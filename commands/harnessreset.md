@@ -10,6 +10,11 @@ allowed_tools: ["Bash", "Read", "Write", "Glob"]
 
 End the current session cleanly with a structured handoff for the next session.
 
+## Migration Check
+Before proceeding, check if old-format `artifacts/` directory exists:
+- If `artifacts/` exists but `.harness/` does not: print "Old format detected. Run /harness:migrate first." and STOP.
+- If both exist: print warning but continue (user may be mid-migration).
+
 ## When to Use
 
 - Context is ~75% full

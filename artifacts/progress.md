@@ -94,5 +94,19 @@
 - Verification: `bash artifacts/init.sh` -> 76 PASS, 0 FAIL
 - Feature count: 2/10 passing (F-001, F-010)
 
+## Sprint 3 — F-002 (Migration Command) — PASS
+
+### Changes
+- Created `commands/harness:migrate.md`: full migration workflow that detects old-format `artifacts/` directory, renames to `.harness/`, renames `feature-list.json` to `features.json` and `run-state.json` to `state.json`, and converts `feature-XXX` IDs to `F-XXX` format
+- Added Migration Check section to `commands/harness:init.md` (before Steps)
+- Added Migration Check section to `commands/harness:run.md` (before Preconditions)
+- Added Migration Check section to `commands/harness:session.md` (before Session Startup)
+- Added Migration Check section to `commands/harness:reset.md` (before When to Use)
+- Migration check warns if old-format `artifacts/` exists without `.harness/` and stops execution
+
+### Evidence
+- Verification: `bash artifacts/init.sh` -> 76 PASS, 0 FAIL
+- Feature count: 3/10 passing (F-001, F-010, F-002)
+
 ## Next step
-- Sprint 3 should target F-002 (Migration Command).
+- Sprint 4 should target F-003 (Auto-Commit After Sprint).

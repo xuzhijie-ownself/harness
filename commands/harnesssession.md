@@ -11,6 +11,11 @@ allowed_tools: ["Bash", "Read", "Write", "Glob", "Agent"]
 
 Run one supervised sprint round (Variant A or B, supervised mode).
 
+## Migration Check
+Before proceeding, check if old-format `artifacts/` directory exists:
+- If `artifacts/` exists but `.harness/` does not: print "Old format detected. Run /harness:migrate first." and STOP.
+- If both exist: print warning but continue (user may be mid-migration).
+
 ## Session Startup
 
 1. Read `.harness/progress.md`.

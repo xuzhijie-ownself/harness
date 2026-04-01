@@ -32,9 +32,9 @@
       "description": "New /harness:migrate command that detects old-format projects (artifacts/ dir, feature-list.json, feature-NNN IDs) and migrates them to the new format. Every other command gains a migration check at the top that warns the user if old format is detected.",
       "required": true,
       "priority": "P0",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 3,
       "dependencies": ["F-001"],
       "steps": [
         "Verify harness:migrate command file exists at commands/harness:migrate.md",
@@ -44,8 +44,8 @@
         "Verify migration renames files and directories to new format",
         "Verify other commands include migration check warning at top"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Sprint 3: Created commands/harness:migrate.md with full migration workflow (artifacts/ -> .harness/, feature-list.json -> features.json, run-state.json -> state.json, feature-XXX -> F-XXX ID conversion). Added Migration Check section to all four existing commands (harness:init, harness:run, harness:session, harness:reset) that warns users if old format detected. Verification: bash artifacts/init.sh -> 76 PASS, 0 FAIL."],
+      "notes": "Completed sprint 3."
     },
     {
       "id": "F-003",
