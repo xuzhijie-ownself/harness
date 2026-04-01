@@ -1,7 +1,7 @@
 # Harness
 
-A unified plugin for **Claude Code** and **Codex** implementing Anthropic's
-long-running agent harness patterns.
+Multi-agent sprint orchestration harness for long-running application
+development, implementing Anthropic's harness patterns.
 
 **References:**
 - https://www.anthropic.com/engineering/harness-design-long-running-apps
@@ -15,17 +15,24 @@ long-running agent harness patterns.
 
 ```bash
 # Mac / Linux / Git Bash
-bash plugins/harness/install.sh
+bash plugins/long-running-harness/install.sh
 
 # Windows CMD
-plugins\harness\install.bat
+plugins\long-running-harness\install.bat
 ```
 
-Copies commands, agents, skill, and hooks into `.claude/`. Available immediately.
+Copies commands, agents, skill, roles, references, and hooks into `.claude/`.
+Available immediately -- no restart needed.
+
+To uninstall:
+
+```bash
+bash plugins/long-running-harness/install.sh --uninstall
+```
 
 ### Codex
 
-`.codex-plugin/plugin.json` is already present — Codex loads it directly.
+`.codex-plugin/plugin.json` is already present -- Codex loads it directly.
 
 ---
 
@@ -50,6 +57,15 @@ Copies commands, agents, skill, and hooks into `.claude/`. Available immediately
 | evaluator | `/harness:session`, coordinator | `skills/harness/roles/evaluator.md` |
 | coordinator | `/harness:run` | `skills/harness/roles/coordinator.md` |
 
+**Coming in v0.2.0:**
+
+| Agent | Purpose | Reference |
+|-------|---------|-----------|
+| tester | Runs test plans after generation | `skills/harness/roles/tester.md` |
+| reviewer | Code review (auto-detects Codex plugin) | `skills/harness/roles/reviewer.md` |
+| releaser | Versioning, changelog, git tags | `skills/harness/roles/releaser.md` |
+| architect | Design review for complex projects | `skills/harness/roles/architect.md` |
+
 ---
 
 ## Shared Contract
@@ -65,12 +81,27 @@ Both Claude Code and Codex share:
 
 ---
 
+## Artifact Layout
+
+```
+.harness/
+  features.json        # feature list with pass/fail status
+  state.json           # run state, current round, active features
+  progress.md          # progress log across sprints
+  handoff.md           # context handoff (Variant B)
+  NN-contract.md       # sprint contract per round
+  NN-evaluation.md     # evaluation report per round
+  NN-evaluation.json   # machine-readable evaluation per round
+```
+
+---
+
 ## Harness Variants
 
 | Variant | When |
 |---------|------|
-| A: Full-Stack Sprinted | Default — coordinator loop, continuous compaction OK |
-| B: Reset-Based | Context anxiety — use `/harness:reset` + `.harness/handoff.md` |
+| A: Full-Stack Sprinted | Default -- coordinator loop, continuous compaction OK |
+| B: Reset-Based | Context anxiety -- use `/harness:reset` + `.harness/handoff.md` |
 | C: Simplified | Sprint decomposition no longer adds lift (evidence required) |
 
 ---

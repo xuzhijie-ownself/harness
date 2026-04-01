@@ -208,9 +208,9 @@
       "description": "Updated install.sh and install.bat with new paths and all new files. Updated plugin.json (name=harness, version=0.2.0). Updated openai.yaml. Full README rewrite. Add --uninstall flag to remove old artifacts.",
       "required": true,
       "priority": "P0",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 2,
       "dependencies": ["F-001"],
       "steps": [
         "Verify install.sh copies all new files to correct destination paths",
@@ -221,8 +221,8 @@
         "Verify install.sh supports --uninstall flag",
         "Verify --uninstall removes old artifacts directory and stale files"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Sprint 2: install.sh rewritten with --uninstall flag, new directory targets (skills/harness/roles/, skills/harness/references/), portable colon-filename handling. install.bat rewritten with matching --uninstall support. plugin.json updated to name=harness version=0.2.0. openai.yaml updated with new display_name and default_prompt referencing /harness: commands. README.md fully rewritten with command table, role table, artifact layout, 4 new roles listed as coming in v0.2.0. Verification: bash artifacts/init.sh -> 76 PASS, 0 FAIL."],
+      "notes": "Completed sprint 2."
     }
   ]
 }

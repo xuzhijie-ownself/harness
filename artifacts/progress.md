@@ -81,5 +81,18 @@
 - Removed stray empty `commands/harness` file (NTFS ADS base file)
 - Verification: `bash artifacts/init.sh` -> 76 PASS, 0 FAIL
 
+## Sprint 2 — F-010 (Install and Metadata Update) — PASS
+
+### Changes
+- Rewrote `install.sh`: added `--uninstall` flag, creates all target dirs (commands, agents, skills/harness, skills/harness/roles, skills/harness/references), portable colon-filename loop for commands, hooks merge logic preserved
+- Rewrote `install.bat`: matching `--uninstall` support, same directory creation and copy logic for Windows CMD
+- Updated `.codex-plugin/plugin.json`: name=harness, version=0.2.0, updated description and longDescription to reference all 9 roles including new ones, added keywords
+- Updated `skills/harness/agents/openai.yaml`: updated short_description and default_prompt to reference `$harness` and `/harness:` commands
+- Full README.md rewrite: updated install paths, command table, role table with current 5 roles, "coming in v0.2.0" section for 4 new roles (tester, reviewer, releaser, architect), artifact layout diagram showing `.harness/` structure, uninstall instructions
+
+### Evidence
+- Verification: `bash artifacts/init.sh` -> 76 PASS, 0 FAIL
+- Feature count: 2/10 passing (F-001, F-010)
+
 ## Next step
-- Sprint 2 should target F-010 (Install and Metadata Update). The install scripts now reference the new paths but need additional updates for new agent/role files that will be added in later sprints.
+- Sprint 3 should target F-002 (Migration Command).

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Install Harness into Claude Code's auto-load directories.
-# Run once from anywhere: bash plugins/harness/install.sh
+# Run once from anywhere: bash plugins/long-running-harness/install.sh
+#
+# Options:
+#   --uninstall   Remove all harness files from .claude/
 
 set -e
 
@@ -8,33 +11,70 @@ PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$PLUGIN_DIR/../.." && pwd)"
 CLAUDE_DIR="$PROJECT_ROOT/.claude"
 
+# ── Uninstall ────────────────────────────────────────────────────────
+if [ "${1:-}" = "--uninstall" ]; then
+  echo "Harness — Uninstall"
+  echo "  Project: $PROJECT_ROOT"
+  echo ""
+
+  # Commands
+  for cmd in init run session reset migrate release; do
+    rm -f "$CLAUDE_DIR/commands/harness:${cmd}.md" 2>/dev/null || true
+  done
+  echo "  ✓ Removed commands"
+
+  # Agents
+  for agent in coordinator evaluator generator initializer planner tester reviewer releaser architect; do
+    rm -f "$CLAUDE_DIR/agents/${agent}.md" 2>/dev/null || true
+  done
+  echo "  ✓ Removed agents"
+
+  # Skill directory
+  rm -rf "$CLAUDE_DIR/skills/harness"
+  echo "  ✓ Removed skills/harness/"
+
+  # Note: hooks.json is NOT removed — it may contain non-harness hooks.
+  echo ""
+  echo "✓ Uninstalled. Hooks.json left intact (may contain other hooks)."
+  exit 0
+fi
+
+# ── Install ──────────────────────────────────────────────────────────
 echo "Harness — Local Install"
 echo "  Plugin : $PLUGIN_DIR"
 echo "  Project: $PROJECT_ROOT"
 echo ""
 
 # Create target directories
-mkdir -p "$CLAUDE_DIR/commands" "$CLAUDE_DIR/agents" "$CLAUDE_DIR/skills/harness"
+mkdir -p "$CLAUDE_DIR/commands" \
+         "$CLAUDE_DIR/agents" \
+         "$CLAUDE_DIR/skills/harness" \
+         "$CLAUDE_DIR/skills/harness/roles" \
+         "$CLAUDE_DIR/skills/harness/references"
 
-# Commands
-cp "$PLUGIN_DIR/commands/harness:"*.md "$CLAUDE_DIR/commands/"
-echo "  ✓ Commands  → .claude/commands/"
+# Commands — handle colon-in-filename portably
+for f in "$PLUGIN_DIR/commands/"harness:*.md; do
+  [ -f "$f" ] || continue
+  cp "$f" "$CLAUDE_DIR/commands/"
+done
+echo "  ✓ Commands    → .claude/commands/"
 
 # Agents
 cp "$PLUGIN_DIR/agents/"*.md "$CLAUDE_DIR/agents/"
-echo "  ✓ Agents    → .claude/agents/"
+echo "  ✓ Agents      → .claude/agents/"
 
-# Skill
+# Skill — SKILL.md
 cp "$PLUGIN_DIR/skills/harness/SKILL.md" \
    "$CLAUDE_DIR/skills/harness/SKILL.md"
-# Roles + References (shared source of truth for all agents)
-mkdir -p "$CLAUDE_DIR/skills/harness/roles" \
-         "$CLAUDE_DIR/skills/harness/references"
+
+# Roles
 cp "$PLUGIN_DIR/skills/harness/roles/"*.md \
    "$CLAUDE_DIR/skills/harness/roles/"
+
+# References
 cp "$PLUGIN_DIR/skills/harness/references/"*.md \
    "$CLAUDE_DIR/skills/harness/references/"
-echo "  ✓ Skill     → .claude/skills/harness/ (+ roles/ + references/)"
+echo "  ✓ Skill       → .claude/skills/harness/ (+ roles/ + references/)"
 
 # Hooks — merge if .claude/hooks.json already exists, otherwise copy
 HOOKS_SRC="$PLUGIN_DIR/hooks/hooks.json"
@@ -51,10 +91,10 @@ if [ -f "$HOOKS_DST" ]; then
     const merged = { hooks: [...(dst.hooks || []), ...src.hooks.filter(h => !existing.has(h.command))] };
     fs.writeFileSync(dstPath, JSON.stringify(merged, null, 2));
   " "$HOOKS_SRC" "$HOOKS_DST"
-  echo "  ✓ Hooks     → merged into existing .claude/hooks.json"
+  echo "  ✓ Hooks       → merged into existing .claude/hooks.json"
 else
   cp "$HOOKS_SRC" "$HOOKS_DST"
-  echo "  ✓ Hooks     → .claude/hooks.json"
+  echo "  ✓ Hooks       → .claude/hooks.json"
 fi
 
 echo ""
