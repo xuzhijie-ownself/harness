@@ -38,6 +38,35 @@ After each completed evaluation round:
    - Commit: `git commit -m "wip(F-XXX): <feature title> — sprint N attempt [harness]"`
 4. Never leave work uncommitted between sprints
 
+## Error Recovery
+
+If an agent spawn fails (timeout, API error, crash):
+1. Log the error in `.harness/state.json` `errors` array with `{ "round": N, "agent": "<name>", "error": "<message>", "timestamp": "<ISO>" }`.
+2. Wait 30 seconds, then retry the same spawn once.
+3. If the retry also fails, set `stop_reason` to `"agent spawn failed after retry: <agent> — <error>"` and STOP.
+4. Never silently swallow spawn failures or continue as if the agent succeeded.
+
+## Context Freshness
+
+Track `rounds_since_reset` in `.harness/state.json` (starts at 0, increments each round).
+After 3 rounds (`rounds_since_reset >= 3`):
+1. Write `.harness/handoff.md` with current progress summary.
+2. Set `rounds_since_reset` to 0.
+3. Pause with `stop_reason`: `"context refresh — resume with /harness:session or /harness:run"`.
+4. The next session picks up from the handoff automatically.
+
+## Evaluator Enforcement
+
+The coordinator MUST NOT update `.harness/features.json` directly.
+Only evaluator-backed evidence in `NN-evaluation.json` `feature_evidence` may flip pass/fail.
+
+Before advancing to the next round, verify ALL of these artifacts exist for round NN:
+- `.harness/sprints/NN-contract.md`
+- `.harness/sprints/NN-evaluation.md`
+- `.harness/sprints/NN-evaluation.json`
+
+If any are missing, set `stop_reason` to `"missing required sprint artifacts for round NN"` and STOP.
+
 ## Pause Rules
 
 Write reason to `.harness/state.json` `stop_reason` field and halt if:

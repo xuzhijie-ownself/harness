@@ -184,9 +184,9 @@
       "description": "Seven sub-items: API error retry with 30s delay, context freshness handoff every 3 rounds, sprint resume via current_sprint_phase field, evaluator enforcement, sprint artifact enforcement, cost/duration tracking, cross-platform init scripts.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 5,
       "dependencies": ["F-001"],
       "steps": [
         "Verify coordinator.md includes API error retry logic (retry once after 30s, pause on retry failure)",

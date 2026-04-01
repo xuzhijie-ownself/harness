@@ -120,5 +120,17 @@
 - Verification: `bash artifacts/init.sh` -> 76 PASS, 0 FAIL
 - Feature count: 4/10 passing (F-001, F-010, F-002, F-003)
 
+## Sprint 5 — F-009 (Reliability Fixes) — PASS
+
+### Changes
+- Updated `agents/coordinator.md`: added Error Recovery (30s retry, error logging to state.json errors array), Context Freshness (rounds_since_reset tracking, handoff at 3 rounds), Evaluator Enforcement (coordinator must not update features.json directly, must verify NN-contract.md + NN-evaluation.md + NN-evaluation.json exist before advancing)
+- Updated `skills/harness/references/patterns.md`: expanded state.json schema with `rounds_since_reset`, `current_sprint_phase`, `methodology`, `errors`, `cost_tracking` fields and field reference docs; added `init.bat` template alongside `init.sh`
+- Updated `commands/harness:session.md`: added Sprint Resume section with phase-based resume table (idle/contract/implementation/testing/review/evaluation), phase transition updates at each section boundary
+- Updated `skills/harness/SKILL.md`: added Reliability section covering API error recovery, context freshness, sprint resume, evaluator enforcement, cost tracking, cross-platform init scripts
+
+### Evidence
+- Verification: `bash artifacts/init.sh` -> 76 PASS, 0 FAIL
+- Feature count: 5/10 passing (F-001, F-010, F-002, F-003, F-009)
+
 ## Next step
-- Sprint 5 should target F-009 (Reliability Fixes).
+- Sprint 6 should target F-004 (Release and Versioning).

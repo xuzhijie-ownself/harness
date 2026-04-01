@@ -16,6 +16,22 @@ Before proceeding, check if old-format `artifacts/` directory exists:
 - If `artifacts/` exists but `.harness/` does not: print "Old format detected. Run /harness:migrate first." and STOP.
 - If both exist: print warning but continue (user may be mid-migration).
 
+## Sprint Resume
+
+Before starting fresh, check `.harness/state.json` `current_sprint_phase`:
+
+| Phase | Resume action |
+|-------|---------------|
+| `idle` | Start a new sprint from step 1 |
+| `contract` | Resume at Contract Phase (step 6) — contract was being negotiated |
+| `implementation` | Resume at Implementation Phase (step 9) — contract was accepted, implementation in progress |
+| `testing` | Resume at Evaluation Phase (step 10) — implementation complete, testing in progress |
+| `review` | Resume at Evaluation Phase (step 10) — review in progress |
+| `evaluation` | Resume at step 11 — evaluation done, update features and progress |
+
+Update `current_sprint_phase` in `state.json` at the start of each phase transition.
+If `current_sprint_phase` is not `idle`, skip ahead to the corresponding phase instead of restarting the sprint.
+
 ## Session Startup
 
 1. Read `.harness/progress.md`.
@@ -25,6 +41,8 @@ Before proceeding, check if old-format `artifacts/` directory exists:
 5. Read `.harness/features.json` — find highest-priority `passes: false` required feature.
 
 ## Contract Phase
+
+Set `current_sprint_phase` to `contract` in `state.json`.
 
 6. Spawn the `generator` agent: "Propose a sprint contract for [feature-id]."
    → `.harness/sprints/NN-contract.md`
@@ -36,10 +54,14 @@ Before proceeding, check if old-format `artifacts/` directory exists:
 
 ## Implementation Phase
 
+Set `current_sprint_phase` to `implementation` in `state.json`.
+
 9. Spawn the `generator` agent: "Implement the accepted contract at .harness/sprints/NN-contract.md."
    → code changes + `.harness/sprints/NN-builder-report.md`
 
 ## Evaluation Phase
+
+Set `current_sprint_phase` to `evaluation` in `state.json`.
 
 10. Spawn the `evaluator` agent:
     "Grade the implementation. Contract: NN-contract.md. Builder report: NN-builder-report.md."
@@ -51,6 +73,8 @@ Before proceeding, check if old-format `artifacts/` directory exists:
 13. Show result to user:
     - **PASS** → score breakdown + recommended next action.
     - **FAIL** → specific blockers from evaluation + suggest re-running /harness:session.
+
+Set `current_sprint_phase` to `idle` in `state.json` after completing the round.
 
 ## Auto-Commit
 

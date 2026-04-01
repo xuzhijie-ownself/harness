@@ -465,6 +465,35 @@ Remove one component at a time and observe the impact.
 - Keep iterative QA even after sprint removal until evidence shows it is no longer load-bearing.
 - Re-baseline the execution strategy whenever you simplify, instead of silently drifting into a different mode.
 
+## Reliability
+
+### API Error Recovery
+
+If an agent spawn fails (timeout, API error, crash):
+1. Log the error in `state.json` `errors` array.
+2. Wait 30 seconds, then retry the spawn once.
+3. If the retry fails, set `stop_reason` and STOP. Never silently continue.
+
+### Context Freshness
+
+Track `rounds_since_reset` in `state.json`. After 3 rounds, the coordinator pauses the run, writes a handoff file, and resets the counter. The next `/harness:session` or `/harness:run` picks up from the handoff automatically.
+
+### Sprint Resume
+
+`state.json` tracks `current_sprint_phase` (one of: `idle`, `contract`, `implementation`, `testing`, `review`, `evaluation`). When a session starts, it checks this field and resumes from the last active phase instead of restarting the sprint.
+
+### Evaluator Enforcement
+
+The coordinator MUST NOT update `features.json` directly. Only evaluator evidence in `NN-evaluation.json` `feature_evidence` may flip pass/fail status. Before advancing to the next round, the coordinator verifies that `NN-contract.md`, `NN-evaluation.md`, and `NN-evaluation.json` all exist.
+
+### Cost Tracking
+
+`state.json` includes a `cost_tracking` object with per-round timestamps for each phase (contract, implementation, evaluation). The coordinator updates these at phase boundaries. An optional `cost-log.md` artifact provides a human-readable summary.
+
+### Cross-Platform Init Scripts
+
+The initializer generates both `init.sh` (bash) and `init.bat` (Windows CMD) so the harness works on any platform. `init.sh` should detect Windows (MSYS/Git Bash) and adapt accordingly.
+
 ## Review The Harness
 
 When reviewing whether the harness was actually followed, check:
