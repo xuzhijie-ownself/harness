@@ -37,9 +37,10 @@ When the environment supports separate agents or sessions, dispatch explicitly:
 1. Spawn an `initializer` agent to create the operational scaffold.
 2. Spawn a `planner` agent to produce or refine the product spec if the prompt is underspecified.
 3. Spawn a `generator` agent to propose the next bounded sprint and implement it.
-4. Spawn an `evaluator` agent to review the contract, test the live app, and grade acceptance.
-5. Spawn a `coordinator` agent in continuous mode to advance rounds automatically until a stop condition is reached.
-6. Spawn a `releaser` agent after all required features pass or when the user requests `/harness:release`.
+4. Spawn a `tester` agent to write and run tests after generator implementation.
+5. Spawn an `evaluator` agent to review the contract, test the live app, and grade acceptance.
+6. Spawn a `coordinator` agent in continuous mode to advance rounds automatically until a stop condition is reached.
+7. Spawn a `releaser` agent after all required features pass or when the user requests `/harness:release`.
 
 Do not collapse these into one agent unless the environment truly cannot separate them.
 If you are forced to use one agent, state that the run is an approximation and not faithful role separation.
@@ -57,6 +58,7 @@ Use role-scoped references so each subagent reads only the context it needs:
 - [roles/initializer.md](roles/initializer.md)
 - [roles/planner.md](roles/planner.md)
 - [roles/generator.md](roles/generator.md)
+- [roles/tester.md](roles/tester.md)
 - [roles/evaluator.md](roles/evaluator.md)
 - [roles/coordinator.md](roles/coordinator.md)
 - [roles/releaser.md](roles/releaser.md)
@@ -182,6 +184,48 @@ The releaser creates an annotated git tag for each release: `git tag -a vX.Y.Z -
 ### Dispatch
 
 - [roles/releaser.md](roles/releaser.md)
+
+## Testing Strategy
+
+The tester agent writes and runs tests after generator implementation and before evaluator grading.
+
+### Tester Role
+
+- Owns: test files in the project, `.harness/test-plan.md`, `.harness/sprints/NN-test-report.md`
+- Reads: sprint contract, builder report, features.json, spec.md
+- Does NOT own: product code (only test files), evaluation artifacts
+
+### Test Plan
+
+During init, the initializer (or tester if spawned) generates `.harness/test-plan.md` from the spec's feature list. The test plan defines per-feature test requirements (unit, integration, e2e) and target coverage levels.
+
+### Sprint Test Reports
+
+Each sprint produces `.harness/sprints/NN-test-report.md` with:
+- List of test files created or modified
+- Test suite results (passed, failed, skipped, coverage)
+- Findings and issues discovered during testing
+
+### Test Verification in Evaluator
+
+The evaluator checks three test criteria before grading:
+- TEST-01 (required): Tests exist for new/changed code
+- TEST-02 (required): All tests pass
+- TEST-03 (advisory): E2E tests cover the feature's verification steps
+
+TEST-01 and TEST-02 are non-blocking by default but become blocking if `test-plan.md` requires tests for the feature.
+
+### Updated Sprint Flow
+
+The tester runs between implementation and evaluation:
+
+1. Generator implements the sprint
+2. **Tester writes and runs tests** → `NN-test-report.md`
+3. Evaluator grades the implementation (including test results)
+
+### Dispatch
+
+- [roles/tester.md](roles/tester.md)
 
 ## Quantified Evaluation
 
@@ -391,7 +435,8 @@ In Variant A, run this loop:
 6. Evaluator writes `.harness/sprints/NN-contract-review.md`.
 7. Generator revises the contract until accepted.
 8. Generator implements the sprint and writes `.harness/sprints/NN-builder-report.md`.
-9. Evaluator runs QA and writes `.harness/sprints/NN-evaluation.md`, `.harness/sprints/NN-evaluation.json`, and `.harness/sprints/NN-evaluator-steps.md`.
+8b. Tester writes and runs tests, produces `.harness/sprints/NN-test-report.md`.
+9. Evaluator runs QA (including test verification) and writes `.harness/sprints/NN-evaluation.md`, `.harness/sprints/NN-evaluation.json`, and `.harness/sprints/NN-evaluator-steps.md`.
 10. Evaluator-backed evidence updates `.harness/features.json`.
 11. Coordinator either advances to the next failing required feature, pauses on a blocker, or stops if completion conditions are met.
 
@@ -406,9 +451,11 @@ Start with:
 - `.harness/init.md` + `.harness/init.sh`
 - `.harness/state.json` in continuous mode
 - `.harness/spec.md`
+- `.harness/test-plan.md`
 - `.harness/sprints/NN-contract.md`
 - `.harness/sprints/NN-contract-review.md`
 - `.harness/sprints/NN-builder-report.md`
+- `.harness/sprints/NN-test-report.md`
 - `.harness/sprints/NN-evaluation.md`
 - `.harness/sprints/NN-evaluation.json`
 - `.harness/sprints/NN-evaluator-steps.md`

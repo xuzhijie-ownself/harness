@@ -11,6 +11,7 @@ For role-specific guidance, prefer:
 - [../roles/evaluator.md](../roles/evaluator.md)
 - [../roles/coordinator.md](../roles/coordinator.md)
 - [../roles/releaser.md](../roles/releaser.md)
+- [../roles/tester.md](../roles/tester.md)
 
 ## Shared Principles
 
@@ -28,6 +29,7 @@ For role-specific guidance, prefer:
   state.json
   init.md
   spec.md
+  test-plan.md
   decomposition.md              # optional when sprint rationale needs its own artifact
   summary.md
   handoff.md                    # reset-based compatibility runs only
@@ -39,6 +41,7 @@ For role-specific guidance, prefer:
     01-evaluation.md
     01-evaluation.json
     01-evaluator-steps.md
+    01-test-report.md
 ```
 
 ## Shared Metadata
@@ -47,7 +50,7 @@ Use this metadata block at the top of every role-owned Markdown artifact:
 
 ```md
 ## Metadata
-- Role: initializer | planner | generator | evaluator | coordinator
+- Role: initializer | planner | generator | tester | evaluator | coordinator
 - Agent: agent identifier or session name
 - Inputs: files reviewed before writing this artifact
 - Status: draft | in_review | accepted | rejected | pass | fail | active | complete | paused
@@ -482,6 +485,48 @@ if %ERRORLEVEL% EQU 0 (
 | 1 | planner | — | — | |
 | 1 | generator | — | — | |
 | 1 | evaluator | — | — | |
+```
+
+### `test-plan.md`
+
+```md
+# Test Plan
+
+## Metadata
+- Role: tester
+- Agent: tester-1
+- Status: active
+
+## Strategy
+- Unit tests: [framework] — target 80% coverage
+- Integration tests: [framework] — API endpoint coverage
+- E2E tests: Playwright — critical user flows
+- Regression: run full suite before each sprint evaluation
+
+## Per-Feature Test Requirements
+| Feature ID | Unit | Integration | E2E | Status |
+|------------|------|-------------|-----|--------|
+| F-001      | N/A  | N/A         | smoke | pending |
+```
+
+### `NN-test-report.md`
+
+```md
+# Test Report — Sprint NN
+
+## Metadata
+- Role: tester
+- Status: completed
+
+## Tests Written
+- [list of test files created/modified]
+
+## Test Results
+| Suite | Passed | Failed | Skipped | Coverage |
+|-------|--------|--------|---------|----------|
+
+## Findings
+- [issues found during testing]
 ```
 
 ### `release.json`

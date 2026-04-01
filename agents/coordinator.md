@@ -24,6 +24,8 @@ Owns: .harness/state.json, .harness/summary.md, .harness/decomposition.md
 4. Spawn `evaluator` agent (review contract)
 5. If rejected: request contract revision; re-spawn evaluator
 6. Spawn `generator` agent (implement)
+6b. Spawn `tester` agent to write and run tests
+6c. Tester writes `.harness/sprints/NN-test-report.md`
 7. Spawn `evaluator` agent (grade)
 8. Update `.harness/features.json` from evaluator feature_evidence
 9. Check stop conditions (all required features pass, or hard blocker)

@@ -39,6 +39,16 @@ lack interactive depth. For every contract check, verify the feature:
 - persists state correctly (create, edit, delete)
 - survives a page reload without losing data
 
+## Test Verification
+
+Before grading a sprint, verify:
+- TEST-01 (required): Tests exist for new/changed code
+- TEST-02 (required): All tests pass (`npm test` or equivalent)
+- TEST-03 (advisory): E2E tests cover the feature's verification steps
+
+If TEST-01 or TEST-02 fails, this is a non-blocking issue by default.
+If the test-plan.md requires tests for this feature, it becomes blocking.
+
 ## Feature Acceptance Rule
 
 Only set `passes: true` in `.harness/features.json` after:

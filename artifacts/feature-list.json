@@ -119,9 +119,9 @@
       "description": "New tester agent and role. test-plan.md artifact generated during init. NN-test-report.md per sprint. Updated sprint flow with tester between generator and evaluator. Evaluator gains TEST-01 and TEST-02 contract checks.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 7,
       "dependencies": ["F-001"],
       "steps": [
         "Verify tester agent file exists at agents/tester.md",
@@ -131,8 +131,8 @@
         "Verify sprint flow in SKILL.md shows tester between generator and evaluator",
         "Verify evaluator role includes TEST-01 (tests exist) and TEST-02 (tests pass) checks"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Sprint 7: Created agents/tester.md with test round sequence, test framework detection, and test-plan generation. Created skills/harness/roles/tester.md with read/write ownership boundaries and per-feature testing guidance. Added test-plan.md and NN-test-report.md templates to patterns.md. Added Test Verification section (TEST-01, TEST-02, TEST-03) to evaluator agent. Updated coordinator.md with tester dispatch (step 6b/6c). Updated harness:session.md with Testing Phase (step 9b). Updated initializer.md to generate test-plan.md during init. Added Testing Strategy section to SKILL.md with tester role, test plan, sprint test reports, test verification, and updated sprint flow. Updated execution loop (step 8b) and required artifacts list. Added tester to dispatch rules and role references. Updated artifacts/init.sh to check for tester.md and roles/tester.md."],
+      "notes": "Completed sprint 7."
     },
     {
       "id": "F-007",

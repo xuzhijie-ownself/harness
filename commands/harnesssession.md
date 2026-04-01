@@ -2,8 +2,8 @@
 name: harness:session
 description: Run one supervised sprint round for a harness project.
   Selects the next failing required feature, negotiates a sprint contract with
-  evaluator review, implements it, and evaluates it. Waits for user confirmation
-  between contract review and implementation.
+  evaluator review, implements it, tests it, and evaluates it. Waits for user
+  confirmation between contract review and implementation.
 allowed_tools: ["Bash", "Read", "Write", "Glob", "Agent"]
 ---
 
@@ -25,7 +25,7 @@ Before starting fresh, check `.harness/state.json` `current_sprint_phase`:
 | `idle` | Start a new sprint from step 1 |
 | `contract` | Resume at Contract Phase (step 6) — contract was being negotiated |
 | `implementation` | Resume at Implementation Phase (step 9) — contract was accepted, implementation in progress |
-| `testing` | Resume at Evaluation Phase (step 10) — implementation complete, testing in progress |
+| `testing` | Resume at Testing Phase (step 9b) — implementation complete, testing in progress |
 | `review` | Resume at Evaluation Phase (step 10) — review in progress |
 | `evaluation` | Resume at step 11 — evaluation done, update features and progress |
 
@@ -59,12 +59,20 @@ Set `current_sprint_phase` to `implementation` in `state.json`.
 9. Spawn the `generator` agent: "Implement the accepted contract at .harness/sprints/NN-contract.md."
    → code changes + `.harness/sprints/NN-builder-report.md`
 
+## Testing Phase
+
+Set `current_sprint_phase` to `testing` in `state.json`.
+
+9b. Spawn the `tester` agent:
+    "Write and run tests for the implementation. Contract: NN-contract.md. Builder report: NN-builder-report.md."
+    → test files + `.harness/sprints/NN-test-report.md`
+
 ## Evaluation Phase
 
 Set `current_sprint_phase` to `evaluation` in `state.json`.
 
 10. Spawn the `evaluator` agent:
-    "Grade the implementation. Contract: NN-contract.md. Builder report: NN-builder-report.md."
+    "Grade the implementation. Contract: NN-contract.md. Builder report: NN-builder-report.md. Test report: NN-test-report.md."
     → `.harness/sprints/NN-evaluation.md`
     → `.harness/sprints/NN-evaluation.json`
     → `.harness/sprints/NN-evaluator-steps.md`

@@ -23,5 +23,6 @@ Does NOT modify: product code, .harness/spec.md
 2. `.harness/progress.md` — baseline state: what currently works and what fails
 3. `.harness/init.md` — human-readable setup documentation
 4. `.harness/init.sh` — executable startup script (dev server + smoke test); use the template from `references/patterns.md`
+5. `.harness/test-plan.md` — generated from the spec's feature list; use the template from `references/patterns.md`; populate per-feature test requirements (unit, integration, e2e) based on feature type
 
 All artifacts must include the shared metadata block defined in patterns.md.
