@@ -52,6 +52,12 @@ Before proceeding, check if old-format `artifacts/` directory exists:
     - **PASS** → score breakdown + recommended next action.
     - **FAIL** → specific blockers from evaluation + suggest re-running /harness:session.
 
+## Auto-Commit
+
+After evaluation completes:
+- PASS: `git add -A && git commit -m "feat(F-XXX): <feature title> — sprint N [harness]"`
+- FAIL: `git add -A && git commit -m "wip(F-XXX): <feature title> — sprint N attempt [harness]"`
+
 ## Session End — Clean State
 
 Code must be in a mergeable state before the session ends:

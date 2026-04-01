@@ -28,6 +28,16 @@ Owns: .harness/state.json, .harness/summary.md, .harness/decomposition.md
 8. Update `.harness/features.json` from evaluator feature_evidence
 9. Check stop conditions (all required features pass, or hard blocker)
 
+### Auto-Commit Protocol
+
+After each completed evaluation round:
+1. Stage all changes: `git add -A`
+2. If evaluation PASSED:
+   - Commit: `git commit -m "feat(F-XXX): <feature title> — sprint N [harness]"`
+3. If evaluation FAILED:
+   - Commit: `git commit -m "wip(F-XXX): <feature title> — sprint N attempt [harness]"`
+4. Never leave work uncommitted between sprints
+
 ## Pause Rules
 
 Write reason to `.harness/state.json` `stop_reason` field and halt if:

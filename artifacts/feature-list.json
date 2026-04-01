@@ -54,9 +54,9 @@
       "description": "After each sprint evaluation, auto-commit with conventional commit message format. feat(F-XXX) for pass, wip(F-XXX) for fail. Update coordinator, generator, and session command.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 4,
       "dependencies": ["F-001"],
       "steps": [
         "Verify coordinator.md includes auto-commit instructions after evaluation",
@@ -65,8 +65,8 @@
         "Verify generator.md references auto-commit workflow",
         "Verify session command references auto-commit workflow"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Sprint 4: Added Auto-Commit Protocol to coordinator.md (after evaluation step), Post-Implementation Commit to generator.md (after implementation step), Auto-Commit section to harness:session.md (after evaluation result), and Auto-Commit Protocol section to SKILL.md with commit message format table and rules. Verification: bash artifacts/init.sh -> 76 PASS, 0 FAIL."],
+      "notes": "Completed sprint 4."
     },
     {
       "id": "F-004",

@@ -108,5 +108,17 @@
 - Verification: `bash artifacts/init.sh` -> 76 PASS, 0 FAIL
 - Feature count: 3/10 passing (F-001, F-010, F-002)
 
+## Sprint 4 — F-003 (Auto-Commit After Sprint) — PASS
+
+### Changes
+- Updated `agents/coordinator.md`: added Auto-Commit Protocol section after evaluation step (step 8/9) with PASS/FAIL commit message formats
+- Updated `agents/generator.md`: added Post-Implementation Commit section after implementation step with pre-evaluation wip commit
+- Updated `commands/harness:session.md`: added Auto-Commit section after evaluation result (step 13) with PASS/FAIL commit commands
+- Updated `skills/harness/SKILL.md`: added Auto-Commit Protocol section with commit message format table (feat/wip prefixes) and rules for when each role commits
+
+### Evidence
+- Verification: `bash artifacts/init.sh` -> 76 PASS, 0 FAIL
+- Feature count: 4/10 passing (F-001, F-010, F-002, F-003)
+
 ## Next step
-- Sprint 4 should target F-003 (Auto-Commit After Sprint).
+- Sprint 5 should target F-009 (Reliability Fixes).

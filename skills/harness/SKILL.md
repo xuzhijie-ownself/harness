@@ -243,6 +243,25 @@ At the start of every coding session or reset session:
 
 If the session starts by inventing a new roadmap instead of checking the failing feature list, the harness is drifting.
 
+## Auto-Commit Protocol
+
+Every sprint must result in a git commit. This prevents work loss and creates a traceable history.
+
+### Commit Message Format
+
+| Outcome | Prefix | Format |
+|---------|--------|--------|
+| Evaluation PASS | `feat` | `feat(F-XXX): <title> — sprint N [harness]` |
+| Evaluation FAIL | `wip` | `wip(F-XXX): <title> — sprint N attempt [harness]` |
+| Implementation pre-eval | `wip` | `wip(F-XXX): implement <title> — sprint N [harness]` |
+
+### Rules
+- Never leave changes uncommitted between sprints
+- Generator commits after implementation (before evaluation)
+- Coordinator/session commits after evaluation result
+- Use `git add -A` to stage all changes
+- The `[harness]` tag identifies automated commits
+
 ## Execution Modes
 
 Choose one mode explicitly:
