@@ -1,0 +1,12 @@
+{
+  "hooks": [
+    {
+      "event": "PostToolUse",
+      "matcher": {
+        "tool_name": "Bash",
+        "input_contains": "git commit"
+      },
+      "command": "node -e \"const fs=require('fs'),path=require('path');const p=path.join(process.cwd(),'artifacts','progress.md');if(fs.existsSync(p)){const now=new Date().toISOString();let txt=fs.readFileSync(p,'utf8');txt=txt.replace(/\\n## Last commit\\n.*$/ms,'')+'\\n## Last commit\\n- '+now;fs.writeFileSync(p,txt);}\""
+    }
+  ]
+}

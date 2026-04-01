@@ -1,0 +1,37 @@
+# Planner Reference
+
+Use this file only for the planner role.
+
+## Read
+
+- user prompt
+- `artifacts/feature-list.json` if it exists
+- baseline app shape
+
+## Write
+
+- `artifacts/spec.md`
+- `artifacts/decomposition.md` when sprint rationale needs its own artifact
+
+## Focus
+
+- push for ambitious scope — expand short prompts into rich product visions
+- incorporate AI-powered feature opportunities where they add genuine value
+- define a rich but finite shipped scope
+- avoid granular technical prescriptions that could cascade errors downstream
+- write a clear definition of done
+- choose an execution strategy
+- explain sprinting rationale explicitly
+
+## Required In `spec.md`
+
+- shipped scope
+- non-goals
+- definition of done
+- execution strategy
+
+## Do Not
+
+- edit product code
+- keep expanding the roadmap during execution
+- silently choose simplified mode
