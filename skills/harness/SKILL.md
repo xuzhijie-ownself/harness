@@ -39,6 +39,7 @@ When the environment supports separate agents or sessions, dispatch explicitly:
 3. Spawn a `generator` agent to propose the next bounded sprint and implement it.
 4. Spawn an `evaluator` agent to review the contract, test the live app, and grade acceptance.
 5. Spawn a `coordinator` agent in continuous mode to advance rounds automatically until a stop condition is reached.
+6. Spawn a `releaser` agent after all required features pass or when the user requests `/harness:release`.
 
 Do not collapse these into one agent unless the environment truly cannot separate them.
 If you are forced to use one agent, state that the run is an approximation and not faithful role separation.
@@ -58,6 +59,7 @@ Use role-scoped references so each subagent reads only the context it needs:
 - [roles/generator.md](roles/generator.md)
 - [roles/evaluator.md](roles/evaluator.md)
 - [roles/coordinator.md](roles/coordinator.md)
+- [roles/releaser.md](roles/releaser.md)
 - [references/patterns.md](references/patterns.md) for shared schemas and templates only
 
 ## Initializer
@@ -139,6 +141,47 @@ The coordinator should also write a short rationale whenever it:
 - changes the expected sprint plan
 - pauses for repeated failure
 - switches harness variant
+
+## Release & Versioning
+
+The releaser agent manages version bumps, changelog generation, and git tags.
+
+### When to Release
+
+- Automatically: the coordinator spawns the releaser after all required features pass.
+- Manually: the user runs `/harness:release` to cut a release checkpoint mid-run.
+
+### Releaser Role
+
+- Owns: `.harness/release.json`, `.harness/changelog.md`
+- Reads: `features.json`, `state.json`, `summary.md`, `progress.md`
+- Does NOT modify product code or feature status
+
+### release.json
+
+Tracks all releases with version history. Schema documented in [references/patterns.md](references/patterns.md).
+
+Fields: `current_version`, `releases[]` (version, date, features_shipped, features_deferred, changelog, sprint_count, previous_version), `next_version`.
+
+### Changelog
+
+Generated from feature evidence in `features.json`. Each entry lists shipped features, deferred features, sprint count, and notable changes.
+
+### Version Bump Rules
+
+| Condition | Bump | Example |
+|-----------|------|---------|
+| Only bug fixes or reliability improvements | patch | 0.1.0 -> 0.1.1 |
+| At least one new feature shipped | minor | 0.1.0 -> 0.2.0 |
+| Breaking changes to existing behavior | major | 0.2.0 -> 1.0.0 |
+
+### Git Tags
+
+The releaser creates an annotated git tag for each release: `git tag -a vX.Y.Z -m "Release vX.Y.Z"`.
+
+### Dispatch
+
+- [roles/releaser.md](roles/releaser.md)
 
 ## Quantified Evaluation
 

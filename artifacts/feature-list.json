@@ -75,9 +75,9 @@
       "description": "New releaser agent and role. New /harness:release command. New artifacts: .harness/release.json and .harness/changelog.md. Coordinator spawns releaser after all required features pass. Git tag created on release.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 6,
       "dependencies": ["F-001"],
       "steps": [
         "Verify releaser agent file exists at agents/releaser.md",
@@ -88,8 +88,8 @@
         "Verify coordinator.md spawns releaser after all required features pass",
         "Verify git tag creation is part of release workflow"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Sprint 6: Created agents/releaser.md with version bump rules and git tag workflow. Created skills/harness/roles/releaser.md with read/write ownership boundaries. Created commands/harness:release.md with migration check and 5-step release flow. Added release.json schema and changelog.md template to patterns.md. Updated coordinator.md to spawn releaser after all required features pass (step 10). Added Release & Versioning section to SKILL.md with version bump table, git tag docs, and releaser dispatch. Added releaser to SKILL.md dispatch rules and role references. Updated artifacts/init.sh to check for releaser.md, roles/releaser.md, and harness:release.md. Verified install.sh already handles releaser via glob patterns. Verification: bash artifacts/init.sh -> 89 PASS, 0 FAIL."],
+      "notes": "Completed sprint 6."
     },
     {
       "id": "F-005",

@@ -70,6 +70,7 @@ check_file "agents/planner.md"
 check_file "agents/generator.md"
 check_file "agents/evaluator.md"
 check_file "agents/coordinator.md"
+check_file "agents/releaser.md"
 
 # --- Section 3: Existing role files ---
 echo "-- Checking existing role files --"
@@ -78,6 +79,7 @@ check_file "skills/harness/roles/planner.md"
 check_file "skills/harness/roles/generator.md"
 check_file "skills/harness/roles/evaluator.md"
 check_file "skills/harness/roles/coordinator.md"
+check_file "skills/harness/roles/releaser.md"
 
 # --- Section 4: Command files ---
 echo "-- Checking command files --"
@@ -85,6 +87,7 @@ check_file "commands/harness:init.md"
 check_file "commands/harness:run.md"
 check_file "commands/harness:session.md"
 check_file "commands/harness:reset.md"
+check_file "commands/harness:release.md"
 
 # --- Section 5: JSON validation ---
 echo "-- Validating JSON files --"
@@ -111,7 +114,7 @@ for f in agents/*.md skills/harness/SKILL.md skills/harness/roles/*.md skills/ha
 done
 
 # Check command files (with colon in name)
-for f in "commands/harness:init.md" "commands/harness:run.md" "commands/harness:session.md" "commands/harness:reset.md"; do
+for f in "commands/harness:init.md" "commands/harness:run.md" "commands/harness:session.md" "commands/harness:reset.md" "commands/harness:release.md"; do
   check_no_stale_refs "$f" "skills/long-running-harness" "old skill path"
   check_no_stale_refs "$f" "feature-list\.json" "old feature list filename"
   check_no_stale_refs "$f" "run-state\.json" "old run state filename"

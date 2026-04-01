@@ -27,6 +27,7 @@ Owns: .harness/state.json, .harness/summary.md, .harness/decomposition.md
 7. Spawn `evaluator` agent (grade)
 8. Update `.harness/features.json` from evaluator feature_evidence
 9. Check stop conditions (all required features pass, or hard blocker)
+10. If all required features pass: spawn `releaser` agent before writing summary
 
 ### Auto-Commit Protocol
 
