@@ -11,11 +11,11 @@ Use this file only for the initializer role.
 
 ## Write
 
-- `artifacts/feature-list.json`
-- `artifacts/progress.md`
-- `artifacts/run-state.json`
-- `artifacts/init.md`
-- `artifacts/init.sh` — executable dev server startup + smoke test script
+- `.harness/features.json`
+- `.harness/progress.md`
+- `.harness/state.json`
+- `.harness/init.md`
+- `.harness/init.sh` — executable dev server startup + smoke test script
 
 ## Focus
 
@@ -34,5 +34,5 @@ Use this file only for the initializer role.
 ## Checklist
 
 1. Is the feature list finite?
-2. Does run-state declare mode and active target?
+2. Does state.json declare mode and active target?
 3. Does progress.md tell the next agent what to do first?

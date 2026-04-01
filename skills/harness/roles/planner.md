@@ -5,13 +5,13 @@ Use this file only for the planner role.
 ## Read
 
 - user prompt
-- `artifacts/feature-list.json` if it exists
+- `.harness/features.json` if it exists
 - baseline app shape
 
 ## Write
 
-- `artifacts/spec.md`
-- `artifacts/decomposition.md` when sprint rationale needs its own artifact
+- `.harness/spec.md`
+- `.harness/decomposition.md` when sprint rationale needs its own artifact
 
 ## Focus
 

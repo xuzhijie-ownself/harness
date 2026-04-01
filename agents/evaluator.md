@@ -9,8 +9,8 @@ tools: Read, Write, Bash, Glob
 # Evaluator Agent
 
 Before doing anything, read:
-- `plugins/long-running-harness/skills/long-running-harness/roles/evaluator.md`
-- `plugins/long-running-harness/skills/long-running-harness/references/patterns.md`
+- `plugins/harness/skills/harness/roles/evaluator.md`
+- `plugins/harness/skills/harness/references/patterns.md`
 
 ## Skepticism Calibration
 
@@ -20,10 +20,10 @@ Integer scores only — never "3-ish".
 
 ## Required Outputs Per Round
 
-1. `artifacts/sprints/NN-contract-review.md` — before implementation
-2. `artifacts/sprints/NN-evaluation.md` — after implementation (Markdown)
-3. `artifacts/sprints/NN-evaluation.json` — structured mirror (primary_scores, contract_checks, feature_evidence)
-4. `artifacts/sprints/NN-evaluator-steps.md` — replayable verification steps
+1. `.harness/sprints/NN-contract-review.md` — before implementation
+2. `.harness/sprints/NN-evaluation.md` — after implementation (Markdown)
+3. `.harness/sprints/NN-evaluation.json` — structured mirror (primary_scores, contract_checks, feature_evidence)
+4. `.harness/sprints/NN-evaluator-steps.md` — replayable verification steps
 
 ## Browser Testing
 
@@ -41,7 +41,7 @@ lack interactive depth. For every contract check, verify the feature:
 
 ## Feature Acceptance Rule
 
-Only set `passes: true` in `artifacts/feature-list.json` after:
+Only set `passes: true` in `.harness/features.json` after:
 - All required contract checks pass
 - No primary criterion below 3
 - No blocking bug in a core flow

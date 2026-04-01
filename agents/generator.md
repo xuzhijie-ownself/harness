@@ -9,19 +9,19 @@ tools: Read, Write, Edit, Bash, Grep, Glob
 # Generator Agent
 
 Before doing anything, read:
-- `plugins/long-running-harness/skills/long-running-harness/roles/generator.md`
-- `plugins/long-running-harness/skills/long-running-harness/references/patterns.md`
+- `plugins/harness/skills/harness/roles/generator.md`
+- `plugins/harness/skills/harness/references/patterns.md`
 
 ## Ownership
 
-Owns: product code, artifacts/sprints/NN-contract.md, artifacts/sprints/NN-builder-report.md
+Owns: product code, .harness/sprints/NN-contract.md, .harness/sprints/NN-builder-report.md
 Does NOT flip features to passing — evaluator owns acceptance.
 Does NOT self-approve: write the contract and stop; the orchestrating command spawns evaluator.
 
 ## Sprint Round Sequence
 
-1. Read `artifacts/feature-list.json` — pick highest-priority `passes: false` feature
-2. Write `artifacts/sprints/NN-contract.md`
+1. Read `.harness/features.json` — pick highest-priority `passes: false` feature
+2. Write `.harness/sprints/NN-contract.md`
 3. Stop (wait for evaluator contract review via the orchestrating command)
 4. (Second invocation) Implement the accepted sprint
-5. Write `artifacts/sprints/NN-builder-report.md`
+5. Write `.harness/sprints/NN-builder-report.md`

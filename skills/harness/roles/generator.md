@@ -4,17 +4,17 @@ Use this file only for the generator role.
 
 ## Read
 
-- `artifacts/spec.md`
-- `artifacts/feature-list.json`
-- `artifacts/progress.md`
+- `.harness/spec.md`
+- `.harness/features.json`
+- `.harness/progress.md`
 - accepted sprint contract
 - prior evaluation artifacts for the same target feature if they exist
 
 ## Write
 
 - product code
-- `artifacts/sprints/NN-contract.md`
-- `artifacts/sprints/NN-builder-report.md`
+- `.harness/sprints/NN-contract.md`
+- `.harness/sprints/NN-builder-report.md`
 
 ## Focus
 

@@ -7,15 +7,15 @@ Use this file only for the evaluator role.
 - accepted sprint contract
 - builder report
 - running app
-- `artifacts/feature-list.json`
+- `.harness/features.json`
 - evaluator calibration if it exists
 
 ## Write
 
-- `artifacts/sprints/NN-contract-review.md`
-- `artifacts/sprints/NN-evaluation.md`
-- `artifacts/sprints/NN-evaluation.json`
-- `artifacts/sprints/NN-evaluator-steps.md`
+- `.harness/sprints/NN-contract-review.md`
+- `.harness/sprints/NN-evaluation.md`
+- `.harness/sprints/NN-evaluation.json`
+- `.harness/sprints/NN-evaluator-steps.md`
 
 ## Focus
 
@@ -26,7 +26,7 @@ Use this file only for the evaluator role.
 - record exact evidence and steps
 - test via browser automation (Playwright or Puppeteer), not by reading source code
 - watch for "display-only" features that render but lack interactive depth — this is the primary failure mode (Anthropic, March 2026)
-- walk through the feature's pre-defined `steps[]` from `feature-list.json` during evaluation
+- walk through the feature's pre-defined `steps[]` from `features.json` during evaluation
 
 ## Disagreement Rule
 

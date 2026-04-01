@@ -1,0 +1,4 @@
+interface:
+  display_name: "Harness"
+  short_description: "Continuous multi-agent sprinted app harness"
+  default_prompt: "Use $harness in continuous mode to dispatch initializer, planner, generator, evaluator, and coordinator roles until the required feature set passes or a blocker stops the run. Require an explicit execution strategy, default to one failing required feature per sprint unless a written grouping waiver exists, and require quantified evaluator grading with integer 0-5 primary scores plus matching Markdown, JSON, and replayable evaluator-step artifacts before any feature flips to passing."

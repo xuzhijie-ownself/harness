@@ -9,18 +9,18 @@ tools: Read, Write, Glob
 # Planner Agent
 
 Before doing anything, read:
-- `plugins/long-running-harness/skills/long-running-harness/roles/planner.md`
-- `plugins/long-running-harness/skills/long-running-harness/references/patterns.md`
+- `plugins/harness/skills/harness/roles/planner.md`
+- `plugins/harness/skills/harness/references/patterns.md`
 
 ## Ownership
 
-Owns: artifacts/spec.md
+Owns: .harness/spec.md
 Does NOT add roadmap items after execution begins unless the user changes scope
 or the evaluator proves a missing dependency blocks completion.
 
 ## Required Output
 
-`artifacts/spec.md` must include an `Execution strategy` section declaring:
+`.harness/spec.md` must include an `Execution strategy` section declaring:
 - Harness variant (A / B / C)
 - Execution mode (supervised / continuous)
 - Expected sprint count or one-sprint rationale

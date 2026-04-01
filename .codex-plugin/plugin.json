@@ -1,7 +1,7 @@
 {
-  "name": "long-running-harness",
+  "name": "harness",
   "version": "0.1.0",
-  "description": "Anthropic-style long-running application harness with explicit multi-agent sprint orchestration.",
+  "description": "Anthropic-style application harness with explicit multi-agent sprint orchestration.",
   "author": {
     "name": "Local Workspace",
     "email": "[TODO: author@example.com]",
@@ -19,9 +19,9 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Long-Running Harness",
-    "shortDescription": "Multi-agent sprinted app harness",
-    "longDescription": "Runs an Anthropic-style long-running application harness with initializer, planner, generator, evaluator, and coordinator roles, explicit sprint strategy, quantified QA, and a completion ledger.",
+    "displayName": "Harness",
+    "shortDescription": "Multi-agent sprinted application harness",
+    "longDescription": "Runs an Anthropic-style application harness with initializer, planner, generator, evaluator, and coordinator roles, explicit sprint strategy, quantified QA, and a completion ledger.",
     "developerName": "Local Workspace",
     "category": "Productivity",
     "capabilities": [
@@ -32,7 +32,7 @@
     "privacyPolicyURL": "[TODO: privacy-policy-url]",
     "termsOfServiceURL": "[TODO: terms-of-service-url]",
     "defaultPrompt": [
-      "Build an app using a long-running harness.",
+      "Build an app using a harness.",
       "Review whether this harness really followed the sprint plan.",
       "Run continuous multi-agent app delivery until done."
     ],

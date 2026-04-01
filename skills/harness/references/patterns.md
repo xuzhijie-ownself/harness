@@ -1,6 +1,6 @@
 # Shared Patterns
 
-This file is the shared core for the long-running harness.
+This file is the shared core for the harness.
 Keep it small enough that every role can reference it without carrying the entire harness in memory.
 
 For role-specific guidance, prefer:
@@ -21,10 +21,10 @@ For role-specific guidance, prefer:
 ## Shared Artifact Layout
 
 ```text
-artifacts/
-  feature-list.json
+.harness/
+  features.json
   progress.md
-  run-state.json
+  state.json
   init.md
   spec.md
   decomposition.md              # optional when sprint rationale needs its own artifact
@@ -61,7 +61,7 @@ For review artifacts, also include:
 
 ## Shared JSON Schemas
 
-### `feature-list.json`
+### `features.json`
 
 ```json
 {
@@ -69,7 +69,7 @@ For review artifacts, also include:
   "updated_by": "initializer-1",
   "features": [
     {
-      "id": "feature-001",
+      "id": "F-001",
       "title": "Create and edit tasks",
       "category": "functional",
       "description": "Users can create new tasks and edit existing ones inline",
@@ -91,7 +91,7 @@ For review artifacts, also include:
 }
 ```
 
-### `run-state.json`
+### `state.json`
 
 ```json
 {
@@ -100,7 +100,7 @@ For review artifacts, also include:
   "variant": "variant-a-sprinted",
   "current_round": 2,
   "last_completed_round": 1,
-  "active_feature_ids": ["feature-002"],
+  "active_feature_ids": ["F-002"],
   "expected_sprint_count": 5,
   "current_failure_streak": 0,
   "last_feature_pass_delta": 1,
@@ -114,7 +114,7 @@ For review artifacts, also include:
 {
   "round": 2,
   "decision": "PASS",
-  "target_feature_ids": ["feature-002"],
+  "target_feature_ids": ["F-002"],
   "primary_scores": {
     "product_depth": 4,
     "functionality": 4,
@@ -133,7 +133,7 @@ For review artifacts, also include:
   "non_blocking_issues": [],
   "feature_evidence": [
     {
-      "feature_id": "feature-002",
+      "feature_id": "F-002",
       "passes": true,
       "reason": "Required checks passed and no blocking issues remain."
     }
@@ -180,7 +180,7 @@ For review artifacts, also include:
 ## Metadata
 - Role: planner
 - Agent: planner-1
-- Inputs: user prompt, feature-list.json
+- Inputs: user prompt, features.json
 - Status: accepted
 
 ## Overview
@@ -220,12 +220,12 @@ For review artifacts, also include:
 ## Metadata
 - Role: coordinator
 - Agent: coordinator-1
-- Inputs: spec.md, feature-list.json
+- Inputs: spec.md, features.json
 - Status: accepted
 
 ## Planned order
-- feature-001
-- feature-002
+- F-001
+- F-002
 
 ## Grouping policy
 - One failing feature per sprint by default
@@ -242,11 +242,11 @@ For review artifacts, also include:
 ## Metadata
 - Role: generator
 - Agent: generator-1
-- Inputs: artifacts/spec.md, artifacts/feature-list.json, prior evaluation artifacts
+- Inputs: .harness/spec.md, .harness/features.json, prior evaluation artifacts
 - Status: in_review
 
 ## Target feature IDs
-- feature-001
+- F-001
 
 ## Grouping waiver
 - Omit when there is only one failing feature target
@@ -285,11 +285,11 @@ For review artifacts, also include:
 ## Metadata
 - Role: generator
 - Agent: generator-1
-- Inputs: accepted contract, spec, feature-list.json
+- Inputs: accepted contract, spec, features.json
 - Status: completed
 
 ## Target feature IDs
-- feature-001
+- F-001
 
 ## Implemented
 - What changed
@@ -313,13 +313,13 @@ For review artifacts, also include:
 ## Metadata
 - Role: evaluator
 - Agent: evaluator-1
-- Inputs: accepted contract, builder report, running app, feature-list.json
+- Inputs: accepted contract, builder report, running app, features.json
 - Status: pass
 - Reviewed by: evaluator-1
 - Decision: pass
 
 ## Target feature IDs
-- feature-001
+- F-001
 
 ## Result
 - PASS or FAIL
@@ -344,7 +344,7 @@ For review artifacts, also include:
 - `CQ-01`: pass | fail
 
 ## Feature evidence
-- feature-001: why it now passes or still fails
+- F-001: why it now passes or still fails
 ```
 
 ### `NN-evaluator-steps.md`
@@ -375,11 +375,11 @@ For review artifacts, also include:
 ## Metadata
 - Role: generator | coordinator
 - Agent: <agent-id>
-- Inputs: artifacts/progress.md, git diff
+- Inputs: .harness/progress.md, git diff
 - Status: paused
 
 ## Current feature
-- ID: feature-XXX
+- ID: F-XXX
 - Title: <title>
 
 ## Last completed step
@@ -426,7 +426,7 @@ fi
 ## Metadata
 - Role: coordinator
 - Agent: coordinator-1
-- Inputs: run-state.json
+- Inputs: state.json
 - Status: active
 
 | Round | Phase | Duration | Cost | Notes |

@@ -1,9 +1,9 @@
 ---
-name: long-running-harness
-description: Designs and runs Anthropic-style long-running application harnesses for autonomous coding. Use when turning a short prompt into a multi-agent workflow, dispatching initializer/planner/generator/evaluator/coordinator roles, tracking completion through a machine-readable feature list, negotiating sprint contracts before coding, making incremental progress on failing features across sessions, or running until the required feature set passes. Also activate for /init, /session, /run, /reset commands, context reset with handoff files, supervised vs continuous execution modes, or questions about Anthropic harness design patterns and context anxiety.
+name: harness
+description: Designs and runs Anthropic-style long-running application harnesses for autonomous coding. Use when turning a short prompt into a multi-agent workflow, dispatching initializer/planner/generator/evaluator/coordinator roles, tracking completion through a machine-readable feature list, negotiating sprint contracts before coding, making incremental progress on failing features across sessions, or running until the required feature set passes. Also activate for /harness:init, /harness:session, /harness:run, /harness:reset commands, context reset with handoff files, supervised vs continuous execution modes, or questions about Anthropic harness design patterns and context anxiety.
 ---
 
-# Long Running Harness
+# Harness
 
 Blend the two Anthropic articles rather than following only one of them:
 
@@ -15,7 +15,7 @@ If the harness finishes in one sprint without a written rationale, it is no long
 
 ## Article Default
 
-The default long-running app harness should have:
+The default harness should have:
 
 - an initializer phase
 - a machine-readable feature list with explicit pass/fail status
@@ -67,10 +67,10 @@ The initializer exists to prevent endless re-planning and drifting scope.
 Initializer responsibilities:
 
 - Create the working harness scaffold.
-- Write `artifacts/feature-list.json`.
-- Write `artifacts/progress.md`.
-- Write `artifacts/init.md` or an equivalent setup artifact that explains how to start and verify the app.
-- Write `artifacts/run-state.json` when the run will continue automatically.
+- Write `.harness/features.json`.
+- Write `.harness/progress.md`.
+- Write `.harness/init.md` or an equivalent setup artifact that explains how to start and verify the app.
+- Write `.harness/state.json` when the run will continue automatically.
 - Record the initial baseline status of required features as failing until they are proven.
 
 Do not skip the feature list. It is the main completion ledger.
@@ -127,7 +127,7 @@ The coordinator exists to keep the run convergent and auditable.
 
 Coordinator responsibilities:
 
-- maintain `artifacts/run-state.json`
+- maintain `.harness/state.json`
 - choose the next failing required feature after each accepted or failed round
 - enforce the execution strategy chosen in the spec
 - record when the run pauses, retries, simplifies, or stops
@@ -189,9 +189,9 @@ Checklist items measure whether the sprint actually satisfied the contract.
 
 Every evaluation round should emit all of these:
 
-- `artifacts/sprints/NN-evaluation.md`
-- `artifacts/sprints/NN-evaluation.json`
-- `artifacts/sprints/NN-evaluator-steps.md`
+- `.harness/sprints/NN-evaluation.md`
+- `.harness/sprints/NN-evaluation.json`
+- `.harness/sprints/NN-evaluator-steps.md`
 
 The Markdown artifact is for human review.
 The JSON artifact is for machine-readable continuity across long runs.
@@ -211,7 +211,7 @@ Do not mark a feature as passing based only on the Markdown summary if the struc
 
 ## Feature-List Discipline
 
-Maintain a machine-readable `artifacts/feature-list.json` with at least:
+Maintain a machine-readable `.harness/features.json` with at least:
 
 - `id`
 - `title`
@@ -234,9 +234,9 @@ Rules:
 
 At the start of every coding session or reset session:
 
-1. Read `artifacts/progress.md`.
-2. Read `artifacts/feature-list.json`.
-3. Read the execution strategy in `artifacts/spec.md`.
+1. Read `.harness/progress.md`.
+2. Read `.harness/features.json`.
+3. Read the execution strategy in `.harness/spec.md`.
 4. Start the app and verify the current baseline.
 5. Choose the highest-priority required feature that is still failing.
 6. Work only on that bounded scope unless a documented blocker forces a contract revision.
@@ -275,7 +275,7 @@ Use this only when the model shows context anxiety, loses coherence over long ru
 
 - Keep the initializer/planner/generator/evaluator split.
 - Reset the active coding session between chunks when needed.
-- Use `artifacts/handoff.md` so the next generator session can resume.
+- Use `.harness/handoff.md` so the next generator session can resume.
 
 This is a fallback, not the default reading of the 2026 article.
 
@@ -321,16 +321,16 @@ For evaluation artifacts, also include:
 
 In Variant A, run this loop:
 
-1. Initializer writes or updates `artifacts/feature-list.json` and `artifacts/progress.md`.
-2. Coordinator initializes or updates `artifacts/run-state.json` in continuous mode.
-3. Planner writes or updates `artifacts/spec.md` if the spec is incomplete.
-4. Generator selects the highest-priority failing required feature ID and writes `artifacts/sprints/NN-contract.md`.
+1. Initializer writes or updates `.harness/features.json` and `.harness/progress.md`.
+2. Coordinator initializes or updates `.harness/state.json` in continuous mode.
+3. Planner writes or updates `.harness/spec.md` if the spec is incomplete.
+4. Generator selects the highest-priority failing required feature ID and writes `.harness/sprints/NN-contract.md`.
 5. If the generator wants multiple target feature IDs, the contract should include a grouping waiver tied to the execution strategy.
-6. Evaluator writes `artifacts/sprints/NN-contract-review.md`.
+6. Evaluator writes `.harness/sprints/NN-contract-review.md`.
 7. Generator revises the contract until accepted.
-8. Generator implements the sprint and writes `artifacts/sprints/NN-builder-report.md`.
-9. Evaluator runs QA and writes `artifacts/sprints/NN-evaluation.md`, `artifacts/sprints/NN-evaluation.json`, and `artifacts/sprints/NN-evaluator-steps.md`.
-10. Evaluator-backed evidence updates `artifacts/feature-list.json`.
+8. Generator implements the sprint and writes `.harness/sprints/NN-builder-report.md`.
+9. Evaluator runs QA and writes `.harness/sprints/NN-evaluation.md`, `.harness/sprints/NN-evaluation.json`, and `.harness/sprints/NN-evaluator-steps.md`.
+10. Evaluator-backed evidence updates `.harness/features.json`.
 11. Coordinator either advances to the next failing required feature, pauses on a blocker, or stops if completion conditions are met.
 
 Do not keep increasing sprint count without reducing the number of failing required features.
@@ -339,25 +339,25 @@ Do not keep increasing sprint count without reducing the number of failing requi
 
 Start with:
 
-- `artifacts/feature-list.json`
-- `artifacts/progress.md`
-- `artifacts/init.md` + `artifacts/init.sh`
-- `artifacts/run-state.json` in continuous mode
-- `artifacts/spec.md`
-- `artifacts/sprints/NN-contract.md`
-- `artifacts/sprints/NN-contract-review.md`
-- `artifacts/sprints/NN-builder-report.md`
-- `artifacts/sprints/NN-evaluation.md`
-- `artifacts/sprints/NN-evaluation.json`
-- `artifacts/sprints/NN-evaluator-steps.md`
+- `.harness/features.json`
+- `.harness/progress.md`
+- `.harness/init.md` + `.harness/init.sh`
+- `.harness/state.json` in continuous mode
+- `.harness/spec.md`
+- `.harness/sprints/NN-contract.md`
+- `.harness/sprints/NN-contract-review.md`
+- `.harness/sprints/NN-builder-report.md`
+- `.harness/sprints/NN-evaluation.md`
+- `.harness/sprints/NN-evaluation.json`
+- `.harness/sprints/NN-evaluator-steps.md`
 
 Optional supporting artifacts:
 
-- `artifacts/handoff.md` for reset-based runs only
-- `artifacts/summary.md` for final wrap-up
-- `artifacts/evaluator-calibration.md` when subjective scoring needs tighter anchors
-- `artifacts/decomposition.md` when sprint planning needs an auditable rationale outside the main spec
-- `artifacts/cost-log.md` for tracking per-sprint cost and duration
+- `.harness/handoff.md` for reset-based runs only
+- `.harness/summary.md` for final wrap-up
+- `.harness/evaluator-calibration.md` when subjective scoring needs tighter anchors
+- `.harness/decomposition.md` when sprint planning needs an auditable rationale outside the main spec
+- `.harness/cost-log.md` for tracking per-sprint cost and duration
 
 Use the shared schemas in [references/patterns.md](references/patterns.md).
 
@@ -365,7 +365,7 @@ Use the shared schemas in [references/patterns.md](references/patterns.md).
 
 A run is complete when one of these is true:
 
-- All required features in `artifacts/feature-list.json` have `passes: true`.
+- All required features in `.harness/features.json` have `passes: true`.
 - The accepted shipped scope is complete and any remaining features are explicitly marked deferred or out of scope.
 - The evaluator marks a hard blocker that requires user intervention.
 
@@ -399,7 +399,7 @@ When evaluator scoring drifts or feels too lenient:
 - keep criterion wording stable across rounds
 - compare the current round against prior accepted rounds
 - avoid inflating later scores just because the app is larger
-- write those anchors to `artifacts/evaluator-calibration.md` so future evaluator rounds inherit the same standard
+- write those anchors to `.harness/evaluator-calibration.md` so future evaluator rounds inherit the same standard
 
 The evaluator should become more consistent over time, not merely more detailed.
 
@@ -410,7 +410,7 @@ Harness assumptions decay with model improvements. Components that were load-bea
 Test removal methodically:
 
 - Remove one component at a time and measure whether output quality drops.
-- Document the evidence in `artifacts/evaluator-calibration.md`.
+- Document the evidence in `.harness/evaluator-calibration.md`.
 - Re-baseline the execution strategy after each removal.
 - A component that was required for Sonnet may be overhead for Opus, and vice versa.
 
@@ -426,7 +426,7 @@ Use compaction when:
 - Context usage is below ~60%.
 - Quality has not degraded in later sprints compared to earlier ones.
 
-Use a full reset (`/reset`) when:
+Use a full reset (`/harness:reset`) when:
 
 - Context is above ~75%.
 - The model shows premature closure, rushing behavior, or "context anxiety."

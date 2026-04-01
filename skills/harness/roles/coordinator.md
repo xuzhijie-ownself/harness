@@ -4,17 +4,17 @@ Use this file only for the coordinator role.
 
 ## Read
 
-- `artifacts/spec.md`
-- `artifacts/decomposition.md` if it exists
-- `artifacts/feature-list.json`
-- `artifacts/progress.md`
+- `.harness/spec.md`
+- `.harness/decomposition.md` if it exists
+- `.harness/features.json`
+- `.harness/progress.md`
 - latest evaluation artifacts
 
 ## Write
 
-- `artifacts/run-state.json`
-- `artifacts/summary.md`
-- `artifacts/decomposition.md` when sprint rationale needs its own record
+- `.harness/state.json`
+- `.harness/summary.md`
+- `.harness/decomposition.md` when sprint rationale needs its own record
 
 ## Focus
 

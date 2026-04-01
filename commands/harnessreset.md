@@ -1,12 +1,12 @@
 ---
-name: reset
+name: harness:reset
 description: Write a structured handoff file and checkpoint the current session.
-  Use when context is filling or work needs to pause. The next /session resumes
+  Use when context is filling or work needs to pause. The next /harness:session resumes
   from the handoff automatically. Implements Variant B (Reset-Based Compatibility).
 allowed_tools: ["Bash", "Read", "Write", "Glob"]
 ---
 
-# /reset
+# /harness:reset
 
 End the current session cleanly with a structured handoff for the next session.
 
@@ -23,10 +23,10 @@ long sessions. Models exhibit "context anxiety" — premature closure as context
 ## Steps
 
 1. Run `git diff --name-only HEAD` — list all modified files.
-2. Read `artifacts/feature-list.json` — identify current `in_progress` feature.
-3. Read `artifacts/progress.md` — identify last completed step.
-4. Write `artifacts/handoff.md` using the template from
-   `plugins/long-running-harness/skills/long-running-harness/references/patterns.md`.
+2. Read `.harness/features.json` — identify current `in_progress` feature.
+3. Read `.harness/progress.md` — identify last completed step.
+4. Write `.harness/handoff.md` using the template from
+   `plugins/harness/skills/harness/references/patterns.md`.
    The handoff must include:
    - Current feature ID and title
    - Last completed step (one sentence)
@@ -35,6 +35,6 @@ long sessions. Models exhibit "context anxiety" — premature closure as context
    - Next step (single sentence — the first thing the next session should do)
 5. Stage and commit work in progress:
    `git commit -m "wip(F00X): session checkpoint — <brief description>"`
-6. Update `artifacts/progress.md` — record session end and reference to handoff.
-7. Print: "Handoff written to artifacts/handoff.md. Start a new session and run
-   /session to resume."
+6. Update `.harness/progress.md` — record session end and reference to handoff.
+7. Print: "Handoff written to .harness/handoff.md. Start a new session and run
+   /harness:session to resume."
