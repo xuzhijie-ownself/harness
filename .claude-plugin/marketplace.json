@@ -1,0 +1,49 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "xuzhijie-ownself-long-running-harness",
+  "description": "Multi-agent sprint orchestration harness implementing Anthropic's long-running agent patterns — 6 agents, GAN-like generator/evaluator loop, domain-agnostic profiles, quantified QA",
+  "owner": {
+    "name": "xuzhijie-ownself",
+    "email": "kidtsui@outlook.com"
+  },
+  "metadata": {
+    "description": "Multi-agent sprint orchestration harness for long-running application development"
+  },
+  "plugins": [
+    {
+      "name": "long-running-harness",
+      "source": "./",
+      "description": "Anthropic-style long-running harness with 6 agents (initializer, planner, generator, evaluator, coordinator, releaser), GAN-like adversarial evaluation, domain profiles (software, architecture, tender, research, content, business analysis), sprint contracts, quantified 0-5 grading, and auto-commit protocol",
+      "version": "0.3.0",
+      "author": {
+        "name": "xuzhijie-ownself",
+        "email": "kidtsui@outlook.com"
+      },
+      "homepage": "https://github.com/xuzhijie-ownself/long-running-harness",
+      "repository": "https://github.com/xuzhijie-ownself/long-running-harness",
+      "license": "MIT",
+      "keywords": [
+        "harness",
+        "agents",
+        "multi-agent",
+        "sprints",
+        "evaluation",
+        "orchestration",
+        "long-running",
+        "GAN-pattern",
+        "domain-agnostic"
+      ],
+      "category": "workflow",
+      "tags": [
+        "harness",
+        "agents",
+        "sprints",
+        "evaluation",
+        "orchestration",
+        "planning",
+        "coordinator"
+      ],
+      "strict": false
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "long-running-harness",
+  "version": "0.3.0",
+  "description": "Multi-agent sprint orchestration harness implementing Anthropic's long-running agent patterns with GAN-like generator/evaluator loop and domain-agnostic profiles",
+  "author": {
+    "name": "xuzhijie-ownself",
+    "url": "https://github.com/xuzhijie-ownself"
+  },
+  "homepage": "https://github.com/xuzhijie-ownself/long-running-harness",
+  "repository": "https://github.com/xuzhijie-ownself/long-running-harness",
+  "license": "MIT",
+  "keywords": [
+    "harness",
+    "agents",
+    "multi-agent",
+    "sprints",
+    "evaluation",
+    "orchestration",
+    "long-running",
+    "GAN-pattern",
+    "domain-agnostic",
+    "claude-code"
+  ]
+}

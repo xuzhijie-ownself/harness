@@ -18,14 +18,10 @@ The evaluator handles testing, code review, and grading in one pass.
 ### Option 1: Claude Code Marketplace (Recommended)
 
 ```bash
-claude mcp add-plugin xuzhijie-ownself/long-running-harness
+claude plugin install --marketplace https://github.com/xuzhijie-ownself/long-running-harness
 ```
 
-Or install via the Claude Code settings UI:
-1. Open Claude Code
-2. Go to Settings > Plugins
-3. Search for `long-running-harness`
-4. Click Install
+This clones the repo and registers the plugin automatically. The plugin will be available after restart or `/reload-plugins`.
 
 ### Option 2: Git Clone + Local Install
 
