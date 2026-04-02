@@ -2,16 +2,16 @@
   "mode": "continuous",
   "status": "active",
   "variant": "variant-a-sprinted",
-  "current_round": 1,
-  "last_completed_round": 0,
-  "active_feature_ids": ["F-003"],
+  "current_round": 2,
+  "last_completed_round": 1,
+  "active_feature_ids": ["F-001"],
   "expected_sprint_count": 5,
   "current_failure_streak": 0,
-  "last_feature_pass_delta": 0,
+  "last_feature_pass_delta": 1,
   "stop_reason": "",
   "context_reset_threshold": 3,
-  "rounds_since_reset": 1,
-  "current_sprint_phase": "implementation",
+  "rounds_since_reset": 2,
+  "current_sprint_phase": "idle",
   "domain_profile": "software",
   "secondary_profile": "",
   "methodology": "agile",
@@ -21,13 +21,25 @@
       {
         "round": 1,
         "started_at": "2026-04-02T10:00:00Z",
-        "completed_at": "",
+        "completed_at": "2026-04-02T10:01:00Z",
         "feature_id": "F-003",
-        "outcome": "",
+        "outcome": "pass",
         "phases": {
-          "contract": { "started_at": "2026-04-02T10:00:00Z", "completed_at": "2026-04-02T10:00:30Z" },
-          "implementation": { "started_at": "2026-04-02T10:00:30Z", "completed_at": "" },
-          "evaluation": { "started_at": "", "completed_at": "" }
+          "contract": { "started_at": "2026-04-02T10:00:00Z", "completed_at": "2026-04-02T10:00:15Z" },
+          "implementation": { "started_at": "2026-04-02T10:00:15Z", "completed_at": "2026-04-02T10:00:40Z" },
+          "evaluation": { "started_at": "2026-04-02T10:00:40Z", "completed_at": "2026-04-02T10:01:00Z" }
+        }
+      },
+      {
+        "round": 2,
+        "started_at": "2026-04-02T10:01:00Z",
+        "completed_at": "2026-04-02T10:02:00Z",
+        "feature_id": "F-001",
+        "outcome": "pass",
+        "phases": {
+          "contract": { "started_at": "2026-04-02T10:01:00Z", "completed_at": "2026-04-02T10:01:15Z" },
+          "implementation": { "started_at": "2026-04-02T10:01:15Z", "completed_at": "2026-04-02T10:01:40Z" },
+          "evaluation": { "started_at": "2026-04-02T10:01:40Z", "completed_at": "2026-04-02T10:02:00Z" }
         }
       }
     ]

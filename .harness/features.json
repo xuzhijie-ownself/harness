@@ -31,10 +31,10 @@
       "description": "Rewrite agents/evaluator.md codex detection from descriptive bullets to a mandatory sequential pre-flight section (Section 0) before the testing section. Add SDLC skill reference to evaluator read list.",
       "required": true,
       "priority": "P0",
-      "status": "pending",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-003"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-001",
       "steps": [
         "Read plugins/harness/agents/evaluator.md",
@@ -43,7 +43,7 @@
         "Verify the read list includes harness-sdlc/SKILL.md",
         "Grep for 'pre-flight' or 'Pre-Flight' in evaluator.md"
       ],
-      "evidence": [],
+      "evidence": ["Sprint 2: Pre-flight section added at line 26 before Testing. harness-sdlc added to read list. Old codex bullets replaced."],
       "notes": ""
     },
     {
