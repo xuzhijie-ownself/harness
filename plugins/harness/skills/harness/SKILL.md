@@ -43,6 +43,30 @@ This harness follows a GAN-like (Generative Adversarial Network) pattern from An
 
 The adversarial tension between generator and evaluator prevents the common failure mode where a model is too lenient grading its own work. This pattern applies regardless of domain — whether building software, writing tender documents, or designing architecture.
 
+
+## Workflow Entry
+
+Whenever this skill is activated (by any agent, command, or direct invocation):
+
+### State Check
+1. Verify `.harness/` directory exists. If not -> suggest `/harness:init`
+2. Read `.harness/state.json` -> verify `mode`, `variant`, `current_sprint_phase` exist
+3. Read `.harness/features.json` -> verify at least one feature exists
+4. Read `.harness/config.json` -> use defaults for missing fields
+5. Read `release.json` (project root) if exists -> know current version
+
+### Domain Skill Routing
+Based on `domain_profile` in state.json or spec.md:
+- `software` -> also read `harness-sdlc` skill
+- `architecture` -> also read `harness-ea` skill
+- `custom` -> read spec.md for custom criteria
+- If missing -> default to `software`
+
+### Integrity Invariants
+- features.json `passes` field only changed by evaluator evidence
+- state.json `current_round` only incremented by coordinator or session
+- release.json only written by releaser agent
+- No command or skill may bypass these ownership rules
 ## Configuration
 
 The harness uses `.harness/config.json` as the single configuration source for persistent preferences. State.json holds runtime state (round, phase, errors); config.json holds tunable settings.
