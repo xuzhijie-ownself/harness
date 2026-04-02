@@ -53,25 +53,25 @@ if not exist "%CLAUDE_DIR%\skills\harness\roles" mkdir "%CLAUDE_DIR%\skills\harn
 if not exist "%CLAUDE_DIR%\skills\harness\references" mkdir "%CLAUDE_DIR%\skills\harness\references"
 
 :: Commands — simple filenames (init.md, run.md, etc.)
-for %%f in ("%PLUGIN_DIR%\commands\*.md") do copy /Y "%%f" "%CLAUDE_DIR%\commands\" > nul
+for %%f in ("%PLUGIN_DIR%\plugins\harness\commands\*.md") do copy /Y "%%f" "%CLAUDE_DIR%\commands\" > nul
 echo   [OK] Commands    -^> .claude\commands\
 
 :: Agents
-copy /Y "%PLUGIN_DIR%\agents\*.md" "%CLAUDE_DIR%\agents\" > nul
+copy /Y "%PLUGIN_DIR%\plugins\harness\agents\*.md" "%CLAUDE_DIR%\agents\" > nul
 echo   [OK] Agents      -^> .claude\agents\
 
 :: Skill
-copy /Y "%PLUGIN_DIR%\skills\harness\SKILL.md" "%CLAUDE_DIR%\skills\harness\SKILL.md" > nul
+copy /Y "%PLUGIN_DIR%\plugins\harness\skills\harness\SKILL.md" "%CLAUDE_DIR%\skills\harness\SKILL.md" > nul
 
 :: Roles
-copy /Y "%PLUGIN_DIR%\skills\harness\roles\*.md" "%CLAUDE_DIR%\skills\harness\roles\" > nul
+copy /Y "%PLUGIN_DIR%\plugins\harness\skills\harness\roles\*.md" "%CLAUDE_DIR%\skills\harness\roles\" > nul
 
 :: References
-copy /Y "%PLUGIN_DIR%\skills\harness\references\*.md" "%CLAUDE_DIR%\skills\harness\references\" > nul
+copy /Y "%PLUGIN_DIR%\plugins\harness\skills\harness\references\*.md" "%CLAUDE_DIR%\skills\harness\references\" > nul
 echo   [OK] Skill       -^> .claude\skills\harness\ (+ roles\ + references\)
 
 :: Hooks -- merge if .claude\hooks.json exists, otherwise copy
-set "HOOKS_SRC=%PLUGIN_DIR%\hooks\hooks.json"
+set "HOOKS_SRC=%PLUGIN_DIR%\plugins\harness\hooks\hooks.json"
 set "HOOKS_DST=%CLAUDE_DIR%\hooks.json"
 
 if exist "%HOOKS_DST%" (
@@ -85,9 +85,9 @@ if exist "%HOOKS_DST%" (
 echo.
 echo [OK] Installed. Available immediately -- no restart needed.
 echo.
-echo   /init       scaffold harness for a new project
-echo   /session    run one supervised sprint round
-echo   /run        continuous mode (unattended)
-echo   /reset      checkpoint + handoff when context fills
+echo   /harness:init       scaffold harness for a new project
+echo   /harness:session    run one supervised sprint round
+echo   /harness:run        continuous mode (unattended)
+echo   /harness:reset      checkpoint + handoff when context fills
 echo.
 endlocal

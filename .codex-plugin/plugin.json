@@ -1,6 +1,6 @@
 {
-  "name": "long-running-harness",
-  "version": "0.3.0",
+  "name": "harness",
+  "version": "0.4.0",
   "description": "Multi-agent sprint orchestration harness for long-running application development.",
   "author": {
     "name": "xuzhijie-ownself",
@@ -10,26 +10,15 @@
   "homepage": "https://github.com/xuzhijie-ownself/long-running-harness",
   "repository": "https://github.com/xuzhijie-ownself/long-running-harness",
   "license": "MIT",
-  "keywords": [
-    "harness",
-    "agents",
-    "planning",
-    "evaluation",
-    "sprints",
-    "orchestration",
-    "multi-agent"
-  ],
-  "skills": "./skills/",
+  "keywords": ["harness", "agents", "planning", "evaluation", "sprints", "orchestration", "multi-agent"],
+  "skills": "./plugins/harness/skills/",
   "interface": {
     "displayName": "Harness",
     "shortDescription": "Multi-agent sprint orchestration harness",
-    "longDescription": "Runs an Anthropic-style application harness with 6 agents: initializer, planner, generator, evaluator, coordinator, and releaser. The evaluator handles testing, code review, and grading in one pass. Explicit sprint strategy, quantified QA, and a completion ledger. Domain-agnostic — works for any project type.",
+    "longDescription": "Runs an Anthropic-style application harness with 6 agents: initializer, planner, generator, evaluator, coordinator, and releaser. Domain-agnostic with support for software, architecture, tender, research, content, and business analysis profiles.",
     "developerName": "xuzhijie-ownself",
     "category": "Productivity",
-    "capabilities": [
-      "Interactive",
-      "Write"
-    ],
+    "capabilities": ["Interactive", "Write"],
     "websiteURL": "https://github.com/xuzhijie-ownself/long-running-harness",
     "privacyPolicyURL": "https://github.com/xuzhijie-ownself/long-running-harness",
     "termsOfServiceURL": "https://github.com/xuzhijie-ownself/long-running-harness",

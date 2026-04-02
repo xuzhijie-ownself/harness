@@ -18,7 +18,7 @@ The evaluator handles testing, code review, and grading in one pass.
 ### Option 1: Claude Code Marketplace (Recommended)
 
 ```bash
-claude plugin install --marketplace https://github.com/xuzhijie-ownself/long-running-harness
+claude plugin install harness@harness
 ```
 
 Then reload:
@@ -57,7 +57,7 @@ The Codex plugin provides the same skill definitions and role references. Agents
 
 ```bash
 # Claude Code marketplace
-claude plugin uninstall long-running-harness
+claude plugin uninstall harness
 
 # Local install
 bash plugins/long-running-harness/install.sh --uninstall
@@ -67,7 +67,7 @@ bash plugins/long-running-harness/install.sh --uninstall
 
 ```bash
 # Marketplace
-claude plugin update long-running-harness
+claude plugin update harness
 
 # Local
 cd plugins/long-running-harness && git pull && bash install.sh
@@ -79,11 +79,11 @@ cd plugins/long-running-harness && git pull && bash install.sh
 
 | Command | Purpose |
 |---------|---------|
-| `/init` | Scaffold harness for a new project (run once) |
-| `/session` | Run one supervised sprint round |
-| `/run` | Continuous coordinator-driven loop (unattended) |
-| `/reset` | Checkpoint + handoff when context fills (Variant B) |
-| `/release` | Version bump, changelog, and git tag |
+| `/harness:init` | Scaffold harness for a new project (run once) |
+| `/harness:session` | Run one supervised sprint round |
+| `/harness:run` | Continuous coordinator-driven loop (unattended) |
+| `/harness:reset` | Checkpoint + handoff when context fills (Variant B) |
+| `/harness:release` | Version bump, changelog, and git tag |
 
 ---
 
@@ -91,12 +91,12 @@ cd plugins/long-running-harness && git pull && bash install.sh
 
 | Agent | Spawned by | Reference |
 |-------|-----------|-----------|
-| initializer | `/init` | `skills/harness/roles/initializer.md` |
-| planner | `/init` | `skills/harness/roles/planner.md` |
-| generator | `/session`, coordinator | `skills/harness/roles/generator.md` |
-| evaluator | `/session`, coordinator | `skills/harness/roles/evaluator.md` |
-| coordinator | `/run` | `skills/harness/roles/coordinator.md` |
-| releaser | `/release`, coordinator | `skills/harness/roles/releaser.md` |
+| initializer | `/harness:init` | `plugins/harness/skills/harness/roles/initializer.md` |
+| planner | `/harness:init` | `plugins/harness/skills/harness/roles/planner.md` |
+| generator | `/harness:session`, coordinator | `plugins/harness/skills/harness/roles/generator.md` |
+| evaluator | `/harness:session`, coordinator | `plugins/harness/skills/harness/roles/evaluator.md` |
+| coordinator | `/harness:run` | `plugins/harness/skills/harness/roles/coordinator.md` |
+| releaser | `/harness:release`, coordinator | `plugins/harness/skills/harness/roles/releaser.md` |
 
 The harness follows a **GAN-like pattern**: the generator produces artifacts and the evaluator adversarially grades them. The generator cannot self-approve; the evaluator cannot edit product artifacts. This separation prevents the common failure mode where a model is too lenient grading its own work. The loop iterates (generate, evaluate, feedback, regenerate) until the evaluator accepts.
 
@@ -108,9 +108,9 @@ Both Claude Code and Codex share:
 
 | Element | Location |
 |---------|----------|
-| Role instructions | `skills/harness/roles/` |
-| Artifact schemas + templates | `skills/harness/references/patterns.md` |
-| Harness spec (variants, eval, stop conditions) | `skills/harness/SKILL.md` |
+| Role instructions | `plugins/harness/skills/harness/roles/` |
+| Artifact schemas + templates | `plugins/harness/skills/harness/references/patterns.md` |
+| Harness spec (variants, eval, stop conditions) | `plugins/harness/skills/harness/SKILL.md` |
 | Artifact layout | `.harness/` in project root |
 
 ---
@@ -159,7 +159,7 @@ Projects can declare a primary + optional secondary profile for cross-domain wor
 | Variant | When |
 |---------|------|
 | A: Full-Stack Sprinted | Default -- coordinator loop, continuous compaction OK |
-| B: Reset-Based | Context anxiety -- use `/reset` + `.harness/handoff.md` |
+| B: Reset-Based | Context anxiety -- use `/harness:reset` + `.harness/handoff.md` |
 | C: Simplified | Sprint decomposition no longer adds lift (evidence required) |
 
 ---

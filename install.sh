@@ -53,31 +53,31 @@ mkdir -p "$CLAUDE_DIR/commands" \
          "$CLAUDE_DIR/skills/harness/references"
 
 # Commands — simple filenames (init.md, run.md, etc.)
-for f in "$PLUGIN_DIR/commands/"*.md; do
+for f in "$PLUGIN_DIR/plugins/harness/commands/"*.md; do
   [ -f "$f" ] || continue
   cp "$f" "$CLAUDE_DIR/commands/"
 done
 echo "  ✓ Commands    → .claude/commands/"
 
 # Agents
-cp "$PLUGIN_DIR/agents/"*.md "$CLAUDE_DIR/agents/"
+cp "$PLUGIN_DIR/plugins/harness/agents/"*.md "$CLAUDE_DIR/agents/"
 echo "  ✓ Agents      → .claude/agents/"
 
 # Skill — SKILL.md
-cp "$PLUGIN_DIR/skills/harness/SKILL.md" \
+cp "$PLUGIN_DIR/plugins/harness/skills/harness/SKILL.md" \
    "$CLAUDE_DIR/skills/harness/SKILL.md"
 
 # Roles
-cp "$PLUGIN_DIR/skills/harness/roles/"*.md \
+cp "$PLUGIN_DIR/plugins/harness/skills/harness/roles/"*.md \
    "$CLAUDE_DIR/skills/harness/roles/"
 
 # References
-cp "$PLUGIN_DIR/skills/harness/references/"*.md \
+cp "$PLUGIN_DIR/plugins/harness/skills/harness/references/"*.md \
    "$CLAUDE_DIR/skills/harness/references/"
 echo "  ✓ Skill       → .claude/skills/harness/ (+ roles/ + references/)"
 
 # Hooks — merge if .claude/hooks.json already exists, otherwise copy
-HOOKS_SRC="$PLUGIN_DIR/hooks/hooks.json"
+HOOKS_SRC="$PLUGIN_DIR/plugins/harness/hooks/hooks.json"
 HOOKS_DST="$CLAUDE_DIR/hooks.json"
 
 if [ -f "$HOOKS_DST" ]; then
@@ -100,7 +100,7 @@ fi
 echo ""
 echo "✓ Installed. Available immediately — no restart needed."
 echo ""
-echo "  /init       scaffold harness for a new project"
-echo "  /session    run one supervised sprint round"
-echo "  /run        continuous mode (unattended)"
-echo "  /reset      checkpoint + handoff when context fills"
+echo "  /harness:init       scaffold harness for a new project"
+echo "  /harness:session    run one supervised sprint round"
+echo "  /harness:run        continuous mode (unattended)"
+echo "  /harness:reset      checkpoint + handoff when context fills"
