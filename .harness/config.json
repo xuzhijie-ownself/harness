@@ -1,0 +1,12 @@
+{
+  "use_codex": "auto",
+  "context_reset_threshold": 3,
+  "auto_commit": true,
+  "auto_retro": false,
+  "retro_interval": 3,
+  "max_retry_on_failure": 3,
+  "evaluator_strictness": "standard",
+  "commit_prefix_pass": "feat",
+  "commit_prefix_fail": "wip",
+  "commit_tag": "[harness]"
+}
