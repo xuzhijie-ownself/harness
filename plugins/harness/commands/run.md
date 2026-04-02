@@ -38,3 +38,12 @@ If execution mode is `supervised`, redirect the user to `/session` instead.
    - **Completion** -> print final summary from `.harness/summary.md`.
    - **Blocker** -> print `stop_reason` from `.harness/state.json` and suggest
      the next action for the user.
+
+## Post-flight
+
+When coordinator stops:
+1. Read `.harness/state.json` -> verify `stop_reason` is set
+2. If `stop_reason` is "All features complete" or similar:
+   - Verify `release.json` exists at project root
+   - If missing -> spawn releaser manually as recovery
+3. Print final summary from `.harness/summary.md`
