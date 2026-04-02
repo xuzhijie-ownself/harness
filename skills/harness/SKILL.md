@@ -38,9 +38,10 @@ When the environment supports separate agents or sessions, dispatch explicitly:
 2. Spawn a `planner` agent to produce or refine the product spec if the prompt is underspecified.
 3. Spawn a `generator` agent to propose the next bounded sprint and implement it.
 4. Spawn a `tester` agent to write and run tests after generator implementation.
-5. Spawn an `evaluator` agent to review the contract, test the live app, and grade acceptance.
-6. Spawn a `coordinator` agent in continuous mode to advance rounds automatically until a stop condition is reached.
-7. Spawn a `releaser` agent after all required features pass or when the user requests `/harness:release`.
+5. Spawn a `reviewer` agent to perform code review after testing (uses Codex if available).
+6. Spawn an `evaluator` agent to review the contract, test the live app, and grade acceptance.
+7. Spawn a `coordinator` agent in continuous mode to advance rounds automatically until a stop condition is reached.
+8. Spawn a `releaser` agent after all required features pass or when the user requests `/harness:release`.
 
 Do not collapse these into one agent unless the environment truly cannot separate them.
 If you are forced to use one agent, state that the run is an approximation and not faithful role separation.
@@ -50,6 +51,7 @@ Use these ownership boundaries:
 - Initializer owns setup artifacts only.
 - Planner owns product-spec and execution-strategy artifacts only.
 - Generator edits product code and generator-owned reports only.
+- Reviewer owns code review artifacts only; does not edit product code.
 - Evaluator does not edit product code; it writes review, QA, and acceptance artifacts only.
 - Coordinator owns run-state, loop control, and decomposition decisions only.
 
@@ -60,6 +62,7 @@ Use role-scoped references so each subagent reads only the context it needs:
 - [roles/generator.md](roles/generator.md)
 - [roles/tester.md](roles/tester.md)
 - [roles/evaluator.md](roles/evaluator.md)
+- [roles/reviewer.md](roles/reviewer.md)
 - [roles/coordinator.md](roles/coordinator.md)
 - [roles/releaser.md](roles/releaser.md)
 - [references/patterns.md](references/patterns.md) for shared schemas and templates only
@@ -221,11 +224,55 @@ The tester runs between implementation and evaluation:
 
 1. Generator implements the sprint
 2. **Tester writes and runs tests** → `NN-test-report.md`
-3. Evaluator grades the implementation (including test results)
+3. **Reviewer performs code review** → `NN-review.md`
+4. Evaluator grades the implementation (including test and review results)
 
 ### Dispatch
 
 - [roles/tester.md](roles/tester.md)
+
+## Code Review & Codex Integration
+
+The reviewer agent performs code review after testing and before evaluation.
+
+### Reviewer Role
+
+- Owns: `.harness/sprints/NN-review.md`
+- Reads: sprint contract, builder report, test report, git diff, `.claude/settings.json`
+- Focus: code quality, security, patterns compliance, performance
+- Does NOT: modify product code, skip review, mark features passing
+
+### Codex Detection
+
+The reviewer checks `.claude/settings.json` for Codex availability:
+
+1. Read `.claude/settings.json`
+2. Look for `"codex@openai-codex": true` in any settings key
+3. If found: Codex is available and `/codex:adversarial-review` can be used
+4. If not found: fall back to Claude-based review
+
+### Review Flow
+
+1. Read sprint contract and builder report
+2. Run `git diff HEAD~1 --name-only` to identify changed files
+3. If Codex available: invoke `/codex:adversarial-review` on the diff
+4. If Codex not available: read each changed file, check for security issues, code smells, performance problems, pattern violations, missing error handling
+5. Write `.harness/sprints/NN-review.md`
+
+### Blocking vs Non-Blocking Findings
+
+- **BLOCKING**: security vulnerabilities, data loss risks, broken functionality, missing error handling on critical paths. The generator must fix these before evaluation proceeds.
+- **NON-BLOCKING**: code style suggestions, minor performance improvements, optional refactoring, documentation gaps. Informational only — evaluation proceeds.
+
+If BLOCKING issues are found, the coordinator returns the sprint to the generator for fixes before spawning the evaluator.
+
+### Optional Nature of Codex
+
+Codex integration is optional. The reviewer works without Codex by performing Claude-based review. When Codex is available, it provides an additional adversarial perspective but does not replace the reviewer's own analysis.
+
+### Dispatch
+
+- [roles/reviewer.md](roles/reviewer.md)
 
 ## Quantified Evaluation
 
@@ -436,6 +483,7 @@ In Variant A, run this loop:
 7. Generator revises the contract until accepted.
 8. Generator implements the sprint and writes `.harness/sprints/NN-builder-report.md`.
 8b. Tester writes and runs tests, produces `.harness/sprints/NN-test-report.md`.
+8c. Reviewer performs code review, produces `.harness/sprints/NN-review.md`. If BLOCKING issues found, returns to generator.
 9. Evaluator runs QA (including test verification) and writes `.harness/sprints/NN-evaluation.md`, `.harness/sprints/NN-evaluation.json`, and `.harness/sprints/NN-evaluator-steps.md`.
 10. Evaluator-backed evidence updates `.harness/features.json`.
 11. Coordinator either advances to the next failing required feature, pauses on a blocker, or stops if completion conditions are met.
@@ -456,6 +504,7 @@ Start with:
 - `.harness/sprints/NN-contract-review.md`
 - `.harness/sprints/NN-builder-report.md`
 - `.harness/sprints/NN-test-report.md`
+- `.harness/sprints/NN-review.md`
 - `.harness/sprints/NN-evaluation.md`
 - `.harness/sprints/NN-evaluation.json`
 - `.harness/sprints/NN-evaluator-steps.md`

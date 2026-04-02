@@ -12,6 +12,7 @@ For role-specific guidance, prefer:
 - [../roles/coordinator.md](../roles/coordinator.md)
 - [../roles/releaser.md](../roles/releaser.md)
 - [../roles/tester.md](../roles/tester.md)
+- [../roles/reviewer.md](../roles/reviewer.md)
 
 ## Shared Principles
 
@@ -42,6 +43,7 @@ For role-specific guidance, prefer:
     01-evaluation.json
     01-evaluator-steps.md
     01-test-report.md
+    01-review.md
 ```
 
 ## Shared Metadata
@@ -527,6 +529,32 @@ if %ERRORLEVEL% EQU 0 (
 
 ## Findings
 - [issues found during testing]
+```
+
+### `NN-review.md`
+
+```md
+# Code Review — Sprint NN
+
+## Metadata
+- Role: reviewer
+- Agent: reviewer-1
+- Status: completed
+- Review mode: codex | claude
+
+## Changed Files
+- [list from git diff]
+
+## Findings
+
+### Blocking
+- [issues that must be fixed]
+
+### Non-Blocking
+- [informational findings]
+
+## Recommendation
+- PROCEED | FIX_REQUIRED
 ```
 
 ### `release.json`

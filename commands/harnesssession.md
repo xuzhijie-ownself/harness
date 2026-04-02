@@ -26,8 +26,8 @@ Before starting fresh, check `.harness/state.json` `current_sprint_phase`:
 | `contract` | Resume at Contract Phase (step 6) — contract was being negotiated |
 | `implementation` | Resume at Implementation Phase (step 9) — contract was accepted, implementation in progress |
 | `testing` | Resume at Testing Phase (step 9b) — implementation complete, testing in progress |
-| `review` | Resume at Evaluation Phase (step 10) — review in progress |
-| `evaluation` | Resume at step 11 — evaluation done, update features and progress |
+| `review` | Resume at Review Phase (step 9c) — testing complete, code review in progress |
+| `evaluation` | Resume at Evaluation Phase (step 10) — review complete, evaluation in progress |
 
 Update `current_sprint_phase` in `state.json` at the start of each phase transition.
 If `current_sprint_phase` is not `idle`, skip ahead to the corresponding phase instead of restarting the sprint.
@@ -66,6 +66,17 @@ Set `current_sprint_phase` to `testing` in `state.json`.
 9b. Spawn the `tester` agent:
     "Write and run tests for the implementation. Contract: NN-contract.md. Builder report: NN-builder-report.md."
     → test files + `.harness/sprints/NN-test-report.md`
+
+## Review Phase
+
+Set `current_sprint_phase` to `review` in `state.json`.
+
+9c. Spawn the `reviewer` agent:
+    "Review the implementation. Contract: NN-contract.md. Builder report: NN-builder-report.md. Test report: NN-test-report.md."
+    → `.harness/sprints/NN-review.md`
+9d. If reviewer finds BLOCKING issues:
+    - Return to generator for fixes (re-run Implementation Phase)
+    - After fixes, re-run Testing and Review phases
 
 ## Evaluation Phase
 

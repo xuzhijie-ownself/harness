@@ -141,9 +141,9 @@
       "description": "New reviewer agent and role. Auto-detect codex plugin. When available, use /codex:adversarial-review. When not available, perform Claude-based code review. NN-review.md per sprint. Reviewer runs after tester, before evaluator.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 8,
       "dependencies": ["F-001"],
       "steps": [
         "Verify reviewer agent file exists at agents/reviewer.md",
@@ -153,8 +153,8 @@
         "Verify NN-review.md template exists in patterns.md",
         "Verify sprint flow shows reviewer after tester and before evaluator"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Sprint 8: Created agents/reviewer.md with codex detection, review round sequence, and BLOCKING/NON-BLOCKING classification. Created skills/harness/roles/reviewer.md with read/write ownership boundaries and codex detection guidance. Added NN-review.md template to patterns.md and reviewer to artifact layout and role list. Updated coordinator.md with reviewer dispatch (steps 6d/6e/6f). Updated harness:session.md with Review Phase (steps 9c/9d) and sprint resume table. Added Code Review & Codex Integration section to SKILL.md with reviewer role, codex detection, review flow, blocking vs non-blocking findings, and optional codex nature. Updated dispatch rules (step 5), ownership boundaries, role references, execution loop (step 8c), and required artifacts. Updated artifacts/init.sh to check for reviewer.md and roles/reviewer.md. Verification: bash artifacts/init.sh -> 105 PASS, 0 FAIL."],
+      "notes": "Completed sprint 8."
     },
     {
       "id": "F-008",
