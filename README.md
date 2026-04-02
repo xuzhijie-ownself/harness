@@ -154,6 +154,19 @@ Projects can declare a primary + optional secondary profile for cross-domain wor
 
 ---
 
+## Domain Skills
+
+The harness delegates domain-specific knowledge to companion skills:
+
+| Skill | Domain | What it provides |
+|-------|--------|-----------------|
+| `harness-sdlc` | Software Development | Methodology selection, testing strategy, build/runtime verification, evaluation criteria anchors |
+
+Domain skills are loaded automatically when the matching domain profile is selected during `/harness:init`.
+
+---
+
+
 ## Harness Variants
 
 | Variant | When |
