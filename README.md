@@ -15,20 +15,43 @@ The evaluator handles testing, code review, and grading in one pass.
 
 ## Install
 
-### Claude Code (local)
+### Option 1: Claude Code Marketplace (Recommended)
 
 ```bash
-# Mac / Linux / Git Bash
+claude mcp add-plugin xuzhijie-ownself/long-running-harness
+```
+
+Or install via the Claude Code settings UI:
+1. Open Claude Code
+2. Go to Settings > Plugins
+3. Search for `long-running-harness`
+4. Click Install
+
+### Option 2: Git Clone + Local Install
+
+```bash
+# Clone the plugin into your project
+git clone https://github.com/xuzhijie-ownself/long-running-harness.git plugins/long-running-harness
+
+# Install to .claude/ (Mac / Linux / Git Bash)
 bash plugins/long-running-harness/install.sh
 
-# Windows CMD
+# Install to .claude/ (Windows CMD)
 plugins\long-running-harness\install.bat
 ```
 
 Copies commands, agents, skill, roles, references, and hooks into `.claude/`.
 Available immediately -- no restart needed.
 
-To uninstall:
+### Option 3: Direct Download
+
+```bash
+# Download and install in one step
+git clone https://github.com/xuzhijie-ownself/long-running-harness.git ~/.claude/plugins/long-running-harness
+bash ~/.claude/plugins/long-running-harness/install.sh
+```
+
+### Uninstall
 
 ```bash
 bash plugins/long-running-harness/install.sh --uninstall
@@ -36,7 +59,15 @@ bash plugins/long-running-harness/install.sh --uninstall
 
 ### Codex
 
-`.codex-plugin/plugin.json` is already present -- Codex loads it directly.
+`.codex-plugin/plugin.json` is already present -- Codex loads it directly from the cloned repo.
+
+### Update
+
+Pull the latest version and re-run install:
+
+```bash
+cd plugins/long-running-harness && git pull && bash install.sh
+```
 
 ---
 

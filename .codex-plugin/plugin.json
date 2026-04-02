@@ -3,13 +3,13 @@
   "version": "0.2.0",
   "description": "Multi-agent sprint orchestration harness for long-running application development.",
   "author": {
-    "name": "Local Workspace",
-    "email": "[TODO: author@example.com]",
-    "url": "[TODO: https://github.com/author]"
+    "name": "xuzhijie-ownself",
+    "email": "kidtsui@outlook.com",
+    "url": "https://github.com/xuzhijie-ownself"
   },
-  "homepage": "[TODO: documentation-url]",
-  "repository": "[TODO: repository-url]",
-  "license": "UNLICENSED",
+  "homepage": "https://github.com/xuzhijie-ownself/long-running-harness",
+  "repository": "https://github.com/xuzhijie-ownself/long-running-harness",
+  "license": "MIT",
   "keywords": [
     "harness",
     "agents",
@@ -24,15 +24,15 @@
     "displayName": "Harness",
     "shortDescription": "Multi-agent sprint orchestration harness",
     "longDescription": "Runs an Anthropic-style application harness with 6 agents: initializer, planner, generator, evaluator, coordinator, and releaser. The evaluator handles testing, code review, and grading in one pass. Explicit sprint strategy, quantified QA, and a completion ledger. Domain-agnostic — works for any project type.",
-    "developerName": "Local Workspace",
+    "developerName": "xuzhijie-ownself",
     "category": "Productivity",
     "capabilities": [
       "Interactive",
       "Write"
     ],
-    "websiteURL": "[TODO: website-url]",
-    "privacyPolicyURL": "[TODO: privacy-policy-url]",
-    "termsOfServiceURL": "[TODO: terms-of-service-url]",
+    "websiteURL": "https://github.com/xuzhijie-ownself/long-running-harness",
+    "privacyPolicyURL": "https://github.com/xuzhijie-ownself/long-running-harness",
+    "termsOfServiceURL": "https://github.com/xuzhijie-ownself/long-running-harness",
     "defaultPrompt": [
       "Build an app using the harness.",
       "Review whether this harness really followed the sprint plan.",
