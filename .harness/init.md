@@ -1,76 +1,73 @@
-# Initialization Guide
+# Setup Instructions
 
 ## Metadata
 - Role: initializer
 - Agent: initializer-1
-- Inputs: spec.md, project file structure
+- Inputs: spec.md, plugin.json, skills directory listing
 - Status: accepted
 
-## Project Overview
+## Project Context
 
-The Workflow Integrity project adds pre-flight/post-flight integrity guards to every entry point in the Harness plugin. All changes are to Markdown instruction files and JSON schema examples -- there is no runtime code, no build step, and no dev server.
+This harness run adds three new domain skills to the long-running-harness plugin (v0.7.0 -> v0.8.0 target). The deliverables are pure Markdown SKILL.md files plus integration updates to the main SKILL.md and plugin.json. There is no runtime code, no build step, and no dev server.
 
-## Project Location
+## Pre-flight Verification
 
+Before starting any sprint, verify the following baseline conditions:
+
+### 1. Plugin structure exists
 ```
-C:\Users\zhijie\Desktop\ai\frontend\plugins\long-running-harness\
+plugins/harness/.claude-plugin/plugin.json    -- valid JSON, version 0.7.0
+plugins/harness/skills/harness/SKILL.md       -- main harness skill (routing table lives here)
+plugins/harness/skills/harness-sdlc/SKILL.md  -- existing software domain skill
+plugins/harness/skills/harness-ea/SKILL.md    -- existing architecture domain skill (template for new skills)
 ```
 
-## Prerequisites
+### 2. Template skill is readable
+The harness-ea/SKILL.md file is the structural template for all new domain skills. It should contain:
+- YAML frontmatter with name and description
+- 10 numbered sections following the pattern documented in spec.md
+- 4 evaluation criteria with 0-5 anchor tables
+- Activation Check section
 
-- A text editor or Claude Code session
-- Git (for verification steps that check clean working tree)
-- grep or ripgrep (for verification steps that search for stale references)
+### 3. Harness artifacts are initialized
+```
+.harness/features.json  -- 5 features, all passes: false
+.harness/progress.md    -- baseline state documented
+.harness/state.json     -- mode: supervised, status: active
+.harness/config.json    -- default configuration
+.harness/spec.md        -- accepted product spec
+```
 
-## Target Files
+### 4. No conflicting skill directories
+Verify that harness-ba, harness-sa, and harness-ops directories do NOT yet exist under plugins/harness/skills/. If they do exist from a prior partial run, review their contents before proceeding.
 
-The project modifies 12 Markdown files inside `plugins/harness/`:
+## Sprint Order
 
-| File | Feature(s) |
-|------|------------|
-| `plugins/harness/commands/init.md` | F-002, F-007 |
-| `plugins/harness/commands/session.md` | F-003, F-007 |
-| `plugins/harness/commands/run.md` | F-004, F-007 |
-| `plugins/harness/commands/reset.md` | F-005, F-007 |
-| `plugins/harness/commands/release.md` | F-006, F-007 |
-| `plugins/harness/agents/releaser.md` | F-001, F-008 |
-| `plugins/harness/agents/coordinator.md` | F-001 |
-| `plugins/harness/skills/harness/roles/releaser.md` | F-001 |
-| `plugins/harness/skills/harness/references/patterns.md` | F-001 |
-| `plugins/harness/skills/harness/SKILL.md` | F-001, F-009 |
-| `plugins/harness/skills/harness-sdlc/SKILL.md` | F-010 |
-| `plugins/harness/skills/harness-ea/SKILL.md` | F-011 |
+| Sprint | Feature(s) | Deliverable |
+|--------|-----------|-------------|
+| 1 | F-001 | harness-ba/SKILL.md |
+| 2 | F-002 | harness-sa/SKILL.md |
+| 3 | F-003 | harness-ops/SKILL.md |
+| 4 | F-004 + F-005 | SKILL.md routing updates + plugin.json verification |
 
-## Startup
+## Verification Commands
 
-This project has no dev server or build step. "Startup" means opening the project directory and verifying the file structure is intact.
-
-To verify the project is ready:
-
+To check the current state of skill directories:
 ```bash
-ls plugins/harness/commands/ plugins/harness/agents/ plugins/harness/skills/
+ls plugins/harness/skills/
 ```
 
-All target files should be listed.
-
-## Verification
-
-After each feature is implemented, verify with:
-
-1. Read the modified file(s) and confirm the expected sections are present
-2. For F-001 specifically: `grep -r '.harness/release.json' plugins/harness/` should return zero matches
-3. For F-007: all 5 command files should contain a pre-flight validation block
-
-## Sprint Ordering
-
-The dependency-aware ordering from the spec is:
-
-```
-F-001 -> F-007 -> F-002 -> F-003 -> F-004 -> F-005 -> F-006 -> F-008 -> F-009 -> F-010 -> F-011
+To validate plugin.json is valid JSON:
+```bash
+cat plugins/harness/.claude-plugin/plugin.json | python -m json.tool
 ```
 
-## Notes
+To verify a SKILL.md file has the expected section count:
+```bash
+grep -c "^## " plugins/harness/skills/harness-ba/SKILL.md
+```
 
-- No runtime code is involved; quality is measured by completeness, consistency, and clarity of Markdown instructions
-- "visual_design" criterion maps to "documentation clarity" for this project
-- The evaluator should score documentation clarity, structural consistency, and readability under visual_design
+To verify evaluation criteria anchors are complete (should show scores 0 through 5):
+```bash
+grep -c "Score [0-5]" plugins/harness/skills/harness-ba/SKILL.md
+```
