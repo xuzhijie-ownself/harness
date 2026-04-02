@@ -242,6 +242,18 @@ A project can declare a primary profile + optional secondary profile. The evalua
 - Deliverables classified as: primary, supporting, governance
 - Stakeholder lens influences how the evaluator grades quality
 
+### Domain Skill References
+
+When `domain_profile` is `software`, the evaluator and generator should read the `harness-sdlc` domain skill at `skills/harness-sdlc/SKILL.md` for:
+- Tech-stack-specific verification procedures
+- ORM/database detection and migration commands
+- Server framework detection and startup verification
+- Test framework detection and execution
+- Evaluation criteria anchors with concrete 0-5 descriptions
+- Sprint contract checklist templates
+
+The domain skill provides the HOW; the harness provides the WHEN.
+
 ## Quantified Evaluation
 
 Do not rely on prose-only judgments. Every evaluation round should produce numeric criterion scores plus granular contract-check results.
