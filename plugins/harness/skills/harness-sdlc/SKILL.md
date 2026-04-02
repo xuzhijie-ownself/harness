@@ -9,6 +9,16 @@ description: Software Development Lifecycle domain skill for the harness plugin.
 
 Activated when `domain_profile: software` is declared in `.harness/spec.md`.
 
+
+## Activation Check
+
+This skill activates when `domain_profile: software` is set in `.harness/spec.md` or `.harness/state.json`.
+
+Before using this skill's procedures:
+1. Verify the project has a recognizable tech stack (package.json, go.mod, Cargo.toml, pyproject.toml, pom.xml, etc.)
+2. If no tech stack detected -> framework detection tables won't apply; fall back to generic evaluation criteria from the main harness skill
+3. Read the project's test configuration -> determine which testing methodology applies (Section 3)
+4. Read the project's ORM/database configuration -> determine which migration commands apply (Section 4)
 ---
 
 ## Section 1: Project Management Methodology
