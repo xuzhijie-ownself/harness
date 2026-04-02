@@ -37,10 +37,10 @@
       "description": "Create plugins/harness/skills/harness-sa/SKILL.md (~350-400 lines) following the 10-section pattern. The skill activates when domain_profile: solution_architecture is set. Distinct from harness-ea (enterprise architecture): SA focuses on a single solution's technical design. Includes SA methodology, evaluation criteria (design_coherence, technical_depth, integration_clarity, implementability), and sprint contract checklists.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-002",
       "steps": [
         "Create the SKILL.md file at plugins/harness/skills/harness-sa/SKILL.md",
@@ -53,8 +53,10 @@
         "Verify Sprint Contract Checklists include templates for Context & Constraints, Component Design, API Design, Data Design, NFR & Capacity",
         "Verify Repository Structure section defines solution-architecture/ directory layout"
       ],
-      "evidence": [],
-      "notes": "Sprint 2. Second high-priority skill, follows the pattern from sprint 1."
+      "evidence": [
+        "02-evaluation.json: all contract checks passed, all criteria scored 4"
+      ],
+      "notes": "Sprint 2 PASS. All 10 sections present, 395 lines."
     },
     {
       "id": "F-003",
