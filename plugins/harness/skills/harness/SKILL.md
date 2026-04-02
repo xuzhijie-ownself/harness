@@ -264,6 +264,14 @@ When `domain_profile` is `software`, the evaluator and generator should read the
 
 The domain skill provides the HOW; the harness provides the WHEN.
 
+When `domain_profile` is `architecture`, the evaluator and generator should read the `harness-ea` domain skill at `skills/harness-ea/SKILL.md` for:
+- Architecture framework selection (TOGAF, Zachman, FEAF, ArchiMate, SAFe, Lean EA)
+- Architecture development methodology (ADR-First, Capability-First, Viewpoint-Driven)
+- Deliverable verification procedures (document structure, cross-references, notation)
+- TOGAF phase gate checks with required deliverables
+- Evaluation criteria anchors (coherence, standards_compliance, stakeholder_coverage, feasibility)
+- Sprint contract checklist templates for each TOGAF phase
+
 ## Quantified Evaluation
 
 Do not rely on prose-only judgments. Every evaluation round should produce numeric criterion scores plus granular contract-check results.

@@ -161,6 +161,7 @@ The harness delegates domain-specific knowledge to companion skills:
 | Skill | Domain | What it provides |
 |-------|--------|-----------------|
 | `harness-sdlc` | Software Development | Methodology selection, testing strategy, build/runtime verification, evaluation criteria anchors |
+| `harness-ea` | Enterprise Architecture | Architecture methodology (TOGAF/Zachman/FEAF), deliverable verification, TOGAF phase gates, evaluation criteria anchors |
 
 Domain skills are loaded automatically when the matching domain profile is selected during `/harness:init`.
 
