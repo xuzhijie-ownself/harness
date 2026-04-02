@@ -19,6 +19,14 @@ Before proceeding:
 
 Note: For `/init`, the `.harness/` directory is not required to exist yet (this command creates it). The validation above applies only when `.harness/` already exists (re-init scenario).
 
+## Pre-flight
+
+1. Check if `.harness/` already exists:
+   - If yes AND `.harness/state.json` has `"status": "complete"`: allow re-init (new development cycle). Print: "Previous harness completed. Starting fresh cycle."
+   - If yes AND status is `"active"` or `"paused"`: WARN "Active harness found. Run /harness:reset first or pass --force to overwrite." STOP unless --force.
+2. Check if `release.json` exists at project root -- if yes, read `current_version` so the next release increments correctly. Print: "Found existing release history at v{version}."
+3. Verify git repo exists (`git rev-parse --is-inside-work-tree`). If not -> WARN "No git repository. Auto-commit and release features require git."
+
 ## Steps
 
 1. Read the current working directory for any existing README or spec.
