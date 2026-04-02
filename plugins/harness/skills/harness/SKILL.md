@@ -59,6 +59,9 @@ Whenever this skill is activated (by any agent, command, or direct invocation):
 Based on `domain_profile` in state.json or spec.md:
 - `software` -> also read `harness-sdlc` skill
 - `architecture` -> also read `harness-ea` skill
+- `business_analysis` -> also read `harness-ba` skill
+- `solution_architecture` -> also read `harness-sa` skill
+- `ops` -> also read `harness-ops` skill
 - `custom` -> read spec.md for custom criteria
 - If missing -> default to `software`
 
@@ -276,6 +279,8 @@ The harness supports multiple domains through a profile system. Each profile def
 | `research` | rigor, novelty, reproducibility, clarity | Papers, notebooks, citations | Reviewers, peers |
 | `content` | clarity, engagement, accuracy, brand_alignment | Articles, scripts, briefs | Audience, editors |
 | `business_analysis` | completeness, traceability, stakeholder_alignment, feasibility | BRDs, use cases, process maps | Business owners, PMs |
+| `solution_architecture` | design_coherence, technical_depth, integration_clarity, implementability | HLDs, API specs, data models, C4 diagrams | Solution architects, tech leads |
+| `ops` | operational_readiness, automation_coverage, reliability_design, security_posture | IaC configs, pipelines, runbooks, dashboards | SREs, platform engineers, DevOps |
 | `custom` | User-defined (4 criteria in spec) | User-defined | User-defined |
 
 ### Cross-Domain Composability
@@ -305,6 +310,30 @@ When `domain_profile` is `architecture`, the evaluator and generator should read
 - TOGAF phase gate checks with required deliverables
 - Evaluation criteria anchors (coherence, standards_compliance, stakeholder_coverage, feasibility)
 - Sprint contract checklist templates for each TOGAF phase
+
+When `domain_profile` is `business_analysis`, the evaluator and generator should read the `harness-ba` domain skill at `skills/harness-ba/SKILL.md` for:
+- BA methodology selection (Waterfall BA, Agile BA, Lean BA, Design Thinking BA, Six Sigma BA)
+- Development methodology (Requirements-First, User-Story-First, Process-First, Data-First, Stakeholder-First)
+- Deliverable verification procedures (document structure, cross-references, traceability)
+- BRD section gate checks with required content
+- Evaluation criteria anchors (completeness, traceability, stakeholder_alignment, feasibility)
+- Sprint contract checklist templates for BA phases
+
+When `domain_profile` is `solution_architecture`, the evaluator and generator should read the `harness-sa` domain skill at `skills/harness-sa/SKILL.md` for:
+- SA framework selection (C4 Model, Arc42, 4+1 View, Domain-Driven Design, Microservices Patterns)
+- Development methodology (API-First, Component-First, Data-First, Event-First, Contract-First)
+- Deliverable verification procedures (API spec linting, component boundary checks, data model consistency)
+- C4 level gate checks and Arc42 section gate checks
+- Evaluation criteria anchors (design_coherence, technical_depth, integration_clarity, implementability)
+- Sprint contract checklist templates for SA phases
+
+When `domain_profile` is `ops`, the evaluator and generator should read the `harness-ops` domain skill at `skills/harness-ops/SKILL.md` for:
+- Ops methodology selection (GitOps, Platform Engineering, SRE, DevOps, Infrastructure-as-Code)
+- Development methodology (Pipeline-First, Infrastructure-First, Monitoring-First, Runbook-First, Security-First)
+- Deliverable verification procedures (IaC linting, pipeline syntax validation, secret scanning)
+- Pipeline stage gate checks with required stages
+- Evaluation criteria anchors (operational_readiness, automation_coverage, reliability_design, security_posture)
+- Sprint contract checklist templates for ops phases
 
 ## Quantified Evaluation
 
