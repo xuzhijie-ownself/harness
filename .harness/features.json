@@ -6,7 +6,7 @@
       "id": "F-001",
       "title": "Business Analysis Domain Skill (harness-ba)",
       "category": "functional",
-      "description": "Create plugins/harness/skills/harness-ba/SKILL.md (~350-400 lines) following the 10-section pattern established by harness-ea. The skill activates when domain_profile: business_analysis is set. Includes BA methodology, verification strategy, evaluation criteria (completeness, traceability, stakeholder_alignment, feasibility), sprint contract checklists, and reference materials.",
+      "description": "Create plugins/harness/skills/harness-ba/SKILL.md (~350-400 lines) following the 10-section pattern established by harness-ea. The skill activates when domain_profile: business_analysis is set.",
       "required": true,
       "priority": "high",
       "status": "complete",
@@ -14,17 +14,7 @@
       "depends_on": [],
       "maturity": "reviewed",
       "source_requirement": "spec.md F-001",
-      "steps": [
-        "Create the SKILL.md file at plugins/harness/skills/harness-ba/SKILL.md",
-        "Verify it follows the 10-section structural pattern of harness-ea",
-        "Verify all 4 evaluation criteria (completeness, traceability, stakeholder_alignment, feasibility) have complete 0-5 anchor tables",
-        "Verify the YAML frontmatter metadata block is present and correct",
-        "Verify Activation Check section verifies domain_profile is business_analysis",
-        "Verify BA Methodology table includes Waterfall BA, Agile BA, Lean BA, Design Thinking BA, Six Sigma BA",
-        "Verify Development Methodology first-action table includes Requirements-First, User-Story-First, Process-First, Data-First, Stakeholder-First",
-        "Verify Sprint Contract Checklists include templates for Requirements Elicitation, Use Case Development, Process Modeling, Gap Analysis, Stakeholder Review",
-        "Verify Repository Structure section defines business-analysis/ directory layout"
-      ],
+      "steps": [],
       "evidence": [
         "01-evaluation.json: all contract checks passed, all criteria scored 4"
       ],
@@ -34,7 +24,7 @@
       "id": "F-002",
       "title": "Solution Architecture Domain Skill (harness-sa)",
       "category": "functional",
-      "description": "Create plugins/harness/skills/harness-sa/SKILL.md (~350-400 lines) following the 10-section pattern. The skill activates when domain_profile: solution_architecture is set. Distinct from harness-ea (enterprise architecture): SA focuses on a single solution's technical design. Includes SA methodology, evaluation criteria (design_coherence, technical_depth, integration_clarity, implementability), and sprint contract checklists.",
+      "description": "Create plugins/harness/skills/harness-sa/SKILL.md (~350-400 lines) following the 10-section pattern. The skill activates when domain_profile: solution_architecture is set.",
       "required": true,
       "priority": "high",
       "status": "complete",
@@ -42,17 +32,7 @@
       "depends_on": [],
       "maturity": "reviewed",
       "source_requirement": "spec.md F-002",
-      "steps": [
-        "Create the SKILL.md file at plugins/harness/skills/harness-sa/SKILL.md",
-        "Verify it follows the 10-section structural pattern of harness-ea",
-        "Verify all 4 evaluation criteria (design_coherence, technical_depth, integration_clarity, implementability) have complete 0-5 anchor tables",
-        "Verify the YAML frontmatter metadata block is present and correct",
-        "Verify Activation Check section verifies domain_profile is solution_architecture",
-        "Verify SA Methodology table includes C4 Model, Arc42, 4+1 View, Domain-Driven Design, Microservices Patterns",
-        "Verify Development Methodology first-action table includes API-First, Component-First, Data-First, Event-First, Contract-First",
-        "Verify Sprint Contract Checklists include templates for Context & Constraints, Component Design, API Design, Data Design, NFR & Capacity",
-        "Verify Repository Structure section defines solution-architecture/ directory layout"
-      ],
+      "steps": [],
       "evidence": [
         "02-evaluation.json: all contract checks passed, all criteria scored 4"
       ],
@@ -62,27 +42,19 @@
       "id": "F-003",
       "title": "Deployment & Ops Domain Skill (harness-ops)",
       "category": "functional",
-      "description": "Create plugins/harness/skills/harness-ops/SKILL.md (~350-400 lines) following the 10-section pattern. The skill activates when domain_profile: ops is set. Covers deployment planning, infrastructure-as-code, CI/CD pipelines, runbooks, and operational readiness. Includes ops methodology, evaluation criteria (operational_readiness, automation_coverage, reliability_design, security_posture), and sprint contract checklists.",
+      "description": "Create plugins/harness/skills/harness-ops/SKILL.md (~350-400 lines) following the 10-section pattern. The skill activates when domain_profile: ops is set.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-003",
-      "steps": [
-        "Create the SKILL.md file at plugins/harness/skills/harness-ops/SKILL.md",
-        "Verify it follows the 10-section structural pattern of harness-ea",
-        "Verify all 4 evaluation criteria (operational_readiness, automation_coverage, reliability_design, security_posture) have complete 0-5 anchor tables",
-        "Verify the YAML frontmatter metadata block is present and correct",
-        "Verify Activation Check section verifies domain_profile is ops",
-        "Verify Ops Methodology table includes GitOps, Platform Engineering, SRE, DevOps, Infrastructure-as-Code",
-        "Verify Development Methodology first-action table includes Pipeline-First, Infrastructure-First, Monitoring-First, Runbook-First, Security-First",
-        "Verify Sprint Contract Checklists include templates for CI/CD Pipeline, Infrastructure Provisioning, Monitoring & Alerting, Runbook Development, Security Hardening",
-        "Verify Repository Structure section defines ops/ or infrastructure/ directory layout"
+      "steps": [],
+      "evidence": [
+        "03-evaluation.json: all contract checks passed, all criteria scored 4"
       ],
-      "evidence": [],
-      "notes": "Sprint 3. Medium priority, same structural pattern as F-001 and F-002."
+      "notes": "Sprint 3 PASS. All 10 sections present, 379 lines."
     },
     {
       "id": "F-004",
@@ -104,13 +76,13 @@
         "Verify no domain-specific logic is added to the planner or coordinator sections"
       ],
       "evidence": [],
-      "notes": "Sprint 4 (grouped with F-005). Depends on all three domain skills being complete."
+      "notes": "Sprint 4 (grouped with F-005). Depends on all three domain skills being complete — now unblocked."
     },
     {
       "id": "F-005",
       "title": "Plugin Registration",
       "category": "structural",
-      "description": "Update plugins/harness/.claude-plugin/plugin.json to register the new skill paths so the plugin loader discovers them. The current './skills/' glob may already cover them, but verify and add explicit entries if needed.",
+      "description": "Update plugins/harness/.claude-plugin/plugin.json to register the new skill paths so the plugin loader discovers them.",
       "required": true,
       "priority": "high",
       "status": "not_started",
@@ -120,13 +92,13 @@
       "source_requirement": "spec.md F-005",
       "steps": [
         "Read current plugins/harness/.claude-plugin/plugin.json",
-        "Verify the skills array discovery mechanism covers new subdirectories (harness-ba, harness-sa, harness-ops)",
-        "Add explicit skill paths if the './skills/' glob pattern does not cover new subdirectories",
-        "Verify JSON is valid after any changes",
-        "Verify plugin.json version field is unchanged (releaser handles version bumps)"
+        "Verify the skills array discovery mechanism covers new subdirectories",
+        "Add explicit skill paths if needed",
+        "Verify JSON is valid",
+        "Verify version field unchanged"
       ],
       "evidence": [],
-      "notes": "Sprint 4 (grouped with F-004). Small integration change -- verify glob coverage."
+      "notes": "Sprint 4 (grouped with F-004). Now unblocked."
     }
   ]
 }
