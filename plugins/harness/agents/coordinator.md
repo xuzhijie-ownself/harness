@@ -38,7 +38,18 @@ Owns: .harness/state.json, .harness/summary.md, .harness/decomposition.md
 18. Auto-commit: `git add -A && git commit -m "feat/wip(F-XXX): <title> — sprint N [harness]"`
 19. Update `.harness/features.json` from evaluator feature_evidence
 20. Check stop conditions (all required features pass, or hard blocker)
-21. If all required features pass: spawn `releaser` agent before writing summary
+21. Check stop conditions: if all required features pass → go to Release. If hard blocker → STOP.
+
+### Release (MANDATORY when all features pass)
+
+When all required features have `passes: true`, you MUST complete these steps before writing summary:
+
+1. Spawn `releaser` agent with input: `.harness/features.json`, `.harness/state.json`
+2. Verify releaser created `.harness/release.json` and `.harness/changelog.md`
+3. Verify releaser created a git tag (`git tag -l` shows new version)
+4. If any release artifact is missing, log a warning in progress.md but do NOT block the summary
+
+**CRITICAL**: Do not skip the releaser. If the releaser agent spawn fails, record the failure in state.json errors array and proceed to summary with a note that release was skipped.
 
 ### Auto-Commit Protocol
 

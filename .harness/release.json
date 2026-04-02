@@ -1,0 +1,46 @@
+{
+  "current_version": "0.5.0",
+  "releases": [
+    {
+      "version": "0.1.0",
+      "date": "2026-04-01",
+      "features_shipped": ["F-001", "F-002", "F-003", "F-004", "F-005", "F-006", "F-007", "F-008", "F-009", "F-010"],
+      "changelog": "Initial harness plugin: naming migration, install scripts, migration command, auto-commit, release/versioning, testing strategy, code review/codex integration, architect role, reliability fixes, metadata updates",
+      "sprint_count": 10,
+      "previous_version": null
+    },
+    {
+      "version": "0.2.0",
+      "date": "2026-04-02",
+      "features_shipped": ["v2-consolidation"],
+      "changelog": "Consolidated 9 agents to 6 (tester/reviewer/architect absorbed into evaluator), fixed colon filenames, simplified coordinator to 2-agent loop, removed migration command",
+      "sprint_count": 1,
+      "previous_version": "0.1.0"
+    },
+    {
+      "version": "0.3.0",
+      "date": "2026-04-02",
+      "features_shipped": ["E-001", "E-002", "E-003", "E-004", "E-005", "E-006", "E-007", "E-008", "E-009", "E-010", "E-011"],
+      "changelog": "11 enhancements: codex toggle, domain profiles with BA foundation, feature dependencies, configurable context reset, cost tracking, GAN pattern docs, cross-platform init, subjective quality grading, sprint retrospectives, feature maturity levels, config file",
+      "sprint_count": 11,
+      "previous_version": "0.2.0"
+    },
+    {
+      "version": "0.4.0",
+      "date": "2026-04-02",
+      "features_shipped": ["marketplace-restructure", "sdlc-skill"],
+      "changelog": "Restructured for Claude Code marketplace (nested plugins/harness/), fixed hooks.json format, created harness-sdlc domain skill with 6 sections covering SDLC best practices",
+      "sprint_count": 3,
+      "previous_version": "0.3.0"
+    },
+    {
+      "version": "0.5.0",
+      "date": "2026-04-02",
+      "features_shipped": ["F-001", "F-002", "F-003", "F-004", "F-005"],
+      "changelog": "Fixed codex review detection (mandatory pre-flight), expanded sprint artifact enforcement (3→5), added codex detection enforcement in coordinator, added context freshness trace, added runtime verification requirement for software projects",
+      "sprint_count": 5,
+      "previous_version": "0.4.0"
+    }
+  ],
+  "next_version": "0.6.0"
+}
