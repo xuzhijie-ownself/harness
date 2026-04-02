@@ -7,25 +7,24 @@
 - Status: active
 
 ## Current target
-- F-002: Harness Integration
+- F-003: Plugin Manifest & README
 
 ## Baseline
-- The harness plugin structure exists at plugins/long-running-harness/
-- The spec (spec.md) is accepted and defines three features in a linear dependency chain
-- F-001 (SDLC Skill File) is COMPLETE and PASSING
-- plugins/harness/skills/harness-sdlc/SKILL.md exists with all 6 sections
+- F-001 (SDLC Skill File): COMPLETE, PASSING
+- F-002 (Harness Integration): COMPLETE, PASSING
+- F-003 (Plugin Manifest & README): PENDING
 
 ## This round
-- Sprint 1 completed: F-001 PASSED
-- Created plugins/harness/skills/harness-sdlc/SKILL.md with all 6 sections
-- All contract checks passed
+- Sprint 2 completed: F-002 PASSED
+- Added Domain Skill References subsection to plugins/harness/skills/harness/SKILL.md
+- All contract checks passed, no existing content corrupted
 
 ## Latest evidence
-- 01-evaluation.json: PASS, all 5 contract checks pass
+- 02-evaluation.json: PASS, all 3 contract checks pass
 - Scores: product_depth=5, functionality=5, visual_design=4, code_quality=5
 
 ## Next step
-- Sprint 2: Add domain skill reference to plugins/harness/skills/harness/SKILL.md (F-002)
+- Sprint 3: Update README.md with Domain Skills section (F-003)
 
 ---
 
@@ -42,3 +41,10 @@
 - All 6 sections complete with reference tables and checklists
 - Evaluation: PASS (5/5/4/5)
 - F-001 status: complete, passes: true
+
+#### 2026-04-02 -- Sprint 2 (F-002: Harness Integration)
+- Added Domain Skill References subsection to plugins/harness/skills/harness/SKILL.md
+- Placed under Domain Profiles section, after Business Analysis Foundation
+- Line count increased 647->659, no existing content corrupted
+- Evaluation: PASS (5/5/4/5)
+- F-002 status: complete, passes: true

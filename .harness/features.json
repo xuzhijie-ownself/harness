@@ -34,10 +34,10 @@
       "description": "Update plugins/harness/skills/harness/SKILL.md to add a reference directing agents to the harness-sdlc skill when domain_profile: software is active. Minimal, non-breaking addition.",
       "required": true,
       "priority": "P0",
-      "status": "pending",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "spec.md F-002",
       "steps": [
         "Open plugins/harness/skills/harness/SKILL.md",
@@ -45,8 +45,8 @@
         "Confirm the reference directs agents to harness-sdlc/SKILL.md for software domain projects",
         "Verify no existing content in SKILL.md was corrupted or removed"
       ],
-      "evidence": [],
-      "notes": "Targeted edit to an existing file. Must not break the main harness skill."
+      "evidence": ["02-evaluation.json: all 3 contract checks pass, reference subsection verified at line 245, no content corrupted"],
+      "notes": "Completed in sprint 2. Domain Skill References subsection added under Domain Profiles."
     },
     {
       "id": "F-003",
