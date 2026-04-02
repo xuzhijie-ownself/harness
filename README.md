@@ -148,9 +148,42 @@ The harness supports multiple domains through a profile system. Each profile def
 | `research` | rigor, novelty, reproducibility, clarity | Reviewers, peers |
 | `content` | clarity, engagement, accuracy, brand_alignment | Audience, editors |
 | `business_analysis` | completeness, traceability, stakeholder_alignment, feasibility | Business owners, PMs |
+| `solution_architecture` | design_coherence, technical_depth, integration_clarity, implementability | Solution architects, dev leads |
+| `ops` | operational_readiness, automation_coverage, reliability_design, security_posture | SREs, platform engineers |
 | `custom` | User-defined (4 criteria in spec) | User-defined |
 
 Projects can declare a primary + optional secondary profile for cross-domain work. The `source_requirement` field in features.json links features to original business needs for BA/tender/architecture domains.
+
+---
+
+## End-to-End Delivery Pipeline
+
+Domain skills map to phases in a delivery workflow. Not every project needs every phase — the planner routes based on project type.
+
+```
+Customer Request
+    │
+    ├─ Phase 1: Discovery & Intake        (harness core — /init + planner)
+    ├─ Phase 2: Business Analysis          (harness-ba)
+    ├─ Phase 3: Enterprise Architecture    (harness-ea)
+    ├─ Phase 4: Solution Architecture      (harness-sa)
+    ├─ Phase 5: Project Planning           (harness core — planner + coordinator)
+    ├─ Phase 6: Software Development       (harness-sdlc)
+    ├─ Phase 7: Testing & QA               (harness-sdlc evaluator)
+    └─ Phase 8: Deployment & Handover      (harness-ops)
+    │
+    ▼
+Delivered Product
+```
+
+| Project Type | Phases | Example |
+|-------------|--------|---------|
+| Quick prototype | 1 → 6 | "Build me a CLI tool" |
+| Internal tool | 1 → 2 → 4 → 6 | "Automate our docket submissions" |
+| Enterprise system | 1 → 2 → 3 → 4 → 6 → 8 | "Modernize our claims platform" |
+| Architecture only | 1 → 2 → 3 | "Design our target-state EA" |
+
+Each phase is a separate harness run (`/init` → `/run` → `/release`). Each run's output becomes the next run's input context.
 
 ---
 
@@ -158,10 +191,13 @@ Projects can declare a primary + optional secondary profile for cross-domain wor
 
 The harness delegates domain-specific knowledge to companion skills:
 
-| Skill | Domain | What it provides |
-|-------|--------|-----------------|
-| `harness-sdlc` | Software Development | Methodology selection, testing strategy, build/runtime verification, evaluation criteria anchors |
-| `harness-ea` | Enterprise Architecture | Architecture methodology (TOGAF/Zachman/FEAF), deliverable verification, TOGAF phase gates, evaluation criteria anchors |
+| Skill | Domain | Profile | What it provides |
+|-------|--------|---------|-----------------|
+| `harness-sdlc` | Software Development | `software` | Methodology selection, testing strategy, build/runtime verification, evaluation criteria anchors |
+| `harness-ea` | Enterprise Architecture | `architecture` | Architecture methodology (TOGAF/Zachman/FEAF), deliverable verification, TOGAF phase gates, evaluation criteria anchors |
+| `harness-ba` | Business Analysis | `business_analysis` | BA methodology (Waterfall/Agile/Lean/Design Thinking/Six Sigma), requirements traceability, BRD verification, evaluation criteria anchors |
+| `harness-sa` | Solution Architecture | `solution_architecture` | SA methodology (C4/Arc42/4+1/DDD/Microservices), API design verification, NFR compliance, evaluation criteria anchors |
+| `harness-ops` | Deployment & Ops | `ops` | Ops methodology (GitOps/Platform Engineering/SRE/DevOps/IaC), deployment readiness, runbook verification, evaluation criteria anchors |
 
 Domain skills are loaded automatically when the matching domain profile is selected during `/harness:init`.
 
