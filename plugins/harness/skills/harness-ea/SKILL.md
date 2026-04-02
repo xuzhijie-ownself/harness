@@ -19,6 +19,17 @@ This skill covers the full Enterprise Architecture lifecycle:
 
 It is framework-agnostic at its core — any of the supported methodologies can be selected. The TOGAF ADM is the default because it provides the most structured phase model for harness sprint mapping.
 
+
+## Activation Check
+
+This skill activates when `domain_profile: architecture` is set in `.harness/spec.md` or `.harness/state.json`.
+
+Before using this skill's procedures:
+1. Verify the project produces architecture deliverables (documents, diagrams, decision records -- not primarily code)
+2. Read spec.md -> identify the selected framework (TOGAF, Zachman, FEAF, etc.)
+3. If no framework specified -> default to TOGAF ADM
+4. Check if `architecture/` directory exists -> if yes, verify against the Repository Structure (Section 9)
+5. Identify the industry -> select the appropriate reference architecture from Section 7
 ---
 
 ## Section 1: Architecture Methodology
