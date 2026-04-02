@@ -55,10 +55,10 @@
       "description": "Update README.md to document the SDLC domain skill: what it provides, how agents use it, and where it lives in the skill directory structure.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-002"],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "spec.md F-003",
       "steps": [
         "Open README.md in the plugin root",
@@ -67,8 +67,8 @@
         "Confirm the section explains how agents use it",
         "Confirm the section describes the skill directory structure location"
       ],
-      "evidence": [],
-      "notes": "Documentation only. Should be written after F-001 and F-002 are confirmed correct."
+      "evidence": ["03-evaluation.json: all 3 contract checks pass, Domain Skills section at line 157"],
+      "notes": "Completed in sprint 3. Domain Skills section added to README.md."
     }
   ]
 }
