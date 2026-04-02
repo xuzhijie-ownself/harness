@@ -146,6 +146,16 @@ If the run finishes in one sprint, the planner or coordinator should state why s
 - Update acceptance only after verification evidence exists.
 - If Codex plugin is detected (`.claude/settings.json` has `"codex@openai-codex": true`), use `/codex:adversarial-review` for deeper code review.
 
+### Runtime Verification Requirement
+
+For software projects (`domain_profile: software`), the evaluator MUST read `skills/harness-sdlc/SKILL.md` for runtime verification procedures. Build-only verification (`npm run build` passing) is NOT sufficient — the evaluator must also:
+1. Verify database is initialized (detect ORM, run migrations)
+2. Verify the application starts without errors
+3. Verify at least one API endpoint responds successfully
+4. Verify health check passes
+
+The SingPost project demonstrated that 14 features can pass build verification while the app crashes on startup due to an uninitialized database. Runtime verification prevents this class of failures.
+
 ## Coordinator
 
 The coordinator exists to keep the run convergent and auditable.

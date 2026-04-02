@@ -98,10 +98,10 @@
       "description": "Strengthen the evaluator section of SKILL.md to require runtime verification (application starts and responds) for software-profile projects, not just build-only verification.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-005",
       "steps": [
         "Read plugins/harness/skills/harness/SKILL.md",
@@ -110,7 +110,7 @@
         "Verify build-only verification is explicitly insufficient",
         "Grep for 'runtime verification' in SKILL.md"
       ],
-      "evidence": [],
+      "evidence": ["Sprint 5: Runtime Verification Requirement section added to Evaluator. software-profile specific. Build-only marked insufficient. 4 verification steps."],
       "notes": ""
     }
   ]
