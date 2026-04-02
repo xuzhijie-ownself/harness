@@ -18,6 +18,11 @@ Before proceeding:
 3. If reading `features.json`: verify it's valid JSON with at least one feature. If malformed -> STOP with error.
 4. If reading `config.json`: verify it's valid JSON. If missing -> use defaults silently.
 
+## Pre-flight
+
+1. Verify `.harness/` exists. If not -> "No harness to reset." STOP.
+2. Note: `release.json` and `CHANGELOG.md` live at project root -- they are NOT affected by harness resets.
+
 ## When to Use
 
 - Context is ~75% full
@@ -46,3 +51,8 @@ long sessions. Models exhibit "context anxiety" -- premature closure as context 
 6. Update `.harness/progress.md` -- record session end and reference to handoff.
 7. Print: "Handoff written to .harness/handoff.md. Start a new session and run
    /session to resume."
+
+## Post-flight
+
+1. Update `.harness/state.json`: set `status` to `"paused"`, set `stop_reason` to `"context reset via /reset"`
+2. Verify `.harness/handoff.md` was created and contains: current feature, last step, modified files, next step
