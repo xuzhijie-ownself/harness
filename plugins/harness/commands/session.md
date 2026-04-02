@@ -41,6 +41,13 @@ If `current_sprint_phase` is not `idle`, skip ahead to the corresponding phase i
 4. Run `bash .harness/init.sh` (or the command from `.harness/init.md`) -- STOP and report if baseline fails.
 5. Read `.harness/features.json` -- find highest-priority `passes: false` required feature.
 
+## Feature Selection
+
+When selecting the next failing feature:
+1. Read `depends_on` array for each candidate
+2. Skip features whose dependencies haven't passed yet
+3. If no eligible feature exists: print "All remaining features are dependency-blocked:" followed by the blockers. STOP.
+
 ## Contract Phase
 
 Set `current_sprint_phase` to `contract` in `state.json`.
@@ -76,6 +83,14 @@ Set `current_sprint_phase` to `evaluation` in `state.json`.
 
 Set `current_sprint_phase` to `idle` in `state.json` after completing the round.
 
+## Post-flight
+
+After updating features.json:
+1. Check if ALL required features now have `passes: true`
+2. If yes: print "All features pass. Triggering release..." -> spawn releaser agent
+3. Verify release artifacts created (release.json at root, CHANGELOG.md, git tag)
+4. If releaser fails: log warning but don't block session completion
+
 ## Auto-Commit
 
 After evaluation completes:
@@ -90,7 +105,7 @@ Code must be in a mergeable state before the session ends:
 - Git committed with a descriptive message
 - `.harness/progress.md` updated with what changed and what to do next
 
-## After Successful Resumption from Handoff
+## Handoff Cleanup
 
-If `.harness/handoff.md` was read in step 3 and this session completes successfully,
-delete `.harness/handoff.md` to signal clean resumption.
+- If `.harness/handoff.md` was read at session start AND session completed successfully -> delete handoff.md
+- If handoff.md exists but is for a DIFFERENT feature than current target -> warn user
