@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "initializer-1",
+  "updated_by": "evaluator-1",
   "features": [
     {
       "id": "F-001",
@@ -9,10 +9,10 @@
       "description": "Create plugins/harness/skills/harness-ba/SKILL.md (~350-400 lines) following the 10-section pattern established by harness-ea. The skill activates when domain_profile: business_analysis is set. Includes BA methodology, verification strategy, evaluation criteria (completeness, traceability, stakeholder_alignment, feasibility), sprint contract checklists, and reference materials.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-001",
       "steps": [
         "Create the SKILL.md file at plugins/harness/skills/harness-ba/SKILL.md",
@@ -25,8 +25,10 @@
         "Verify Sprint Contract Checklists include templates for Requirements Elicitation, Use Case Development, Process Modeling, Gap Analysis, Stakeholder Review",
         "Verify Repository Structure section defines business-analysis/ directory layout"
       ],
-      "evidence": [],
-      "notes": "Sprint 1. Highest priority -- establishes the pattern for F-002 and F-003."
+      "evidence": [
+        "01-evaluation.json: all contract checks passed, all criteria scored 4"
+      ],
+      "notes": "Sprint 1 PASS. All 10 sections present, 373 lines."
     },
     {
       "id": "F-002",
