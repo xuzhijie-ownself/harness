@@ -1,59 +1,32 @@
 {
   "round": 1,
   "decision": "PASS",
-  "target_feature_ids": ["F-001"],
+  "target_feature_ids": ["F-003"],
   "primary_scores": {
-    "product_depth": {
-      "score": 5,
-      "justification": "All 6 sections present with complete, non-trivial content including methodology matrices, detection tables, evaluation anchors, and checklist templates.",
-      "prior_round_score": null,
-      "drift_check": "First round, no prior score."
-    },
-    "functionality": {
-      "score": 5,
-      "justification": "Every table maps correctly to harness concepts. ORM table has 7 entries, server table has 8, framework detection covers 5 language ecosystems.",
-      "prior_round_score": null,
-      "drift_check": "First round, no prior score."
-    },
-    "visual_design": {
-      "score": 4,
-      "justification": "Clean Markdown formatting, consistent tables and headers. Score 4 because this is a knowledge artifact, not a visual product.",
-      "prior_round_score": null,
-      "drift_check": "First round, no prior score."
-    },
-    "code_quality": {
-      "score": 5,
-      "justification": "Valid YAML frontmatter, consistent Markdown structure, logical section ordering, no formatting issues.",
-      "prior_round_score": null,
-      "drift_check": "First round, no prior score."
-    }
+    "product_depth": { "score": 4, "justification": "codex_detection object comprehensively captures all detection state", "prior_round_score": null, "drift_check": "First round." },
+    "functionality": { "score": 4, "justification": "Both JSON schema and Markdown template updated correctly", "prior_round_score": null, "drift_check": "First round." },
+    "visual_design": { "score": 4, "justification": "Clean formatting, consistent with existing patterns", "prior_round_score": null, "drift_check": "First round." },
+    "code_quality": { "score": 4, "justification": "Well-structured JSON, clear field names", "prior_round_score": null, "drift_check": "First round." }
   },
   "contract_checks": [
-    { "id": "PD-01", "required": true, "result": "pass", "evidence": "All 6 sections present with non-trivial content" },
-    { "id": "FN-01", "required": true, "result": "pass", "evidence": "Methodology tables map to harness sprint/round/phase concepts" },
-    { "id": "FN-02", "required": true, "result": "pass", "evidence": "ORM table: 7 entries, Server table: 8 entries" },
-    { "id": "FN-03", "required": true, "result": "pass", "evidence": "All 4 criteria have 0-5 anchors with concrete descriptions" },
-    { "id": "CQ-01", "required": true, "result": "pass", "evidence": "Valid YAML frontmatter, consistent Markdown structure" }
+    { "id": "FN-01", "required": true, "result": "pass", "evidence": "codex_detection object at line 243" },
+    { "id": "FN-02", "required": true, "result": "pass", "evidence": "Detection fields at lines 457-460" }
   ],
   "blockers": [],
   "non_blocking_issues": [],
   "feature_evidence": [
-    {
-      "feature_id": "F-001",
-      "passes": true,
-      "reason": "All 6 sections complete, all contract checks pass, file well-structured at correct path."
-    }
+    { "feature_id": "F-003", "passes": true, "reason": "codex_detection object and template detection fields both present and correct." }
   ],
-  "test_results": {
-    "tests_written": [],
-    "passed": 0,
-    "failed": 0,
-    "skipped": 0,
-    "coverage": "N/A — knowledge-layer artifact"
-  },
+  "test_results": { "tests_written": [], "passed": 0, "failed": 0, "skipped": 0, "coverage": "N/A -- documentation project" },
   "review_findings": {
+    "review_mode": "claude",
+    "codex_detection": {
+      "config_use_codex": "auto",
+      "settings_codex_enabled": false,
+      "detection_result": "codex plugin not available in this environment",
+      "fallback_reason": "documentation-only project, no codex plugin installed"
+    },
     "blocking": [],
-    "non_blocking": [],
-    "review_mode": "claude"
+    "non_blocking": []
   }
 }

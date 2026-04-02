@@ -3,72 +3,115 @@
   "updated_by": "coordinator-1",
   "features": [
     {
-      "id": "F-001",
-      "title": "SDLC Skill File",
+      "id": "F-003",
+      "title": "Evaluation Schema Update",
       "category": "functional",
-      "description": "Create plugins/harness/skills/harness-sdlc/SKILL.md containing all six sections: Methodology Selection Matrix, Development Methodology, Testing Strategy, Build & Runtime Verification, Evaluation Criteria Anchors, and Sprint Contract Checklist Templates.",
+      "description": "Add codex_detection object to review_findings in the NN-evaluation.json schema in patterns.md. Update the NN-evaluation.md template Code Review section to include detection fields.",
       "required": true,
       "priority": "P0",
       "status": "complete",
       "passes": true,
       "depends_on": [],
-      "maturity": "polished",
+      "maturity": "reviewed",
+      "source_requirement": "spec.md F-003",
+      "steps": [
+        "Read plugins/harness/skills/harness/references/patterns.md",
+        "Verify NN-evaluation.json schema contains review_findings.codex_detection object",
+        "Verify codex_detection has fields: config_use_codex, settings_codex_enabled, detection_result, fallback_reason",
+        "Verify NN-evaluation.md template Code Review section includes detection fields",
+        "Grep for 'codex_detection' in patterns.md to confirm presence"
+      ],
+      "evidence": ["Sprint 1: codex_detection object added to review_findings schema; NN-evaluation.md template updated with detection fields"],
+      "notes": "Schema-first: other features reference this schema."
+    },
+    {
+      "id": "F-001",
+      "title": "Evaluator Codex Pre-Flight",
+      "category": "functional",
+      "description": "Rewrite agents/evaluator.md codex detection from descriptive bullets to a mandatory sequential pre-flight section (Section 0) before the testing section. Add SDLC skill reference to evaluator read list.",
+      "required": true,
+      "priority": "P0",
+      "status": "pending",
+      "passes": false,
+      "depends_on": ["F-003"],
+      "maturity": "draft",
       "source_requirement": "spec.md F-001",
       "steps": [
-        "Verify plugins/harness/skills/harness-sdlc/SKILL.md exists",
-        "Confirm YAML frontmatter is present and valid",
-        "Check Section 1: Methodology Selection Matrix with Agile/Scrum/Waterfall/Kanban/Lean mappings",
-        "Check Section 2: Development Methodology with TDD/BDD/DDD/Clean Architecture/Prototype-First guidance",
-        "Check Section 3: Testing Strategy with test pyramid and framework auto-detection tables",
-        "Check Section 4: Build & Runtime Verification with ORM/database and server detection tables",
-        "Check Section 5: Evaluation Criteria Anchors with 0-5 scale for all four criteria",
-        "Check Section 6: Sprint Contract Checklist Templates for API/UI/Database/Infrastructure"
+        "Read plugins/harness/agents/evaluator.md",
+        "Verify a 'Section 0' or 'Pre-Flight' section exists before the testing section",
+        "Verify the section contains mandatory sequential codex detection steps",
+        "Verify the read list includes harness-sdlc/SKILL.md",
+        "Grep for 'pre-flight' or 'Pre-Flight' in evaluator.md"
       ],
-      "evidence": ["01-evaluation.json: all 5 contract checks pass, all 6 sections verified complete"],
-      "notes": "Completed in sprint 1. All sections present with complete content."
+      "evidence": [],
+      "notes": ""
     },
     {
       "id": "F-002",
-      "title": "Harness Integration",
-      "category": "integration",
-      "description": "Update plugins/harness/skills/harness/SKILL.md to add a reference directing agents to the harness-sdlc skill when domain_profile: software is active. Minimal, non-breaking addition.",
+      "title": "Evaluator Role Mirror",
+      "category": "functional",
+      "description": "Mirror the pre-flight changes in skills/harness/roles/evaluator.md. Add harness-sdlc to the Read list. Replace descriptive codex bullets with reference to pre-flight.",
       "required": true,
       "priority": "P0",
-      "status": "complete",
-      "passes": true,
+      "status": "pending",
+      "passes": false,
       "depends_on": ["F-001"],
-      "maturity": "polished",
+      "maturity": "draft",
       "source_requirement": "spec.md F-002",
       "steps": [
-        "Open plugins/harness/skills/harness/SKILL.md",
-        "Verify a new reference paragraph exists in the Domain Profiles section",
-        "Confirm the reference directs agents to harness-sdlc/SKILL.md for software domain projects",
-        "Verify no existing content in SKILL.md was corrupted or removed"
+        "Read plugins/harness/skills/harness/roles/evaluator.md",
+        "Verify pre-flight section or reference exists",
+        "Verify harness-sdlc is in the Read list",
+        "Verify descriptive codex bullets have been replaced",
+        "Grep for 'pre-flight' or 'harness-sdlc' in roles/evaluator.md"
       ],
-      "evidence": ["02-evaluation.json: all 3 contract checks pass, reference subsection verified at line 245, no content corrupted"],
-      "notes": "Completed in sprint 2. Domain Skill References subsection added under Domain Profiles."
+      "evidence": [],
+      "notes": ""
     },
     {
-      "id": "F-003",
-      "title": "Plugin Manifest & README",
-      "category": "documentation",
-      "description": "Update README.md to document the SDLC domain skill: what it provides, how agents use it, and where it lives in the skill directory structure.",
+      "id": "F-004",
+      "title": "Coordinator Enforcement",
+      "category": "functional",
+      "description": "In agents/coordinator.md: add Codex Detection Enforcement section, expand sprint artifact checks from 3 to 5 (adding contract-review.md and evaluation.json), add context freshness trace logging. Mirror in roles/coordinator.md.",
+      "required": true,
+      "priority": "P0",
+      "status": "pending",
+      "passes": false,
+      "depends_on": ["F-003"],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-004",
+      "steps": [
+        "Read plugins/harness/agents/coordinator.md",
+        "Verify Codex Detection Enforcement section exists",
+        "Verify 5 sprint artifacts are checked (including contract-review.md and evaluation.json)",
+        "Verify context freshness trace logging (rounds_since_reset) is present",
+        "Read plugins/harness/skills/harness/roles/coordinator.md and verify codex enforcement reference",
+        "Grep for 'contract-review.md' and 'evaluation.json' in coordinator.md"
+      ],
+      "evidence": [],
+      "notes": "Modifies two files: agents/coordinator.md and roles/coordinator.md."
+    },
+    {
+      "id": "F-005",
+      "title": "SKILL.md Runtime Verification",
+      "category": "functional",
+      "description": "Strengthen the evaluator section of SKILL.md to require runtime verification (application starts and responds) for software-profile projects, not just build-only verification.",
       "required": true,
       "priority": "P1",
-      "status": "complete",
-      "passes": true,
-      "depends_on": ["F-002"],
-      "maturity": "polished",
-      "source_requirement": "spec.md F-003",
+      "status": "pending",
+      "passes": false,
+      "depends_on": ["F-001"],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-005",
       "steps": [
-        "Open README.md in the plugin root",
-        "Verify a new section documents the SDLC domain skill",
-        "Confirm the section explains what the skill provides",
-        "Confirm the section explains how agents use it",
-        "Confirm the section describes the skill directory structure location"
+        "Read plugins/harness/skills/harness/SKILL.md",
+        "Verify the evaluator section explicitly requires runtime verification",
+        "Verify the requirement applies specifically to software-profile projects",
+        "Verify build-only verification is explicitly insufficient",
+        "Grep for 'runtime verification' in SKILL.md"
       ],
-      "evidence": ["03-evaluation.json: all 3 contract checks pass, Domain Skills section at line 157"],
-      "notes": "Completed in sprint 3. Domain Skills section added to README.md."
+      "evidence": [],
+      "notes": ""
     }
   ]
 }

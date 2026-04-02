@@ -239,9 +239,15 @@ State.json holds runtime state (round, phase, errors). Config.json holds persist
     "coverage": ""
   },
   "review_findings": {
+    "review_mode": "claude",
+    "codex_detection": {
+        "config_use_codex": "auto",
+        "settings_codex_enabled": false,
+        "detection_result": "codex plugin not found in .claude/settings.json",
+        "fallback_reason": null
+    },
     "blocking": [],
-    "non_blocking": [],
-    "review_mode": "claude"
+    "non_blocking": []
   }
 }
 ```
@@ -448,6 +454,10 @@ For each criterion, reference the anchor from evaluator-calibration.md and compa
 
 ## Code Review
 - Review mode: codex | claude
+- Config use_codex: [value from config.json]
+- Settings codex enabled: [true|false from .claude/settings.json]
+- Detection result: [what was found]
+- Fallback reason: [if codex was expected but claude used, why]
 - Blocking findings: [list]
 - Non-blocking findings: [list]
 

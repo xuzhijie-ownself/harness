@@ -3,38 +3,41 @@
 ## Metadata
 - Role: initializer
 - Agent: initializer-1
-- Inputs: spec.md, plugin directory structure
+- Inputs: spec.md, plugin source tree
 - Status: accepted
 
-## Project Overview
+## Project
 
-This project creates an SDLC domain skill for the harness plugin. It is a knowledge-layer project -- all deliverables are Markdown files, not executable code. There is no dev server, no build step, and no runtime to verify.
+Codex Fix + Enhancements -- a documentation/schema fix project targeting 6 Markdown files and 1 JSON schema section within the long-running-harness plugin. No application code is modified.
 
-## Verification Steps
+## Prerequisites
 
-Since this is a documentation/knowledge project, verification consists of checking that key plugin files exist and contain the expected content.
+No build tools, package managers, or dev servers are required. This project modifies only Markdown and JSON schema files within the plugin tree.
 
-### Pre-existing files (should already exist)
-- `plugins/long-running-harness/plugins/harness/skills/harness/SKILL.md` -- main harness skill file
-- `plugins/long-running-harness/plugins/harness/skills/harness/roles/` -- agent role definitions
-- `plugins/long-running-harness/plugins/harness/skills/harness/references/patterns.md` -- shared patterns
+## Verification
 
-### Files to be created (F-001)
-- `plugins/long-running-harness/plugins/harness/skills/harness-sdlc/SKILL.md` -- the SDLC domain skill
+The init.sh script verifies that all 6 target files exist before any sprint work begins:
 
-### Files to be modified (F-002)
-- `plugins/long-running-harness/plugins/harness/skills/harness/SKILL.md` -- add SDLC skill reference
+1. `plugins/harness/agents/evaluator.md` (F-001)
+2. `plugins/harness/agents/coordinator.md` (F-004)
+3. `plugins/harness/skills/harness/SKILL.md` (F-005)
+4. `plugins/harness/skills/harness/references/patterns.md` (F-003)
+5. `plugins/harness/skills/harness/roles/evaluator.md` (F-002)
+6. `plugins/harness/skills/harness/roles/coordinator.md` (F-004)
 
-### Files to be modified (F-003)
-- `plugins/long-running-harness/README.md` -- add SDLC skill documentation
+## Sprint ordering
 
-## How to Verify
+1. F-003 -- Schema update in patterns.md (no dependencies)
+2. F-001 -- Evaluator pre-flight in agents/evaluator.md (depends on F-003)
+3. F-002 -- Evaluator role mirror in roles/evaluator.md (depends on F-001)
+4. F-004 -- Coordinator enforcement in agents/coordinator.md + roles/coordinator.md (depends on F-003)
+5. F-005 -- SKILL.md runtime verification (depends on F-001)
 
-Run `init.sh` (or `init.bat` on Windows) to check that key plugin structure files exist. The script performs file-existence checks only -- there is no server to start or API to test.
+## Feature verification method
 
-## Environment Requirements
-
-- No runtime dependencies
-- No package manager required
-- No build tools required
-- A text editor and shell access are sufficient
+All features are verified by reading file contents and grepping for key terms:
+- F-003: `codex_detection` in patterns.md
+- F-001: `pre-flight` or `Pre-Flight` in agents/evaluator.md
+- F-002: `pre-flight` or `harness-sdlc` in roles/evaluator.md
+- F-004: `contract-review.md`, `evaluation.json`, `rounds_since_reset` in agents/coordinator.md
+- F-005: `runtime verification` in SKILL.md
