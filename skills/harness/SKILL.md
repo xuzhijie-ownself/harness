@@ -43,6 +43,14 @@ This harness follows a GAN-like (Generative Adversarial Network) pattern from An
 
 The adversarial tension between generator and evaluator prevents the common failure mode where a model is too lenient grading its own work. This pattern applies regardless of domain — whether building software, writing tender documents, or designing architecture.
 
+## Configuration
+
+The harness uses `.harness/config.json` as the single configuration source for persistent preferences. State.json holds runtime state (round, phase, errors); config.json holds tunable settings.
+
+The initializer creates a default `config.json` during `/init`. Users can edit it manually between sessions. Config.json values take precedence over state.json defaults when both define the same field (e.g., `context_reset_threshold`).
+
+Key fields: `use_codex` (auto/on/off), `context_reset_threshold`, `auto_commit`, `auto_retro`, `retro_interval`, `max_retry_on_failure`, `evaluator_strictness` (lenient/standard/strict), `commit_prefix_pass`, `commit_prefix_fail`, `commit_tag`. See [references/patterns.md](references/patterns.md) for the full schema and field descriptions.
+
 ## Dispatch Rules
 
 When the environment supports separate agents or sessions, dispatch explicitly:

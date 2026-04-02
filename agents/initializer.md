@@ -24,6 +24,7 @@ Does NOT modify: product code, .harness/spec.md
 3. `.harness/init.md` — human-readable setup documentation
 4. `.harness/init.sh` — executable startup script (dev server + smoke test); use the template from `references/patterns.md`
 5. `.harness/init.bat` — Windows CMD equivalent of init.sh; use the template from `references/patterns.md`
+6. `.harness/config.json` — default configuration with standard settings; use the schema from `references/patterns.md`. User can edit between sessions.
 
 Generate both init.sh (bash) and init.bat (Windows CMD) using templates from patterns.md.
 

@@ -77,6 +77,7 @@ For review artifacts, also include:
       "priority": "high",
       "status": "not_started",
       "passes": false,
+      "depends_on": [],
       "steps": [
         "Navigate to task list",
         "Click 'New Task' button",
@@ -90,6 +91,10 @@ For review artifacts, also include:
   ]
 }
 ```
+
+Feature field reference:
+
+- `depends_on`: Array of feature IDs that must have `passes: true` before this feature is targeted. Empty or absent means no dependencies. The coordinator skips dependency-blocked features during target selection.
 
 ### `state.json`
 
@@ -135,6 +140,38 @@ Field reference:
 - `methodology`: One of `agile` (default), `waterfall`, `scrum`, `kanban`. Set during `/init`.
 - `errors`: Array of `{ "round", "agent", "error", "timestamp" }` objects logged on agent spawn failures.
 - `cost_tracking`: Per-round timestamps for duration tracking across phases.
+
+### `config.json`
+
+```json
+{
+  "use_codex": "auto",
+  "context_reset_threshold": 3,
+  "auto_commit": true,
+  "auto_retro": true,
+  "retro_interval": 3,
+  "max_retry_on_failure": 3,
+  "evaluator_strictness": "standard",
+  "commit_prefix_pass": "feat",
+  "commit_prefix_fail": "wip",
+  "commit_tag": "[harness]"
+}
+```
+
+Field reference:
+
+- `use_codex`: Controls Codex review usage. One of `"auto"` (detect and use if available), `"on"` (always attempt, warn if unavailable), `"off"` (never use). Default: `"auto"`.
+- `context_reset_threshold`: Number of rounds before coordinator pauses for context refresh. Overrides `state.json` value if present. Default: `3`.
+- `auto_commit`: Whether the coordinator auto-commits after each sprint phase. Default: `true`.
+- `auto_retro`: Whether the coordinator generates sprint retrospectives automatically. Default: `true`.
+- `retro_interval`: Number of rounds between automatic retrospectives. Default: `3`.
+- `max_retry_on_failure`: Maximum retry attempts when an agent spawn or evaluation fails. Default: `3`.
+- `evaluator_strictness`: Evaluator grading strictness level. One of `"lenient"`, `"standard"`, `"strict"`. Default: `"standard"`.
+- `commit_prefix_pass`: Git commit prefix for passing evaluations. Default: `"feat"`.
+- `commit_prefix_fail`: Git commit prefix for failing evaluations. Default: `"wip"`.
+- `commit_tag`: Tag appended to all harness-generated commit messages. Default: `"[harness]"`.
+
+State.json holds runtime state (round, phase, errors). Config.json holds persistent preferences. The initializer creates a default config.json during `/init`. Users can edit it manually between sessions. Config.json values take precedence over state.json defaults when both define the same field.
 
 ### `NN-evaluation.json`
 

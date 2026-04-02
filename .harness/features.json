@@ -9,9 +9,9 @@
       "description": "Add use_codex field (auto/off/on) to config.json and state.json. Update evaluator to check this field before Codex detection. Update commands/init.md with optional prompt. Update initializer to include the field.",
       "required": true,
       "priority": "P0",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 6,
       "depends_on": ["E-011"],
       "steps": [
         "Verify config.json schema in patterns.md contains use_codex field with allowed values auto, off, on",
@@ -20,8 +20,8 @@
         "Verify commands/init.md includes optional Codex toggle prompt",
         "Verify agents/initializer.md sets use_codex in default config output"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["config.json schema in patterns.md contains use_codex field", "evaluator agent+role uses 3-step codex detection from config.json", "commands/init.md includes Codex toggle prompt", "initializer creates config.json with use_codex"],
+      "notes": "Completed in sprint 6"
     },
     {
       "id": "E-002",
@@ -53,17 +53,17 @@
       "description": "Add depends_on field (array of feature IDs) to features.json schema in patterns.md. Update coordinator to skip dependency-blocked features when selecting the next target.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 7,
       "depends_on": [],
       "steps": [
         "Verify features.json schema in patterns.md contains depends_on field as array of feature IDs",
         "Verify agents/coordinator.md documents dependency-blocked feature skipping logic",
         "Verify roles/coordinator.md references dependency checking in target selection"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["features.json schema in patterns.md contains depends_on field", "coordinator agent selects features with dependency-aware logic", "coordinator role references dependency checking in simplified loop and focus"],
+      "notes": "Completed in sprint 7"
     },
     {
       "id": "E-004",
@@ -92,17 +92,17 @@
       "description": "Update agents/coordinator.md and roles/coordinator.md to record ISO timestamps at each phase boundary into state.json.cost_tracking.rounds[].",
       "required": true,
       "priority": "P0",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 4,
       "depends_on": [],
       "steps": [
         "Verify agents/coordinator.md documents recording ISO timestamps at phase boundaries",
         "Verify roles/coordinator.md references cost_tracking timestamp recording",
         "Verify state.json schema in patterns.md contains cost_tracking.rounds[] with phase timestamps"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["coordinator agent records ISO timestamps at each phase boundary", "coordinator role references cost_tracking timestamp recording", "state.json schema already contains cost_tracking.rounds[] with phase timestamps"],
+      "notes": "Completed in sprint 4"
     },
     {
       "id": "E-006",
@@ -217,9 +217,9 @@
       "description": "Add .harness/config.json schema to patterns.md with fields: use_codex, context_reset_threshold, auto_commit, auto_retro, retro_interval, max_retry_on_failure, evaluator_strictness, commit_prefix_pass, commit_prefix_fail, commit_tag. Update agents/initializer.md to create default config. Update coordinator and evaluator to read from config.",
       "required": true,
       "priority": "P0",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 5,
       "depends_on": [],
       "steps": [
         "Verify patterns.md contains config.json schema with all specified fields",
@@ -230,8 +230,8 @@
         "Verify agents/coordinator.md references reading from config.json",
         "Verify agents/evaluator.md references reading from config.json"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["patterns.md contains config.json schema with all 10 fields", "initializer creates config.json as required output 6", "coordinator reads config.json at loop start", "evaluator reads config.json for use_codex and evaluator_strictness", "SKILL.md contains Configuration section"],
+      "notes": "Completed in sprint 5"
     }
   ]
 }

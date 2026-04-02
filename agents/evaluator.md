@@ -32,8 +32,12 @@ The evaluator performs three jobs in the post-implementation invocation:
 ### 2. Code Review
 
 - Check code quality: readability, security, patterns compliance, performance, error handling
-- If Codex plugin detected (`.claude/settings.json` has `"codex@openai-codex": true`): use `/codex:adversarial-review` on changed files
-- Otherwise: Claude-based review (read each changed file, check for issues)
+- Read `.harness/config.json` for `use_codex` and `evaluator_strictness` settings
+- Codex detection (3-step):
+  1. Read `config.json` → `use_codex` field
+  2. If `"off"`: skip Codex entirely, use Claude-based review
+  3. If `"on"`: attempt `/codex:adversarial-review` on changed files, warn if not available
+  4. If `"auto"` or absent: detect via `.claude/settings.json` (has `"codex@openai-codex": true`), use if available
 - Classify findings as BLOCKING or NON-BLOCKING
 
 ### 3. Grading

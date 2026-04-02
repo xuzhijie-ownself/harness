@@ -28,8 +28,12 @@ Use this file only for the evaluator role.
 
 ### Code Review
 - Check code quality: readability, security, patterns compliance, performance, error handling
-- If Codex plugin detected (`.claude/settings.json` has `"codex@openai-codex": true`): use `/codex:adversarial-review`
-- Otherwise: Claude-based review (read changed files, check for issues)
+- Read `.harness/config.json` for `use_codex` and `evaluator_strictness` settings
+- Codex detection (3-step):
+  1. Read `config.json` → `use_codex` field
+  2. If `"off"`: skip Codex entirely, use Claude-based review
+  3. If `"on"`: attempt `/codex:adversarial-review`, warn if not available
+  4. If `"auto"` or absent: detect via `.claude/settings.json` (has `"codex@openai-codex": true`), use if available
 - Classify findings as BLOCKING or NON-BLOCKING
 
 ### Grading

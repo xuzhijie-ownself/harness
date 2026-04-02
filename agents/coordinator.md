@@ -18,18 +18,27 @@ Owns: .harness/state.json, .harness/summary.md, .harness/decomposition.md
 
 ## Loop Per Round
 
-1. Update `.harness/state.json` — increment current_round
-2. Pick highest-priority `passes: false` required feature
-3. Spawn `generator` agent (propose contract)
-4. Spawn `evaluator` agent (review contract)
-5. If rejected: request contract revision; re-spawn evaluator
-6. Spawn `generator` agent (implement)
-7. Auto-commit: `git add -A && git commit -m "wip(F-XXX): implement <title> — sprint N [harness]"`
-8. Spawn `evaluator` agent (test + review + grade — all-in-one)
-9. Auto-commit: `git add -A && git commit -m "feat/wip(F-XXX): <title> — sprint N [harness]"`
-10. Update `.harness/features.json` from evaluator feature_evidence
-11. Check stop conditions (all required features pass, or hard blocker)
-12. If all required features pass: spawn `releaser` agent before writing summary
+1. Read `.harness/config.json` at loop start. Use config values for: commit prefixes (`commit_prefix_pass`, `commit_prefix_fail`), retry limit (`max_retry_on_failure`), retro interval (`retro_interval`), context reset threshold (`context_reset_threshold` — overrides state.json if present in config), commit tag (`commit_tag`).
+2. Update `.harness/state.json` — increment current_round
+3. Append a new entry to `state.json` `cost_tracking.rounds[]`: `{ "round": N, "started_at": "<ISO timestamp>", "completed_at": "", "feature_id": "<target feature>", "outcome": "", "phases": { "contract": { "started_at": "", "completed_at": "" }, "implementation": { "started_at": "", "completed_at": "" }, "evaluation": { "started_at": "", "completed_at": "" } } }`
+4. Pick highest-priority `passes: false` required feature whose `depends_on` features all have `passes: true`. If no eligible feature exists, pause with `stop_reason`: `"All remaining features are dependency-blocked."`
+5. Set `cost_tracking.rounds[N].phases.contract.started_at` to current ISO timestamp
+6. Spawn `generator` agent (propose contract)
+7. Spawn `evaluator` agent (review contract)
+8. If rejected: request contract revision; re-spawn evaluator
+9. Set `cost_tracking.rounds[N].phases.contract.completed_at` to current ISO timestamp
+10. Set `cost_tracking.rounds[N].phases.implementation.started_at` to current ISO timestamp
+11. Spawn `generator` agent (implement)
+12. Auto-commit: `git add -A && git commit -m "wip(F-XXX): implement <title> — sprint N [harness]"`
+13. Set `cost_tracking.rounds[N].phases.implementation.completed_at` to current ISO timestamp
+14. Set `cost_tracking.rounds[N].phases.evaluation.started_at` to current ISO timestamp
+15. Spawn `evaluator` agent (test + review + grade — all-in-one)
+16. Set `cost_tracking.rounds[N].phases.evaluation.completed_at` to current ISO timestamp
+17. Set `cost_tracking.rounds[N].completed_at` to current ISO timestamp and `outcome` to `"pass"` or `"fail"`
+18. Auto-commit: `git add -A && git commit -m "feat/wip(F-XXX): <title> — sprint N [harness]"`
+19. Update `.harness/features.json` from evaluator feature_evidence
+20. Check stop conditions (all required features pass, or hard blocker)
+21. If all required features pass: spawn `releaser` agent before writing summary
 
 ### Auto-Commit Protocol
 

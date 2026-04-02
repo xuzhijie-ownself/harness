@@ -19,14 +19,16 @@ Use this file only for the coordinator role.
 ## Focus
 
 - enforce the execution strategy
-- choose the next failing feature
+- choose the next failing feature whose `depends_on` features all have `passes: true` (dependency-aware selection)
 - keep the run convergent
 - pause when the run is no longer making real progress
 - dispatch only generator and evaluator (2-agent loop)
+- update `state.json` `cost_tracking` timestamps at each phase transition (contract, implementation, evaluation start/end)
+- read `.harness/config.json` at loop start; use config values for commit prefixes, retry limit, retro interval, context reset threshold (config overrides state.json defaults)
 
 ## Simplified Loop
 
-1. Pick failing feature
+1. Pick highest-priority failing feature whose `depends_on` features all pass. If no eligible feature, pause with `stop_reason: "All remaining features are dependency-blocked."`
 2. Spawn generator -> contract
 3. Spawn evaluator -> contract review
 4. If rejected -> back to 2

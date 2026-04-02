@@ -94,7 +94,15 @@ check_json "hooks/hooks.json"
 check_json ".harness/features.json"
 check_json ".harness/state.json"
 
-# --- Section 6: Install script syntax ---
+# --- Section 6: Config.json validation (if exists) ---
+echo "-- Checking config.json (if exists) --"
+if [ -f "$PLUGIN_DIR/.harness/config.json" ]; then
+  check_json ".harness/config.json"
+else
+  echo "  config.json not present (optional, created at runtime by initializer)"
+fi
+
+# --- Section 7: Install script syntax ---
 echo "-- Checking install.sh syntax --"
 if bash -n "$PLUGIN_DIR/install.sh" 2>/dev/null; then
   PASS=$((PASS + 1))
@@ -104,7 +112,7 @@ else
   ERRORS="$ERRORS\n  SYNTAX ERROR: install.sh"
 fi
 
-# --- Section 7: Stale reference checks ---
+# --- Section 8: Stale reference checks ---
 echo "-- Checking for stale references --"
 for f in agents/*.md skills/harness/SKILL.md skills/harness/roles/*.md skills/harness/references/*.md; do
   check_no_stale_refs "$f" "skills/long-running-harness" "old skill path"
