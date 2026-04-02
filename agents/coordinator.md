@@ -52,7 +52,7 @@ If an agent spawn fails (timeout, API error, crash):
 ## Context Freshness
 
 Track `rounds_since_reset` in `.harness/state.json` (starts at 0, increments each round).
-After 3 rounds (`rounds_since_reset >= 3`):
+Read `context_reset_threshold` from `state.json` (default 3). After that many rounds (`rounds_since_reset >= context_reset_threshold`):
 1. Write `.harness/handoff.md` with current progress summary.
 2. Set `rounds_since_reset` to 0.
 3. Pause with `stop_reason`: `"context refresh — resume with /session or /run"`.

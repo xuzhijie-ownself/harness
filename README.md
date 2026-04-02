@@ -63,6 +63,8 @@ bash plugins/long-running-harness/install.sh --uninstall
 | coordinator | `/run` | `skills/harness/roles/coordinator.md` |
 | releaser | `/release`, coordinator | `skills/harness/roles/releaser.md` |
 
+The harness follows a **GAN-like pattern**: the generator produces artifacts and the evaluator adversarially grades them. The generator cannot self-approve; the evaluator cannot edit product artifacts. This separation prevents the common failure mode where a model is too lenient grading its own work. The loop iterates (generate, evaluate, feedback, regenerate) until the evaluator accepts.
+
 ---
 
 ## Shared Contract

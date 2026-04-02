@@ -105,6 +105,7 @@ For review artifacts, also include:
   "current_failure_streak": 0,
   "last_feature_pass_delta": 1,
   "stop_reason": "",
+  "context_reset_threshold": 3,
   "rounds_since_reset": 1,
   "current_sprint_phase": "idle",
   "methodology": "agile",
@@ -128,7 +129,8 @@ For review artifacts, also include:
 
 Field reference:
 
-- `rounds_since_reset`: Counter incremented each round; triggers context refresh handoff at 3.
+- `context_reset_threshold`: Number of rounds before coordinator pauses for context refresh. Default: 3.
+- `rounds_since_reset`: Counter incremented each round; triggers context refresh handoff at `context_reset_threshold`.
 - `current_sprint_phase`: One of `idle`, `contract`, `implementation`, `evaluation`. Used for sprint resume.
 - `methodology`: One of `agile` (default), `waterfall`, `scrum`, `kanban`. Set during `/init`.
 - `errors`: Array of `{ "round", "agent", "error", "timestamp" }` objects logged on agent spawn failures.

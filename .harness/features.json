@@ -1,0 +1,237 @@
+{
+  "version": 1,
+  "updated_by": "initializer-1",
+  "features": [
+    {
+      "id": "E-001",
+      "title": "Codex Review Toggle",
+      "category": "configuration",
+      "description": "Add use_codex field (auto/off/on) to config.json and state.json. Update evaluator to check this field before Codex detection. Update commands/init.md with optional prompt. Update initializer to include the field.",
+      "required": true,
+      "priority": "P0",
+      "status": "pending",
+      "passes": false,
+      "sprint": null,
+      "depends_on": ["E-011"],
+      "steps": [
+        "Verify config.json schema in patterns.md contains use_codex field with allowed values auto, off, on",
+        "Verify state.json schema in patterns.md contains use_codex field as legacy fallback",
+        "Verify agents/evaluator.md references use_codex before attempting Codex detection",
+        "Verify commands/init.md includes optional Codex toggle prompt",
+        "Verify agents/initializer.md sets use_codex in default config output"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "E-002",
+      "title": "Cross-Domain Profiles with BA Foundation",
+      "category": "functional",
+      "description": "Add domain profile system to SKILL.md with 7 built-in profiles (software, architecture, tender, research, content, business_analysis, custom). Add domain_profile and secondary_profile to state.json schema. Add source_requirement to features.json. Update planner, evaluator, init command, and README.",
+      "required": true,
+      "priority": "P1",
+      "status": "pending",
+      "passes": false,
+      "sprint": null,
+      "depends_on": [],
+      "steps": [
+        "Verify SKILL.md contains domain profiles section with all 7 built-in profiles",
+        "Verify state.json schema in patterns.md contains domain_profile and secondary_profile fields",
+        "Verify features.json schema in patterns.md contains source_requirement field",
+        "Verify agents/planner.md supports domain profile selection",
+        "Verify agents/evaluator.md uses profile-driven evaluation criteria",
+        "Verify commands/init.md includes domain profile prompt",
+        "Verify README.md contains domain profile table"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "E-003",
+      "title": "Feature Dependencies",
+      "category": "structural",
+      "description": "Add depends_on field (array of feature IDs) to features.json schema in patterns.md. Update coordinator to skip dependency-blocked features when selecting the next target.",
+      "required": true,
+      "priority": "P1",
+      "status": "pending",
+      "passes": false,
+      "sprint": null,
+      "depends_on": [],
+      "steps": [
+        "Verify features.json schema in patterns.md contains depends_on field as array of feature IDs",
+        "Verify agents/coordinator.md documents dependency-blocked feature skipping logic",
+        "Verify roles/coordinator.md references dependency checking in target selection"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "E-004",
+      "title": "Configurable Context Reset Threshold",
+      "category": "configuration",
+      "description": "Add context_reset_threshold field (default 3) to state.json schema in patterns.md. Update coordinator to read this field instead of using a hardcoded value. Update SKILL.md to document the field.",
+      "required": true,
+      "priority": "P0",
+      "status": "complete",
+      "passes": true,
+      "sprint": 3,
+      "depends_on": [],
+      "steps": [
+        "Verify state.json schema in patterns.md contains context_reset_threshold field with default 3",
+        "Verify agents/coordinator.md references context_reset_threshold instead of hardcoded value",
+        "Verify SKILL.md documents the context_reset_threshold field",
+        "Verify no hardcoded reset threshold of 3 remains as the sole option in coordinator"
+      ],
+      "evidence": ["patterns.md state.json schema updated with context_reset_threshold field", "coordinator.md reads context_reset_threshold from state.json", "SKILL.md documents configurable threshold"],
+      "notes": "Completed in sprint 3"
+    },
+    {
+      "id": "E-005",
+      "title": "Cost Tracking Implementation",
+      "category": "operational",
+      "description": "Update agents/coordinator.md and roles/coordinator.md to record ISO timestamps at each phase boundary into state.json.cost_tracking.rounds[].",
+      "required": true,
+      "priority": "P0",
+      "status": "pending",
+      "passes": false,
+      "sprint": null,
+      "depends_on": [],
+      "steps": [
+        "Verify agents/coordinator.md documents recording ISO timestamps at phase boundaries",
+        "Verify roles/coordinator.md references cost_tracking timestamp recording",
+        "Verify state.json schema in patterns.md contains cost_tracking.rounds[] with phase timestamps"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "E-006",
+      "title": "GAN Pattern Documentation",
+      "category": "documentation",
+      "description": "Add GAN Pattern section to SKILL.md and README.md explaining the adversarial generator/evaluator design, why the generator cannot self-approve, and how the loop iterates until acceptance.",
+      "required": true,
+      "priority": "P0",
+      "status": "complete",
+      "passes": true,
+      "sprint": 1,
+      "depends_on": [],
+      "steps": [
+        "Verify SKILL.md contains a GAN Pattern section",
+        "Verify the GAN Pattern section explains the adversarial generator/evaluator design",
+        "Verify the section explains why the generator cannot self-approve",
+        "Verify the section explains how the loop iterates until acceptance",
+        "Verify README.md contains a GAN pattern explanation"
+      ],
+      "evidence": ["SKILL.md GAN Pattern section added after Article Default", "README.md GAN pattern paragraph added after Roles table"],
+      "notes": "Completed in sprint 1"
+    },
+    {
+      "id": "E-007",
+      "title": "Cross-Platform Init",
+      "category": "structural",
+      "description": "Update agents/initializer.md and roles/initializer.md to generate both init.sh and init.bat. Update SKILL.md artifact list to reference both scripts.",
+      "required": true,
+      "priority": "P0",
+      "status": "complete",
+      "passes": true,
+      "sprint": 2,
+      "depends_on": [],
+      "steps": [
+        "Verify agents/initializer.md documents generating both init.sh and init.bat",
+        "Verify roles/initializer.md references both init.sh and init.bat generation",
+        "Verify SKILL.md artifact list references both init.sh and init.bat"
+      ],
+      "evidence": ["agents/initializer.md updated with init.bat as required output 5", "roles/initializer.md updated with init.bat in Write/Owns list", "SKILL.md artifact list updated to include init.bat"],
+      "notes": "Completed in sprint 2"
+    },
+    {
+      "id": "E-008",
+      "title": "Subjective Quality Grading Framework",
+      "category": "evaluation",
+      "description": "Add rubric anchor system to SKILL.md and patterns.md. Enhance NN-evaluation.json schema with justification, prior_round_score, drift_check fields. Add evaluator-calibration.md template. Update evaluator for calibration creation on round 1 and comparative scoring.",
+      "required": true,
+      "priority": "P1",
+      "status": "pending",
+      "passes": false,
+      "sprint": null,
+      "depends_on": [],
+      "steps": [
+        "Verify SKILL.md contains rubric anchor system documentation",
+        "Verify patterns.md contains rubric anchor definitions",
+        "Verify NN-evaluation.json schema contains justification field",
+        "Verify NN-evaluation.json schema contains prior_round_score field",
+        "Verify NN-evaluation.json schema contains drift_check field",
+        "Verify patterns.md contains evaluator-calibration.md template",
+        "Verify agents/evaluator.md documents calibration creation on round 1",
+        "Verify agents/evaluator.md documents comparative scoring approach"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "E-009",
+      "title": "Sprint Retrospective and Learning Loop",
+      "category": "operational",
+      "description": "Add retrospective template to patterns.md. Update coordinator to generate retrospectives every N rounds (configurable via retro_interval in config.json) or after a FAIL. Store as .harness/sprints/retro-RX-RY.md. Coordinator reads latest retro before starting the next round.",
+      "required": true,
+      "priority": "P1",
+      "status": "pending",
+      "passes": false,
+      "sprint": null,
+      "depends_on": ["E-011"],
+      "steps": [
+        "Verify patterns.md contains a retrospective template (retro-RX-RY.md)",
+        "Verify agents/coordinator.md documents retrospective generation every N rounds",
+        "Verify retro_interval is referenced from config.json",
+        "Verify coordinator generates retrospective after a FAIL",
+        "Verify retrospectives are stored as .harness/sprints/retro-RX-RY.md",
+        "Verify coordinator reads latest retro before starting next round"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "E-010",
+      "title": "Feature Maturity Levels",
+      "category": "evaluation",
+      "description": "Add maturity field (draft/functional/reviewed/polished/accepted) to features.json schema. Update evaluator to set maturity based on scores. Update SKILL.md with maturity level documentation.",
+      "required": true,
+      "priority": "P1",
+      "status": "pending",
+      "passes": false,
+      "sprint": null,
+      "depends_on": [],
+      "steps": [
+        "Verify features.json schema in patterns.md contains maturity field",
+        "Verify maturity field supports values: draft, functional, reviewed, polished, accepted",
+        "Verify agents/evaluator.md documents setting maturity based on scores",
+        "Verify SKILL.md contains maturity level documentation with level definitions"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "E-011",
+      "title": "Harness Configuration File",
+      "category": "configuration",
+      "description": "Add .harness/config.json schema to patterns.md with fields: use_codex, context_reset_threshold, auto_commit, auto_retro, retro_interval, max_retry_on_failure, evaluator_strictness, commit_prefix_pass, commit_prefix_fail, commit_tag. Update agents/initializer.md to create default config. Update coordinator and evaluator to read from config.",
+      "required": true,
+      "priority": "P0",
+      "status": "pending",
+      "passes": false,
+      "sprint": null,
+      "depends_on": [],
+      "steps": [
+        "Verify patterns.md contains config.json schema with all specified fields",
+        "Verify config.json schema includes use_codex, context_reset_threshold, auto_commit fields",
+        "Verify config.json schema includes auto_retro, retro_interval, max_retry_on_failure fields",
+        "Verify config.json schema includes evaluator_strictness, commit_prefix_pass, commit_prefix_fail, commit_tag fields",
+        "Verify agents/initializer.md documents creating default config.json",
+        "Verify agents/coordinator.md references reading from config.json",
+        "Verify agents/evaluator.md references reading from config.json"
+      ],
+      "evidence": [],
+      "notes": ""
+    }
+  ]
+}

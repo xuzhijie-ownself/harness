@@ -32,6 +32,17 @@ The default harness should have:
 The goal is not to maximize the number of sprints.
 The goal is to drive the required feature set to passing status and stop.
 
+## GAN Pattern
+
+This harness follows a GAN-like (Generative Adversarial Network) pattern from Anthropic's engineering articles:
+
+- **Generator** produces artifacts (code, documents, configs, or domain-appropriate outputs).
+- **Evaluator** adversarially grades the output with skeptical QA — "mostly works" is a fail.
+- **Loop**: generate → evaluate → feedback → regenerate until acceptance.
+- **Separation rule**: The generator cannot self-approve. The evaluator cannot edit product artifacts. This separation is the core integrity guarantee.
+
+The adversarial tension between generator and evaluator prevents the common failure mode where a model is too lenient grading its own work. This pattern applies regardless of domain — whether building software, writing tender documents, or designing architecture.
+
 ## Dispatch Rules
 
 When the environment supports separate agents or sessions, dispatch explicitly:
@@ -414,7 +425,7 @@ Start with:
 
 - `.harness/features.json`
 - `.harness/progress.md`
-- `.harness/init.md` + `.harness/init.sh`
+- `.harness/init.md` + `.harness/init.sh` + `.harness/init.bat`
 - `.harness/state.json` in continuous mode
 - `.harness/spec.md`
 - `.harness/sprints/NN-contract.md`
@@ -529,7 +540,7 @@ If an agent spawn fails (timeout, API error, crash):
 
 ### Context Freshness
 
-Track `rounds_since_reset` in `state.json`. After 3 rounds, the coordinator pauses the run, writes a handoff file, and resets the counter. The next `/session` or `/run` picks up from the handoff automatically.
+Track `rounds_since_reset` in `state.json`. After `context_reset_threshold` rounds (default: 3), the coordinator pauses the run, writes a handoff file, and resets the counter. The next `/session` or `/run` picks up from the handoff automatically.
 
 ### Sprint Resume
 

@@ -9,20 +9,22 @@ Use this file only for the initializer role.
 - current source scaffold
 - accepted `spec.md` if it already exists
 
-## Write
+## Write / Owns
 
 - `.harness/features.json`
 - `.harness/progress.md`
 - `.harness/state.json`
 - `.harness/init.md`
 - `.harness/init.sh` — executable dev server startup + smoke test script
+- `.harness/init.bat` — Windows CMD equivalent of init.sh
 
 ## Focus
 
 - create a finite completion ledger
 - mark all required features as failing until proven
 - create an executable `init.sh` that starts the dev server and runs a smoke test (use the template from `references/patterns.md`)
-- write `init.md` as human-readable setup documentation alongside the script
+- create both init.sh and init.bat for cross-platform support
+- write `init.md` as human-readable setup documentation alongside the scripts
 - record the baseline honestly
 
 ## Do Not

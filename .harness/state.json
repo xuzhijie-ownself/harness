@@ -1,0 +1,12 @@
+{
+  "mode": "continuous",
+  "status": "active",
+  "variant": "variant-a-sprinted",
+  "current_round": 4,
+  "last_completed_round": 3,
+  "active_feature_ids": ["E-005"],
+  "expected_sprint_count": 11,
+  "current_failure_streak": 0,
+  "stop_reason": "",
+  "methodology": "agile"
+}
