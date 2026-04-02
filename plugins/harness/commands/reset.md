@@ -10,6 +10,14 @@ allowed_tools: ["Bash", "Read", "Write", "Glob"]
 
 End the current session cleanly with a structured handoff for the next session.
 
+## State Validation
+
+Before proceeding:
+1. If this command requires `.harness/`: verify directory exists. If not -> "No harness found. Run /harness:init first." STOP.
+2. If reading `state.json`: verify it contains `mode`, `variant`, `current_sprint_phase`. If missing fields -> warn and use defaults.
+3. If reading `features.json`: verify it's valid JSON with at least one feature. If malformed -> STOP with error.
+4. If reading `config.json`: verify it's valid JSON. If missing -> use defaults silently.
+
 ## When to Use
 
 - Context is ~75% full
@@ -17,14 +25,14 @@ End the current session cleanly with a structured handoff for the next session.
 - Work needs to pause and resume in a new Claude Code session
 
 Context resets with a structured handoff are more reliable than compaction for
-long sessions. Models exhibit "context anxiety" — premature closure as context fills.
+long sessions. Models exhibit "context anxiety" -- premature closure as context fills.
 (Source: Anthropic engineering, March 2026)
 
 ## Steps
 
-1. Run `git diff --name-only HEAD` — list all modified files.
-2. Read `.harness/features.json` — identify current `in_progress` feature.
-3. Read `.harness/progress.md` — identify last completed step.
+1. Run `git diff --name-only HEAD` -- list all modified files.
+2. Read `.harness/features.json` -- identify current `in_progress` feature.
+3. Read `.harness/progress.md` -- identify last completed step.
 4. Write `.harness/handoff.md` using the template from
    `plugins/harness/skills/harness/references/patterns.md`.
    The handoff must include:
@@ -32,9 +40,9 @@ long sessions. Models exhibit "context anxiety" — premature closure as context
    - Last completed step (one sentence)
    - Modified files (from git diff)
    - Open questions or blockers
-   - Next step (single sentence — the first thing the next session should do)
+   - Next step (single sentence -- the first thing the next session should do)
 5. Stage and commit work in progress:
-   `git commit -m "wip(F00X): session checkpoint — <brief description>"`
-6. Update `.harness/progress.md` — record session end and reference to handoff.
+   `git commit -m "wip(F00X): session checkpoint -- <brief description>"`
+6. Update `.harness/progress.md` -- record session end and reference to handoff.
 7. Print: "Handoff written to .harness/handoff.md. Start a new session and run
    /session to resume."

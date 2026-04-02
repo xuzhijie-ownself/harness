@@ -11,6 +11,14 @@ allowed_tools: ["Bash", "Read", "Write", "Glob", "Agent"]
 
 Run one supervised sprint round (Variant A or B, supervised mode).
 
+## State Validation
+
+Before proceeding:
+1. If this command requires `.harness/`: verify directory exists. If not -> "No harness found. Run /harness:init first." STOP.
+2. If reading `state.json`: verify it contains `mode`, `variant`, `current_sprint_phase`. If missing fields -> warn and use defaults.
+3. If reading `features.json`: verify it's valid JSON with at least one feature. If malformed -> STOP with error.
+4. If reading `config.json`: verify it's valid JSON. If missing -> use defaults silently.
+
 ## Sprint Resume
 
 Before starting fresh, check `.harness/state.json` `current_sprint_phase`:
@@ -18,9 +26,9 @@ Before starting fresh, check `.harness/state.json` `current_sprint_phase`:
 | Phase | Resume action |
 |-------|---------------|
 | `idle` | Start a new sprint from step 1 |
-| `contract` | Resume at Contract Phase (step 6) — contract was being negotiated |
-| `implementation` | Resume at Implementation Phase (step 9) — contract was accepted, implementation in progress |
-| `evaluation` | Resume at Evaluation Phase (step 10) — implementation complete, evaluation in progress |
+| `contract` | Resume at Contract Phase (step 6) -- contract was being negotiated |
+| `implementation` | Resume at Implementation Phase (step 9) -- contract was accepted, implementation in progress |
+| `evaluation` | Resume at Evaluation Phase (step 10) -- implementation complete, evaluation in progress |
 
 Update `current_sprint_phase` in `state.json` at the start of each phase transition.
 If `current_sprint_phase` is not `idle`, skip ahead to the corresponding phase instead of restarting the sprint.
@@ -29,9 +37,9 @@ If `current_sprint_phase` is not `idle`, skip ahead to the corresponding phase i
 
 1. Read `.harness/progress.md`.
 2. Run `git log --oneline -10` to recover context from recent commits.
-3. Check for `.harness/handoff.md` — if present, read it and resume from `next_step`.
-4. Run `bash .harness/init.sh` (or the command from `.harness/init.md`) — STOP and report if baseline fails.
-5. Read `.harness/features.json` — find highest-priority `passes: false` required feature.
+3. Check for `.harness/handoff.md` -- if present, read it and resume from `next_step`.
+4. Run `bash .harness/init.sh` (or the command from `.harness/init.md`) -- STOP and report if baseline fails.
+5. Read `.harness/features.json` -- find highest-priority `passes: false` required feature.
 
 ## Contract Phase
 
@@ -71,10 +79,10 @@ Set `current_sprint_phase` to `idle` in `state.json` after completing the round.
 ## Auto-Commit
 
 After evaluation completes:
-- PASS: `git add -A && git commit -m "feat(F-XXX): <feature title> — sprint N [harness]"`
-- FAIL: `git add -A && git commit -m "wip(F-XXX): <feature title> — sprint N attempt [harness]"`
+- PASS: `git add -A && git commit -m "feat(F-XXX): <feature title> -- sprint N [harness]"`
+- FAIL: `git add -A && git commit -m "wip(F-XXX): <feature title> -- sprint N attempt [harness]"`
 
-## Session End — Clean State
+## Session End -- Clean State
 
 Code must be in a mergeable state before the session ends:
 - No half-built features left uncommitted
