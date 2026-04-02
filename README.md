@@ -21,47 +21,55 @@ The evaluator handles testing, code review, and grading in one pass.
 claude plugin install --marketplace https://github.com/xuzhijie-ownself/long-running-harness
 ```
 
-This clones the repo and registers the plugin automatically. The plugin will be available after restart or `/reload-plugins`.
+Then reload:
+```bash
+/reload-plugins
+```
 
 ### Option 2: Git Clone + Local Install
 
 ```bash
-# Clone the plugin into your project
+# Clone into your project
 git clone https://github.com/xuzhijie-ownself/long-running-harness.git plugins/long-running-harness
 
-# Install to .claude/ (Mac / Linux / Git Bash)
+# Install (Mac / Linux / Git Bash)
 bash plugins/long-running-harness/install.sh
 
-# Install to .claude/ (Windows CMD)
+# Install (Windows CMD)
 plugins\long-running-harness\install.bat
 ```
 
-Copies commands, agents, skill, roles, references, and hooks into `.claude/`.
-Available immediately -- no restart needed.
+### Option 3: Codex CLI
 
-### Option 3: Direct Download
+If using [OpenAI Codex CLI](https://github.com/openai/codex), the plugin auto-loads from the `.codex-plugin/plugin.json` manifest:
 
 ```bash
-# Download and install in one step
-git clone https://github.com/xuzhijie-ownself/long-running-harness.git ~/.claude/plugins/long-running-harness
-bash ~/.claude/plugins/long-running-harness/install.sh
+# Clone the repo into your project
+git clone https://github.com/xuzhijie-ownself/long-running-harness.git plugins/long-running-harness
+
+# Codex detects .codex-plugin/plugin.json automatically
+codex  # start codex in the project directory
 ```
+
+The Codex plugin provides the same skill definitions and role references. Agents and commands are shared between Claude Code and Codex.
 
 ### Uninstall
 
 ```bash
+# Claude Code marketplace
+claude plugin uninstall long-running-harness
+
+# Local install
 bash plugins/long-running-harness/install.sh --uninstall
 ```
 
-### Codex
-
-`.codex-plugin/plugin.json` is already present -- Codex loads it directly from the cloned repo.
-
 ### Update
 
-Pull the latest version and re-run install:
-
 ```bash
+# Marketplace
+claude plugin update long-running-harness
+
+# Local
 cd plugins/long-running-harness && git pull && bash install.sh
 ```
 

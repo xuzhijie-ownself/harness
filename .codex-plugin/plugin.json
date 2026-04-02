@@ -1,6 +1,6 @@
 {
-  "name": "harness",
-  "version": "0.2.0",
+  "name": "long-running-harness",
+  "version": "0.3.0",
   "description": "Multi-agent sprint orchestration harness for long-running application development.",
   "author": {
     "name": "xuzhijie-ownself",

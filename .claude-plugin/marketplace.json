@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "xuzhijie-ownself-long-running-harness",
+  "name": "long-running-harness",
   "description": "Multi-agent sprint orchestration harness implementing Anthropic's long-running agent patterns — 6 agents, GAN-like generator/evaluator loop, domain-agnostic profiles, quantified QA",
   "owner": {
     "name": "xuzhijie-ownself",
