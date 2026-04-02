@@ -7,26 +7,25 @@
 - Status: active
 
 ## Current target
-- F-001: SDLC Skill File
+- F-002: Harness Integration
 
 ## Baseline
 - The harness plugin structure exists at plugins/long-running-harness/
 - The spec (spec.md) is accepted and defines three features in a linear dependency chain
-- No product files have been created yet for the SDLC skill
-- plugins/harness/skills/harness-sdlc/SKILL.md does not exist
-- No integration reference exists in the main SKILL.md for the SDLC skill
-- README.md has not been updated with SDLC skill documentation
+- F-001 (SDLC Skill File) is COMPLETE and PASSING
+- plugins/harness/skills/harness-sdlc/SKILL.md exists with all 6 sections
 
 ## This round
-- Initialization complete
-- 3 features registered, all pending, all failing
-- Execution mode: continuous, variant-a-sprinted
+- Sprint 1 completed: F-001 PASSED
+- Created plugins/harness/skills/harness-sdlc/SKILL.md with all 6 sections
+- All contract checks passed
 
 ## Latest evidence
-- No build/test/browser results yet (knowledge-layer project, no runtime code)
+- 01-evaluation.json: PASS, all 5 contract checks pass
+- Scores: product_depth=5, functionality=5, visual_design=4, code_quality=5
 
 ## Next step
-- The planner or generator should begin Sprint 01 targeting F-001: create plugins/harness/skills/harness-sdlc/SKILL.md with all six sections defined in the spec.
+- Sprint 2: Add domain skill reference to plugins/harness/skills/harness/SKILL.md (F-002)
 
 ---
 
@@ -37,3 +36,9 @@
 - All features: passes=false, status=pending
 - Dependency chain: F-001 -> F-002 -> F-003
 - Expected sprint count: 3
+
+#### 2026-04-02 -- Sprint 1 (F-001: SDLC Skill File)
+- Created plugins/harness/skills/harness-sdlc/SKILL.md
+- All 6 sections complete with reference tables and checklists
+- Evaluation: PASS (5/5/4/5)
+- F-001 status: complete, passes: true

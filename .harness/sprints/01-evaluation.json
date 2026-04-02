@@ -1,0 +1,59 @@
+{
+  "round": 1,
+  "decision": "PASS",
+  "target_feature_ids": ["F-001"],
+  "primary_scores": {
+    "product_depth": {
+      "score": 5,
+      "justification": "All 6 sections present with complete, non-trivial content including methodology matrices, detection tables, evaluation anchors, and checklist templates.",
+      "prior_round_score": null,
+      "drift_check": "First round, no prior score."
+    },
+    "functionality": {
+      "score": 5,
+      "justification": "Every table maps correctly to harness concepts. ORM table has 7 entries, server table has 8, framework detection covers 5 language ecosystems.",
+      "prior_round_score": null,
+      "drift_check": "First round, no prior score."
+    },
+    "visual_design": {
+      "score": 4,
+      "justification": "Clean Markdown formatting, consistent tables and headers. Score 4 because this is a knowledge artifact, not a visual product.",
+      "prior_round_score": null,
+      "drift_check": "First round, no prior score."
+    },
+    "code_quality": {
+      "score": 5,
+      "justification": "Valid YAML frontmatter, consistent Markdown structure, logical section ordering, no formatting issues.",
+      "prior_round_score": null,
+      "drift_check": "First round, no prior score."
+    }
+  },
+  "contract_checks": [
+    { "id": "PD-01", "required": true, "result": "pass", "evidence": "All 6 sections present with non-trivial content" },
+    { "id": "FN-01", "required": true, "result": "pass", "evidence": "Methodology tables map to harness sprint/round/phase concepts" },
+    { "id": "FN-02", "required": true, "result": "pass", "evidence": "ORM table: 7 entries, Server table: 8 entries" },
+    { "id": "FN-03", "required": true, "result": "pass", "evidence": "All 4 criteria have 0-5 anchors with concrete descriptions" },
+    { "id": "CQ-01", "required": true, "result": "pass", "evidence": "Valid YAML frontmatter, consistent Markdown structure" }
+  ],
+  "blockers": [],
+  "non_blocking_issues": [],
+  "feature_evidence": [
+    {
+      "feature_id": "F-001",
+      "passes": true,
+      "reason": "All 6 sections complete, all contract checks pass, file well-structured at correct path."
+    }
+  ],
+  "test_results": {
+    "tests_written": [],
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "coverage": "N/A — knowledge-layer artifact"
+  },
+  "review_findings": {
+    "blocking": [],
+    "non_blocking": [],
+    "review_mode": "claude"
+  }
+}

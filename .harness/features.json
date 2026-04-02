@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "initializer-1",
+  "updated_by": "coordinator-1",
   "features": [
     {
       "id": "F-001",
@@ -9,10 +9,10 @@
       "description": "Create plugins/harness/skills/harness-sdlc/SKILL.md containing all six sections: Methodology Selection Matrix, Development Methodology, Testing Strategy, Build & Runtime Verification, Evaluation Criteria Anchors, and Sprint Contract Checklist Templates.",
       "required": true,
       "priority": "P0",
-      "status": "pending",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "spec.md F-001",
       "steps": [
         "Verify plugins/harness/skills/harness-sdlc/SKILL.md exists",
@@ -24,8 +24,8 @@
         "Check Section 5: Evaluation Criteria Anchors with 0-5 scale for all four criteria",
         "Check Section 6: Sprint Contract Checklist Templates for API/UI/Database/Infrastructure"
       ],
-      "evidence": [],
-      "notes": "Bulk of the work. Expected ~300-400 lines of structured Markdown."
+      "evidence": ["01-evaluation.json: all 5 contract checks pass, all 6 sections verified complete"],
+      "notes": "Completed in sprint 1. All sections present with complete content."
     },
     {
       "id": "F-002",
