@@ -3,64 +3,59 @@
 ## Metadata
 - Role: coordinator
 - Agent: coordinator-1
-- Inputs: features.json, state.json, spec.md
+- Inputs: features.json, state.json, spec.md, all evaluation artifacts
 - Status: complete
 
 ## Result
 
-All 11 required features pass. The Harness Workflow Integrity project is complete.
+All 5 required features pass. The Domain Skills Expansion project (v0.8.0) is complete.
 
 ## Features Shipped
 
-| ID | Title | Sprint | Status |
-|----|-------|--------|--------|
-| F-001 | Release artifacts to project root | 1 | PASS |
-| F-007 | State validation in all commands | 2 | PASS |
-| F-002 | /init pre-flight guard | 3 | PASS |
-| F-003 | /session post-flight + dependency resolution + handoff cleanup | 4 | PASS |
-| F-004 | /run safety + release verification | 5 | PASS |
-| F-005 | /reset state preservation | 6 | PASS |
-| F-006 | /release validation guards | 7 | PASS |
-| F-008 | Releaser manifest sync | 8 | PASS |
-| F-009 | Harness SKILL.md workflow entry | 9 | PASS |
-| F-010 | harness-sdlc activation check | 10 | PASS |
-| F-011 | harness-ea activation check | 11 | PASS |
+| ID | Title | Sprint | Status | Scores (PD/FN/VD/CQ) |
+|----|-------|--------|--------|----------------------|
+| F-001 | Business Analysis Domain Skill (harness-ba) | 1 | PASS | 4/4/4/4 |
+| F-002 | Solution Architecture Domain Skill (harness-sa) | 2 | PASS | 4/4/4/4 |
+| F-003 | Deployment & Ops Domain Skill (harness-ops) | 3 | PASS | 4/4/4/4 |
+| F-004 | Phase Routing Table in SKILL.md | 4 | PASS | 4/4/4/4 |
+| F-005 | Plugin Registration | 4 | PASS | 4/4/4/4 |
 
-## Files Modified (12)
+## New Files Created
 
-| File | Features |
-|------|----------|
-| `plugins/harness/commands/init.md` | F-002, F-007 |
-| `plugins/harness/commands/session.md` | F-003, F-007 |
-| `plugins/harness/commands/run.md` | F-004, F-007 |
-| `plugins/harness/commands/reset.md` | F-005, F-007 |
-| `plugins/harness/commands/release.md` | F-006, F-007 |
-| `plugins/harness/agents/releaser.md` | F-001, F-008 |
-| `plugins/harness/agents/coordinator.md` | F-001 |
-| `plugins/harness/skills/harness/roles/releaser.md` | F-001 |
-| `plugins/harness/skills/harness/references/patterns.md` | F-001 |
-| `plugins/harness/skills/harness/SKILL.md` | F-001, F-009 |
-| `plugins/harness/skills/harness-sdlc/SKILL.md` | F-010 |
-| `plugins/harness/skills/harness-ea/SKILL.md` | F-011 |
+| File | Lines | Feature |
+|------|-------|---------|
+| `plugins/harness/skills/harness-ba/SKILL.md` | 373 | F-001 |
+| `plugins/harness/skills/harness-sa/SKILL.md` | 395 | F-002 |
+| `plugins/harness/skills/harness-ops/SKILL.md` | 379 | F-003 |
 
-## Key Changes
+## Existing Files Modified
 
-1. **Release artifacts moved to project root**: `release.json` and `CHANGELOG.md` now persist outside `.harness/` so they survive cleanup between development cycles.
-2. **State validation in all commands**: Every command validates `.harness/` existence, state.json fields, features.json structure, and config.json before executing.
-3. **Pre-flight/post-flight pattern**: All 5 commands now enforce pre-flight checks and post-flight verification.
-4. **Dependency resolution in /session**: Feature selection respects `depends_on` arrays.
-5. **Auto-release trigger**: `/session` and `/run` auto-trigger the releaser when all features pass.
-6. **Release guards**: `/release` refuses when features are failing, detects double-releases, and checks for clean git state.
-7. **Manifest sync**: Releaser updates version in all 3 plugin manifest files.
-8. **Skill activation checks**: Both domain skills (sdlc, ea) verify their activation conditions before applying procedures.
-9. **Workflow entry integrity**: Main harness SKILL.md enforces state checks, domain routing, and ownership invariants.
+| File | Change | Feature |
+|------|--------|---------|
+| `plugins/harness/skills/harness/SKILL.md` | 3 routing entries, 2 table rows, 3 reference paragraphs | F-004 |
+| `plugins/harness/.claude-plugin/plugin.json` | Version 0.7.0 -> 0.8.0 | Release |
+| `.claude-plugin/marketplace.json` | Version 0.7.0 -> 0.8.0 | Release |
+| `.codex-plugin/plugin.json` | Version 0.7.0 -> 0.8.0 | Release |
 
-## Verification
+## Key Achievements
 
-- `grep -r '.harness/release.json' plugins/harness/` returns only intentional migration references in releaser.md
-- All 5 command files contain "State Validation" section
-- All 12 target files modified per plan
+1. **Three new domain skills** following the 10-section harness-ea pattern, each with:
+   - 4 domain-specific evaluation criteria with complete 0-5 anchor tables
+   - 5 sprint contract checklist templates
+   - Methodology selection table with harness sprint mapping
+   - Development methodology with generator first-action table
+   - Verification strategy and deliverable verification procedures
+   - Reference materials, notation guide, repository structure, anti-patterns
+
+2. **Coverage expansion**: The harness now has dedicated skills for 5 of its built-in domain profiles:
+   - `software` -> harness-sdlc
+   - `architecture` -> harness-ea
+   - `business_analysis` -> harness-ba (new)
+   - `solution_architecture` -> harness-sa (new)
+   - `ops` -> harness-ops (new)
+
+3. **Zero failures**: 4 sprints, 5 features, all passed on first attempt.
 
 ## Sprint Count
 
-11 sprints, 11 passes, 0 failures.
+4 sprints, 5 passes, 0 failures.

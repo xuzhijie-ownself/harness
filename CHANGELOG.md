@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.8.0] - 2026-04-02
+
+### Features Shipped
+- **F-001**: Business Analysis Domain Skill (harness-ba)
+- **F-002**: Solution Architecture Domain Skill (harness-sa)
+- **F-003**: Deployment & Ops Domain Skill (harness-ops)
+- **F-004**: Phase Routing Table in SKILL.md
+- **F-005**: Plugin Registration
+
+### Deferred
+- None
+
+### Stats
+- Sprint count: 4
+- Required features: 5/5 passing
+
+### Summary
+Added 3 new domain skills completing the delivery pipeline coverage from business analysis through solution design to deployment:
+- `harness-ba` activates for `domain_profile: business_analysis` with evaluation criteria: completeness, traceability, stakeholder_alignment, feasibility
+- `harness-sa` activates for `domain_profile: solution_architecture` with evaluation criteria: design_coherence, technical_depth, integration_clarity, implementability
+- `harness-ops` activates for `domain_profile: ops` with evaluation criteria: operational_readiness, automation_coverage, reliability_design, security_posture
+
+Each skill follows the 10-section pattern established by harness-ea: activation check, methodology selection, development methodology, verification strategy, deliverable verification, evaluation criteria (4 criteria with 0-5 anchor tables), sprint contract checklists, reference materials, notation guide, repository structure, and anti-patterns.
+
+Updated the main SKILL.md with routing entries, Domain Profiles table rows, and Domain Skill References for all three new skills. Verified plugin.json glob coverage.
+
 ## [0.7.0] - 2026-04-02
 
 ### Features Shipped

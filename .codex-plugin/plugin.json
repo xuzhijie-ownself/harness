@@ -1,6 +1,6 @@
 {
   "name": "harness",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Multi-agent sprint orchestration harness for long-running application development.",
   "author": {
     "name": "xuzhijie-ownself",
@@ -15,7 +15,7 @@
   "interface": {
     "displayName": "Harness",
     "shortDescription": "Multi-agent sprint orchestration harness",
-    "longDescription": "Runs an Anthropic-style application harness with 6 agents: initializer, planner, generator, evaluator, coordinator, and releaser. Domain-agnostic with support for software, architecture, tender, research, content, and business analysis profiles.",
+    "longDescription": "Runs an Anthropic-style application harness with 6 agents: initializer, planner, generator, evaluator, coordinator, and releaser. Domain-agnostic with support for software, architecture, tender, research, content, business analysis, solution architecture, and ops profiles.",
     "developerName": "xuzhijie-ownself",
     "category": "Productivity",
     "capabilities": ["Interactive", "Write"],
