@@ -13,6 +13,7 @@ For role-specific guidance, prefer:
 - [../roles/releaser.md](../roles/releaser.md)
 - [../roles/tester.md](../roles/tester.md)
 - [../roles/reviewer.md](../roles/reviewer.md)
+- [../roles/architect.md](../roles/architect.md)
 
 ## Shared Principles
 
@@ -31,6 +32,7 @@ For role-specific guidance, prefer:
   init.md
   spec.md
   test-plan.md
+  architecture.md               # optional — produced by architect agent for complex projects
   decomposition.md              # optional when sprint rationale needs its own artifact
   summary.md
   handoff.md                    # reset-based compatibility runs only
@@ -52,7 +54,7 @@ Use this metadata block at the top of every role-owned Markdown artifact:
 
 ```md
 ## Metadata
-- Role: initializer | planner | generator | tester | evaluator | coordinator
+- Role: initializer | planner | architect | generator | tester | evaluator | coordinator
 - Agent: agent identifier or session name
 - Inputs: files reviewed before writing this artifact
 - Status: draft | in_review | accepted | rejected | pass | fail | active | complete | paused
@@ -487,6 +489,38 @@ if %ERRORLEVEL% EQU 0 (
 | 1 | planner | — | — | |
 | 1 | generator | — | — | |
 | 1 | evaluator | — | — | |
+```
+
+### `architecture.md`
+
+```md
+# Architecture
+
+## Metadata
+- Role: architect
+- Agent: architect-1
+- Status: accepted
+
+## System Overview
+[Mermaid diagram]
+
+## Module Decomposition
+| Module | Responsibility | Dependencies |
+|--------|---------------|--------------|
+
+## Key Design Decisions
+| Decision | Rationale | Alternatives Considered |
+|----------|-----------|------------------------|
+
+## Feature Dependency Graph
+[ordered list or diagram]
+
+## Technical Risks
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+
+## Recommended Implementation Order
+[ordered feature list with rationale]
 ```
 
 ### `test-plan.md`

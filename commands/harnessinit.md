@@ -30,6 +30,10 @@ Before proceeding, check if old-format `artifacts/` directory exists:
 4. Spawn the `initializer` agent:
    - Input: `.harness/spec.md`
    - Output: `.harness/features.json`, `.harness/progress.md`, `.harness/init.md`
+4b. If `.harness/features.json` has >10 required features OR user requested architecture review:
+    Spawn the `architect` agent (optional)
+    - Input: `.harness/spec.md`, `.harness/features.json`
+    - Output: `.harness/architecture.md`
 5. Run the command from `.harness/init.md` — confirm baseline passes. STOP if it fails.
 6. Show the Execution strategy from `.harness/spec.md` for user confirmation.
 7. Print result based on declared execution mode:

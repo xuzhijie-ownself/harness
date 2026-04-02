@@ -36,6 +36,7 @@ When the environment supports separate agents or sessions, dispatch explicitly:
 
 1. Spawn an `initializer` agent to create the operational scaffold.
 2. Spawn a `planner` agent to produce or refine the product spec if the prompt is underspecified.
+2b. Optionally spawn an `architect` agent for design review if >10 required features or user requests it.
 3. Spawn a `generator` agent to propose the next bounded sprint and implement it.
 4. Spawn a `tester` agent to write and run tests after generator implementation.
 5. Spawn a `reviewer` agent to perform code review after testing (uses Codex if available).
@@ -50,6 +51,7 @@ Use these ownership boundaries:
 
 - Initializer owns setup artifacts only.
 - Planner owns product-spec and execution-strategy artifacts only.
+- Architect owns `.harness/architecture.md` only; does not modify product code or features.json. Optional role.
 - Generator edits product code and generator-owned reports only.
 - Reviewer owns code review artifacts only; does not edit product code.
 - Evaluator does not edit product code; it writes review, QA, and acceptance artifacts only.
@@ -65,6 +67,7 @@ Use role-scoped references so each subagent reads only the context it needs:
 - [roles/reviewer.md](roles/reviewer.md)
 - [roles/coordinator.md](roles/coordinator.md)
 - [roles/releaser.md](roles/releaser.md)
+- [roles/architect.md](roles/architect.md)
 - [references/patterns.md](references/patterns.md) for shared schemas and templates only
 
 ## Initializer
@@ -118,6 +121,20 @@ That section should declare:
 - why simplified mode is not yet justified, or the evidence that it is justified
 
 If the run finishes in one sprint, the planner or coordinator should state why sprint decomposition was not load-bearing for this specific app.
+
+## Architect (Optional)
+
+The architect agent provides design review for complex projects.
+
+- Spawned during `/harness:init` if the feature list contains more than 10 required features
+- Also spawned on explicit user request ("review the architecture")
+- Produces `.harness/architecture.md` with system overview, module decomposition, dependency graph, risks, and recommended implementation order
+- Advisory only — generator may deviate with documented justification
+- Does not modify product code, features.json, or evaluation artifacts
+
+### Dispatch
+
+- [roles/architect.md](roles/architect.md)
 
 ## Generator
 
@@ -529,6 +546,7 @@ Optional supporting artifacts:
 - `.harness/evaluator-calibration.md` when subjective scoring needs tighter anchors
 - `.harness/decomposition.md` when sprint planning needs an auditable rationale outside the main spec
 - `.harness/cost-log.md` for tracking per-sprint cost and duration
+- `.harness/architecture.md` for architect design review on complex projects (>10 features)
 
 Use the shared schemas in [references/patterns.md](references/patterns.md).
 

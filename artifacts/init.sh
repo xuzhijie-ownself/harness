@@ -73,6 +73,7 @@ check_file "agents/coordinator.md"
 check_file "agents/releaser.md"
 check_file "agents/tester.md"
 check_file "agents/reviewer.md"
+check_file "agents/architect.md"
 
 # --- Section 3: Existing role files ---
 echo "-- Checking existing role files --"
@@ -84,6 +85,7 @@ check_file "skills/harness/roles/coordinator.md"
 check_file "skills/harness/roles/releaser.md"
 check_file "skills/harness/roles/tester.md"
 check_file "skills/harness/roles/reviewer.md"
+check_file "skills/harness/roles/architect.md"
 
 # --- Section 4: Command files ---
 echo "-- Checking command files --"

@@ -132,5 +132,72 @@
 - Verification: `bash artifacts/init.sh` -> 76 PASS, 0 FAIL
 - Feature count: 5/10 passing (F-001, F-010, F-002, F-003, F-009)
 
+## Sprint 6 — F-004 (Release and Versioning) — PASS
+
+### Changes
+- Created agents/releaser.md, skills/harness/roles/releaser.md, commands/harness:release.md
+- Added release.json schema and changelog.md template to patterns.md
+- Updated coordinator.md to spawn releaser after all required features pass
+- Added Release & Versioning section to SKILL.md
+
+### Evidence
+- Verification: bash artifacts/init.sh -> 89 PASS, 0 FAIL
+- Feature count: 6/10 passing
+
+## Sprint 7 — F-006 (Testing Strategy) — PASS
+
+### Changes
+- Created agents/tester.md and skills/harness/roles/tester.md
+- Added test-plan.md and NN-test-report.md templates to patterns.md
+- Updated sprint flow with tester between generator and evaluator
+- Added TEST-01, TEST-02, TEST-03 contract checks to evaluator
+
+### Evidence
+- Feature count: 7/10 passing
+
+## Sprint 8 — F-007 (Code Review and Codex Integration) — PASS
+
+### Changes
+- Created agents/reviewer.md and skills/harness/roles/reviewer.md
+- Added NN-review.md template to patterns.md
+- Added codex detection and fallback Claude-based review workflow
+- Updated coordinator.md and harness:session.md with reviewer dispatch
+
+### Evidence
+- Verification: bash artifacts/init.sh -> 105 PASS, 0 FAIL
+- Feature count: 8/10 passing
+
+## Sprint 9 — F-005 (Development Methodology Selection) — PASS
+
+### Changes
+- Added methodology selection prompt (step 2b) to harness:init.md
+- Added Methodology-Aware Execution Strategy section to agents/planner.md
+- Added methodology field to agents/initializer.md for state.json
+- Added Development Methodology section to SKILL.md
+
+### Evidence
+- Feature count: 9/10 passing
+
+## Sprint 10 — F-008 (Architect Role) — PASS
+
+### Changes
+- Created agents/architect.md with ownership boundaries, spawn conditions (>10 features or user request), and 6 responsibilities
+- Created skills/harness/roles/architect.md with read/write ownership and advisory nature
+- Added architecture.md template to patterns.md (Mermaid diagram, module decomposition, design decisions, dependency graph, risks, implementation order)
+- Added architect to patterns.md role list and artifact layout
+- Updated harness:init.md with step 4b for optional architect spawn after initializer
+- Added Architect (Optional) section to SKILL.md with dispatch rules and ownership boundary
+- Updated SKILL.md dispatch rules (step 2b) and role references
+- Updated artifacts/init.sh to check for agents/architect.md and skills/harness/roles/architect.md
+
+### Evidence
+- Verification: bash artifacts/init.sh -> 113 PASS, 0 FAIL
+- Feature count: 10/10 passing (ALL FEATURES COMPLETE)
+
+## Final Status
+- All 10 required features pass
+- Run status: complete
+- Stop reason: All 10 features complete
+
 ## Next step
-- Sprint 6 should target F-004 (Release and Versioning).
+- No further sprints needed. All features are complete. Run /harness:release to cut a release.

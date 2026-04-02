@@ -163,9 +163,9 @@
       "description": "New architect agent and role. Design review for complex projects (more than 10 features). .harness/architecture.md artifact. Spawned during init when complexity warrants it. Optional and brackets-activated.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 10,
       "dependencies": ["F-001"],
       "steps": [
         "Verify architect agent file exists at agents/architect.md",
@@ -174,8 +174,8 @@
         "Verify architect is spawned only for projects with more than 10 features",
         "Verify architect is shown in brackets in sprint flow (optional role)"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Sprint 10: Created agents/architect.md with ownership, spawn conditions (>10 features or user request), and 6 responsibilities. Created skills/harness/roles/architect.md with read/write ownership boundaries and advisory nature. Added architecture.md template to patterns.md with Mermaid diagram, module decomposition, design decisions, dependency graph, risks, and implementation order sections. Added architect to patterns.md role list and artifact layout. Updated harness:init.md with step 4b for optional architect spawn. Added Architect (Optional) section to SKILL.md with description, dispatch rules, ownership boundary, role reference, and optional artifact entry. Updated SKILL.md dispatch rules (step 2b). Updated artifacts/init.sh to check for architect.md and roles/architect.md. Verification: bash artifacts/init.sh -> 113 PASS, 0 FAIL."],
+      "notes": "Completed sprint 10."
     },
     {
       "id": "F-009",
