@@ -6,24 +6,25 @@
 - Inputs: spec.md, features.json, state.json
 - Status: active
 
-## Round 2
-rounds_since_reset: 2 / 3
+## Round 3
+rounds_since_reset: 3 / 3
 
 ## Current target
-- F-002: Solution Architecture Domain Skill (harness-sa)
+- F-003: Deployment & Ops Domain Skill (harness-ops)
 
 ## Baseline
-- 1/5 features passing (F-001 passed in round 1)
-- harness-ba/SKILL.md created and evaluated
+- 2/5 features passing (F-001, F-002 passed)
+- harness-ba/SKILL.md and harness-sa/SKILL.md created and evaluated
 
 ## This round
-- Starting sprint 2: create harness-sa/SKILL.md
+- Starting sprint 3: create harness-ops/SKILL.md
 
 ## Latest evidence
 - Round 1: F-001 PASS (all scores 4/5)
+- Round 2: F-002 PASS (all scores 4/5)
 
 ## Next step
-- Generator: propose contract for F-002
+- Generator: propose contract for F-003
 
 ## Last commit
-- 2026-04-02T10:09:18.340Z
+- 2026-04-02T10:11:43.362Z
