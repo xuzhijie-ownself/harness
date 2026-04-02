@@ -18,6 +18,12 @@ Owns: .harness/spec.md
 Does NOT add roadmap items after execution begins unless the user changes scope
 or the evaluator proves a missing dependency blocks completion.
 
+## Domain Profile
+
+When writing spec.md, include a Domain Profile section. Ask the user about the domain or infer from the project goal. Default to `software` if not specified.
+
+The Domain Profile section in spec.md should declare: primary profile name, the 4 criteria, artifact types, and stakeholder lens. Optionally declare a secondary profile for cross-domain projects. See SKILL.md for the built-in profile table.
+
 ## Required Output
 
 `.harness/spec.md` must include an `Execution strategy` section declaring:

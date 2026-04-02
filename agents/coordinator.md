@@ -79,6 +79,21 @@ Before advancing to the next round, verify ALL of these artifacts exist for roun
 
 If any are missing, set `stop_reason` to `"missing required sprint artifacts for round NN"` and STOP.
 
+## Calibration Enforcement
+
+After round 1 evaluation, verify that `.harness/evaluator-calibration.md` exists. If missing, instruct the evaluator to create it before proceeding.
+
+When reviewing evaluation artifacts, check for score jumps >1 from the prior round on any criterion. If a jump >1 exists without a `drift_check` justification in `NN-evaluation.json`, flag it and request the evaluator to re-justify the score.
+
+## Sprint Retrospective
+
+After every `retro_interval` rounds (read from config.json, default 3) or after any FAIL evaluation:
+1. Generate `.harness/sprints/retro-RX-RY.md` covering the rounds since the last retro (or since round 1 if no prior retro exists).
+2. Include: what worked, what didn't, adjustments for next rounds, patterns detected.
+3. Use the retro template from patterns.md.
+
+Before starting each new round, read the latest `retro-RX-RY.md` file (if any) and incorporate its adjustments into generator/evaluator dispatch instructions.
+
 ## Pause Rules
 
 Write reason to `.harness/state.json` `stop_reason` field and halt if:

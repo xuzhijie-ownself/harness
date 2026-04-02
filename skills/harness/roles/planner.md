@@ -29,6 +29,7 @@ Use this file only for the planner role.
 - non-goals
 - definition of done
 - execution strategy
+- domain profile (primary profile name + criteria; optionally secondary profile)
 
 ## Do Not
 

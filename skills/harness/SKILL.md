@@ -206,16 +206,47 @@ The releaser creates an annotated git tag for each release: `git tag -a vX.Y.Z -
 
 - [roles/releaser.md](roles/releaser.md)
 
+## Feature Maturity
+
+Features have a `maturity` field alongside the binary `passes` flag. Maturity adds granularity for tracking overall project readiness:
+
+| Level | Meaning | Scoring Trigger |
+|-------|---------|----------------|
+| `draft` | Initial implementation, known gaps | Any criterion below 3 |
+| `functional` | Core behavior works | All criteria >= 3 (also sets passes = true) |
+| `reviewed` | Passed evaluation with acceptable scores | All criteria >= 3, evaluator accepted |
+| `polished` | Production-ready quality | All criteria >= 4 |
+| `accepted` | Stakeholder sign-off | Set manually by user/stakeholder, not by evaluator |
+
+The evaluator sets maturity automatically based on scores after grading. The `accepted` level is never set by the evaluator — it requires explicit stakeholder sign-off, which is particularly relevant for architecture, tender, and business_analysis domain profiles.
+
+## Domain Profiles
+
+The harness supports multiple domains through a profile system. Each profile defines 4 primary evaluation criteria, artifact taxonomy, verification methods, and stakeholder lens.
+
+| Profile | Criteria | Artifact Types | Stakeholder Lens |
+|---------|----------|---------------|-----------------|
+| `software` (default) | product_depth, functionality, visual_design, code_quality | Code, tests, configs, UI | End users, developers |
+| `architecture` | coherence, standards_compliance, stakeholder_coverage, feasibility | ADRs, capability maps, diagrams | Enterprise architects, CTO |
+| `tender` | requirements_coverage, regulatory_alignment, cost_justification, risk_mitigation | Spec docs, compliance matrices | Procurement, legal |
+| `research` | rigor, novelty, reproducibility, clarity | Papers, notebooks, citations | Reviewers, peers |
+| `content` | clarity, engagement, accuracy, brand_alignment | Articles, scripts, briefs | Audience, editors |
+| `business_analysis` | completeness, traceability, stakeholder_alignment, feasibility | BRDs, use cases, process maps | Business owners, PMs |
+| `custom` | User-defined (4 criteria in spec) | User-defined | User-defined |
+
+### Cross-Domain Composability
+A project can declare a primary profile + optional secondary profile. The evaluator scores both sets of criteria.
+
+### Business Analysis Foundation
+- `source_requirement` field in features.json links features to original business needs
+- Deliverables classified as: primary, supporting, governance
+- Stakeholder lens influences how the evaluator grades quality
+
 ## Quantified Evaluation
 
 Do not rely on prose-only judgments. Every evaluation round should produce numeric criterion scores plus granular contract-check results.
 
-Primary criteria:
-
-- Product depth
-- Functionality
-- Visual design
-- Code quality
+Primary criteria are determined by the domain profile declared in spec.md. The default `software` profile uses: product_depth, functionality, visual_design, code_quality.
 
 Score each primary criterion on a `0-5` scale:
 
@@ -239,7 +270,7 @@ You may report an average score as a trend signal, but never use the average to 
 
 Each sprint contract must define:
 
-- a granular checklist under the four primary criteria
+- a granular checklist under the domain profile's primary criteria
 - whether each check is required or advisory
 - the verification method for each check
 
@@ -484,15 +515,46 @@ When generator and evaluator evidence conflict:
 
 ## Evaluation Calibration
 
-When evaluator scoring drifts or feels too lenient:
+The evaluator uses a structured rubric system with **anchored examples** to prevent scoring drift.
 
-- add stable examples of what `2`, `3`, and `4` look like for this project
-- keep criterion wording stable across rounds
-- compare the current round against prior accepted rounds
-- avoid inflating later scores just because the app is larger
-- write those anchors to `.harness/evaluator-calibration.md` so future evaluator rounds inherit the same standard
+### Rubric Anchors
+
+After the first evaluation round, the evaluator MUST create `.harness/evaluator-calibration.md` with concrete score anchors (descriptions of what 2, 3, 4, and 5 look like) for each of the domain profile's primary criteria. These anchors are project-specific — the framework provides the structure, the project provides the examples.
+
+### Comparative Scoring
+
+For each criterion every round, the evaluator must:
+- Reference the anchor descriptions when assigning a score
+- Compare against the prior round's score for the same criterion
+- If a score changes by more than 1 from the prior round, justify WHY in the evaluation artifact
+- Record the comparison in `NN-evaluation.md` under a "Score Justification" section
+
+### Calibration Enforcement
+
+The coordinator enforces calibration:
+- After round 1: evaluator MUST create `evaluator-calibration.md` with anchors for all criteria
+- Every 3 rounds: evaluator reviews and updates anchors if the project scope has evolved
+- If the evaluator scores differ by >1 from the prior round without justification, the coordinator flags it
+
+### Calibration Principles
+
+- Keep criterion wording stable across rounds
+- Avoid inflating later scores just because the project is larger
+- Write anchors to `.harness/evaluator-calibration.md` so future evaluator rounds inherit the same standard
 
 The evaluator should become more consistent over time, not merely more detailed.
+
+## Sprint Retrospective
+
+The harness includes a learning loop to prevent mistakes from repeating across rounds. After every `retro_interval` rounds (from config.json, default 3) or after any FAIL evaluation, the coordinator generates a retrospective stored as `.harness/sprints/retro-RX-RY.md`.
+
+The retrospective covers:
+- **What Worked** — effective patterns observed during the covered rounds
+- **What Didn't Work** — failures and their root causes
+- **Adjustments for Next Rounds** — concrete changes to apply going forward
+- **Patterns Detected** — recurring issues or strengths
+
+The coordinator reads the latest retrospective before starting each new round and incorporates learnings into generator/evaluator prompts. This creates a feedback loop where the harness improves its own execution over time.
 
 ## Harness Decay
 

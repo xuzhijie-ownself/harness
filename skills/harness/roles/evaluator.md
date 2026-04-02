@@ -37,6 +37,7 @@ Use this file only for the evaluator role.
 - Classify findings as BLOCKING or NON-BLOCKING
 
 ### Grading
+- Score using criteria from the domain profile, not hardcoded names. Default to software criteria if no profile specified.
 - Be skeptical and replayable
 - Score using integer `0-5`
 - Fail if any primary criterion is below `3`
@@ -45,6 +46,13 @@ Use this file only for the evaluator role.
 - Test via browser automation (Playwright or Puppeteer), not by reading source code
 - Watch for "display-only" features that render but lack interactive depth — this is the primary failure mode (Anthropic, March 2026)
 - Walk through the feature's pre-defined `steps[]` from `features.json` during evaluation
+- After scoring, set feature `maturity` based on scores: draft (any < 3), reviewed (all >= 3), polished (all >= 4). `accepted` is manual only.
+
+### Rubric Anchors & Drift Detection
+- After round 1: create `.harness/evaluator-calibration.md` with score anchors (2/3/4/5 descriptions) for each criterion
+- Every round: reference anchors, compare against prior round scores
+- If score changes by >1 from prior round, justify in `NN-evaluation.md` "Score Justification" section
+- Include `justification`, `prior_round_score`, `drift_check` in `NN-evaluation.json` primary_scores
 
 ## Disagreement Rule
 

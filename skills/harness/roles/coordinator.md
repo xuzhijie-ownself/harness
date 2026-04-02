@@ -47,6 +47,16 @@ Pause continuous mode if:
 - evaluator and generator disagree on a blocking issue
 - the run needs a variant change that was not declared earlier
 
+## Calibration Enforcement
+
+- After round 1: verify `evaluator-calibration.md` exists; instruct evaluator to create it if missing
+- Flag score jumps >1 from prior round without justification in `NN-evaluation.json`
+
+## Sprint Retrospective
+
+- After every `retro_interval` rounds (from config.json, default 3) or after a FAIL: generate `.harness/sprints/retro-RX-RY.md`
+- Read latest retro before starting each new round
+
 ## Do Not
 
 - silently collapse sprinted mode into simplified mode

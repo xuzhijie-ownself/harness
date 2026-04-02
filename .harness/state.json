@@ -1,12 +1,12 @@
 {
   "mode": "continuous",
-  "status": "active",
+  "status": "complete",
   "variant": "variant-a-sprinted",
-  "current_round": 8,
-  "last_completed_round": 7,
-  "active_feature_ids": ["E-010"],
+  "current_round": 11,
+  "last_completed_round": 11,
+  "active_feature_ids": [],
   "expected_sprint_count": 11,
   "current_failure_streak": 0,
-  "stop_reason": "",
+  "stop_reason": "All 11 features complete",
   "methodology": "agile"
 }

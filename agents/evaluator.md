@@ -42,10 +42,24 @@ The evaluator performs three jobs in the post-implementation invocation:
 
 ### 3. Grading
 
-- Score 0-5 on 4 primary criteria (product depth, functionality, visual design, code quality)
+- Read domain profile from spec.md to determine the 4 primary criteria. If no profile specified, default to software criteria (product_depth, functionality, visual_design, code_quality).
+- Score 0-5 on the domain profile's 4 primary criteria
 - Fail if any criterion < 3
 - Fail if any required contract check fails
 - Produce evaluation artifacts with full evidence
+- After scoring, set feature maturity based on scores:
+  - All criteria < 3 → `draft`
+  - All criteria >= 3 → `reviewed` (and passes = true)
+  - All criteria >= 4 → `polished`
+  - `accepted` is set manually by user/stakeholder, not by evaluator
+
+### 4. Calibration & Comparative Scoring
+
+- After round 1: MUST create `.harness/evaluator-calibration.md` with anchors (score 2/3/4/5 descriptions) for all domain profile criteria
+- Every round: reference anchors when scoring, compare against prior round scores
+- If a score changes by >1 from the prior round, include explicit justification in `NN-evaluation.md` under a "Score Justification" section
+- Every 3 rounds: review and update anchors if project scope has evolved
+- Include `justification`, `prior_round_score`, and `drift_check` fields in `NN-evaluation.json` `primary_scores`
 
 ## Required Outputs Per Round
 

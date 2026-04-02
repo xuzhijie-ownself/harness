@@ -30,9 +30,9 @@
       "description": "Add domain profile system to SKILL.md with 7 built-in profiles (software, architecture, tender, research, content, business_analysis, custom). Add domain_profile and secondary_profile to state.json schema. Add source_requirement to features.json. Update planner, evaluator, init command, and README.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 9,
       "depends_on": [],
       "steps": [
         "Verify SKILL.md contains domain profiles section with all 7 built-in profiles",
@@ -43,8 +43,8 @@
         "Verify commands/init.md includes domain profile prompt",
         "Verify README.md contains domain profile table"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["SKILL.md Domain Profiles section with 7 profiles and cross-domain composability", "state.json schema has domain_profile and secondary_profile fields", "features.json schema has source_requirement field", "planner agent includes Domain Profile section", "evaluator reads domain profile for criteria", "init.md includes domain prompt", "README.md has domain profile table"],
+      "notes": "Completed in sprint 9"
     },
     {
       "id": "E-003",
@@ -151,9 +151,9 @@
       "description": "Add rubric anchor system to SKILL.md and patterns.md. Enhance NN-evaluation.json schema with justification, prior_round_score, drift_check fields. Add evaluator-calibration.md template. Update evaluator for calibration creation on round 1 and comparative scoring.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 10,
       "depends_on": [],
       "steps": [
         "Verify SKILL.md contains rubric anchor system documentation",
@@ -165,8 +165,8 @@
         "Verify agents/evaluator.md documents calibration creation on round 1",
         "Verify agents/evaluator.md documents comparative scoring approach"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["SKILL.md Evaluation Calibration section with rubric anchors and comparative scoring", "NN-evaluation.json schema has justification/prior_round_score/drift_check per criterion", "patterns.md has evaluator-calibration.md template", "evaluator agent requires calibration creation on round 1", "evaluator agent requires comparative scoring every round", "coordinator enforces calibration and flags score drift"],
+      "notes": "Completed in sprint 10"
     },
     {
       "id": "E-009",
@@ -175,9 +175,9 @@
       "description": "Add retrospective template to patterns.md. Update coordinator to generate retrospectives every N rounds (configurable via retro_interval in config.json) or after a FAIL. Store as .harness/sprints/retro-RX-RY.md. Coordinator reads latest retro before starting the next round.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 11,
       "depends_on": ["E-011"],
       "steps": [
         "Verify patterns.md contains a retrospective template (retro-RX-RY.md)",
@@ -187,8 +187,8 @@
         "Verify retrospectives are stored as .harness/sprints/retro-RX-RY.md",
         "Verify coordinator reads latest retro before starting next round"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["patterns.md contains retro-RX-RY.md template", "coordinator agent generates retros every retro_interval rounds or after FAIL", "retro_interval referenced from config.json", "coordinator reads latest retro before starting next round", "SKILL.md Sprint Retrospective section documents the learning loop"],
+      "notes": "Completed in sprint 11"
     },
     {
       "id": "E-010",
@@ -197,9 +197,9 @@
       "description": "Add maturity field (draft/functional/reviewed/polished/accepted) to features.json schema. Update evaluator to set maturity based on scores. Update SKILL.md with maturity level documentation.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 8,
       "depends_on": [],
       "steps": [
         "Verify features.json schema in patterns.md contains maturity field",
@@ -207,8 +207,8 @@
         "Verify agents/evaluator.md documents setting maturity based on scores",
         "Verify SKILL.md contains maturity level documentation with level definitions"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["features.json schema has maturity field with 5 levels", "evaluator agent sets maturity based on scores (draft/reviewed/polished)", "SKILL.md Feature Maturity section with level table"],
+      "notes": "Completed in sprint 8"
     },
     {
       "id": "E-011",

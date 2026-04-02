@@ -101,6 +101,24 @@ Both Claude Code and Codex share:
 
 ---
 
+## Domain Profiles
+
+The harness supports multiple domains through a profile system. Each profile defines 4 primary evaluation criteria, artifact taxonomy, and stakeholder lens.
+
+| Profile | Criteria | Stakeholder Lens |
+|---------|----------|-----------------|
+| `software` (default) | product_depth, functionality, visual_design, code_quality | End users, developers |
+| `architecture` | coherence, standards_compliance, stakeholder_coverage, feasibility | Enterprise architects, CTO |
+| `tender` | requirements_coverage, regulatory_alignment, cost_justification, risk_mitigation | Procurement, legal |
+| `research` | rigor, novelty, reproducibility, clarity | Reviewers, peers |
+| `content` | clarity, engagement, accuracy, brand_alignment | Audience, editors |
+| `business_analysis` | completeness, traceability, stakeholder_alignment, feasibility | Business owners, PMs |
+| `custom` | User-defined (4 criteria in spec) | User-defined |
+
+Projects can declare a primary + optional secondary profile for cross-domain work. The `source_requirement` field in features.json links features to original business needs for BA/tender/architecture domains.
+
+---
+
 ## Harness Variants
 
 | Variant | When |
