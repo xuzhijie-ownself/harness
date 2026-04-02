@@ -1,7 +1,11 @@
 # Harness
 
 Multi-agent sprint orchestration harness for long-running application
-development, implementing Anthropic's harness patterns.
+development, implementing Anthropic's harness patterns. Domain-agnostic —
+works for any project type.
+
+**6 agents:** initializer, planner, generator, evaluator, coordinator, releaser.
+The evaluator handles testing, code review, and grading in one pass.
 
 **References:**
 - https://www.anthropic.com/engineering/harness-design-long-running-apps
@@ -40,10 +44,11 @@ bash plugins/long-running-harness/install.sh --uninstall
 
 | Command | Purpose |
 |---------|---------|
-| `/harness:init` | Scaffold harness for a new project (run once) |
-| `/harness:session` | Run one supervised sprint round |
-| `/harness:run` | Continuous coordinator-driven loop (unattended) |
-| `/harness:reset` | Checkpoint + handoff when context fills (Variant B) |
+| `/init` | Scaffold harness for a new project (run once) |
+| `/session` | Run one supervised sprint round |
+| `/run` | Continuous coordinator-driven loop (unattended) |
+| `/reset` | Checkpoint + handoff when context fills (Variant B) |
+| `/release` | Version bump, changelog, and git tag |
 
 ---
 
@@ -51,20 +56,12 @@ bash plugins/long-running-harness/install.sh --uninstall
 
 | Agent | Spawned by | Reference |
 |-------|-----------|-----------|
-| initializer | `/harness:init` | `skills/harness/roles/initializer.md` |
-| planner | `/harness:init` | `skills/harness/roles/planner.md` |
-| generator | `/harness:session`, coordinator | `skills/harness/roles/generator.md` |
-| evaluator | `/harness:session`, coordinator | `skills/harness/roles/evaluator.md` |
-| coordinator | `/harness:run` | `skills/harness/roles/coordinator.md` |
-
-**Coming in v0.2.0:**
-
-| Agent | Purpose | Reference |
-|-------|---------|-----------|
-| tester | Runs test plans after generation | `skills/harness/roles/tester.md` |
-| reviewer | Code review (auto-detects Codex plugin) | `skills/harness/roles/reviewer.md` |
-| releaser | Versioning, changelog, git tags | `skills/harness/roles/releaser.md` |
-| architect | Design review for complex projects | `skills/harness/roles/architect.md` |
+| initializer | `/init` | `skills/harness/roles/initializer.md` |
+| planner | `/init` | `skills/harness/roles/planner.md` |
+| generator | `/session`, coordinator | `skills/harness/roles/generator.md` |
+| evaluator | `/session`, coordinator | `skills/harness/roles/evaluator.md` |
+| coordinator | `/run` | `skills/harness/roles/coordinator.md` |
+| releaser | `/release`, coordinator | `skills/harness/roles/releaser.md` |
 
 ---
 
@@ -88,10 +85,16 @@ Both Claude Code and Codex share:
   features.json        # feature list with pass/fail status
   state.json           # run state, current round, active features
   progress.md          # progress log across sprints
+  spec.md              # product spec with execution strategy
+  init.md              # human-readable setup docs
+  init.sh              # dev server startup + smoke test
   handoff.md           # context handoff (Variant B)
-  NN-contract.md       # sprint contract per round
-  NN-evaluation.md     # evaluation report per round
-  NN-evaluation.json   # machine-readable evaluation per round
+  sprints/
+    NN-contract.md       # sprint contract per round
+    NN-contract-review.md # evaluator contract review
+    NN-builder-report.md  # generator implementation report
+    NN-evaluation.md     # evaluation (tests + review + grade)
+    NN-evaluation.json   # machine-readable evaluation
 ```
 
 ---
@@ -101,7 +104,7 @@ Both Claude Code and Codex share:
 | Variant | When |
 |---------|------|
 | A: Full-Stack Sprinted | Default -- coordinator loop, continuous compaction OK |
-| B: Reset-Based | Context anxiety -- use `/harness:reset` + `.harness/handoff.md` |
+| B: Reset-Based | Context anxiety -- use `/reset` + `.harness/handoff.md` |
 | C: Simplified | Sprint decomposition no longer adds lift (evidence required) |
 
 ---

@@ -1,9 +1,11 @@
 ---
 name: harness
-description: Designs and runs Anthropic-style long-running application harnesses for autonomous coding. Use when turning a short prompt into a multi-agent workflow, dispatching initializer/planner/generator/evaluator/coordinator roles, tracking completion through a machine-readable feature list, negotiating sprint contracts before coding, making incremental progress on failing features across sessions, or running until the required feature set passes. Also activate for /harness:init, /harness:session, /harness:run, /harness:reset commands, context reset with handoff files, supervised vs continuous execution modes, or questions about Anthropic harness design patterns and context anxiety.
+description: Designs and runs Anthropic-style long-running application harnesses for autonomous coding. Use when turning a short prompt into a multi-agent workflow, dispatching initializer/planner/generator/evaluator/coordinator roles, tracking completion through a machine-readable feature list, negotiating sprint contracts before coding, making incremental progress on failing features across sessions, or running until the required feature set passes. Also activate for /init, /session, /run, /reset commands, context reset with handoff files, supervised vs continuous execution modes, or questions about Anthropic harness design patterns and context anxiety.
 ---
 
 # Harness
+
+> **Domain-agnostic.** This harness works for any project type — web apps, CLI tools, APIs, libraries, infrastructure, data pipelines, mobile apps, or any software development workflow. The patterns below are not specific to any tech stack or domain.
 
 Blend the two Anthropic articles rather than following only one of them:
 
@@ -19,7 +21,7 @@ The default harness should have:
 
 - an initializer phase
 - a machine-readable feature list with explicit pass/fail status
-- a planner when the user prompt is too short to define a rich app
+- a planner when the user prompt is too short to define a full app
 - a generator
 - an evaluator
 - a coordinator when the user wants continuous unattended progress
@@ -36,13 +38,10 @@ When the environment supports separate agents or sessions, dispatch explicitly:
 
 1. Spawn an `initializer` agent to create the operational scaffold.
 2. Spawn a `planner` agent to produce or refine the product spec if the prompt is underspecified.
-2b. Optionally spawn an `architect` agent for design review if >10 required features or user requests it.
 3. Spawn a `generator` agent to propose the next bounded sprint and implement it.
-4. Spawn a `tester` agent to write and run tests after generator implementation.
-5. Spawn a `reviewer` agent to perform code review after testing (uses Codex if available).
-6. Spawn an `evaluator` agent to review the contract, test the live app, and grade acceptance.
-7. Spawn a `coordinator` agent in continuous mode to advance rounds automatically until a stop condition is reached.
-8. Spawn a `releaser` agent after all required features pass or when the user requests `/harness:release`.
+4. Spawn an `evaluator` agent to review the contract, then test + review + grade the implementation.
+5. Spawn a `coordinator` agent in continuous mode to advance rounds automatically until a stop condition is reached.
+6. Spawn a `releaser` agent after all required features pass or when the user requests `/release`.
 
 Do not collapse these into one agent unless the environment truly cannot separate them.
 If you are forced to use one agent, state that the run is an approximation and not faithful role separation.
@@ -51,10 +50,8 @@ Use these ownership boundaries:
 
 - Initializer owns setup artifacts only.
 - Planner owns product-spec and execution-strategy artifacts only.
-- Architect owns `.harness/architecture.md` only; does not modify product code or features.json. Optional role.
 - Generator edits product code and generator-owned reports only.
-- Reviewer owns code review artifacts only; does not edit product code.
-- Evaluator does not edit product code; it writes review, QA, and acceptance artifacts only.
+- Evaluator does not edit product code; it writes testing, review, QA, and acceptance artifacts only.
 - Coordinator owns run-state, loop control, and decomposition decisions only.
 
 Use role-scoped references so each subagent reads only the context it needs:
@@ -62,12 +59,9 @@ Use role-scoped references so each subagent reads only the context it needs:
 - [roles/initializer.md](roles/initializer.md)
 - [roles/planner.md](roles/planner.md)
 - [roles/generator.md](roles/generator.md)
-- [roles/tester.md](roles/tester.md)
 - [roles/evaluator.md](roles/evaluator.md)
-- [roles/reviewer.md](roles/reviewer.md)
 - [roles/coordinator.md](roles/coordinator.md)
 - [roles/releaser.md](roles/releaser.md)
-- [roles/architect.md](roles/architect.md)
 - [references/patterns.md](references/patterns.md) for shared schemas and templates only
 
 ## Initializer
@@ -94,19 +88,6 @@ Do not skip the feature list. It is the main completion ledger.
 - Do not keep adding roadmap items during execution unless the user changes scope or the evaluator proves a missing dependency blocks completion.
 - Write an explicit execution strategy.
 
-## Development Methodology
-
-During `/harness:init`, users select a development methodology. This shapes how sprints are structured and what artifacts are produced.
-
-| Methodology | Sprint Structure | Feature Ordering | Extra Artifacts |
-|-------------|-----------------|------------------|-----------------|
-| agile | Iterative sprints | Priority-based | Standard contract/evaluation |
-| scrum | Time-boxed with planning/review/retro | Sprint backlog | sprint-planning.md, sprint-retro.md |
-| waterfall | Sequential phases | Phase-dependent | phase-gate.md |
-| kanban | Continuous flow, WIP-limited | Pull-based | None (evaluation gates only) |
-
-Default: agile (if user doesn't specify).
-
 ## Execution Strategy
 
 Every planned app spec should include an `Execution strategy` section.
@@ -122,20 +103,6 @@ That section should declare:
 
 If the run finishes in one sprint, the planner or coordinator should state why sprint decomposition was not load-bearing for this specific app.
 
-## Architect (Optional)
-
-The architect agent provides design review for complex projects.
-
-- Spawned during `/harness:init` if the feature list contains more than 10 required features
-- Also spawned on explicit user request ("review the architecture")
-- Produces `.harness/architecture.md` with system overview, module decomposition, dependency graph, risks, and recommended implementation order
-- Advisory only — generator may deviate with documented justification
-- Does not modify product code, features.json, or evaluation artifacts
-
-### Dispatch
-
-- [roles/architect.md](roles/architect.md)
-
 ## Generator
 
 - Build against the accepted spec, the current feature list, and the accepted contract.
@@ -149,14 +116,16 @@ The architect agent provides design review for complex projects.
 
 ## Evaluator
 
-- Act as skeptical QA and product reviewer.
+- Act as skeptical QA, code reviewer, and tester — all in one pass.
 - Review the proposed sprint contract before code is written.
+- After implementation: write and run tests, review code quality, and grade acceptance.
 - Interact with the running application the way a user would.
 - For browser apps, use Playwright or an equivalent browser tool.
 - For full-stack apps, test UI flows, API behavior, and database state when possible.
 - Grade against hard thresholds for product depth, functionality, visual design, and code quality.
 - Fail the sprint or round if any one criterion misses the bar.
 - Update acceptance only after verification evidence exists.
+- If Codex plugin is detected (`.claude/settings.json` has `"codex@openai-codex": true`), use `/codex:adversarial-review` for deeper code review.
 
 ## Coordinator
 
@@ -184,7 +153,7 @@ The releaser agent manages version bumps, changelog generation, and git tags.
 ### When to Release
 
 - Automatically: the coordinator spawns the releaser after all required features pass.
-- Manually: the user runs `/harness:release` to cut a release checkpoint mid-run.
+- Manually: the user runs `/release` to cut a release checkpoint mid-run.
 
 ### Releaser Role
 
@@ -217,92 +186,6 @@ The releaser creates an annotated git tag for each release: `git tag -a vX.Y.Z -
 ### Dispatch
 
 - [roles/releaser.md](roles/releaser.md)
-
-## Testing Strategy
-
-The tester agent writes and runs tests after generator implementation and before evaluator grading.
-
-### Tester Role
-
-- Owns: test files in the project, `.harness/test-plan.md`, `.harness/sprints/NN-test-report.md`
-- Reads: sprint contract, builder report, features.json, spec.md
-- Does NOT own: product code (only test files), evaluation artifacts
-
-### Test Plan
-
-During init, the initializer (or tester if spawned) generates `.harness/test-plan.md` from the spec's feature list. The test plan defines per-feature test requirements (unit, integration, e2e) and target coverage levels.
-
-### Sprint Test Reports
-
-Each sprint produces `.harness/sprints/NN-test-report.md` with:
-- List of test files created or modified
-- Test suite results (passed, failed, skipped, coverage)
-- Findings and issues discovered during testing
-
-### Test Verification in Evaluator
-
-The evaluator checks three test criteria before grading:
-- TEST-01 (required): Tests exist for new/changed code
-- TEST-02 (required): All tests pass
-- TEST-03 (advisory): E2E tests cover the feature's verification steps
-
-TEST-01 and TEST-02 are non-blocking by default but become blocking if `test-plan.md` requires tests for the feature.
-
-### Updated Sprint Flow
-
-The tester runs between implementation and evaluation:
-
-1. Generator implements the sprint
-2. **Tester writes and runs tests** → `NN-test-report.md`
-3. **Reviewer performs code review** → `NN-review.md`
-4. Evaluator grades the implementation (including test and review results)
-
-### Dispatch
-
-- [roles/tester.md](roles/tester.md)
-
-## Code Review & Codex Integration
-
-The reviewer agent performs code review after testing and before evaluation.
-
-### Reviewer Role
-
-- Owns: `.harness/sprints/NN-review.md`
-- Reads: sprint contract, builder report, test report, git diff, `.claude/settings.json`
-- Focus: code quality, security, patterns compliance, performance
-- Does NOT: modify product code, skip review, mark features passing
-
-### Codex Detection
-
-The reviewer checks `.claude/settings.json` for Codex availability:
-
-1. Read `.claude/settings.json`
-2. Look for `"codex@openai-codex": true` in any settings key
-3. If found: Codex is available and `/codex:adversarial-review` can be used
-4. If not found: fall back to Claude-based review
-
-### Review Flow
-
-1. Read sprint contract and builder report
-2. Run `git diff HEAD~1 --name-only` to identify changed files
-3. If Codex available: invoke `/codex:adversarial-review` on the diff
-4. If Codex not available: read each changed file, check for security issues, code smells, performance problems, pattern violations, missing error handling
-5. Write `.harness/sprints/NN-review.md`
-
-### Blocking vs Non-Blocking Findings
-
-- **BLOCKING**: security vulnerabilities, data loss risks, broken functionality, missing error handling on critical paths. The generator must fix these before evaluation proceeds.
-- **NON-BLOCKING**: code style suggestions, minor performance improvements, optional refactoring, documentation gaps. Informational only — evaluation proceeds.
-
-If BLOCKING issues are found, the coordinator returns the sprint to the generator for fixes before spawning the evaluator.
-
-### Optional Nature of Codex
-
-Codex integration is optional. The reviewer works without Codex by performing Claude-based review. When Codex is available, it provides an additional adversarial perspective but does not replace the reviewer's own analysis.
-
-### Dispatch
-
-- [roles/reviewer.md](roles/reviewer.md)
 
 ## Quantified Evaluation
 
@@ -355,11 +238,14 @@ Every evaluation round should emit all of these:
 
 - `.harness/sprints/NN-evaluation.md`
 - `.harness/sprints/NN-evaluation.json`
-- `.harness/sprints/NN-evaluator-steps.md`
 
 The Markdown artifact is for human review.
 The JSON artifact is for machine-readable continuity across long runs.
-The evaluator-steps artifact is for replayable verification.
+
+The Markdown artifact must include these sections:
+- **Test Results**: tests written, suite results, coverage
+- **Code Review**: findings classified as BLOCKING or NON-BLOCKING
+- **Replayable Steps**: exact verification actions for reproducing the evaluation
 
 The JSON artifact should include at least:
 
@@ -370,6 +256,8 @@ The JSON artifact should include at least:
 - `blockers`
 - `non_blocking_issues`
 - `feature_evidence`
+- `test_results`
+- `review_findings`
 
 Do not mark a feature as passing based only on the Markdown summary if the structured evaluation artifact is missing or inconsistent.
 
@@ -449,7 +337,7 @@ Use this by default when the user asks to follow the 2026 app-harness article.
 - Evaluator reviews the proposed sprint before implementation.
 - Coordinator advances the loop automatically in continuous mode.
 - Generator implements the sprint.
-- Evaluator tests the live app and either accepts the targeted feature IDs or sends the sprint back.
+- Evaluator tests, reviews, and grades the live app — either accepts the targeted feature IDs or sends the sprint back.
 - The build can remain one continuous run with compaction rather than resets.
 
 ### Variant B: Reset-Based Compatibility Harness
@@ -498,7 +386,9 @@ For evaluation artifacts, also include:
 - blockers versus non-blocking issues
 - criterion-level reasoning tied to evidence
 - a structured JSON mirror of the same decision
-- replayable evaluator steps or exact verification actions
+- test results (tests written, pass/fail counts, coverage)
+- code review findings (blocking and non-blocking)
+- replayable verification steps
 
 ## Execution Loop
 
@@ -512,9 +402,7 @@ In Variant A, run this loop:
 6. Evaluator writes `.harness/sprints/NN-contract-review.md`.
 7. Generator revises the contract until accepted.
 8. Generator implements the sprint and writes `.harness/sprints/NN-builder-report.md`.
-8b. Tester writes and runs tests, produces `.harness/sprints/NN-test-report.md`.
-8c. Reviewer performs code review, produces `.harness/sprints/NN-review.md`. If BLOCKING issues found, returns to generator.
-9. Evaluator runs QA (including test verification) and writes `.harness/sprints/NN-evaluation.md`, `.harness/sprints/NN-evaluation.json`, and `.harness/sprints/NN-evaluator-steps.md`.
+9. Evaluator runs tests, reviews code, and grades — writes `.harness/sprints/NN-evaluation.md` and `.harness/sprints/NN-evaluation.json`.
 10. Evaluator-backed evidence updates `.harness/features.json`.
 11. Coordinator either advances to the next failing required feature, pauses on a blocker, or stops if completion conditions are met.
 
@@ -529,15 +417,11 @@ Start with:
 - `.harness/init.md` + `.harness/init.sh`
 - `.harness/state.json` in continuous mode
 - `.harness/spec.md`
-- `.harness/test-plan.md`
 - `.harness/sprints/NN-contract.md`
 - `.harness/sprints/NN-contract-review.md`
 - `.harness/sprints/NN-builder-report.md`
-- `.harness/sprints/NN-test-report.md`
-- `.harness/sprints/NN-review.md`
 - `.harness/sprints/NN-evaluation.md`
 - `.harness/sprints/NN-evaluation.json`
-- `.harness/sprints/NN-evaluator-steps.md`
 
 Optional supporting artifacts:
 
@@ -546,7 +430,6 @@ Optional supporting artifacts:
 - `.harness/evaluator-calibration.md` when subjective scoring needs tighter anchors
 - `.harness/decomposition.md` when sprint planning needs an auditable rationale outside the main spec
 - `.harness/cost-log.md` for tracking per-sprint cost and duration
-- `.harness/architecture.md` for architect design review on complex projects (>10 features)
 
 Use the shared schemas in [references/patterns.md](references/patterns.md).
 
@@ -615,7 +498,7 @@ Use compaction when:
 - Context usage is below ~60%.
 - Quality has not degraded in later sprints compared to earlier ones.
 
-Use a full reset (`/harness:reset`) when:
+Use a full reset (`/reset`) when:
 
 - Context is above ~75%.
 - The model shows premature closure, rushing behavior, or "context anxiety."
@@ -646,11 +529,11 @@ If an agent spawn fails (timeout, API error, crash):
 
 ### Context Freshness
 
-Track `rounds_since_reset` in `state.json`. After 3 rounds, the coordinator pauses the run, writes a handoff file, and resets the counter. The next `/harness:session` or `/harness:run` picks up from the handoff automatically.
+Track `rounds_since_reset` in `state.json`. After 3 rounds, the coordinator pauses the run, writes a handoff file, and resets the counter. The next `/session` or `/run` picks up from the handoff automatically.
 
 ### Sprint Resume
 
-`state.json` tracks `current_sprint_phase` (one of: `idle`, `contract`, `implementation`, `testing`, `review`, `evaluation`). When a session starts, it checks this field and resumes from the last active phase instead of restarting the sprint.
+`state.json` tracks `current_sprint_phase` (one of: `idle`, `contract`, `implementation`, `evaluation`). When a session starts, it checks this field and resumes from the last active phase instead of restarting the sprint.
 
 ### Evaluator Enforcement
 
@@ -676,7 +559,7 @@ When reviewing whether the harness was actually followed, check:
 - Did each sprint target one failing required feature unless a written grouping waiver existed?
 - Is there a contract review artifact before implementation?
 - Is there both Markdown and JSON evaluation output for each accepted round?
-- Is there replayable evaluator-step evidence for each round?
+- Does the evaluation include test results and code review findings?
 - Did the number of failing required features go down?
 - Did the run stop because required features passed, not because another sprint was invented?
 

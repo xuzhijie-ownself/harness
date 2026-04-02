@@ -19,13 +19,13 @@ if "%~1"=="--uninstall" (
     echo.
 
     :: Commands
-    for %%c in (init run session reset migrate release) do (
-        del /Q "%CLAUDE_DIR%\commands\harness_%%c.md" 2>nul
+    for %%c in (init run session reset release) do (
+        del /Q "%CLAUDE_DIR%\commands\%%c.md" 2>nul
     )
     echo   [OK] Removed commands
 
     :: Agents
-    for %%a in (coordinator evaluator generator initializer planner tester reviewer releaser architect) do (
+    for %%a in (coordinator evaluator generator initializer planner releaser) do (
         del /Q "%CLAUDE_DIR%\agents\%%a.md" 2>nul
     )
     echo   [OK] Removed agents
@@ -52,8 +52,8 @@ if not exist "%CLAUDE_DIR%\skills\harness" mkdir "%CLAUDE_DIR%\skills\harness"
 if not exist "%CLAUDE_DIR%\skills\harness\roles" mkdir "%CLAUDE_DIR%\skills\harness\roles"
 if not exist "%CLAUDE_DIR%\skills\harness\references" mkdir "%CLAUDE_DIR%\skills\harness\references"
 
-:: Commands — colons not supported on NTFS; use glob for whatever filenames exist
-for %%f in ("%PLUGIN_DIR%\commands\harness*.md") do copy /Y "%%f" "%CLAUDE_DIR%\commands\" > nul
+:: Commands — simple filenames (init.md, run.md, etc.)
+for %%f in ("%PLUGIN_DIR%\commands\*.md") do copy /Y "%%f" "%CLAUDE_DIR%\commands\" > nul
 echo   [OK] Commands    -^> .claude\commands\
 
 :: Agents
@@ -85,9 +85,9 @@ if exist "%HOOKS_DST%" (
 echo.
 echo [OK] Installed. Available immediately -- no restart needed.
 echo.
-echo   /harness:init     scaffold harness for a new project
-echo   /harness:session  run one supervised sprint round
-echo   /harness:run      continuous mode (unattended)
-echo   /harness:reset    checkpoint + handoff when context fills
+echo   /init       scaffold harness for a new project
+echo   /session    run one supervised sprint round
+echo   /run        continuous mode (unattended)
+echo   /reset      checkpoint + handoff when context fills
 echo.
 endlocal

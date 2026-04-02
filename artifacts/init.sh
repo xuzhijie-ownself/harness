@@ -63,37 +63,31 @@ check_file "README.md"
 check_file "skills/harness/SKILL.md"
 check_file "skills/harness/references/patterns.md"
 
-# --- Section 2: Existing agent files ---
-echo "-- Checking existing agent files --"
+# --- Section 2: Agent files (6 agents) ---
+echo "-- Checking agent files --"
 check_file "agents/initializer.md"
 check_file "agents/planner.md"
 check_file "agents/generator.md"
 check_file "agents/evaluator.md"
 check_file "agents/coordinator.md"
 check_file "agents/releaser.md"
-check_file "agents/tester.md"
-check_file "agents/reviewer.md"
-check_file "agents/architect.md"
 
-# --- Section 3: Existing role files ---
-echo "-- Checking existing role files --"
+# --- Section 3: Role files (6 roles) ---
+echo "-- Checking role files --"
 check_file "skills/harness/roles/initializer.md"
 check_file "skills/harness/roles/planner.md"
 check_file "skills/harness/roles/generator.md"
 check_file "skills/harness/roles/evaluator.md"
 check_file "skills/harness/roles/coordinator.md"
 check_file "skills/harness/roles/releaser.md"
-check_file "skills/harness/roles/tester.md"
-check_file "skills/harness/roles/reviewer.md"
-check_file "skills/harness/roles/architect.md"
 
-# --- Section 4: Command files ---
+# --- Section 4: Command files (simple names) ---
 echo "-- Checking command files --"
-check_file "commands/harness:init.md"
-check_file "commands/harness:run.md"
-check_file "commands/harness:session.md"
-check_file "commands/harness:reset.md"
-check_file "commands/harness:release.md"
+check_file "commands/init.md"
+check_file "commands/run.md"
+check_file "commands/session.md"
+check_file "commands/reset.md"
+check_file "commands/release.md"
 
 # --- Section 5: JSON validation ---
 echo "-- Validating JSON files --"
@@ -111,7 +105,7 @@ else
   ERRORS="$ERRORS\n  SYNTAX ERROR: install.sh"
 fi
 
-# --- Section 7: Stale reference checks (enabled after F-001) ---
+# --- Section 7: Stale reference checks ---
 echo "-- Checking for stale references --"
 for f in agents/*.md skills/harness/SKILL.md skills/harness/roles/*.md skills/harness/references/*.md; do
   check_no_stale_refs "$f" "skills/long-running-harness" "old skill path"
@@ -119,8 +113,8 @@ for f in agents/*.md skills/harness/SKILL.md skills/harness/roles/*.md skills/ha
   check_no_stale_refs "$f" "run-state\.json" "old run state filename"
 done
 
-# Check command files (with colon in name)
-for f in "commands/harness:init.md" "commands/harness:run.md" "commands/harness:session.md" "commands/harness:reset.md" "commands/harness:release.md"; do
+# Check command files
+for f in commands/init.md commands/run.md commands/session.md commands/reset.md commands/release.md; do
   check_no_stale_refs "$f" "skills/long-running-harness" "old skill path"
   check_no_stale_refs "$f" "feature-list\.json" "old feature list filename"
   check_no_stale_refs "$f" "run-state\.json" "old run state filename"

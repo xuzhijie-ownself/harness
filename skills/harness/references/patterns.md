@@ -11,9 +11,6 @@ For role-specific guidance, prefer:
 - [../roles/evaluator.md](../roles/evaluator.md)
 - [../roles/coordinator.md](../roles/coordinator.md)
 - [../roles/releaser.md](../roles/releaser.md)
-- [../roles/tester.md](../roles/tester.md)
-- [../roles/reviewer.md](../roles/reviewer.md)
-- [../roles/architect.md](../roles/architect.md)
 
 ## Shared Principles
 
@@ -31,8 +28,6 @@ For role-specific guidance, prefer:
   state.json
   init.md
   spec.md
-  test-plan.md
-  architecture.md               # optional — produced by architect agent for complex projects
   decomposition.md              # optional when sprint rationale needs its own artifact
   summary.md
   handoff.md                    # reset-based compatibility runs only
@@ -43,9 +38,6 @@ For role-specific guidance, prefer:
     01-builder-report.md
     01-evaluation.md
     01-evaluation.json
-    01-evaluator-steps.md
-    01-test-report.md
-    01-review.md
 ```
 
 ## Shared Metadata
@@ -54,7 +46,7 @@ Use this metadata block at the top of every role-owned Markdown artifact:
 
 ```md
 ## Metadata
-- Role: initializer | planner | architect | generator | tester | evaluator | coordinator
+- Role: initializer | planner | generator | evaluator | coordinator
 - Agent: agent identifier or session name
 - Inputs: files reviewed before writing this artifact
 - Status: draft | in_review | accepted | rejected | pass | fail | active | complete | paused
@@ -137,8 +129,8 @@ For review artifacts, also include:
 Field reference:
 
 - `rounds_since_reset`: Counter incremented each round; triggers context refresh handoff at 3.
-- `current_sprint_phase`: One of `idle`, `contract`, `implementation`, `testing`, `review`, `evaluation`. Used for sprint resume.
-- `methodology`: One of `agile` (default), `waterfall`, `scrum`, `kanban`. Set during `/harness:init`.
+- `current_sprint_phase`: One of `idle`, `contract`, `implementation`, `evaluation`. Used for sprint resume.
+- `methodology`: One of `agile` (default), `waterfall`, `scrum`, `kanban`. Set during `/init`.
 - `errors`: Array of `{ "round", "agent", "error", "timestamp" }` objects logged on agent spawn failures.
 - `cost_tracking`: Per-round timestamps for duration tracking across phases.
 
@@ -171,7 +163,19 @@ Field reference:
       "passes": true,
       "reason": "Required checks passed and no blocking issues remain."
     }
-  ]
+  ],
+  "test_results": {
+    "tests_written": [],
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "coverage": ""
+  },
+  "review_findings": {
+    "blocking": [],
+    "non_blocking": [],
+    "review_mode": "claude"
+  }
 }
 ```
 
@@ -364,12 +368,15 @@ Field reference:
 - Visual design: 0-5
 - Code quality: 0-5
 
-## Findings
-- Title
-  - reproduction
-  - expected
-  - actual
-  - likely cause
+## Test Results
+- Tests written: [list of test files]
+- Suite results: passed/failed/skipped/coverage
+- Findings from testing
+
+## Code Review
+- Review mode: codex | claude
+- Blocking findings: [list]
+- Non-blocking findings: [list]
 
 ## Contract check results
 - `PD-01`: pass | fail
@@ -377,28 +384,14 @@ Field reference:
 - `VD-01`: pass | fail
 - `CQ-01`: pass | fail
 
+## Replayable Steps
+1. Open the app
+2. Seed or create the required state
+3. Run the browser steps needed for each contract check
+4. Include exact storage seeds, URLs, filters, and assertions
+
 ## Feature evidence
 - F-001: why it now passes or still fails
-```
-
-### `NN-evaluator-steps.md`
-
-```md
-# Evaluator Steps
-
-## Metadata
-- Role: evaluator
-- Agent: evaluator-1
-- Inputs: accepted contract, running app
-- Status: completed
-
-## Replayable steps
-1. Open the app
-2. Seed or create the required task state
-3. Run the browser steps needed for each contract check
-
-## Notes
-- Include exact storage seeds, URLs, filters, and assertions where relevant
 ```
 
 ### `handoff.md`
@@ -491,106 +484,6 @@ if %ERRORLEVEL% EQU 0 (
 | 1 | evaluator | — | — | |
 ```
 
-### `architecture.md`
-
-```md
-# Architecture
-
-## Metadata
-- Role: architect
-- Agent: architect-1
-- Status: accepted
-
-## System Overview
-[Mermaid diagram]
-
-## Module Decomposition
-| Module | Responsibility | Dependencies |
-|--------|---------------|--------------|
-
-## Key Design Decisions
-| Decision | Rationale | Alternatives Considered |
-|----------|-----------|------------------------|
-
-## Feature Dependency Graph
-[ordered list or diagram]
-
-## Technical Risks
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-
-## Recommended Implementation Order
-[ordered feature list with rationale]
-```
-
-### `test-plan.md`
-
-```md
-# Test Plan
-
-## Metadata
-- Role: tester
-- Agent: tester-1
-- Status: active
-
-## Strategy
-- Unit tests: [framework] — target 80% coverage
-- Integration tests: [framework] — API endpoint coverage
-- E2E tests: Playwright — critical user flows
-- Regression: run full suite before each sprint evaluation
-
-## Per-Feature Test Requirements
-| Feature ID | Unit | Integration | E2E | Status |
-|------------|------|-------------|-----|--------|
-| F-001      | N/A  | N/A         | smoke | pending |
-```
-
-### `NN-test-report.md`
-
-```md
-# Test Report — Sprint NN
-
-## Metadata
-- Role: tester
-- Status: completed
-
-## Tests Written
-- [list of test files created/modified]
-
-## Test Results
-| Suite | Passed | Failed | Skipped | Coverage |
-|-------|--------|--------|---------|----------|
-
-## Findings
-- [issues found during testing]
-```
-
-### `NN-review.md`
-
-```md
-# Code Review — Sprint NN
-
-## Metadata
-- Role: reviewer
-- Agent: reviewer-1
-- Status: completed
-- Review mode: codex | claude
-
-## Changed Files
-- [list from git diff]
-
-## Findings
-
-### Blocking
-- [issues that must be fixed]
-
-### Non-Blocking
-- [informational findings]
-
-## Recommendation
-- PROCEED | FIX_REQUIRED
-```
-
 ### `release.json`
 
 ```json
@@ -662,7 +555,7 @@ Use this when reviewing whether a run truly followed the harness:
 5. Did the spec explain the execution strategy and sprinting rationale?
 6. Did each sprint target one failing required feature unless a grouping waiver existed?
 7. Did the number of failing required features go down?
-8. Did each accepted round include `NN-evaluation.md`, `NN-evaluation.json`, and `NN-evaluator-steps.md`?
+8. Did each accepted round include `NN-evaluation.md` and `NN-evaluation.json`?
 9. In continuous mode, did the coordinator either advance, pause, or stop explicitly?
 
 If the answer to the first six questions is no, or the failing-feature count does not move, the harness is drifting.

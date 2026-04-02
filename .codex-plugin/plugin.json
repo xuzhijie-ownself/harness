@@ -23,7 +23,7 @@
   "interface": {
     "displayName": "Harness",
     "shortDescription": "Multi-agent sprint orchestration harness",
-    "longDescription": "Runs an Anthropic-style application harness with initializer, planner, generator, evaluator, coordinator, tester, reviewer, releaser, and architect roles. Explicit sprint strategy, quantified QA, and a completion ledger. Supports agile, waterfall, scrum, and kanban methodologies.",
+    "longDescription": "Runs an Anthropic-style application harness with 6 agents: initializer, planner, generator, evaluator, coordinator, and releaser. The evaluator handles testing, code review, and grading in one pass. Explicit sprint strategy, quantified QA, and a completion ledger. Domain-agnostic — works for any project type.",
     "developerName": "Local Workspace",
     "category": "Productivity",
     "capabilities": [

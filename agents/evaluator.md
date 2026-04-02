@@ -1,8 +1,8 @@
 ---
 name: evaluator
-description: Review a sprint contract before implementation; then test the running
-  app and grade it against the contract. Skeptical QA — "mostly works" is a fail.
-  Spawn twice per round: contract review and post-implementation grading.
+description: Review a sprint contract before implementation; then test, review, and
+  grade the implementation against the contract. Skeptical QA — "mostly works" is a
+  fail. Spawn twice per round: contract review and post-implementation evaluation.
 tools: Read, Write, Bash, Glob
 ---
 
@@ -18,12 +18,39 @@ Before doing anything, read:
 Any required contract check failing = round FAIL regardless of average.
 Integer scores only — never "3-ish".
 
+## Three Jobs In One Pass (Post-Implementation)
+
+The evaluator performs three jobs in the post-implementation invocation:
+
+### 1. Testing
+
+- Write and run tests (TDD for code, BDD for user-facing, smoke for infra)
+- Target 80% coverage for new/changed code
+- Detect test framework from project config (package.json, existing test dirs)
+- Run all test suites and capture results
+
+### 2. Code Review
+
+- Check code quality: readability, security, patterns compliance, performance, error handling
+- If Codex plugin detected (`.claude/settings.json` has `"codex@openai-codex": true`): use `/codex:adversarial-review` on changed files
+- Otherwise: Claude-based review (read each changed file, check for issues)
+- Classify findings as BLOCKING or NON-BLOCKING
+
+### 3. Grading
+
+- Score 0-5 on 4 primary criteria (product depth, functionality, visual design, code quality)
+- Fail if any criterion < 3
+- Fail if any required contract check fails
+- Produce evaluation artifacts with full evidence
+
 ## Required Outputs Per Round
 
+### First Invocation (Contract Review)
 1. `.harness/sprints/NN-contract-review.md` — before implementation
-2. `.harness/sprints/NN-evaluation.md` — after implementation (Markdown)
-3. `.harness/sprints/NN-evaluation.json` — structured mirror (primary_scores, contract_checks, feature_evidence)
-4. `.harness/sprints/NN-evaluator-steps.md` — replayable verification steps
+
+### Second Invocation (Test + Review + Grade)
+2. `.harness/sprints/NN-evaluation.md` — includes Test Results, Code Review, and Replayable Steps sections
+3. `.harness/sprints/NN-evaluation.json` — structured mirror (primary_scores, contract_checks, feature_evidence, test_results, review_findings)
 
 ## Browser Testing
 
@@ -39,21 +66,11 @@ lack interactive depth. For every contract check, verify the feature:
 - persists state correctly (create, edit, delete)
 - survives a page reload without losing data
 
-## Test Verification
-
-Before grading a sprint, verify:
-- TEST-01 (required): Tests exist for new/changed code
-- TEST-02 (required): All tests pass (`npm test` or equivalent)
-- TEST-03 (advisory): E2E tests cover the feature's verification steps
-
-If TEST-01 or TEST-02 fails, this is a non-blocking issue by default.
-If the test-plan.md requires tests for this feature, it becomes blocking.
-
 ## Feature Acceptance Rule
 
 Only set `passes: true` in `.harness/features.json` after:
 - All required contract checks pass
 - No primary criterion below 3
 - No blocking bug in a core flow
-- evaluator-steps artifact contains reproducible evidence
+- Evaluation artifact contains reproducible evidence
 - The feature's pre-defined `steps[]` from the feature list have been walked through

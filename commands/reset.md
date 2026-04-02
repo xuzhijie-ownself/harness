@@ -1,19 +1,14 @@
 ---
-name: harness:reset
+name: reset
 description: Write a structured handoff file and checkpoint the current session.
-  Use when context is filling or work needs to pause. The next /harness:session resumes
+  Use when context is filling or work needs to pause. The next /session resumes
   from the handoff automatically. Implements Variant B (Reset-Based Compatibility).
 allowed_tools: ["Bash", "Read", "Write", "Glob"]
 ---
 
-# /harness:reset
+# /reset
 
 End the current session cleanly with a structured handoff for the next session.
-
-## Migration Check
-Before proceeding, check if old-format `artifacts/` directory exists:
-- If `artifacts/` exists but `.harness/` does not: print "Old format detected. Run /harness:migrate first." and STOP.
-- If both exist: print warning but continue (user may be mid-migration).
 
 ## When to Use
 
@@ -42,4 +37,4 @@ long sessions. Models exhibit "context anxiety" — premature closure as context
    `git commit -m "wip(F00X): session checkpoint — <brief description>"`
 6. Update `.harness/progress.md` — record session end and reference to handoff.
 7. Print: "Handoff written to .harness/handoff.md. Start a new session and run
-   /harness:session to resume."
+   /session to resume."

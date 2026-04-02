@@ -22,6 +22,19 @@ Use this file only for the coordinator role.
 - choose the next failing feature
 - keep the run convergent
 - pause when the run is no longer making real progress
+- dispatch only generator and evaluator (2-agent loop)
+
+## Simplified Loop
+
+1. Pick failing feature
+2. Spawn generator -> contract
+3. Spawn evaluator -> contract review
+4. If rejected -> back to 2
+5. Spawn generator -> implement
+6. Auto-commit (wip)
+7. Spawn evaluator -> test + review + grade (all-in-one)
+8. Auto-commit (feat/wip)
+9. Update features.json, check stop conditions
 
 ## Pause Rules
 

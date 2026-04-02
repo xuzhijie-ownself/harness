@@ -24,15 +24,12 @@ Owns: .harness/state.json, .harness/summary.md, .harness/decomposition.md
 4. Spawn `evaluator` agent (review contract)
 5. If rejected: request contract revision; re-spawn evaluator
 6. Spawn `generator` agent (implement)
-6b. Spawn `tester` agent to write and run tests
-6c. Tester writes `.harness/sprints/NN-test-report.md`
-6d. Check codex availability (read `.claude/settings.json` for `"codex@openai-codex": true`)
-6e. Spawn `reviewer` agent to perform code review → `.harness/sprints/NN-review.md`
-6f. If reviewer finds BLOCKING issues, return to generator for fixes before evaluation proceeds
-7. Spawn `evaluator` agent (grade)
-8. Update `.harness/features.json` from evaluator feature_evidence
-9. Check stop conditions (all required features pass, or hard blocker)
-10. If all required features pass: spawn `releaser` agent before writing summary
+7. Auto-commit: `git add -A && git commit -m "wip(F-XXX): implement <title> — sprint N [harness]"`
+8. Spawn `evaluator` agent (test + review + grade — all-in-one)
+9. Auto-commit: `git add -A && git commit -m "feat/wip(F-XXX): <title> — sprint N [harness]"`
+10. Update `.harness/features.json` from evaluator feature_evidence
+11. Check stop conditions (all required features pass, or hard blocker)
+12. If all required features pass: spawn `releaser` agent before writing summary
 
 ### Auto-Commit Protocol
 
@@ -58,7 +55,7 @@ Track `rounds_since_reset` in `.harness/state.json` (starts at 0, increments eac
 After 3 rounds (`rounds_since_reset >= 3`):
 1. Write `.harness/handoff.md` with current progress summary.
 2. Set `rounds_since_reset` to 0.
-3. Pause with `stop_reason`: `"context refresh — resume with /harness:session or /harness:run"`.
+3. Pause with `stop_reason`: `"context refresh — resume with /session or /run"`.
 4. The next session picks up from the handoff automatically.
 
 ## Evaluator Enforcement

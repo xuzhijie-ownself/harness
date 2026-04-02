@@ -18,13 +18,13 @@ if [ "${1:-}" = "--uninstall" ]; then
   echo ""
 
   # Commands
-  for cmd in init run session reset migrate release; do
-    rm -f "$CLAUDE_DIR/commands/harness:${cmd}.md" 2>/dev/null || true
+  for cmd in init run session reset release; do
+    rm -f "$CLAUDE_DIR/commands/${cmd}.md" 2>/dev/null || true
   done
   echo "  ✓ Removed commands"
 
   # Agents
-  for agent in coordinator evaluator generator initializer planner tester reviewer releaser architect; do
+  for agent in coordinator evaluator generator initializer planner releaser; do
     rm -f "$CLAUDE_DIR/agents/${agent}.md" 2>/dev/null || true
   done
   echo "  ✓ Removed agents"
@@ -52,8 +52,8 @@ mkdir -p "$CLAUDE_DIR/commands" \
          "$CLAUDE_DIR/skills/harness/roles" \
          "$CLAUDE_DIR/skills/harness/references"
 
-# Commands — handle colon-in-filename portably
-for f in "$PLUGIN_DIR/commands/"harness:*.md; do
+# Commands — simple filenames (init.md, run.md, etc.)
+for f in "$PLUGIN_DIR/commands/"*.md; do
   [ -f "$f" ] || continue
   cp "$f" "$CLAUDE_DIR/commands/"
 done
@@ -100,7 +100,7 @@ fi
 echo ""
 echo "✓ Installed. Available immediately — no restart needed."
 echo ""
-echo "  /harness:init     scaffold harness for a new project"
-echo "  /harness:session  run one supervised sprint round"
-echo "  /harness:run      continuous mode (unattended)"
-echo "  /harness:reset    checkpoint + handoff when context fills"
+echo "  /init       scaffold harness for a new project"
+echo "  /session    run one supervised sprint round"
+echo "  /run        continuous mode (unattended)"
+echo "  /reset      checkpoint + handoff when context fills"

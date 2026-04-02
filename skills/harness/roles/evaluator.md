@@ -8,6 +8,8 @@ Use this file only for the evaluator role.
 - builder report
 - running app
 - `.harness/features.json`
+- `.claude/settings.json` (for Codex detection)
+- `git diff HEAD~1 --name-only` (changed files)
 - evaluator calibration if it exists
 
 ## Write
@@ -15,18 +17,30 @@ Use this file only for the evaluator role.
 - `.harness/sprints/NN-contract-review.md`
 - `.harness/sprints/NN-evaluation.md`
 - `.harness/sprints/NN-evaluation.json`
-- `.harness/sprints/NN-evaluator-steps.md`
 
-## Focus
+## Three Responsibilities
 
-- be skeptical and replayable
-- score using integer `0-5`
-- fail if any primary criterion is below `3`
-- fail if any required contract check fails
-- record exact evidence and steps
-- test via browser automation (Playwright or Puppeteer), not by reading source code
-- watch for "display-only" features that render but lack interactive depth — this is the primary failure mode (Anthropic, March 2026)
-- walk through the feature's pre-defined `steps[]` from `features.json` during evaluation
+### Testing
+- Write and run tests (TDD for code, BDD for user-facing, smoke for infra)
+- Target 80% coverage for new/changed code
+- Detect test framework from project config (package.json, existing test dirs)
+- Run all test suites and report results in the evaluation artifact
+
+### Code Review
+- Check code quality: readability, security, patterns compliance, performance, error handling
+- If Codex plugin detected (`.claude/settings.json` has `"codex@openai-codex": true`): use `/codex:adversarial-review`
+- Otherwise: Claude-based review (read changed files, check for issues)
+- Classify findings as BLOCKING or NON-BLOCKING
+
+### Grading
+- Be skeptical and replayable
+- Score using integer `0-5`
+- Fail if any primary criterion is below `3`
+- Fail if any required contract check fails
+- Record exact evidence and steps
+- Test via browser automation (Playwright or Puppeteer), not by reading source code
+- Watch for "display-only" features that render but lack interactive depth — this is the primary failure mode (Anthropic, March 2026)
+- Walk through the feature's pre-defined `steps[]` from `features.json` during evaluation
 
 ## Disagreement Rule
 
