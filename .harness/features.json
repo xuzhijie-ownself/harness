@@ -6,7 +6,7 @@
       "id": "F-001",
       "title": "Business Analysis Domain Skill (harness-ba)",
       "category": "functional",
-      "description": "Create plugins/harness/skills/harness-ba/SKILL.md (~350-400 lines) following the 10-section pattern established by harness-ea. The skill activates when domain_profile: business_analysis is set.",
+      "description": "Create plugins/harness/skills/harness-ba/SKILL.md following the 10-section pattern. Activated when domain_profile: business_analysis.",
       "required": true,
       "priority": "high",
       "status": "complete",
@@ -18,13 +18,13 @@
       "evidence": [
         "01-evaluation.json: all contract checks passed, all criteria scored 4"
       ],
-      "notes": "Sprint 1 PASS. All 10 sections present, 373 lines."
+      "notes": "Sprint 1 PASS. 373 lines, 10 sections, 4 criteria."
     },
     {
       "id": "F-002",
       "title": "Solution Architecture Domain Skill (harness-sa)",
       "category": "functional",
-      "description": "Create plugins/harness/skills/harness-sa/SKILL.md (~350-400 lines) following the 10-section pattern. The skill activates when domain_profile: solution_architecture is set.",
+      "description": "Create plugins/harness/skills/harness-sa/SKILL.md following the 10-section pattern. Activated when domain_profile: solution_architecture.",
       "required": true,
       "priority": "high",
       "status": "complete",
@@ -36,13 +36,13 @@
       "evidence": [
         "02-evaluation.json: all contract checks passed, all criteria scored 4"
       ],
-      "notes": "Sprint 2 PASS. All 10 sections present, 395 lines."
+      "notes": "Sprint 2 PASS. 395 lines, 10 sections, 4 criteria."
     },
     {
       "id": "F-003",
       "title": "Deployment & Ops Domain Skill (harness-ops)",
       "category": "functional",
-      "description": "Create plugins/harness/skills/harness-ops/SKILL.md (~350-400 lines) following the 10-section pattern. The skill activates when domain_profile: ops is set.",
+      "description": "Create plugins/harness/skills/harness-ops/SKILL.md following the 10-section pattern. Activated when domain_profile: ops.",
       "required": true,
       "priority": "medium",
       "status": "complete",
@@ -54,51 +54,43 @@
       "evidence": [
         "03-evaluation.json: all contract checks passed, all criteria scored 4"
       ],
-      "notes": "Sprint 3 PASS. All 10 sections present, 379 lines."
+      "notes": "Sprint 3 PASS. 379 lines, 10 sections, 4 criteria."
     },
     {
       "id": "F-004",
       "title": "Phase Routing Table in SKILL.md",
       "category": "functional",
-      "description": "Update plugins/harness/skills/harness/SKILL.md to add routing entries for the three new domain skills in the Domain Skill Routing subsection and the Domain Skill References subsection. Also add solution_architecture and ops to the Domain Profiles table.",
+      "description": "Update SKILL.md routing table, Domain Profiles table, and Domain Skill References for 3 new domain skills.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-001", "F-002", "F-003"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-004",
-      "steps": [
-        "Read current plugins/harness/skills/harness/SKILL.md",
-        "Add routing entries in Domain Skill Routing section for business_analysis, solution_architecture, and ops",
-        "Add rows to Domain Profiles table for solution_architecture and ops with their criteria, artifact types, and stakeholder lens",
-        "Add reference paragraphs in Domain Skill References section for harness-ba, harness-sa, and harness-ops",
-        "Verify no domain-specific logic is added to the planner or coordinator sections"
+      "steps": [],
+      "evidence": [
+        "04-evaluation.json: 3 routing entries, 2 table rows, 3 reference paragraphs verified. No planner/coordinator pollution."
       ],
-      "evidence": [],
-      "notes": "Sprint 4 (grouped with F-005). Depends on all three domain skills being complete — now unblocked."
+      "notes": "Sprint 4 PASS (grouped with F-005)."
     },
     {
       "id": "F-005",
       "title": "Plugin Registration",
       "category": "structural",
-      "description": "Update plugins/harness/.claude-plugin/plugin.json to register the new skill paths so the plugin loader discovers them.",
+      "description": "Verify plugin.json skill discovery covers new directories.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-001", "F-002", "F-003"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-005",
-      "steps": [
-        "Read current plugins/harness/.claude-plugin/plugin.json",
-        "Verify the skills array discovery mechanism covers new subdirectories",
-        "Add explicit skill paths if needed",
-        "Verify JSON is valid",
-        "Verify version field unchanged"
+      "steps": [],
+      "evidence": [
+        "04-evaluation.json: './skills/' glob covers all 6 skill directories. No changes needed."
       ],
-      "evidence": [],
-      "notes": "Sprint 4 (grouped with F-004). Now unblocked."
+      "notes": "Sprint 4 PASS (grouped with F-004). Glob already covers new directories."
     }
   ]
 }
