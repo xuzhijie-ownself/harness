@@ -1,0 +1,54 @@
+{
+  "current_version": "0.6.0",
+  "releases": [
+    {
+      "version": "0.1.0",
+      "date": "2026-04-01",
+      "features_shipped": ["naming-migration", "install-scripts", "auto-commit", "release-versioning", "testing-strategy", "code-review", "architect-role", "reliability-fixes"],
+      "changelog": "Initial harness plugin with 9 agents, GAN-like evaluation, sprint contracts",
+      "sprint_count": 10,
+      "previous_version": null
+    },
+    {
+      "version": "0.2.0",
+      "date": "2026-04-02",
+      "features_shipped": ["agent-consolidation", "filename-fix", "coordinator-simplification"],
+      "changelog": "Consolidated 9 agents to 6, fixed colon filenames, simplified coordinator to 2-agent loop",
+      "sprint_count": 1,
+      "previous_version": "0.1.0"
+    },
+    {
+      "version": "0.3.0",
+      "date": "2026-04-02",
+      "features_shipped": ["E-001-codex-toggle", "E-002-domain-profiles", "E-003-feature-deps", "E-004-reset-threshold", "E-005-cost-tracking", "E-006-gan-docs", "E-007-cross-platform", "E-008-subjective-grading", "E-009-retrospectives", "E-010-maturity-levels", "E-011-config-file"],
+      "changelog": "11 enhancements: codex toggle, domain profiles with BA foundation, feature dependencies, cost tracking, GAN docs, subjective quality grading, sprint retrospectives, feature maturity levels, config file",
+      "sprint_count": 11,
+      "previous_version": "0.2.0"
+    },
+    {
+      "version": "0.4.0",
+      "date": "2026-04-02",
+      "features_shipped": ["marketplace-restructure", "hooks-format-fix"],
+      "changelog": "Restructured for Claude Code marketplace (nested plugins/harness/ pattern), fixed hooks.json from array to record format",
+      "sprint_count": 0,
+      "previous_version": "0.3.0"
+    },
+    {
+      "version": "0.5.0",
+      "date": "2026-04-02",
+      "features_shipped": ["codex-preflight", "evaluation-schema", "coordinator-enforcement", "runtime-verification", "sdlc-domain-skill"],
+      "changelog": "Fixed codex review detection (mandatory pre-flight), expanded artifact enforcement, runtime verification requirement, created harness-sdlc domain skill",
+      "sprint_count": 8,
+      "previous_version": "0.4.0"
+    },
+    {
+      "version": "0.6.0",
+      "date": "2026-04-02",
+      "features_shipped": ["harness-ea-domain-skill", "ea-industry-references", "ea-archimate-guide", "ea-repository-structure", "ea-anti-patterns", "releaser-enforcement"],
+      "changelog": "Created harness-ea Enterprise Architecture domain skill (10 sections: TOGAF/Zachman/FEAF methodology, ArchiMate modeling guide, 8 industry reference architectures, architecture repository structure, anti-patterns), strengthened releaser invocation",
+      "sprint_count": 3,
+      "previous_version": "0.5.0"
+    }
+  ],
+  "next_version": "0.7.0"
+}
