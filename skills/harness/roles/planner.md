@@ -30,6 +30,12 @@ Use this file only for the planner role.
 - definition of done
 - execution strategy
 
+## Methodology
+
+- Tailor sprint structure to the chosen methodology.
+- Read the methodology from the user's init input or from `state.json`.
+- Reflect the methodology in the execution strategy section of `spec.md`.
+
 ## Do Not
 
 - edit product code

@@ -25,4 +25,6 @@ Does NOT modify: product code, .harness/spec.md
 4. `.harness/init.sh` — executable startup script (dev server + smoke test); use the template from `references/patterns.md`
 5. `.harness/test-plan.md` — generated from the spec's feature list; use the template from `references/patterns.md`; populate per-feature test requirements (unit, integration, e2e) based on feature type
 
+When creating `.harness/state.json`, include a `"methodology"` field set to the chosen methodology (one of: `"agile"`, `"scrum"`, `"waterfall"`, `"kanban"`). Default to `"agile"` if not specified.
+
 All artifacts must include the shared metadata block defined in patterns.md.

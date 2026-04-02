@@ -18,8 +18,14 @@ Before proceeding, check if old-format `artifacts/` directory exists:
 
 1. Read the current working directory for any existing README or spec.
 2. Ask: "Describe your project goal in 1-3 sentences."
+2b. Ask: "Choose a development methodology: agile (default), waterfall, scrum, kanban"
+    - agile: iterative sprints, backlog-driven, priority-based ordering
+    - scrum: time-boxed sprints with planning/review/retro artifacts
+    - waterfall: sequential phases (requirements → design → implementation → testing → deploy)
+    - kanban: continuous flow, WIP-limited, pull-based
+2c. Pass methodology choice to planner agent input
 3. Spawn the `planner` agent:
-   - Input: user goal + any existing README context
+   - Input: user goal + chosen methodology + any existing README context
    - Output: `.harness/spec.md` (must include Execution strategy section)
 4. Spawn the `initializer` agent:
    - Input: `.harness/spec.md`

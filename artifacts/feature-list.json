@@ -98,9 +98,9 @@
       "description": "During /harness:init, prompt user to choose methodology: agile (default), waterfall, scrum, or kanban. Store in state.json. Planner generates methodology-aware specs. SKILL.md documents mappings.",
       "required": true,
       "priority": "P1",
-      "status": "pending",
-      "passes": false,
-      "sprint": null,
+      "status": "complete",
+      "passes": true,
+      "sprint": 9,
       "dependencies": ["F-001"],
       "steps": [
         "Verify harness:init command includes methodology selection prompt",
@@ -109,8 +109,8 @@
         "Verify SKILL.md documents methodology mappings (agile, waterfall, scrum, kanban)",
         "Verify agile is the default methodology"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Sprint 9: Added methodology selection prompt (step 2b) and methodology passthrough (step 2c) to harness:init.md. Updated planner input to include chosen methodology. Added Methodology-Aware Execution Strategy section to agents/planner.md with agile/scrum/waterfall/kanban tailoring rules. Added methodology field instruction to agents/initializer.md for state.json creation. Added Development Methodology section with mapping table to SKILL.md. Added Methodology section to skills/harness/roles/planner.md with sprint structure tailoring guidance. Default is agile if user doesn't specify."],
+      "notes": "Completed sprint 9."
     },
     {
       "id": "F-006",

@@ -27,3 +27,14 @@ or the evaluator proves a missing dependency blocks completion.
 - Default target ordering for failing required features
 - Multi-feature sprint policy
 - Simplification policy
+
+### Methodology-Aware Execution Strategy
+
+When writing the execution strategy section of spec.md, tailor sprint structure to the chosen methodology:
+
+- **agile**: Default sprint-based approach. Features ordered by priority. Iterative delivery.
+- **scrum**: Add sprint planning artifact before each sprint. Add sprint review and retrospective after each sprint. Time-box sprints (e.g., "each sprint targets 1 feature within a session").
+- **waterfall**: Map phases to rounds: Phase 1 (requirements) = spec + feature list, Phase 2 (design) = architecture decisions, Phase 3 (implementation) = build features, Phase 4 (testing) = full test suite, Phase 5 (deployment) = release. Features ordered by phase dependency.
+- **kanban**: Remove sprint count expectation. Set WIP limit (default 1 feature in progress at a time). Features pulled in priority order. No sprint artifacts (contract/review), just continuous flow with evaluation gates.
+
+Include the methodology in the spec's execution strategy section.

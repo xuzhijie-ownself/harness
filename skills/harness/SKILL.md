@@ -91,6 +91,19 @@ Do not skip the feature list. It is the main completion ledger.
 - Do not keep adding roadmap items during execution unless the user changes scope or the evaluator proves a missing dependency blocks completion.
 - Write an explicit execution strategy.
 
+## Development Methodology
+
+During `/harness:init`, users select a development methodology. This shapes how sprints are structured and what artifacts are produced.
+
+| Methodology | Sprint Structure | Feature Ordering | Extra Artifacts |
+|-------------|-----------------|------------------|-----------------|
+| agile | Iterative sprints | Priority-based | Standard contract/evaluation |
+| scrum | Time-boxed with planning/review/retro | Sprint backlog | sprint-planning.md, sprint-retro.md |
+| waterfall | Sequential phases | Phase-dependent | phase-gate.md |
+| kanban | Continuous flow, WIP-limited | Pull-based | None (evaluation gates only) |
+
+Default: agile (if user doesn't specify).
+
 ## Execution Strategy
 
 Every planned app spec should include an `Execution strategy` section.
