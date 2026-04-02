@@ -16,6 +16,15 @@ Before proceeding:
 3. If reading `features.json`: verify it's valid JSON with at least one feature. If malformed -> STOP with error.
 4. If reading `config.json`: verify it's valid JSON. If missing -> use defaults silently.
 
+## Pre-flight
+
+1. Read `.harness/features.json` -- verify ALL required features have `passes: true`
+   - If any required feature has `passes: false`: REFUSE. Print: "Cannot release: features [F-XXX, F-YYY] are still failing."
+2. Read existing `release.json` (project root) if it exists:
+   - Check if the latest release already shipped the same feature set -> warn about double-release
+3. Verify git working tree is clean (`git status --porcelain` is empty)
+   - If dirty: WARN "Uncommitted changes. Commit or stash before releasing."
+
 ## When to Use
 - After all required features pass (automatic via coordinator)
 - Manually when you want to cut a release mid-run
