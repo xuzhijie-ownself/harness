@@ -75,10 +75,10 @@
       "description": "In agents/coordinator.md: add Codex Detection Enforcement section, expand sprint artifact checks from 3 to 5 (adding contract-review.md and evaluation.json), add context freshness trace logging. Mirror in roles/coordinator.md.",
       "required": true,
       "priority": "P0",
-      "status": "pending",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-003"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-004",
       "steps": [
         "Read plugins/harness/agents/coordinator.md",
@@ -88,7 +88,7 @@
         "Read plugins/harness/skills/harness/roles/coordinator.md and verify codex enforcement reference",
         "Grep for 'contract-review.md' and 'evaluation.json' in coordinator.md"
       ],
-      "evidence": [],
+      "evidence": ["Sprint 4: Codex Detection Enforcement added. 5 artifacts enforced. Context freshness trace added. roles/coordinator.md updated."],
       "notes": "Modifies two files: agents/coordinator.md and roles/coordinator.md."
     },
     {

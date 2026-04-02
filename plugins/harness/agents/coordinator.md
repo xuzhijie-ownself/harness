@@ -67,6 +67,11 @@ Read `context_reset_threshold` from `state.json` (default 3). After that many ro
 3. Pause with `stop_reason`: `"context refresh — resume with /session or /run"`.
 4. The next session picks up from the handoff automatically.
 
+### Context Freshness Trace
+At the START of each round, append to `.harness/progress.md`:
+`rounds_since_reset: N / context_reset_threshold`
+This makes it visible whether the counter is advancing.
+
 ## Evaluator Enforcement
 
 The coordinator MUST NOT update `.harness/features.json` directly.
@@ -74,10 +79,18 @@ Only evaluator-backed evidence in `NN-evaluation.json` `feature_evidence` may fl
 
 Before advancing to the next round, verify ALL of these artifacts exist for round NN:
 - `.harness/sprints/NN-contract.md`
+- `.harness/sprints/NN-contract-review.md`
+- `.harness/sprints/NN-builder-report.md`
 - `.harness/sprints/NN-evaluation.md`
 - `.harness/sprints/NN-evaluation.json`
 
 If any are missing, set `stop_reason` to `"missing required sprint artifacts for round NN"` and STOP.
+
+## Codex Detection Enforcement
+
+After reading `NN-evaluation.json` for each round, verify:
+1. `review_findings.codex_detection` exists — if missing, flag as process violation and instruct evaluator to re-run with pre-flight.
+2. If `config_use_codex` is `"auto"` or `"on"` AND `settings_codex_enabled` is `true` AND `review_mode` is `"claude"` AND `fallback_reason` is null or empty → flag as process violation (codex should have been used but wasn't without explanation).
 
 ## Calibration Enforcement
 
