@@ -186,11 +186,11 @@ The releaser agent manages version bumps, changelog generation, and git tags.
 
 ### Releaser Role
 
-- Owns: `.harness/release.json`, `.harness/changelog.md`
+- Owns: `release.json` (project root), `CHANGELOG.md` (project root)
 - Reads: `features.json`, `state.json`, `summary.md`, `progress.md`
 - Does NOT modify product code or feature status
 
-### release.json
+### release.json (project root)
 
 Tracks all releases with version history. Schema documented in [references/patterns.md](references/patterns.md).
 
@@ -211,6 +211,16 @@ Generated from feature evidence in `features.json`. Each entry lists shipped fea
 ### Git Tags
 
 The releaser creates an annotated git tag for each release: `git tag -a vX.Y.Z -m "Release vX.Y.Z"`.
+
+### Manifest Synchronization
+
+After creating the release commit and git tag, the releaser syncs the new version into all plugin manifest files:
+
+1. `.claude-plugin/marketplace.json` -- update `plugins[0].version`
+2. `plugins/harness/.claude-plugin/plugin.json` -- update `version`
+3. `.codex-plugin/plugin.json` -- update `version`
+
+This prevents version drift between `release.json` and the plugin descriptors.
 
 ### Dispatch
 
@@ -502,6 +512,11 @@ Start with:
 - `.harness/sprints/NN-builder-report.md`
 - `.harness/sprints/NN-evaluation.md`
 - `.harness/sprints/NN-evaluation.json`
+
+Release artifacts (project root -- persist across .harness/ resets):
+
+- `release.json` -- created by releaser after all required features pass
+- `CHANGELOG.md` -- generated changelog from feature evidence
 
 Optional supporting artifacts:
 

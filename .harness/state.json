@@ -1,0 +1,22 @@
+{
+  "mode": "continuous",
+  "status": "active",
+  "variant": "variant-a-sprinted",
+  "current_round": 0,
+  "last_completed_round": 0,
+  "active_feature_ids": [],
+  "expected_sprint_count": 11,
+  "current_failure_streak": 0,
+  "last_feature_pass_delta": 0,
+  "stop_reason": "",
+  "context_reset_threshold": 3,
+  "rounds_since_reset": 0,
+  "current_sprint_phase": "idle",
+  "domain_profile": "software",
+  "secondary_profile": "",
+  "methodology": "agile",
+  "errors": [],
+  "cost_tracking": {
+    "rounds": []
+  }
+}

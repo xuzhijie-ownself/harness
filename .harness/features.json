@@ -1,0 +1,244 @@
+{
+  "version": 1,
+  "updated_by": "initializer-1",
+  "features": [
+    {
+      "id": "F-001",
+      "title": "Release artifacts to project root",
+      "category": "structural",
+      "description": "Move release.json and CHANGELOG.md out of .harness/ to the project root so they survive cleanup. Update all references in commands, agents, roles, patterns, and SKILL.md.",
+      "required": true,
+      "priority": "high",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": [],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-001",
+      "steps": [
+        "Verify patterns.md references release.json and changelog.md at project root (not .harness/)",
+        "Verify releaser.md role references root-level release artifacts",
+        "Verify coordinator.md references root-level release artifacts",
+        "Verify SKILL.md references root-level release artifacts",
+        "Run grep -r '.harness/release.json' plugins/harness/ and confirm zero matches",
+        "Run grep -r '.harness/changelog.md' plugins/harness/ and confirm zero matches (case-insensitive)"
+      ],
+      "evidence": [],
+      "notes": "Dependency for F-002, F-003, F-004, F-005, F-006, F-008"
+    },
+    {
+      "id": "F-002",
+      "title": "/init pre-flight guard",
+      "category": "functional",
+      "description": "Add re-init detection (warn if .harness/ exists with status active), read existing release.json from project root for version continuity, and verify git repo presence.",
+      "required": true,
+      "priority": "high",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001", "F-007"],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-002",
+      "steps": [
+        "Verify init.md contains a Pre-flight section",
+        "Verify pre-flight includes re-init detection checking .harness/ with status active",
+        "Verify pre-flight includes reading release.json from project root for version continuity",
+        "Verify pre-flight includes git repo presence check",
+        "Verify init.md includes the shared state validation block from F-007"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-003",
+      "title": "/session post-flight release trigger + dependency resolution + handoff cleanup",
+      "category": "functional",
+      "description": "After evaluation, check if all required features pass and auto-trigger the releaser. Before feature selection, resolve depends_on and skip blocked features. On successful completion, clean up stale handoff.md.",
+      "required": true,
+      "priority": "high",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001", "F-007"],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-003",
+      "steps": [
+        "Verify session.md contains a Post-flight section",
+        "Verify post-flight includes all-features-pass check and auto-release trigger",
+        "Verify session.md includes dependency resolution before feature selection",
+        "Verify session.md includes handoff.md cleanup on successful completion",
+        "Verify session.md includes the shared state validation block from F-007"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-004",
+      "title": "/run timeout safety + release verification",
+      "category": "functional",
+      "description": "Add context-window timeout handling and post-run verification that release.json exists when all features are complete.",
+      "required": true,
+      "priority": "medium",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001", "F-007"],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-004",
+      "steps": [
+        "Verify run.md contains context-window timeout handling instructions",
+        "Verify run.md contains post-run release.json existence check when all features pass",
+        "Verify run.md includes the shared state validation block from F-007"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-005",
+      "title": "/reset state preservation",
+      "category": "functional",
+      "description": "Ensure .harness/ existence before handoff, never delete root-level release artifacts, update state.json to paused, verify handoff.md completeness.",
+      "required": true,
+      "priority": "medium",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001", "F-007"],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-005",
+      "steps": [
+        "Verify reset.md ensures .harness/ existence before handoff",
+        "Verify reset.md explicitly preserves root-level release.json and CHANGELOG.md",
+        "Verify reset.md updates state.json status to paused",
+        "Verify reset.md includes handoff.md completeness verification",
+        "Verify reset.md includes the shared state validation block from F-007"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-006",
+      "title": "/release validation guards",
+      "category": "functional",
+      "description": "Refuse release when required features still fail. Detect double-release (same feature set). Verify clean git working tree.",
+      "required": true,
+      "priority": "high",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001", "F-007"],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-006",
+      "steps": [
+        "Verify release.md refuses release when any required feature has passes: false",
+        "Verify release.md detects double-release of same feature set",
+        "Verify release.md checks for clean git working tree",
+        "Verify release.md includes the shared state validation block from F-007"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-007",
+      "title": "State validation in all commands",
+      "category": "functional",
+      "description": "Add a shared pre-flight block to all 5 commands: verify .harness/ exists, validate state.json fields, validate features.json structure, validate config.json with defaults.",
+      "required": true,
+      "priority": "high",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001"],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-007",
+      "steps": [
+        "Verify all 5 command files (init, session, run, reset, release) contain a shared pre-flight validation block",
+        "Verify pre-flight validates .harness/ directory existence",
+        "Verify pre-flight validates state.json required fields",
+        "Verify pre-flight validates features.json structure",
+        "Verify pre-flight validates config.json with defaults"
+      ],
+      "evidence": [],
+      "notes": "Referenced by F-002 through F-006"
+    },
+    {
+      "id": "F-008",
+      "title": "Releaser manifest sync",
+      "category": "functional",
+      "description": "Update agents/releaser.md to sync version into marketplace.json, plugin.json (harness), and .codex-plugin/plugin.json after release.",
+      "required": true,
+      "priority": "medium",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001"],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-008",
+      "steps": [
+        "Verify releaser.md contains manifest sync instructions",
+        "Verify manifest sync covers marketplace.json",
+        "Verify manifest sync covers plugin.json (harness)",
+        "Verify manifest sync covers .codex-plugin/plugin.json",
+        "Verify sync happens after release artifact generation"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-009",
+      "title": "Harness SKILL.md workflow entry section",
+      "category": "functional",
+      "description": "Add a Workflow Entry section to skills/harness/SKILL.md with state checks, domain skill routing, and integrity invariants (ownership rules for features.json, state.json, release.json).",
+      "required": true,
+      "priority": "medium",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-007"],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-009",
+      "steps": [
+        "Verify SKILL.md contains a Workflow Entry section",
+        "Verify Workflow Entry includes state checks",
+        "Verify Workflow Entry includes domain skill routing",
+        "Verify Workflow Entry includes integrity invariants with ownership rules for features.json, state.json, and release.json"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-010",
+      "title": "harness-sdlc activation check",
+      "category": "functional",
+      "description": "Add an Activation Check section to skills/harness-sdlc/SKILL.md verifying domain_profile: software, tech stack detection, and test configuration reading.",
+      "required": true,
+      "priority": "low",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": [],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-010",
+      "steps": [
+        "Verify harness-sdlc/SKILL.md contains an Activation Check section",
+        "Verify activation check verifies domain_profile is software",
+        "Verify activation check includes tech stack detection",
+        "Verify activation check includes test configuration reading"
+      ],
+      "evidence": [],
+      "notes": "May be grouped with F-011"
+    },
+    {
+      "id": "F-011",
+      "title": "harness-ea activation check",
+      "category": "functional",
+      "description": "Add an Activation Check section to skills/harness-ea/SKILL.md verifying domain_profile: architecture, architecture deliverables, framework detection, and repository structure.",
+      "required": true,
+      "priority": "low",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": [],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-011",
+      "steps": [
+        "Verify harness-ea/SKILL.md contains an Activation Check section",
+        "Verify activation check verifies domain_profile is architecture",
+        "Verify activation check includes architecture deliverables check",
+        "Verify activation check includes framework detection",
+        "Verify activation check includes repository structure check"
+      ],
+      "evidence": [],
+      "notes": "May be grouped with F-010"
+    }
+  ]
+}

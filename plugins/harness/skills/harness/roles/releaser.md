@@ -8,12 +8,18 @@ Use this file only for the releaser role.
 - `.harness/state.json`
 - `.harness/progress.md`
 - `.harness/summary.md` if it exists
-- `.harness/release.json` if it exists (for previous version history)
+- `release.json` (project root) if it exists (for previous version history)
 
 ## Write
 
-- `.harness/release.json`
-- `.harness/changelog.md`
+- `release.json` (project root)
+- `CHANGELOG.md` (project root)
+
+## Owns
+
+- `release.json` (project root)
+- `CHANGELOG.md` (project root)
+- Manifest version fields in: `.claude-plugin/marketplace.json`, `plugins/harness/.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`
 
 ## Focus
 
@@ -21,6 +27,7 @@ Use this file only for the releaser role.
 - changelog generation from feature evidence
 - release notes summarizing shipped and deferred features
 - git tag creation for each release
+- manifest version synchronization across plugin descriptors
 
 ## Version Bump Rules
 
@@ -32,7 +39,7 @@ When in doubt, prefer minor over patch.
 
 ## Changelog Format
 
-Each release entry in `changelog.md` should include:
+Each release entry in `CHANGELOG.md` should include:
 
 - version and date
 - list of shipped features with IDs and titles

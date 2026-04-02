@@ -22,22 +22,25 @@ For role-specific guidance, prefer:
 ## Shared Artifact Layout
 
 ```text
-.harness/
-  features.json
-  progress.md
-  state.json
-  init.md
-  spec.md
-  decomposition.md              # optional when sprint rationale needs its own artifact
-  summary.md
-  handoff.md                    # reset-based compatibility runs only
-  evaluator-calibration.md      # optional
-  sprints/
-    01-contract.md
-    01-contract-review.md
-    01-builder-report.md
-    01-evaluation.md
-    01-evaluation.json
+project-root/
+  release.json                   # PERSISTENT — survives .harness/ cleanup
+  CHANGELOG.md                   # PERSISTENT — open-source convention
+  .harness/                      # TRANSIENT — per-run state
+    features.json
+    progress.md
+    state.json
+    init.md
+    spec.md
+    decomposition.md             # optional when sprint rationale needs its own artifact
+    summary.md
+    handoff.md                   # reset-based compatibility runs only
+    evaluator-calibration.md     # optional
+    sprints/
+      01-contract.md
+      01-contract-review.md
+      01-builder-report.md
+      01-evaluation.md
+      01-evaluation.json
 ```
 
 ## Shared Metadata
@@ -567,7 +570,7 @@ if %ERRORLEVEL% EQU 0 (
 | 1 | evaluator | — | — | |
 ```
 
-### `release.json`
+### `release.json` (project root)
 
 ```json
 {
@@ -587,7 +590,7 @@ if %ERRORLEVEL% EQU 0 (
 }
 ```
 
-### `changelog.md`
+### `CHANGELOG.md` (project root)
 
 ```md
 # Changelog
