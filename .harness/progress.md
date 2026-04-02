@@ -6,25 +6,24 @@
 - Inputs: spec.md, features.json, state.json
 - Status: active
 
-## Round 1
-rounds_since_reset: 1 / 3
+## Round 2
+rounds_since_reset: 2 / 3
 
 ## Current target
-- F-001: Business Analysis Domain Skill (harness-ba)
+- F-002: Solution Architecture Domain Skill (harness-sa)
 
 ## Baseline
-- 0/5 features passing
-- No SKILL.md files created yet
-- Template available: harness-ea/SKILL.md (10-section pattern)
+- 1/5 features passing (F-001 passed in round 1)
+- harness-ba/SKILL.md created and evaluated
 
 ## This round
-- Starting sprint 1: create harness-ba/SKILL.md
+- Starting sprint 2: create harness-sa/SKILL.md
 
 ## Latest evidence
-- None yet
+- Round 1: F-001 PASS (all scores 4/5)
 
 ## Next step
-- Generator: propose contract for F-001
+- Generator: propose contract for F-002
 
 ## Last commit
-- 2026-04-02T10:03:28.456Z
+- 2026-04-02T10:06:38.954Z
