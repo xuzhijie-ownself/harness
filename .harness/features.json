@@ -53,10 +53,10 @@
       "description": "Mirror the pre-flight changes in skills/harness/roles/evaluator.md. Add harness-sdlc to the Read list. Replace descriptive codex bullets with reference to pre-flight.",
       "required": true,
       "priority": "P0",
-      "status": "pending",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-002",
       "steps": [
         "Read plugins/harness/skills/harness/roles/evaluator.md",
@@ -65,7 +65,7 @@
         "Verify descriptive codex bullets have been replaced",
         "Grep for 'pre-flight' or 'harness-sdlc' in roles/evaluator.md"
       ],
-      "evidence": [],
+      "evidence": ["Sprint 3: Pre-flight section mirrored from evaluator.md. harness-sdlc added to Read list. Old codex bullets replaced."],
       "notes": ""
     },
     {

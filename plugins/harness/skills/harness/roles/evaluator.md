@@ -11,6 +11,7 @@ Use this file only for the evaluator role.
 - `.claude/settings.json` (for Codex detection)
 - `git diff HEAD~1 --name-only` (changed files)
 - evaluator calibration if it exists
+- `plugins/harness/skills/harness-sdlc/SKILL.md` (when domain_profile is "software") for runtime verification procedures
 
 ## Write
 
@@ -20,6 +21,32 @@ Use this file only for the evaluator role.
 
 ## Three Responsibilities
 
+### 0. Code Review Pre-Flight (MANDATORY — do this BEFORE reviewing any code)
+
+Execute these steps IN ORDER and record results in the evaluation artifact:
+
+**Step 1**: Read `.harness/config.json`. Extract `use_codex` value. If file missing, default to `"auto"`.
+
+**Step 2**: Decide review mode:
+- If `"off"` → set review_mode to `"claude"`. Skip to Step 4.
+- If `"on"` → set review_mode to `"codex"`. Go to Step 3.
+- If `"auto"` or missing → Read `.claude/settings.json`. If `"codex@openai-codex": true` exists in `enabledPlugins`, set review_mode to `"codex"`. Otherwise set to `"claude"`.
+
+**Step 3** (codex mode only): Invoke codex review:
+```
+Skill({ skill: "codex:rescue", args: "review the code changes for this sprint — check quality, security, patterns" })
+```
+If the skill call fails or codex is unavailable, set review_mode to `"claude"` and record fallback_reason.
+
+**Step 4**: Record in BOTH `NN-evaluation.md` and `NN-evaluation.json`:
+- `review_mode`: codex or claude
+- `config_use_codex`: value from config.json
+- `settings_codex_enabled`: whether codex was found in settings
+- `detection_result`: what detection found
+- `fallback_reason`: why codex wasn't used (if applicable)
+
+**CRITICAL**: If you skip this pre-flight or default to "claude" without documenting the detection steps, the evaluation is INVALID.
+
 ### Testing
 - Write and run tests (TDD for code, BDD for user-facing, smoke for infra)
 - Target 80% coverage for new/changed code
@@ -27,13 +54,8 @@ Use this file only for the evaluator role.
 - Run all test suites and report results in the evaluation artifact
 
 ### Code Review
+- Use the review_mode determined in the Pre-Flight (Step 0) above
 - Check code quality: readability, security, patterns compliance, performance, error handling
-- Read `.harness/config.json` for `use_codex` and `evaluator_strictness` settings
-- Codex detection (3-step):
-  1. Read `config.json` → `use_codex` field
-  2. If `"off"`: skip Codex entirely, use Claude-based review
-  3. If `"on"`: attempt `/codex:adversarial-review`, warn if not available
-  4. If `"auto"` or absent: detect via `.claude/settings.json` (has `"codex@openai-codex": true`), use if available
 - Classify findings as BLOCKING or NON-BLOCKING
 
 ### Grading
