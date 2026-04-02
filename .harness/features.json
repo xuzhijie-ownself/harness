@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "initializer-1",
+  "updated_by": "coordinator-1",
   "features": [
     {
       "id": "F-001",
@@ -9,10 +9,10 @@
       "description": "Move release.json and CHANGELOG.md out of .harness/ to the project root so they survive cleanup. Update all references in commands, agents, roles, patterns, and SKILL.md.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-001",
       "steps": [
         "Verify patterns.md references release.json and changelog.md at project root (not .harness/)",
@@ -22,8 +22,8 @@
         "Run grep -r '.harness/release.json' plugins/harness/ and confirm zero matches",
         "Run grep -r '.harness/changelog.md' plugins/harness/ and confirm zero matches (case-insensitive)"
       ],
-      "evidence": [],
-      "notes": "Dependency for F-002, F-003, F-004, F-005, F-006, F-008"
+      "evidence": ["All references updated to project root in releaser.md, coordinator.md, patterns.md, SKILL.md, roles/releaser.md. Migration check added to releaser agent. Grep confirms zero non-migration references."],
+      "notes": "Sprint 1. Dependency for F-002, F-003, F-004, F-005, F-006, F-008"
     },
     {
       "id": "F-002",
@@ -32,10 +32,10 @@
       "description": "Add re-init detection (warn if .harness/ exists with status active), read existing release.json from project root for version continuity, and verify git repo presence.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-001", "F-007"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-002",
       "steps": [
         "Verify init.md contains a Pre-flight section",
@@ -44,8 +44,8 @@
         "Verify pre-flight includes git repo presence check",
         "Verify init.md includes the shared state validation block from F-007"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Pre-flight section added with re-init detection, release.json read from root, git check. State Validation block present."],
+      "notes": "Sprint 3"
     },
     {
       "id": "F-003",
@@ -54,10 +54,10 @@
       "description": "After evaluation, check if all required features pass and auto-trigger the releaser. Before feature selection, resolve depends_on and skip blocked features. On successful completion, clean up stale handoff.md.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-001", "F-007"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-003",
       "steps": [
         "Verify session.md contains a Post-flight section",
@@ -66,8 +66,8 @@
         "Verify session.md includes handoff.md cleanup on successful completion",
         "Verify session.md includes the shared state validation block from F-007"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Feature Selection, Post-flight, and Handoff Cleanup sections all added. State Validation block present."],
+      "notes": "Sprint 4"
     },
     {
       "id": "F-004",
@@ -76,18 +76,18 @@
       "description": "Add context-window timeout handling and post-run verification that release.json exists when all features are complete.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-001", "F-007"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-004",
       "steps": [
         "Verify run.md contains context-window timeout handling instructions",
         "Verify run.md contains post-run release.json existence check when all features pass",
         "Verify run.md includes the shared state validation block from F-007"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Post-flight section added with stop_reason check, release.json recovery, and summary print. State Validation block present."],
+      "notes": "Sprint 5"
     },
     {
       "id": "F-005",
@@ -96,10 +96,10 @@
       "description": "Ensure .harness/ existence before handoff, never delete root-level release artifacts, update state.json to paused, verify handoff.md completeness.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-001", "F-007"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-005",
       "steps": [
         "Verify reset.md ensures .harness/ existence before handoff",
@@ -108,8 +108,8 @@
         "Verify reset.md includes handoff.md completeness verification",
         "Verify reset.md includes the shared state validation block from F-007"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Pre-flight and Post-flight sections added. Root artifacts explicitly preserved. State Validation block present."],
+      "notes": "Sprint 6"
     },
     {
       "id": "F-006",
@@ -118,10 +118,10 @@
       "description": "Refuse release when required features still fail. Detect double-release (same feature set). Verify clean git working tree.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-001", "F-007"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-006",
       "steps": [
         "Verify release.md refuses release when any required feature has passes: false",
@@ -129,8 +129,8 @@
         "Verify release.md checks for clean git working tree",
         "Verify release.md includes the shared state validation block from F-007"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Pre-flight section added with feature pass check, double-release detection, and clean tree verification. State Validation block present."],
+      "notes": "Sprint 7"
     },
     {
       "id": "F-007",
@@ -139,10 +139,10 @@
       "description": "Add a shared pre-flight block to all 5 commands: verify .harness/ exists, validate state.json fields, validate features.json structure, validate config.json with defaults.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-007",
       "steps": [
         "Verify all 5 command files (init, session, run, reset, release) contain a shared pre-flight validation block",
@@ -151,8 +151,8 @@
         "Verify pre-flight validates features.json structure",
         "Verify pre-flight validates config.json with defaults"
       ],
-      "evidence": [],
-      "notes": "Referenced by F-002 through F-006"
+      "evidence": ["State Validation section added to all 5 command files with identical 4-step validation block."],
+      "notes": "Sprint 2. Referenced by F-002 through F-006"
     },
     {
       "id": "F-008",
@@ -161,10 +161,10 @@
       "description": "Update agents/releaser.md to sync version into marketplace.json, plugin.json (harness), and .codex-plugin/plugin.json after release.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-008",
       "steps": [
         "Verify releaser.md contains manifest sync instructions",
@@ -173,8 +173,8 @@
         "Verify manifest sync covers .codex-plugin/plugin.json",
         "Verify sync happens after release artifact generation"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Manifest Synchronization section added to releaser.md in F-001 sprint. Covers all 3 manifest files. Also added to SKILL.md and roles/releaser.md."],
+      "notes": "Sprint 8 (covered by F-001 implementation)"
     },
     {
       "id": "F-009",
@@ -183,10 +183,10 @@
       "description": "Add a Workflow Entry section to skills/harness/SKILL.md with state checks, domain skill routing, and integrity invariants (ownership rules for features.json, state.json, release.json).",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": ["F-007"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-009",
       "steps": [
         "Verify SKILL.md contains a Workflow Entry section",
@@ -194,8 +194,8 @@
         "Verify Workflow Entry includes domain skill routing",
         "Verify Workflow Entry includes integrity invariants with ownership rules for features.json, state.json, and release.json"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Workflow Entry section added after GAN Pattern with State Check, Domain Skill Routing, and Integrity Invariants subsections."],
+      "notes": "Sprint 9"
     },
     {
       "id": "F-010",
@@ -204,10 +204,10 @@
       "description": "Add an Activation Check section to skills/harness-sdlc/SKILL.md verifying domain_profile: software, tech stack detection, and test configuration reading.",
       "required": true,
       "priority": "low",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-010",
       "steps": [
         "Verify harness-sdlc/SKILL.md contains an Activation Check section",
@@ -215,8 +215,8 @@
         "Verify activation check includes tech stack detection",
         "Verify activation check includes test configuration reading"
       ],
-      "evidence": [],
-      "notes": "May be grouped with F-011"
+      "evidence": ["Activation Check section added after intro paragraph with all 4 verification steps."],
+      "notes": "Sprint 10"
     },
     {
       "id": "F-011",
@@ -225,10 +225,10 @@
       "description": "Add an Activation Check section to skills/harness-ea/SKILL.md verifying domain_profile: architecture, architecture deliverables, framework detection, and repository structure.",
       "required": true,
       "priority": "low",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-011",
       "steps": [
         "Verify harness-ea/SKILL.md contains an Activation Check section",
@@ -237,8 +237,8 @@
         "Verify activation check includes framework detection",
         "Verify activation check includes repository structure check"
       ],
-      "evidence": [],
-      "notes": "May be grouped with F-010"
+      "evidence": ["Activation Check section added after Scope of This Skill with all 5 verification steps."],
+      "notes": "Sprint 11"
     }
   ]
 }

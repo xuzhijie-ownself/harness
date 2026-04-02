@@ -1,6 +1,6 @@
 {
   "name": "harness",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Multi-agent sprint orchestration harness with GAN-like generator/evaluator loop and domain-agnostic profiles",
   "author": {
     "name": "xuzhijie-ownself",

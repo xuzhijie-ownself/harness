@@ -1,0 +1,15 @@
+{
+  "current_version": "0.7.0",
+  "releases": [
+    {
+      "version": "0.7.0",
+      "date": "2026-04-02",
+      "features_shipped": ["F-001", "F-002", "F-003", "F-004", "F-005", "F-006", "F-007", "F-008", "F-009", "F-010", "F-011"],
+      "features_deferred": [],
+      "changelog": "Harness Workflow Integrity: Added pre-flight/post-flight guards to all 5 commands, moved release artifacts to project root, added manifest sync, added skill activation checks, added workflow entry integrity invariants.",
+      "sprint_count": 11,
+      "previous_version": "0.6.0"
+    }
+  ],
+  "next_version": "0.8.0"
+}
