@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "initializer-1",
+  "updated_by": "evaluator-1",
   "features": [
     {
       "id": "F-001",
@@ -9,10 +9,10 @@
       "description": "Create the harness-sdlc-suite plugin directory tree with plugin.json manifest (skills-only, no agents or commands). Move the 5 domain skills (harness-sdlc, harness-ea, harness-ba, harness-sa, harness-ops) from plugins/harness/skills/ to plugins/harness-sdlc-suite/skills/. After completion, plugins/harness/skills/ contains only the harness/ directory.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-001",
       "steps": [
         "Verify plugins/harness-sdlc-suite/.claude-plugin/plugin.json exists and is valid JSON with skills-only manifest",
@@ -21,8 +21,8 @@
         "Verify plugins/harness/skills/ contains ONLY the harness/ directory -- no domain skill directories remain",
         "Verify domain skill SKILL.md files are content-identical before and after move"
       ],
-      "evidence": [],
-      "notes": "Foundation feature. All other features depend on or follow from this."
+      "evidence": ["01-evaluation.json: All 5 domain skills moved. Core contains only harness/. Git confirms byte-identical renames."],
+      "notes": "Foundation feature. Passed sprint 1."
     },
     {
       "id": "F-002",
@@ -31,10 +31,10 @@
       "description": "Create plugins/harness-sdlc-suite/skills/harness-sdlc-suite/SKILL.md as the domain registry for software delivery. Contains Domain Profiles table, Domain Skill Routing table, End-to-End Delivery Pipeline diagram, Phase routing table, Domain Skills summary table, Cross-Domain Composability note, and Business Analysis Foundation note.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-002",
       "steps": [
         "Verify plugins/harness-sdlc-suite/skills/harness-sdlc-suite/SKILL.md exists",
@@ -46,8 +46,8 @@
         "Verify it contains the Domain Skills summary table",
         "Verify it contains Cross-Domain Composability and Business Analysis Foundation notes"
       ],
-      "evidence": [],
-      "notes": "Grouped with F-001 in Sprint 1. Both create new files without modifying existing ones."
+      "evidence": ["01-evaluation.json: All 7 required sections present. YAML frontmatter valid."],
+      "notes": "Grouped with F-001 in Sprint 1. Passed."
     },
     {
       "id": "F-003",
