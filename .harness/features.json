@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "initializer-1",
+  "updated_by": "evaluator-1",
   "features": [
     {
       "id": "F-001",
@@ -9,10 +9,10 @@
       "description": "Add a README Sync section to the releaser role file that instructs the releaser to verify and update README.md during every release. The section covers version references, directory layout diagrams, and skill/profile tables. Positioned after Manifest Synchronization and before Version Bump Rules.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-001",
       "steps": [
         "Verify plugins/harness/skills/harness/roles/releaser.md contains a README Sync section",
@@ -23,8 +23,10 @@
         "Verify plugins/harness/agents/releaser.md still delegates to the role file and needs no changes",
         "Verify the total addition is approximately 10-15 lines of Markdown"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "01-evaluation.json: all contract checks pass, feature_evidence confirms passes: true"
+      ],
+      "notes": "Completed in sprint 1. All contract checks passed."
     }
   ]
 }
