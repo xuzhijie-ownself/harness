@@ -1,6 +1,15 @@
 {
-  "current_version": "2.0.1",
+  "current_version": "2.1.0",
   "releases": [
+    {
+      "version": "2.1.0",
+      "date": "2026-04-04",
+      "features_shipped": ["F-001", "F-002"],
+      "features_deferred": [],
+      "changelog": "Fix Codex evaluation detection and review integration. Detection logic in advanced.md rewritten to check 3 sources (project enabledPlugins, global extraKnownMarketplaces, CLI on PATH) with any-one-passes semantics. Review method changed from raw codex CLI to /codex:adversarial-review plugin skill with severity mapping. Evaluator.md decision tree updated to match. Also includes README Sync from prior sprint.",
+      "sprint_count": 2,
+      "previous_version": "2.0.1"
+    },
     {
       "version": "2.0.1",
       "date": "2026-04-03",
@@ -65,5 +74,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "2.0.2"
+  "next_version": "2.1.1"
 }

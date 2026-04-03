@@ -20,8 +20,12 @@
 - F-001: passes (reviewed)
 - F-002: passes (polished)
 
-## Next step
-- Release checkpoint (version bump, changelog, git tag)
+## Release v2.1.0
+- AuditEvent: releaser created release v2.1.0 on 2026-04-04
+- Updated: release.json, CHANGELOG.md, marketplace.json, plugin.json (harness), plugin.json (codex)
+- Git tag: v2.1.0
+- Features shipped: F-001, F-002
+- Sprint count: 2
 
 ## Last commit
-- 2026-04-03T16:40:33.786Z
+- 2026-04-04T00:00:00Z

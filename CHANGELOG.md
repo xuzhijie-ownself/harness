@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.1.0] - 2026-04-04
+
+### Features Shipped
+- **F-001**: Add README Sync to releaser -- releaser now verifies and updates README.md during every release
+- **F-002**: Fix Codex evaluation detection and review integration -- 3-source detection with any-one-passes semantics, /codex:adversarial-review as primary review method
+
+### Deferred
+- None
+
+### Stats
+- Sprint count: 2
+- Required features: 2/2 passing
+
+### Summary
+Fixed the evaluator Codex detection pre-flight which always fell back to Claude-only review. The detection logic in `advanced.md` was rewritten to check 3 sources (project `enabledPlugins`, global `extraKnownMarketplaces`, CLI on PATH) with any-one-passes semantics. The review method was changed from a raw codex CLI call to `/codex:adversarial-review` plugin skill with severity-to-BLOCKING/NON-BLOCKING mapping. The evaluator.md condensed decision tree was updated to match the new 3-check procedure. Also includes the README Sync feature from the prior sprint (F-001), which adds automatic README.md verification and update during every release.
+
 ## [2.0.1] - 2026-04-03
 
 ### Features Shipped
