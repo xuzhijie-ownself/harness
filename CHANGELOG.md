@@ -1,5 +1,30 @@
 # Changelog
 
+## [2.0.0] - 2026-04-03
+
+### Features Shipped
+- **F-001**: Create harness-sdlc-suite plugin structure -- moved 5 domain skills to new skills-only plugin
+- **F-002**: Create harness-sdlc-suite index skill -- domain registry with profiles, routing, and pipeline
+- **F-003**: Make core SKILL.md domain-blind -- zero references to specific domain skills
+- **F-004**: Update marketplace manifest -- two entries in plugins[] array
+- **F-005**: Update Codex manifest -- dual skill paths array
+- **F-006**: Update install scripts -- copy from both plugins, uninstall removes both
+- **F-007**: Update README -- two-plugin architecture documentation
+
+### Deferred
+- None
+
+### Stats
+- Sprint count: 4
+- Required features: 7/7 passing
+
+### Summary
+Breaking change: Refactored the harness from a single-plugin monolith into a two-plugin architecture. The core plugin (`harness`) is now domain-blind -- it contains all orchestration machinery (6 agents, 5 commands, profile system, authenticity gate, sprint loop) but zero references to specific domain skills. The SDLC suite plugin (`harness-sdlc-suite`) bundles the 5 existing domain skills (harness-sdlc, harness-ea, harness-ba, harness-sa, harness-ops) under a new index skill that serves as the domain registry.
+
+This separation allows the core harness to be used standalone with a `custom` profile, and enables future domain skill suites (e.g., harness-research-suite) to be developed independently without modifying the core.
+
+Updated: marketplace manifest (2 plugins), Codex manifest (dual skill paths), install scripts (both plugins), README (architecture diagram, install commands, domain skills table).
+
 ## [1.0.0] - 2026-04-03
 
 ### Features Shipped
@@ -34,14 +59,6 @@ Harness kernel simplification release. Reduced total prose across 19 core files 
 
 ### Summary
 Renamed the Authenticity Gate dimension `coherence` to `internal_consistency` across all 6 base framework files to eliminate naming overlap with the harness-ea domain criterion `coherence`. Removed 3 disambiguation notes that existed solely because of the naming conflict. No logic changes -- text substitution only.
-
-Files modified:
-- `plugins/harness/skills/harness/SKILL.md` -- dimension table rename, disambiguation note removed
-- `plugins/harness/skills/harness/references/patterns.md` -- JSON key rename, display label rename
-- `plugins/harness/agents/generator.md` -- checklist item rename
-- `plugins/harness/skills/harness/roles/generator.md` -- bullet label rename
-- `plugins/harness/agents/evaluator.md` -- verification table rename, disambiguation note removed
-- `plugins/harness/skills/harness/roles/evaluator.md` -- dimension list rename, disambiguation instruction removed
 
 ## [0.9.0] - 2026-04-03
 

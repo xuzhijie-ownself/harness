@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "evaluator-3",
+  "updated_by": "evaluator-4",
   "features": [
     {
       "id": "F-001",
@@ -153,10 +153,10 @@
       "description": "Update README.md to document: two-plugin architecture overview (core + SDLC suite), updated install commands, updated architecture diagram showing both plugin directory trees, updated Domain Skills table referencing SDLC suite, updated artifact layout, note that core can be used standalone with custom profile.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-007",
       "steps": [
         "Verify README.md documents two-plugin architecture overview",
@@ -166,8 +166,8 @@
         "Verify README.md notes that core harness can be used standalone with custom profile",
         "Verify README.md artifact layout shows plugins/harness-sdlc-suite/"
       ],
-      "evidence": [],
-      "notes": "Documentation wrap-up. Standalone sprint after all structural changes verified."
+      "evidence": ["04-evaluation.json: README documents two-plugin architecture with all required sections. Zero old structure references."],
+      "notes": "Documentation wrap-up. Passed sprint 4."
     }
   ]
 }

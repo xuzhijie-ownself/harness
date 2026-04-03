@@ -1,13 +1,13 @@
 {
   "name": "harness",
-  "version": "1.0.0",
-  "description": "Multi-agent sprint orchestration harness with GAN-like generator/evaluator loop and domain-agnostic profiles",
+  "version": "2.0.0",
+  "description": "Domain-blind core harness with 6 agents, GAN-like generator/evaluator loop, profile system, sprint contracts, and quantified 0-5 grading",
   "author": {
     "name": "xuzhijie-ownself",
     "url": "https://github.com/xuzhijie-ownself"
   },
-  "homepage": "https://github.com/xuzhijie-ownself/long-running-harness",
-  "repository": "https://github.com/xuzhijie-ownself/long-running-harness",
+  "homepage": "https://github.com/xuzhijie-ownself/harness",
+  "repository": "https://github.com/xuzhijie-ownself/harness",
   "license": "MIT",
   "keywords": [
     "harness",

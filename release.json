@@ -1,6 +1,15 @@
 {
-  "current_version": "1.0.0",
+  "current_version": "2.0.0",
   "releases": [
+    {
+      "version": "2.0.0",
+      "date": "2026-04-03",
+      "features_shipped": ["F-001", "F-002", "F-003", "F-004", "F-005", "F-006", "F-007"],
+      "features_deferred": [],
+      "changelog": "Two-plugin architecture: Refactored harness from single-plugin monolith into domain-blind core (harness) + domain skill suite (harness-sdlc-suite). Core SKILL.md has zero references to specific domain skills. SDLC suite bundles 5 domain skills with an index skill for profile routing. Updated marketplace manifest, Codex manifest, and install scripts for dual-plugin discovery and installation. Updated README with new architecture diagram and install commands. Breaking change to plugin structure.",
+      "sprint_count": 4,
+      "previous_version": "1.0.0"
+    },
     {
       "version": "1.0.0",
       "date": "2026-04-03",
@@ -47,5 +56,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "1.1.0"
+  "next_version": "2.1.0"
 }
