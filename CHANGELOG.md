@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.0.1] - 2026-04-03
+
+### Features Shipped
+- **F-001**: Add README Sync to releaser -- releaser now verifies and updates README.md during every release
+
+### Deferred
+- None
+
+### Stats
+- Sprint count: 1
+- Required features: 1/1 passing
+
+### Summary
+Added a "README Sync" section to the releaser role file (`plugins/harness/skills/harness/roles/releaser.md`). The releaser now automatically verifies and updates README.md as part of every release: version references, architecture diagrams, skills/profiles tables, and install command URLs. Discovery uses glob patterns (`plugins/*/skills/*/SKILL.md`) -- no hardcoded skill names. Prose and explanatory text are never rewritten; only factual content is updated. Patch release -- additive instruction change with no breaking changes.
+
 ## [2.0.0] - 2026-04-03
 
 ### Features Shipped

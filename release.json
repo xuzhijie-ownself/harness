@@ -1,6 +1,15 @@
 {
-  "current_version": "2.0.0",
+  "current_version": "2.0.1",
   "releases": [
+    {
+      "version": "2.0.1",
+      "date": "2026-04-03",
+      "features_shipped": ["F-001"],
+      "features_deferred": [],
+      "changelog": "Added README Sync section to releaser role file. The releaser now verifies and updates README.md during every release: checks version references, architecture diagrams, skills/profiles tables, and install command URLs. Domain-agnostic discovery via glob patterns. No breaking changes.",
+      "sprint_count": 1,
+      "previous_version": "2.0.0"
+    },
     {
       "version": "2.0.0",
       "date": "2026-04-03",
