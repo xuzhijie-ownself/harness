@@ -252,6 +252,25 @@ State.json holds runtime state (round, phase, errors). Config.json holds persist
     },
     "blocking": [],
     "non_blocking": []
+  },
+  "authenticity_gate": {
+    "gate_result": "pass",
+    "coherence": {
+      "pass": true,
+      "justification": "Artifacts share consistent conventions throughout."
+    },
+    "intentionality": {
+      "pass": true,
+      "justification": "Project-specific decisions evident; no unmodified defaults."
+    },
+    "craft": {
+      "pass": true,
+      "justification": "Structure, hierarchy, and formatting follow established standards."
+    },
+    "fitness_for_purpose": {
+      "pass": true,
+      "justification": "Deliverables usable by target audience without additional explanation."
+    }
   }
 }
 ```
@@ -417,6 +436,12 @@ Check IDs map to the domain profile's criteria:
 ## Self-check
 - What appears complete
 - What is still risky
+
+## Authenticity self-check
+- **Coherence**: [Have you defined project conventions and applied them consistently across all artifacts?]
+- **Intentionality**: [For every default used, have you made at least one project-specific customization? List the choices made.]
+- **Craft**: [Have you verified fundamentals -- consistent structure, clear hierarchy, uniform conventions?]
+- **Fitness for purpose**: [Is every deliverable usable by the target audience without additional explanation?]
 
 ## Suggested feature updates
 - Which features may now pass, with evidence

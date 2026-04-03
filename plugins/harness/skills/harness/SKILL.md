@@ -359,6 +359,38 @@ Hard rules:
 
 You may report an average score as a trend signal, but never use the average to override a failed criterion.
 
+## Authenticity Gate
+
+After the domain criteria scoring (0-5 scale) above, every evaluation round applies a binary Authenticity Gate. This gate is a cross-cutting quality check that detects technically-competent-but-generic output -- artifacts that score adequately on domain criteria yet show no evidence of project-specific decision-making.
+
+The gate checks four dimensions. Each dimension is binary pass/fail -- not scored on a 0-5 scale. The gate runs AFTER domain criteria scoring and is independent of those scores.
+
+### Dimensions
+
+| Dimension | Definition |
+|-----------|------------|
+| **coherence** | All artifacts share consistent conventions -- structure, terminology, and style form a unified whole rather than appearing assembled from different sources. Note: this is distinct from domain-specific criteria that may also be named "coherence" (e.g., the architecture profile uses "coherence" as a domain criterion measuring cross-reference consistency). The authenticity gate "coherence" operates at the output-integrity level -- it checks whether the artifacts feel like they belong to the same project, not whether they satisfy domain-specific structural rules. |
+| **intentionality** | Evidence of project-specific decisions tailored to THIS project's context. Artifacts reflect deliberate choices rather than unmodified defaults or generic template output. |
+| **craft** | Technical fundamentals are correct for the artifact type -- consistent structure, clear hierarchy, uniform conventions, and formatting that follows established standards for the deliverable format. |
+| **fitness_for_purpose** | Every deliverable is usable by the target audience without requiring additional explanation. Artifacts serve their stated purpose and can be consumed as-is. |
+
+### Gate Rules
+
+- The gate is **binary pass/fail** per dimension. There is no partial credit.
+- The gate runs **after** the 4 domain criteria are scored (0-5). Domain scores are recorded first; then the authenticity gate is applied as an overlay.
+- If **any** dimension fails, the round **fails** -- regardless of how high the domain criteria scores are.
+- The gate does not replace domain criteria scoring. It adds a second layer of quality assurance that catches a different class of defects (generic/template output vs. domain-specific quality).
+
+### Dual-Side Control
+
+The authenticity gate operates as a dual-side control:
+
+- **Generator side (prevention)**: The generator applies a pre-implementation checklist covering all 4 dimensions before building. This prevents generic output at the source.
+- **Evaluator side (detection)**: The evaluator applies a post-grading gate after scoring domain criteria. This catches any generic output that slipped through the generator's self-check.
+
+Both sides reference the same 4 dimensions. The generator's checklist and the evaluator's gate are two views of the same quality standard.
+
+
 ## Criterion Design
 
 Each sprint contract must define:
