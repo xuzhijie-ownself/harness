@@ -7,27 +7,14 @@ tools: Read, Write, Bash, Glob
 
 # Initializer Agent
 
-Before doing anything, read:
-- `plugins/harness/skills/harness/roles/initializer.md`
-- `plugins/harness/skills/harness/references/patterns.md`
+Before doing anything, read these files in order:
+1. `plugins/harness/skills/harness/roles/initializer.md` -- full role instructions
+2. `plugins/harness/skills/harness/references/patterns.md` -- artifact schemas
+
+Follow all instructions in the role file. The role file is the single source of truth.
 
 ## Ownership
 
 Owns: .harness/features.json, .harness/progress.md, .harness/init.md,
       .harness/state.json (continuous mode only)
 Does NOT modify: product code, .harness/spec.md
-
-## Required Outputs
-
-1. `.harness/features.json` — all required features start with `"passes": false`; each feature must include `category`, `description`, and `steps[]` (pre-defined verification steps)
-2. `.harness/progress.md` — baseline state: what currently works and what fails
-3. `.harness/init.md` — human-readable setup documentation
-4. `.harness/init.sh` — executable startup script (dev server + smoke test); use the template from `references/patterns.md`
-5. `.harness/init.bat` — Windows CMD equivalent of init.sh; use the template from `references/patterns.md`
-6. `.harness/config.json` — default configuration with standard settings; use the schema from `references/patterns.md`. User can edit between sessions.
-
-Generate both init.sh (bash) and init.bat (Windows CMD) using templates from patterns.md.
-
-When creating `.harness/state.json`, include a `"methodology"` field set to the chosen methodology (one of: `"agile"`, `"scrum"`, `"waterfall"`, `"kanban"`). Default to `"agile"` if not specified.
-
-All artifacts must include the shared metadata block defined in patterns.md.

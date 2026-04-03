@@ -3,100 +3,131 @@
 ## Metadata
 - Role: planner
 - Agent: planner-1
-- Inputs: user prompt, SKILL.md (lines 362-392), evaluator.md (lines 86-105), generator.md, roles/generator.md, roles/evaluator.md, references/patterns.md
+- Inputs: user prompt, all 17 harness kernel files (6 agents, 5 commands, SKILL.md, patterns.md, 2 role files, 2 plugin.json manifests)
 - Status: accepted
 
 ## Overview
 
-Rename the Authenticity Gate dimension `coherence` to `internal_consistency` across all base framework files. This is a v0.9.1 patch that eliminates naming overlap with harness-ea's `coherence` domain criterion (a scored 0-5 criterion), removing evaluator confusion and the need for disambiguation notes.
+Simplify the harness kernel to reduce total prose by approximately 22% while preserving all functionality and maintaining dual-runtime compatibility (Claude Code plugin.json + Codex plugin.json). The harness currently distributes ~1,966 lines across 17 core files. Duplicated content between agent files and role files, repeated pre-flight blocks across commands, and non-essential sections in SKILL.md account for the excess.
 
-The dimension's definition is unchanged: "All artifacts share consistent conventions -- structure, terminology, and style form a unified whole rather than appearing assembled from different sources." Only the name changes.
+This is a refactoring release -- no behavioral changes, no new features, no removed capabilities. The version bumps from 0.9.1 to 1.0.0, marking the harness as mature.
 
 ## Domain Profile
 - Primary: software
 - Secondary: (none)
 - Criteria: product_depth, functionality, visual_design, code_quality
-- Artifact types: Markdown documentation, JSON schemas
-- Stakeholder lens: Harness contributors, evaluator/generator agents consuming these files
+- Artifact types: Code (Markdown, JSON, YAML frontmatter)
+- Stakeholder lens: Plugin authors, harness users (developers running the harness)
 
-## Shipped Scope
+## Design direction
 
-**F-001: Rename `coherence` to `internal_consistency` across all 6 base framework files**
+Every change must satisfy two invariants:
 
-Priority: high | Required: yes
+1. **File-count invariant**: The Claude Code plugin.json `agents[]` array (6 files) and `commands[]` array (5 files) remain unchanged. No file merges, no file deletions, no renames.
+2. **Behavioral invariant**: A harness run before and after this refactor must produce identical artifact structure, identical evaluation flow, and identical stop conditions.
 
-All edits are text substitutions -- no logic changes, no new sections, no removed sections (except disambiguation notes that become unnecessary).
+## Shipped scope
 
-Files and changes:
+### F-001: Agent file deduplication
 
-1. **`plugins/harness/skills/harness/SKILL.md`** (Authenticity Gate section, ~line 372)
-   - Rename `coherence` to `internal_consistency` in the Dimensions table (both the dimension name cell and any references in the definition column)
-   - Remove the disambiguation note from the definition ("Note: this is distinct from domain-specific criteria that may also be named 'coherence'..."). The rename eliminates the ambiguity, so the note is no longer needed. Keep only the core definition.
+Convert 6 agent files (evaluator.md, coordinator.md, generator.md, initializer.md, planner.md, releaser.md) from prose-heavy duplications of their role files into thin YAML-frontmatter wrappers that point to the role file as single source of truth. Each agent file retains its frontmatter (name, description, tools) and adds a short body that says "read and follow the role file." All duplicated procedural prose is removed from agent files. Role files become the canonical reference.
 
-2. **`plugins/harness/skills/harness/references/patterns.md`**
-   - In the `NN-evaluation.json` schema (~line 258): rename the `coherence` JSON key to `internal_consistency` inside the `authenticity_gate` object
-   - In the `NN-builder-report.md` template (~line 441): rename `**Coherence**` to `**Internal consistency**` in the Authenticity self-check section
+Estimated savings: ~280 lines across 6 files.
 
-3. **`plugins/harness/agents/generator.md`** (Pre-Implementation Checklist, ~line 33)
-   - Rename item 1 from `**Coherence**` to `**Internal consistency**`
+### F-002: Command file shared pre-flight extraction
 
-4. **`plugins/harness/skills/harness/roles/generator.md`** (Authenticity section, ~line 45)
-   - Rename `**Coherence**` to `**Internal consistency**` in the bullet list
+The 4-step State Validation block is duplicated verbatim across all 5 command files (init.md, run.md, session.md, reset.md, release.md). Extract this shared validation into a named section in SKILL.md ("Command Pre-Flight Validation"). Each command file replaces its inline copy with a pointer: "Run the Command Pre-Flight Validation from SKILL.md before proceeding." Command-specific pre-flight steps remain inline.
 
-5. **`plugins/harness/agents/evaluator.md`** (Step 5, ~lines 94 and 104)
-   - Rename `**coherence**` to `**internal_consistency**` in the verification table
-   - Remove the disambiguation note at ~line 104 ("Note: the 'coherence' dimension here is distinct from any domain-specific criterion named 'coherence'...")
+Estimated savings: ~100 lines across 5 files (20 lines removed per file, offset by ~5 lines added to SKILL.md).
 
-6. **`plugins/harness/skills/harness/roles/evaluator.md`** (Authenticity Gate section, ~lines 83 and 89)
-   - Rename `coherence` to `internal_consistency` in the dimension list (~line 83)
-   - Remove the disambiguation instruction at ~line 89 ("Distinguish authenticity gate 'coherence' from any domain-specific criterion named 'coherence'")
+### F-003: SKILL.md non-core section extraction
 
-## User Stories
+Move these sections from SKILL.md to a new file `references/advanced.md`:
+- "Harness Decay" section (lines 689-701)
+- "Simplify Methodically" section (lines 721-731)
+- "Review The Harness" section (lines 762-777)
+- Variant B and Variant C full descriptions (keep one-line summaries with pointer to advanced.md)
+- Trim "Context Reset vs Compaction" section from ~18 lines to 5 lines with pointer
 
-- As a harness evaluator agent, I want the Authenticity Gate dimension to be named `internal_consistency` so I do not confuse it with the harness-ea `coherence` criterion when scoring.
-- As a harness contributor, I want disambiguation notes removed so the documentation is cleaner and the rename speaks for itself.
+SKILL.md gains a single line: "For advanced topics (decay testing, simplification policy, harness review checklist, Variant B/C details, context reset guidance), see references/advanced.md."
 
-## Execution Strategy
+Estimated savings: ~70 lines net from SKILL.md.
 
-- **Variant**: Variant A (sprinted)
+### F-004: Codex detection simplification
+
+The 45-line 4-step Codex detection pre-flight appears in both the evaluator agent file and the evaluator role file. After F-001 deduplicates the agent file, condense the role file's version from a 4-step procedure to a 3-line decision tree:
+
+```
+Codex review mode: read config.json use_codex ->
+  "off" -> claude | "on" -> try codex, fallback claude |
+  "auto" -> check .claude/settings.json for openai-codex, use codex if found, else claude.
+Record: review_mode, config_use_codex, codex_available, detection_result, fallback_reason.
+```
+
+Same logic, same output fields, fewer words. The detailed Step 1-4 procedure moves to references/advanced.md as a reference for debugging.
+
+Estimated savings: ~30 lines from the evaluator role file.
+
+### F-005: Conditional evaluator calibration
+
+Make `.harness/evaluator-calibration.md` required only when `expected_sprint_count > 3` in the execution strategy. For shorter runs (3 or fewer sprints), calibration is optional -- the evaluator still scores with anchors but does not need to persist them to a separate file. Update the coordinator's calibration enforcement and the evaluator's calibration section accordingly.
+
+Estimated savings: ~20 lines of conditional logic simplified across evaluator and coordinator files.
+
+### F-006: Merge retrospective into progress log
+
+Instead of creating separate `retro-RX-RY.md` files, append retrospective sections directly to `.harness/progress.md` under a `## Retrospective -- Rounds X-Y` heading. Update the retro template in patterns.md, the coordinator's retro generation logic, and SKILL.md's retrospective section. Remove the `retro-RX-RY.md` template from patterns.md.
+
+Estimated savings: ~15 lines from patterns.md template removal and simplified coordinator retro logic.
+
+## User stories
+
+- As a harness maintainer, I want agent files to be thin wrappers so I only update procedural logic in one place (the role file).
+- As a command author, I want shared validation defined once so adding a new command does not require copying boilerplate.
+- As a new contributor, I want SKILL.md to be focused on core workflow so I can understand the harness without reading advanced-topic prose.
+- As an evaluator agent, I want Codex detection expressed concisely so I spend fewer tokens parsing the procedure.
+- As a coordinator, I want calibration to be conditional so short runs do not produce unnecessary artifacts.
+- As a harness user, I want retrospectives inline in progress.md so I have one file to read for run history.
+
+## Execution strategy
+
+- **Variant**: Variant A (Full-Stack Sprinted Harness)
 - **Mode**: continuous
-- **Expected sprint count**: 1 sprint. Rationale: this is a single atomic rename across 6 files with no logic changes, no tests to run, no build step, and no dependencies between the edits. All 6 files must be updated together to maintain consistency.
-- **Default target ordering**: F-001 (only feature)
-- **Multi-feature sprint policy**: N/A (single feature)
-- **Simplification policy**: No simplification needed. The scope is already minimal -- a find-and-replace rename plus removing two disambiguation notes across 6 Markdown/JSON files.
+- **Expected sprint count**: 3 sprints
+  - Sprint 1: F-001 (agent dedup) + F-002 (command pre-flight) -- grouped because they are independent file-level refactors with no interaction risk; grouping waiver applies
+  - Sprint 2: F-003 (SKILL.md trim) + F-004 (Codex simplification) -- grouped because F-004 moves content to the same advanced.md file created by F-003; natural co-location
+  - Sprint 3: F-005 (conditional calibration) + F-006 (retro merge) -- grouped because both simplify coordinator enforcement logic in the same code paths
+- **Default target ordering**: F-001 -> F-002 -> F-003 -> F-004 -> F-005 -> F-006 (dependency order: F-001 before F-004 because Codex simplification in the role file depends on agent dedup removing the duplicate from the agent file first)
+- **Multi-feature sprint policy**: Allowed. Each sprint groups 2 features that are either independent or naturally co-located. Grouping waivers documented per sprint in the contract.
+- **Simplification policy**: Not justified. Sprint decomposition is load-bearing here because each pair of changes touches different files and needs separate verification. Simplified mode would risk undetected regressions across file boundaries.
 - **Methodology**: agile (default)
 
-## High-Level Technical Design
+## High-level technical design
 
-No code logic changes. All edits are text substitutions in Markdown and JSON:
+- **Files modified**: 6 agent files, 5 command files, SKILL.md, patterns.md, evaluator role file, coordinator role file
+- **Files created**: `references/advanced.md` (new, receives extracted content from SKILL.md)
+- **Files unchanged**: All other role files (initializer, planner, generator, releaser roles), all plugin.json manifests (file arrays stay identical), all domain skill files (harness-sdlc, harness-ea, etc.)
+- **Verification method**: Line-count diff before/after each sprint. Manual read-through of each modified file to confirm no behavioral change. Structural check that plugin.json arrays still resolve to valid files.
 
-- Replace the string `coherence` with `internal_consistency` where it appears as an Authenticity Gate dimension name (not where it appears as prose or in domain criterion references)
-- Replace display text `Coherence` with `Internal consistency` in human-readable labels/headers
-- Delete disambiguation notes that existed solely because of the naming overlap (3 locations: SKILL.md, evaluator.md, roles/evaluator.md)
+## Definition of done
 
-Care points:
-- Do NOT touch any domain skill files (harness-ea, harness-sdlc, etc.) -- those use `coherence` as a domain criterion and that is correct
-- Do NOT change the dimension's definition text, only its name
-- Ensure JSON key names use snake_case (`internal_consistency`), display labels use sentence case (`Internal consistency`)
+1. All 6 agent files are thin wrappers (frontmatter + read-role-file instruction + ownership declaration only, no duplicated procedural prose).
+2. All 5 command files reference shared pre-flight from SKILL.md instead of inline duplication.
+3. SKILL.md is shorter by at least 60 lines with non-core content moved to references/advanced.md.
+4. Codex detection in evaluator role file is 10 lines or fewer (down from ~45).
+5. Evaluator calibration is conditional on expected_sprint_count > 3.
+6. Retrospectives append to progress.md instead of creating separate retro files.
+7. Total line reduction across all modified files is at least 400 lines (~20%).
+8. Both plugin.json files (Claude Code and Codex) are unmodified -- file arrays unchanged.
+9. No behavioral change: artifact structure, evaluation flow, stop conditions, and dispatch rules remain identical.
+10. Version in release.json bumps to 1.0.0.
 
-### Version
-- Current: 0.9.0
-- Target: 0.9.1 (patch -- rename only, no new functionality)
+## Non-goals
 
-## Non-Goals
-
-- Changing the definition or behavior of the dimension
-- Modifying domain skill files (harness-ea, harness-sdlc, harness-ba, harness-sa, harness-ops)
-- Renaming any domain criterion
-- Adding new Authenticity Gate dimensions
-- Bumping beyond patch version (this is 0.9.1, not 0.10.0)
-- Adding runtime code, TypeScript, or executable components
-
-## Definition of Done
-
-- All 6 files listed in shipped scope have been edited
-- The string `coherence` no longer appears as an Authenticity Gate dimension name in any of the 6 files
-- `internal_consistency` appears in its place with the same definition
-- Disambiguation notes removed from SKILL.md (~line 372), evaluator.md (~line 104), and roles/evaluator.md (~line 89)
-- No edits made to files outside the 6 listed
-- A grep for `coherence` in the 6 files returns zero hits in dimension-name contexts (prose references to the concept are acceptable but none are expected)
+- Adding new features or capabilities to the harness.
+- Changing the plugin.json manifest structure or file arrays.
+- Modifying domain skill files (harness-sdlc, harness-ea, harness-ba, harness-sa, harness-ops).
+- Changing JSON schemas in patterns.md (features.json, state.json, config.json, evaluation.json schemas stay identical).
+- Rewriting patterns.md templates beyond removing the retro-RX-RY.md template.
+- Changing the GAN pattern, dispatch rules, or role ownership boundaries.
+- Performance optimization or runtime changes.

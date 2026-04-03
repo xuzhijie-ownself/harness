@@ -70,6 +70,16 @@ Based on `domain_profile` in state.json or spec.md:
 - state.json `current_round` only incremented by coordinator or session
 - release.json only written by releaser agent
 - No command or skill may bypass these ownership rules
+
+### Command Pre-Flight Validation
+
+Every command (/init, /run, /session, /reset, /release) must run these validation steps before proceeding:
+
+1. If the command requires `.harness/`: verify directory exists. If not -> "No harness found. Run /harness:init first." STOP.
+2. If reading `state.json`: verify it contains `mode`, `variant`, `current_sprint_phase`. If missing fields -> warn and use defaults.
+3. If reading `features.json`: verify it is valid JSON with at least one feature. If malformed -> STOP with error.
+4. If reading `config.json`: verify it is valid JSON. If missing -> use defaults silently.
+
 ## Configuration
 
 The harness uses `.harness/config.json` as the single configuration source for persistent preferences. State.json holds runtime state (round, phase, errors); config.json holds tunable settings.

@@ -9,15 +9,7 @@ allowed_tools: ["Bash", "Read", "Write", "Glob", "Agent"]
 
 Set up the harness scaffold for this project.
 
-## State Validation
-
-Before proceeding:
-1. If this command requires `.harness/`: verify directory exists. If not -> "No harness found. Run /harness:init first." STOP.
-2. If reading `state.json`: verify it contains `mode`, `variant`, `current_sprint_phase`. If missing fields -> warn and use defaults.
-3. If reading `features.json`: verify it's valid JSON with at least one feature. If malformed -> STOP with error.
-4. If reading `config.json`: verify it's valid JSON. If missing -> use defaults silently.
-
-Note: For `/init`, the `.harness/` directory is not required to exist yet (this command creates it). The validation above applies only when `.harness/` already exists (re-init scenario).
+Run the **Command Pre-Flight Validation** from SKILL.md before proceeding. Note: For `/init`, the `.harness/` directory is not required to exist yet (this command creates it). The validation applies only when `.harness/` already exists (re-init scenario).
 
 ## Pre-flight
 

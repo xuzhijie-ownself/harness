@@ -2,50 +2,60 @@
 
 ## Metadata
 - Role: generator
-- Agent: generator-1
-- Inputs: .harness/spec.md, .harness/features.json, progress.md
+- Agent: coordinator-as-generator
+- Inputs: .harness/spec.md, .harness/features.json, all 6 agent files, all 6 role files, all 5 command files, SKILL.md
 - Status: in_review
 
 ## Target feature IDs
 - F-001
+- F-002
+
+## Grouping waiver
+F-001 (agent dedup) and F-002 (command pre-flight extraction) are independent file-level refactors. F-001 touches 6 agent files + 6 role files. F-002 touches 5 command files + SKILL.md. No file overlap. Grouping reduces risk by shipping both thin-wrapper patterns in one sprint.
 
 ## Goal
-Rename the Authenticity Gate dimension `coherence` to `internal_consistency` across all 6 base framework files and remove 3 disambiguation notes that are no longer needed after the rename. This is a text-only change with no logic modifications.
+Convert 6 agent files into thin YAML-frontmatter wrappers pointing to role files. Extract the shared 4-step State Validation block from 5 command files into a "Command Pre-Flight Validation" section in SKILL.md.
 
 ## Deliverables
 
-Six files edited:
+### F-001: Agent file deduplication
+- Modify 6 agent files: coordinator.md, evaluator.md, generator.md, initializer.md, planner.md, releaser.md
+- Each becomes: YAML frontmatter + "read role file" instruction + ownership declaration
+- Before simplifying each agent file, merge any content UNIQUE to the agent file into its role file
+- Role files remain canonical; no content loss
 
-1. `plugins/harness/skills/harness/SKILL.md` -- rename dimension in table, remove disambiguation note from definition
-2. `plugins/harness/skills/harness/references/patterns.md` -- rename JSON key in authenticity_gate schema, rename display label in builder-report template
-3. `plugins/harness/agents/generator.md` -- rename checklist item label
-4. `plugins/harness/skills/harness/roles/generator.md` -- rename bullet label
-5. `plugins/harness/agents/evaluator.md` -- rename dimension in verification table, remove disambiguation note
-6. `plugins/harness/skills/harness/roles/evaluator.md` -- rename dimension in list, remove disambiguation instruction
+### F-002: Command pre-flight extraction
+- Add "Command Pre-Flight Validation" section to SKILL.md (after "Workflow Entry" section)
+- Modify 5 command files: init.md, run.md, session.md, reset.md, release.md
+- Replace inline State Validation block with pointer to shared section
+- Keep command-specific pre-flight steps inline
 
 ## Verification
 
-- `grep -r "coherence" <all 6 files>` returns zero matches in Authenticity Gate dimension-name contexts
-- `grep -r "internal_consistency" <all 6 files>` confirms the new name appears in all expected locations
-- `grep -r "Internal consistency" <all 6 files>` confirms display labels use sentence case
-- Dimension definitions remain unchanged (only the name changes)
-- No files outside the 6 listed have been modified
+### F-001 checks
+- PD-01 (required): Each agent file has YAML frontmatter (name, description, tools) + body referencing role file + ownership declaration. No duplicated procedural prose.
+- FN-01 (required): Role files contain all canonical procedural content. No content lost from agent files.
+- CQ-01 (required): Total line count across 6 agent files reduced by approximately 280 lines from baseline 435.
+
+### F-002 checks
+- PD-02 (required): SKILL.md contains "Command Pre-Flight Validation" section with the 4-step block.
+- FN-02 (required): Each command file references the shared pre-flight instead of inline duplication.
+- CQ-02 (required): Total line count across 5 command files reduced by approximately 100 lines from baseline 305.
 
 ## Acceptance criteria
-
-- Product depth: All 6 files updated atomically with correct naming convention (snake_case for keys, sentence case for labels)
-- Functionality: The rename is complete -- no remaining `coherence` references in dimension-name contexts
-- Visual design: N/A for this change (markdown formatting preserved)
-- Code quality: Clean edits with no unintended side effects; disambiguation notes fully removed
+- Product depth: Agent files are thin wrappers; command files reference shared pre-flight
+- Functionality: No behavioral change; all procedural content preserved in role files and SKILL.md
+- Visual design: N/A for this refactoring sprint (Markdown formatting consistency)
+- Code quality: Measurable line reduction; single source of truth for duplicated content
 
 ## Contract checks
-
-- `PD-01` (required): All 6 files contain `internal_consistency` or `Internal consistency` where `coherence`/`Coherence` previously appeared as a dimension name
-- `FN-01` (required): `grep -r "coherence" <6 files>` returns zero hits in dimension-name contexts
-- `FN-02` (required): 3 disambiguation notes removed (SKILL.md, evaluator.md, roles/evaluator.md)
-- `CQ-01` (required): No files outside the 6 listed were modified; no domain skill files touched
+- `PD-01`: required -- verify each agent file is thin wrapper format
+- `PD-02`: required -- verify SKILL.md contains shared pre-flight section
+- `FN-01`: required -- verify no content lost from agent-to-role merge
+- `FN-02`: required -- verify command files reference shared pre-flight
+- `CQ-01`: required -- verify agent file line reduction (~280 lines)
+- `CQ-02`: required -- verify command file line reduction (~100 lines)
 
 ## Risks
-
-- Accidentally replacing `coherence` in prose contexts where it is not a dimension name (mitigated: no such prose references exist in these files based on review)
-- Missing one of the 3 disambiguation notes (mitigated: spec lists exact locations)
+- Agent files may contain unique content not in role files (mitigated by diff-before-simplify)
+- plugin.json agents[] and commands[] arrays must remain unchanged (verified by not renaming or deleting files)

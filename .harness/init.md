@@ -1,60 +1,70 @@
-# Initialization Documentation
+# Initialization Report
 
 ## Metadata
 - Role: initializer
 - Agent: initializer-1
-- Inputs: spec.md, source file scan
+- Inputs: spec.md, 19 target kernel files
 - Status: accepted
 
-## Project Overview
+## Project overview
 
-This harness run performs a v0.9.1 patch: renaming the Authenticity Gate dimension "coherence" to "internal_consistency" across 6 base framework files in the long-running-harness plugin. The rename eliminates naming overlap with harness-ea's "coherence" domain criterion.
+This is a refactoring release for the harness kernel plugin. The goal is to reduce total prose by approximately 22% (from ~2,614 lines to ~2,214 lines) across 19 core files while preserving all functionality and maintaining dual-runtime compatibility.
 
-## Baseline Verification
+Version bump: 0.9.1 to 1.0.0.
 
-All 6 target files must exist and contain "coherence" in their Authenticity Gate sections before any edits begin.
+## Target files inventory
 
-### Target files
+All 19 target files verified present:
 
-1. `plugins/harness/skills/harness/SKILL.md` -- Authenticity Gate dimension table at ~line 372
-2. `plugins/harness/skills/harness/references/patterns.md` -- NN-evaluation.json schema at ~line 258 and NN-builder-report template at ~line 441
-3. `plugins/harness/agents/generator.md` -- Pre-Implementation Checklist at ~line 33
-4. `plugins/harness/skills/harness/roles/generator.md` -- Authenticity bullet list at ~line 45
-5. `plugins/harness/agents/evaluator.md` -- Verification table at ~line 94 and disambiguation note at ~line 104
-6. `plugins/harness/skills/harness/roles/evaluator.md` -- Dimension list at ~line 83 and disambiguation instruction at ~line 89
+### Agent files (6)
+1. plugins/harness/agents/coordinator.md (130 lines)
+2. plugins/harness/agents/evaluator.md (135 lines)
+3. plugins/harness/agents/generator.md (45 lines)
+4. plugins/harness/agents/initializer.md (33 lines)
+5. plugins/harness/agents/planner.md (37 lines)
+6. plugins/harness/agents/releaser.md (55 lines)
 
-### Baseline status
+### Command files (5)
+7. plugins/harness/commands/init.md (46 lines)
+8. plugins/harness/commands/release.md (41 lines)
+9. plugins/harness/commands/reset.md (58 lines)
+10. plugins/harness/commands/run.md (49 lines)
+11. plugins/harness/commands/session.md (111 lines)
 
-All 6 files confirmed present. Grep confirms "coherence" appears in dimension-name contexts in each file.
+### Core files (2)
+12. plugins/harness/skills/harness/SKILL.md (777 lines)
+13. plugins/harness/skills/harness/references/patterns.md (738 lines)
+
+### Role files (6)
+14. plugins/harness/skills/harness/roles/coordinator.md (66 lines)
+15. plugins/harness/skills/harness/roles/evaluator.md (104 lines)
+16. plugins/harness/skills/harness/roles/generator.md (56 lines)
+17. plugins/harness/skills/harness/roles/initializer.md (40 lines)
+18. plugins/harness/skills/harness/roles/planner.md (38 lines)
+19. plugins/harness/skills/harness/roles/releaser.md (55 lines)
+
+### New file (created during sprints)
+- plugins/harness/skills/harness/references/advanced.md (does not yet exist)
+
+## Baseline metrics
+
+- Total lines: 2,614
+- Agent files subtotal: 435 lines
+- Command files subtotal: 305 lines
+- SKILL.md: 777 lines
+- patterns.md: 738 lines
+- Role files subtotal: 359 lines
+- Target total after refactoring: 2,214 lines or fewer (400+ line reduction)
+
+## Invariants
+
+1. File-count invariant: The Claude Code plugin.json agents[] array (6 files) and commands[] array (5 files) must remain unchanged. No file merges, deletions, or renames.
+2. Behavioral invariant: Artifact structure, evaluation flow, and stop conditions must be identical before and after refactoring.
 
 ## Setup
 
-No dev server or build step required. This is a documentation-only rename across Markdown and JSON files.
+No build step, no dev server, no dependencies. This is a pure Markdown/JSON refactoring project. Verification is done by line counting and manual read-through.
 
-### Prerequisites
+## Smoke test
 
-- Access to the plugin source tree at `plugins/long-running-harness/`
-- Text editor or CLI tools capable of find-and-replace in Markdown/JSON
-
-### Verification command
-
-To verify the rename is complete, run:
-
-```bash
-grep -rn "coherence" \
-  plugins/harness/skills/harness/SKILL.md \
-  plugins/harness/skills/harness/references/patterns.md \
-  plugins/harness/agents/generator.md \
-  plugins/harness/skills/harness/roles/generator.md \
-  plugins/harness/agents/evaluator.md \
-  plugins/harness/skills/harness/roles/evaluator.md
-```
-
-After a successful rename, this grep should return zero hits in dimension-name contexts. Lines referencing "coherence" as prose (e.g., "loses coherence over long runs") or as a domain criterion name (architecture profile) are acceptable and should NOT be changed.
-
-## Scope constraints
-
-- Do NOT edit domain skill files (harness-ea, harness-sdlc, harness-ba, harness-sa, harness-ops)
-- Do NOT change the dimension's definition text, only its name
-- JSON keys use snake_case: `internal_consistency`
-- Display labels use sentence case: `Internal consistency`
+Verification that all 19 target files exist and are non-empty. Both plugin.json manifests must remain unmodified.
