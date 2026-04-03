@@ -1,35 +1,27 @@
 # Progress Log
 
 ## Metadata
-- Role: initializer
-- Agent: initializer-1
-- Inputs: spec.md, releaser.md, releaser agent stub
-- Status: active
+- Role: session
+- Status: complete
 
-## Current target
-- F-001: Add README Sync to releaser
+## Round 1 (F-001) -- PASS
+- Add README Sync to releaser
+- All 4 contract checks passed, scores 4/4/4/4
+- Released as v2.0.1
 
-## Baseline
-- The releaser role file exists at plugins/harness/skills/harness/roles/releaser.md
-- The releaser agent stub exists at plugins/harness/agents/releaser.md
-- The releaser role file does NOT yet contain a README Sync section
-- No code changes are required; this is a Markdown instruction addition only
+## Round 2 (F-002) -- PASS
+- Fix Codex evaluation detection and review integration
+- All 8 contract checks passed (FN-01 through FN-08), scores 4/5/4/4
+- Changes: advanced.md (Codex Detection Procedure rewritten), evaluator.md (Read list + Section 0 updated)
+- Root cause: detection logic was ambiguous about which settings.json to check, used raw CLI instead of plugin skill
+- Fix: 3-source detection with any-one-passes semantics, /codex:adversarial-review as primary review method
 
-## This round
-- Initialization complete
-- features.json created with F-001 (passes: false, status: not_started)
-- Old sprint artifacts cleaned from .harness/sprints/
-
-## Latest evidence
-- Confirmed releaser.md exists via filesystem check
-- Confirmed releaser agent stub exists via filesystem check
-- No build or test steps apply (Markdown-only change)
+## All required features pass
+- F-001: passes (reviewed)
+- F-002: passes (polished)
 
 ## Next step
-- The generator should read the releaser role file, identify the Manifest Synchronization and Version Bump Rules sections, and insert a README Sync section between them containing the six sub-steps defined in spec.md
-
-## Round 1 Context Freshness
-rounds_since_reset: 1 / 3
+- Release checkpoint (version bump, changelog, git tag)
 
 ## Last commit
-- 2026-04-03T16:26:57.366Z
+- 2026-04-03T16:40:33.786Z
