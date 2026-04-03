@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "evaluator-2",
+  "updated_by": "evaluator-3",
   "features": [
     {
       "id": "F-001",
@@ -83,10 +83,10 @@
       "description": "Update .claude-plugin/marketplace.json to list two plugins in the plugins[] array: harness (existing, updated) and harness-sdlc-suite (new entry). Both entries include name, source, description, version (2.0.0), author, and metadata.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-004",
       "steps": [
         "Verify .claude-plugin/marketplace.json exists and is valid JSON",
@@ -95,8 +95,8 @@
         "Verify harness-sdlc-suite entry has correct source path (./plugins/harness-sdlc-suite), description, and version 2.0.0",
         "Verify both entries include name, author, and metadata fields"
       ],
-      "evidence": [],
-      "notes": "Grouped with F-005 and F-006 in Sprint 3. Small manifest update."
+      "evidence": ["03-evaluation.json: marketplace.json has 2 plugin entries with correct metadata, versions, and source paths."],
+      "notes": "Grouped with F-005 and F-006 in Sprint 3. Passed."
     },
     {
       "id": "F-005",
@@ -105,10 +105,10 @@
       "description": "Update .codex-plugin/plugin.json: change skills from a single string to an array of two paths (./plugins/harness/skills/ and ./plugins/harness-sdlc-suite/skills/). Update version to 2.0.0. Update description to reflect two-plugin architecture.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-005",
       "steps": [
         "Verify .codex-plugin/plugin.json exists and is valid JSON",
@@ -118,8 +118,8 @@
         "Verify version is '2.0.0'",
         "Verify description reflects two-plugin architecture"
       ],
-      "evidence": [],
-      "notes": "Grouped with F-004 and F-006 in Sprint 3. Small manifest update."
+      "evidence": ["03-evaluation.json: codex plugin.json skills is array of 2 paths. Version 2.0.0. Description updated."],
+      "notes": "Grouped with F-004 and F-006 in Sprint 3. Passed."
     },
     {
       "id": "F-006",
@@ -128,10 +128,10 @@
       "description": "Modify install.sh and install.bat to: create target directories for all domain skills under .claude/skills/, copy core skill from plugins/harness/skills/harness/ (existing), copy domain skills from plugins/harness-sdlc-suite/skills/ (new), support --uninstall for both plugin trees, maintain existing hooks merge and agents/commands copy behavior.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-006",
       "steps": [
         "Verify install.sh copies core skill from plugins/harness/skills/harness/",
@@ -143,8 +143,8 @@
         "Verify existing hooks merge behavior is unchanged",
         "Verify existing agents and commands copy behavior is unchanged (still from core plugin only)"
       ],
-      "evidence": [],
-      "notes": "Grouped with F-004 and F-005 in Sprint 3."
+      "evidence": ["03-evaluation.json: Both install scripts copy from both plugins, create suite skill directories, and uninstall removes both. Hooks merge preserved."],
+      "notes": "Grouped with F-004 and F-005 in Sprint 3. Passed."
     },
     {
       "id": "F-007",
