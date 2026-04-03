@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "evaluator-1",
+  "updated_by": "evaluator-2",
   "features": [
     {
       "id": "F-001",
@@ -56,10 +56,10 @@
       "description": "Remove all named references to specific domain skills from plugins/harness/skills/harness/SKILL.md. Remove Domain Profiles table, Domain Skill Routing section, Domain Skill References section, Delivery Pipeline diagram. Keep profile system definition, domain_profile field docs, custom profile example, authenticity gate, all orchestration logic. Rewrite Runtime Verification Requirement to reference 'the active domain skill' generically.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-001", "F-002"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-003",
       "steps": [
         "Verify core SKILL.md has zero mentions of 'harness-sdlc', 'harness-ea', 'harness-ba', 'harness-sa', 'harness-ops' by name",
@@ -73,8 +73,8 @@
         "Verify Delivery Pipeline diagram is removed",
         "Verify Runtime Verification Requirement references 'the active domain skill' generically"
       ],
-      "evidence": [],
-      "notes": "Most complex and riskiest feature. Requires surgical editing. Standalone sprint."
+      "evidence": ["02-evaluation.json: Zero domain skill name references. Profile system, custom profile, authenticity gate, all orchestration preserved. Runtime Verification genericized. All 8 contract checks pass."],
+      "notes": "Domain-blind surgery complete. Passed sprint 2."
     },
     {
       "id": "F-004",
