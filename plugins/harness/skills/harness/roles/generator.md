@@ -42,7 +42,7 @@ If the same feature failed the previous round:
 
 Before implementation, apply the Authenticity Pre-Implementation Checklist from the generator agent file. The checklist covers 4 dimensions:
 
-- **Coherence**: define and apply consistent conventions across all sprint artifacts
+- **Internal consistency**: define and apply consistent conventions across all sprint artifacts
 - **Intentionality**: customize defaults to the project context; document choices
 - **Craft**: verify fundamentals -- structure, hierarchy, conventions, formatting
 - **Fitness for purpose**: ensure deliverables are usable by the target audience without explanation

@@ -3,31 +3,32 @@
 ## Metadata
 - Role: coordinator
 - Agent: coordinator-1
-- Inputs: state.json, features.json, spec.md
+- Inputs: spec.md, features.json, state.json
 - Status: active
 
-## Round 2
-rounds_since_reset: 2 / 3
+## Context Freshness Trace
+rounds_since_reset: 1 / 3
 
 ## Current target
-- F-003: Generator Pre-Implementation Checklist
-- F-004: Generator Role Reference Update
-- F-005: Evaluator Post-Grading Gate
-- F-006: Evaluator Role Reference Update
+- F-001: Rename coherence to internal_consistency across all 6 base framework files
 
 ## Baseline
-- F-001: PASSES (round 1)
-- F-002: PASSES (round 1)
-- F-003, F-004, F-005, F-006: not_started
+- All 6 target files exist and contain `coherence` as an Authenticity Gate dimension name
+- SKILL.md line 372: dimension named "coherence" with disambiguation note present
+- patterns.md line 258: JSON key "coherence" in authenticity_gate object; line 441: "**Coherence**" label in builder-report template
+- agents/generator.md line 33: "**Coherence**" in Pre-Implementation Checklist
+- roles/generator.md line 45: "**Coherence**" in Authenticity bullet list
+- agents/evaluator.md line 94: "**coherence**" in verification table; line 104: disambiguation note present
+- roles/evaluator.md line 83: "coherence" in dimension list; line 89: disambiguation instruction present
 
 ## This round
-- Sprint 2 begins: F-003 + F-004 + F-005 + F-006 (grouped per spec execution strategy -- dual-side control pair)
+- Round 1: Contract, implement, evaluate the rename
 
-## Round 1 result
-- PASS: F-001 + F-002 shipped. Authenticity Gate section added to SKILL.md. Evaluation schema and builder report template updated in patterns.md.
+## Latest evidence
+- Not yet started
 
 ## Next step
-- Generator: propose sprint contract for F-003 + F-004 + F-005 + F-006
+- Generate sprint contract for F-001
 
 ## Last commit
-- 2026-04-03T10:58:40.600Z
+- 2026-04-03T11:32:46.901Z

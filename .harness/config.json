@@ -6,7 +6,7 @@
   "retro_interval": 3,
   "max_retry_on_failure": 2,
   "evaluator_strictness": "standard",
-  "commit_prefix_pass": "feat",
+  "commit_prefix_pass": "fix",
   "commit_prefix_fail": "wip",
   "commit_tag": "[harness]"
 }

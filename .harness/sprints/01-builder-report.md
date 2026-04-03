@@ -3,47 +3,43 @@
 ## Metadata
 - Role: generator
 - Agent: generator-1
-- Inputs: accepted contract 01-contract.md, spec.md, features.json, SKILL.md, patterns.md
+- Inputs: accepted contract, spec.md, features.json
 - Status: completed
 
 ## Target feature IDs
 - F-001
-- F-002
 
 ## Implemented
 
-### F-001: SKILL.md Authenticity Gate Section
-- Added "Authenticity Gate" section to `plugins/harness/skills/harness/SKILL.md` immediately after the "Quantified Evaluation" section (after line 360, before "Criterion Design")
-- Defined all 4 dimensions in a table: coherence, intentionality, craft, fitness_for_purpose
-- Each dimension has a generic definition using middleware language only
-- Coherence includes a disambiguation note distinguishing it from domain-specific criteria named "coherence"
-- Gate Rules subsection specifies: binary pass/fail, runs after domain criteria scoring, any fail = round fail
-- Dual-Side Control subsection describes generator (prevention) and evaluator (detection) roles
+All 6 files edited as specified:
 
-### F-002: Evaluation Schema and Builder Report Template Updates
-- Added `authenticity_gate` object to the `NN-evaluation.json` schema in `plugins/harness/skills/harness/references/patterns.md`
-- Schema includes: `gate_result` (pass/fail string), and 4 dimension objects each with `pass` (boolean) and `justification` (string)
-- Added "Authenticity self-check" section to the `NN-builder-report.md` template in patterns.md
-- Self-check section has 4 bullet items mapping to the 4 dimensions with prompt questions
+1. **SKILL.md** (line 372): Renamed `**coherence**` to `**internal_consistency**` in the Dimensions table. Removed the disambiguation note from the definition, keeping only the core definition text.
+
+2. **patterns.md** (line 258): Renamed JSON key `"coherence"` to `"internal_consistency"` in the authenticity_gate schema. (line 441): Renamed `**Coherence**` to `**Internal consistency**` in the builder-report template.
+
+3. **agents/generator.md** (line 33): Renamed `**Coherence**` to `**Internal consistency**` in the Pre-Implementation Checklist.
+
+4. **roles/generator.md** (line 45): Renamed `**Coherence**` to `**Internal consistency**` in the Authenticity bullet list.
+
+5. **agents/evaluator.md** (line 94): Renamed `**coherence**` to `**internal_consistency**` in the verification table. Removed the disambiguation note at the former line 104.
+
+6. **roles/evaluator.md** (line 83): Renamed `coherence` to `internal_consistency` in the dimension list. Removed the disambiguation instruction at the former line 89.
 
 ## Commands run
-- No build/test commands needed -- all changes are additive Markdown edits
+- `grep -n "coherence" <6 files>` -- confirmed zero hits in Authenticity Gate dimension-name contexts (remaining hits are domain criteria in architecture/solution_architecture profiles and general prose, which are out of scope)
+- `grep -n "internal_consistency\|Internal consistency" <6 files>` -- confirmed new name present in all 7 expected locations across 6 files
 
 ## Self-check
-- SKILL.md Authenticity Gate section is self-contained and placed after Quantified Evaluation
-- All 4 dimensions defined with generic definitions -- no domain-specific terms detected
-- Binary pass/fail semantics clearly stated
-- Ordering (after domain criteria) and failure rule (any fail = round fail) clearly stated
-- Coherence disambiguation note present
-- JSON schema in patterns.md is syntactically valid (verified by visual inspection of structure)
-- Builder report template has authenticity self-check section with all 4 dimensions
+- All 6 files updated with correct naming conventions
+- No files outside the 6 listed were modified
+- No domain skill files touched
+- Definitions unchanged -- only names renamed
 
 ## Authenticity self-check
-- **Coherence**: Yes -- both edits (SKILL.md and patterns.md) use the same dimension names, same generic language, and reference each other consistently
-- **Intentionality**: Yes -- the coherence disambiguation note is project-specific (references the architecture profile's "coherence" criterion). The self-check questions are written for this harness's context.
-- **Craft**: Yes -- table formatting matches existing SKILL.md style, JSON schema follows existing patterns.md conventions, section headings follow existing hierarchy
-- **Fitness for purpose**: Yes -- SKILL.md section is readable standalone by harness users; schema is immediately usable by evaluator agents; self-check prompts are actionable by generator agents
+- **Internal consistency**: All edits follow the same convention: snake_case (`internal_consistency`) for JSON keys and technical references, sentence case (`Internal consistency`) for display labels. Applied consistently across all 6 files.
+- **Intentionality**: Each edit was targeted to the specific location identified in the spec. No blanket find-replace was used; each file was reviewed individually to ensure only Authenticity Gate dimension-name contexts were modified while domain criterion references were preserved.
+- **Craft**: Markdown table formatting preserved. JSON indentation preserved. Line spacing around removed disambiguation notes is clean (no double blank lines introduced).
+- **Fitness for purpose**: The rename is immediately consumable by generator and evaluator agents. The new name `internal_consistency` is unambiguous and does not overlap with any domain criterion name.
 
 ## Suggested feature updates
-- F-001: should now pass -- all 7 verification steps from features.json are addressed
-- F-002: should now pass -- all 5 verification steps from features.json are addressed
+- F-001: should now pass. All 6 files renamed, all 3 disambiguation notes removed, grep verification confirms zero dimension-name hits for "coherence."

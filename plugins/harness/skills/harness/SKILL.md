@@ -369,7 +369,7 @@ The gate checks four dimensions. Each dimension is binary pass/fail -- not score
 
 | Dimension | Definition |
 |-----------|------------|
-| **coherence** | All artifacts share consistent conventions -- structure, terminology, and style form a unified whole rather than appearing assembled from different sources. Note: this is distinct from domain-specific criteria that may also be named "coherence" (e.g., the architecture profile uses "coherence" as a domain criterion measuring cross-reference consistency). The authenticity gate "coherence" operates at the output-integrity level -- it checks whether the artifacts feel like they belong to the same project, not whether they satisfy domain-specific structural rules. |
+| **internal_consistency** | All artifacts share consistent conventions -- structure, terminology, and style form a unified whole rather than appearing assembled from different sources. |
 | **intentionality** | Evidence of project-specific decisions tailored to THIS project's context. Artifacts reflect deliberate choices rather than unmodified defaults or generic template output. |
 | **craft** | Technical fundamentals are correct for the artifact type -- consistent structure, clear hierarchy, uniform conventions, and formatting that follows established standards for the deliverable format. |
 | **fitness_for_purpose** | Every deliverable is usable by the target audience without requiring additional explanation. Artifacts serve their stated purpose and can be consumed as-is. |

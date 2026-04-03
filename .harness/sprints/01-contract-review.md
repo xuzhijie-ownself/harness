@@ -8,32 +8,19 @@
 - Reviewed by: evaluator-1
 - Decision: accept
 
-## Target feature IDs
-- F-001
-- F-002
+## Review
 
-## Grouping Waiver Assessment
-The grouping waiver is justified. F-002's schema additions are structurally dependent on F-001's gate definition. Splitting would create an inconsistent intermediate state. The spec execution strategy explicitly allows this grouping. ACCEPTED.
+The contract correctly identifies all 6 target files and the specific changes needed in each. The verification method (grep-based) is appropriate for a text-rename task. Contract checks cover all required aspects:
 
-## Contract Check Review
+- PD-01: Presence of new name in all locations
+- FN-01: Absence of old name in dimension contexts
+- FN-02: Removal of disambiguation notes
+- CQ-01: No out-of-scope modifications
 
-| Check | Required | Assessment |
-|-------|----------|------------|
-| PD-01 | Yes | Clear: 4 dimensions with generic definitions |
-| PD-02 | Yes | Clear: binary pass/fail, ordering, failure rule |
-| FN-01 | Yes | Clear: authenticity_gate object with pass + justification per dimension |
-| FN-02 | Yes | Clear: self-check section in builder report template |
-| VD-01 | Advisory | Clear: section placement after Quantified Evaluation |
-| CQ-01 | Yes | Clear: explicit prohibition of domain-specific terms |
+## Concerns
 
-## Verification Assessment
-- F-001 verification steps are complete and cover all feature steps from features.json
-- F-002 verification steps are complete and cover all feature steps
-- Coherence disambiguation is called out as a specific deliverable -- good
-
-## Risk Assessment
-- Terminology leak risk is acknowledged and mitigated by CQ-01 check
-- Coherence disambiguation risk is acknowledged and addressed as a deliverable
+None. The scope is minimal and well-defined. The contract matches the spec exactly.
 
 ## Decision
-ACCEPT -- contract is well-scoped, verification is complete, risks are identified. Proceed to implementation.
+
+**ACCEPT** -- proceed to implementation.

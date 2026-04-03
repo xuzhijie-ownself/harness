@@ -1,151 +1,32 @@
 {
   "version": 1,
-  "updated_by": "evaluator-1",
+  "updated_by": "initializer-1",
   "features": [
     {
       "id": "F-001",
-      "title": "SKILL.md Authenticity Gate Section",
+      "title": "Rename coherence to internal_consistency across all 6 base framework files",
       "category": "functional",
-      "description": "Add an Authenticity Gate section to SKILL.md after the Quantified Evaluation section. Defines 4 dimensions (coherence, intentionality, craft, fitness for purpose) as binary pass/fail, runs after domain criteria scoring, any dimension failure fails the round. Uses generic middleware language only.",
+      "description": "Atomic rename of the Authenticity Gate dimension 'coherence' to 'internal_consistency' in SKILL.md, patterns.md, agents/generator.md, roles/generator.md, agents/evaluator.md, and roles/evaluator.md. Includes removing 3 disambiguation notes that are no longer needed after the rename.",
       "required": true,
       "priority": "high",
-      "status": "reviewed",
-      "passes": true,
+      "status": "not_started",
+      "passes": false,
       "depends_on": [],
-      "maturity": "reviewed",
-      "source_requirement": "Authenticity Gate middleware layer -- foundation section in SKILL.md",
+      "maturity": "draft",
+      "source_requirement": "spec.md Shipped Scope - v0.9.1 patch rename",
       "steps": [
-        "Read current SKILL.md and locate the Quantified Evaluation section",
-        "Verify an Authenticity Gate section exists immediately after Quantified Evaluation",
-        "Verify all 4 dimensions are defined with generic definitions: coherence, intentionality, craft, fitness for purpose",
-        "Verify binary pass/fail semantics are specified",
-        "Verify ordering is specified: gate runs AFTER domain criteria scoring",
-        "Verify failure rule is stated: any dimension fail = round fail",
-        "Verify no domain-specific terminology is present in the new section"
+        "Verify all 6 target files exist in the plugin tree",
+        "In SKILL.md (~line 372): confirm 'coherence' dimension renamed to 'internal_consistency' and disambiguation note removed",
+        "In patterns.md NN-evaluation.json schema (~line 258): confirm JSON key 'coherence' renamed to 'internal_consistency'",
+        "In patterns.md NN-builder-report.md template (~line 441): confirm '**Coherence**' renamed to '**Internal consistency**'",
+        "In agents/generator.md (~line 33): confirm '**Coherence**' renamed to '**Internal consistency**'",
+        "In roles/generator.md (~line 45): confirm '**Coherence**' renamed to '**Internal consistency**'",
+        "In agents/evaluator.md (~line 94): confirm '**coherence**' renamed to '**internal_consistency**' and disambiguation note at ~line 104 removed",
+        "In roles/evaluator.md (~line 83): confirm 'coherence' renamed to 'internal_consistency' and disambiguation instruction at ~line 89 removed",
+        "Grep all 6 files for 'coherence' in dimension-name contexts and confirm zero hits (prose references to the concept are acceptable)"
       ],
-      "evidence": [
-        "Round 1: All 7 verification steps satisfied. Section placed after Quantified Evaluation with 4 dimensions, binary pass/fail, ordering, failure rule, coherence disambiguation. Zero domain-specific terms (automated scan)."
-      ],
-      "notes": ""
-    },
-    {
-      "id": "F-002",
-      "title": "Evaluation Schema and Builder Report Template Updates",
-      "category": "functional",
-      "description": "Add authenticity_gate object to the NN-evaluation.json schema in patterns.md (4 dimensions, each with pass/fail + justification). Add authenticity self-check section to the NN-builder-report.md template.",
-      "required": true,
-      "priority": "high",
-      "status": "reviewed",
-      "passes": true,
-      "depends_on": ["F-001"],
-      "maturity": "reviewed",
-      "source_requirement": "Evaluation schema and builder report template updates for authenticity gate",
-      "steps": [
-        "Read current patterns.md",
-        "Verify authenticity_gate object is added to NN-evaluation.json schema with 4 dimensions (coherence, intentionality, craft, fitness_for_purpose), each with pass/fail boolean and justification string",
-        "Verify the JSON schema is syntactically valid",
-        "Verify authenticity self-check section is added to NN-builder-report.md template",
-        "Verify builder report template section uses generic middleware language"
-      ],
-      "evidence": [
-        "Round 1: All 5 verification steps satisfied. authenticity_gate object with gate_result + 4 dimensions in NN-evaluation.json schema. JSON validated via python json.loads(). Self-check section in builder report template. Generic language throughout."
-      ],
-      "notes": ""
-    },
-    {
-      "id": "F-003",
-      "title": "Generator Pre-Implementation Checklist",
-      "category": "functional",
-      "description": "Add an authenticity pre-implementation checklist to the generator agent file (generator.md). Checklist instructs the generator to define conventions, customize defaults, verify fundamentals, and ensure usability. Prevention side of dual-side control.",
-      "required": true,
-      "priority": "high",
-      "status": "reviewed",
-      "passes": true,
-      "depends_on": ["F-001"],
-      "maturity": "reviewed",
-      "source_requirement": "Generator-side prevention via pre-implementation authenticity checklist",
-      "steps": [
-        "Read current plugins/harness/agents/generator.md",
-        "Verify an Authenticity Pre-Implementation Checklist section exists",
-        "Verify 4 checklist items are present, mapping to the 4 dimensions",
-        "Verify checklist uses generic middleware language (no domain-specific terms)",
-        "Verify it integrates naturally with the existing sprint round sequence"
-      ],
-      "evidence": [
-        "Round 2: All 5 verification steps satisfied. Checklist exists in generator.md under Sprint Round Sequence with 4 items mapping to coherence, intentionality, craft, fitness_for_purpose. Generic language (automated scan). Integrates between step 5 and Post-Implementation Commit."
-      ],
-      "notes": ""
-    },
-    {
-      "id": "F-004",
-      "title": "Generator Role Reference Update",
-      "category": "functional",
-      "description": "Add authenticity instructions to roles/generator.md so the role-scoped reference includes pre-implementation checklist guidance.",
-      "required": true,
-      "priority": "medium",
-      "status": "reviewed",
-      "passes": true,
-      "depends_on": ["F-003"],
-      "maturity": "reviewed",
-      "source_requirement": "Role reference update for generator authenticity guidance",
-      "steps": [
-        "Read current plugins/harness/skills/harness/roles/generator.md",
-        "Verify an Authenticity section exists with focus-level guidance",
-        "Verify it references the pre-implementation checklist without duplicating full details",
-        "Verify generic middleware language is used throughout"
-      ],
-      "evidence": [
-        "Round 2: All 4 verification steps satisfied. Authenticity section exists in roles/generator.md with focus-level guidance. References Pre-Implementation Checklist from generator agent file. No duplication of full details. Generic language throughout."
-      ],
-      "notes": ""
-    },
-    {
-      "id": "F-005",
-      "title": "Evaluator Post-Grading Gate",
-      "category": "functional",
-      "description": "Add the authenticity post-grading gate to the evaluator agent file (evaluator.md). After existing grading, checks coherence, intentionality, craft, and fitness for purpose. Binary pass/fail -- any dimension failure fails the round.",
-      "required": true,
-      "priority": "high",
-      "status": "reviewed",
-      "passes": true,
-      "depends_on": ["F-001"],
-      "maturity": "reviewed",
-      "source_requirement": "Evaluator-side detection via post-grading authenticity gate",
-      "steps": [
-        "Read current plugins/harness/agents/evaluator.md",
-        "Verify a step for Authenticity Gate exists after the existing grading/calibration steps",
-        "Verify 4 dimension checks are included with verification methods",
-        "Verify binary pass/fail semantics are specified",
-        "Verify that authenticity failure overrides domain criteria pass",
-        "Verify generic middleware language is used throughout"
-      ],
-      "evidence": [
-        "Round 2: All 6 verification steps satisfied. Step 5 Authenticity Gate exists after step 4 Calibration. 4 dimension checks with verification methods in table. Binary pass/fail specified. Override rule: 'any dimension fails, the round FAILS -- regardless of domain criteria scores'. Generic language (automated scan)."
-      ],
-      "notes": ""
-    },
-    {
-      "id": "F-006",
-      "title": "Evaluator Role Reference Update",
-      "category": "functional",
-      "description": "Add the authenticity gate to roles/evaluator.md so the role-scoped reference includes post-grading gate instructions.",
-      "required": true,
-      "priority": "medium",
-      "status": "reviewed",
-      "passes": true,
-      "depends_on": ["F-005"],
-      "maturity": "reviewed",
-      "source_requirement": "Role reference update for evaluator authenticity gate",
-      "steps": [
-        "Read current plugins/harness/skills/harness/roles/evaluator.md",
-        "Verify an Authenticity Gate section exists under grading responsibilities",
-        "Verify it references the post-grading gate without duplicating full details",
-        "Verify generic middleware language is used throughout"
-      ],
-      "evidence": [
-        "Round 2: All 4 verification steps satisfied. Authenticity Gate section in roles/evaluator.md before Disagreement Rule. References post-grading gate in evaluator agent file. No duplication of full details. Generic language throughout."
-      ],
-      "notes": ""
+      "evidence": [],
+      "notes": "All edits are text substitutions. No logic changes, no new sections. Domain skill files (harness-ea, harness-sdlc, etc.) must NOT be touched."
     }
   ]
 }

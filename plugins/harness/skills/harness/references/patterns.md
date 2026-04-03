@@ -255,7 +255,7 @@ State.json holds runtime state (round, phase, errors). Config.json holds persist
   },
   "authenticity_gate": {
     "gate_result": "pass",
-    "coherence": {
+    "internal_consistency": {
       "pass": true,
       "justification": "Artifacts share consistent conventions throughout."
     },
@@ -438,7 +438,7 @@ Check IDs map to the domain profile's criteria:
 - What is still risky
 
 ## Authenticity self-check
-- **Coherence**: [Have you defined project conventions and applied them consistently across all artifacts?]
+- **Internal consistency**: [Have you defined project conventions and applied them consistently across all artifacts?]
 - **Intentionality**: [For every default used, have you made at least one project-specific customization? List the choices made.]
 - **Craft**: [Have you verified fundamentals -- consistent structure, clear hierarchy, uniform conventions?]
 - **Fitness for purpose**: [Is every deliverable usable by the target audience without additional explanation?]
