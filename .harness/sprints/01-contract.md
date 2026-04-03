@@ -2,8 +2,8 @@
 
 ## Metadata
 - Role: generator
-- Agent: coordinator-as-generator
-- Inputs: .harness/spec.md, .harness/features.json, all 6 agent files, all 6 role files, all 5 command files, SKILL.md
+- Agent: generator-1
+- Inputs: .harness/spec.md, .harness/features.json, progress.md
 - Status: in_review
 
 ## Target feature IDs
@@ -11,51 +11,55 @@
 - F-002
 
 ## Grouping waiver
-F-001 (agent dedup) and F-002 (command pre-flight extraction) are independent file-level refactors. F-001 touches 6 agent files + 6 role files. F-002 touches 5 command files + SKILL.md. No file overlap. Grouping reduces risk by shipping both thin-wrapper patterns in one sprint.
+F-001 and F-002 are grouped per the execution strategy. Both create new files without modifying existing ones. F-002 depends on the directory structure created by F-001. Grouping reduces risk because neither feature modifies existing files -- they only add new ones. There is no verification overlap or conflict.
 
 ## Goal
-Convert 6 agent files into thin YAML-frontmatter wrappers pointing to role files. Extract the shared 4-step State Validation block from 5 command files into a "Command Pre-Flight Validation" section in SKILL.md.
+Create the harness-sdlc-suite plugin directory structure, move 5 domain skills from core plugin to the new plugin, and create the index skill SKILL.md that serves as the domain registry.
 
 ## Deliverables
 
-### F-001: Agent file deduplication
-- Modify 6 agent files: coordinator.md, evaluator.md, generator.md, initializer.md, planner.md, releaser.md
-- Each becomes: YAML frontmatter + "read role file" instruction + ownership declaration
-- Before simplifying each agent file, merge any content UNIQUE to the agent file into its role file
-- Role files remain canonical; no content loss
+### F-001: Create harness-sdlc-suite plugin structure
+1. `plugins/harness-sdlc-suite/.claude-plugin/plugin.json` -- skills-only manifest
+2. `plugins/harness-sdlc-suite/skills/` directory containing 5 moved domain skills:
+   - `harness-sdlc/SKILL.md`
+   - `harness-ea/SKILL.md`
+   - `harness-ba/SKILL.md`
+   - `harness-sa/SKILL.md`
+   - `harness-ops/SKILL.md`
+3. `plugins/harness/skills/` must contain ONLY `harness/` after the move
 
-### F-002: Command pre-flight extraction
-- Add "Command Pre-Flight Validation" section to SKILL.md (after "Workflow Entry" section)
-- Modify 5 command files: init.md, run.md, session.md, reset.md, release.md
-- Replace inline State Validation block with pointer to shared section
-- Keep command-specific pre-flight steps inline
+### F-002: Create harness-sdlc-suite index skill
+1. `plugins/harness-sdlc-suite/skills/harness-sdlc-suite/SKILL.md` containing:
+   - YAML frontmatter with skill name and description
+   - Domain Profiles table (software, architecture, business_analysis, solution_architecture, ops)
+   - Domain Skill Routing table
+   - End-to-End Delivery Pipeline diagram (8 phases)
+   - Phase routing table
+   - Domain Skills summary table
+   - Cross-Domain Composability note
+   - Business Analysis Foundation note
 
 ## Verification
-
-### F-001 checks
-- PD-01 (required): Each agent file has YAML frontmatter (name, description, tools) + body referencing role file + ownership declaration. No duplicated procedural prose.
-- FN-01 (required): Role files contain all canonical procedural content. No content lost from agent files.
-- CQ-01 (required): Total line count across 6 agent files reduced by approximately 280 lines from baseline 435.
-
-### F-002 checks
-- PD-02 (required): SKILL.md contains "Command Pre-Flight Validation" section with the 4-step block.
-- FN-02 (required): Each command file references the shared pre-flight instead of inline duplication.
-- CQ-02 (required): Total line count across 5 command files reduced by approximately 100 lines from baseline 305.
+- `ls plugins/harness/skills/` shows only `harness/`
+- `ls plugins/harness-sdlc-suite/skills/` shows 6 directories (5 domain + 1 index)
+- Each domain skill SKILL.md exists and has content
+- `plugins/harness-sdlc-suite/.claude-plugin/plugin.json` is valid JSON
+- Index SKILL.md contains all required sections
 
 ## Acceptance criteria
-- Product depth: Agent files are thin wrappers; command files reference shared pre-flight
-- Functionality: No behavioral change; all procedural content preserved in role files and SKILL.md
-- Visual design: N/A for this refactoring sprint (Markdown formatting consistency)
-- Code quality: Measurable line reduction; single source of truth for duplicated content
+- Product depth: Plugin structure mirrors the architecture diagram from spec.md
+- Functionality: All 5 domain skills accessible at new paths; index skill provides complete routing
+- Visual design: N/A (no UI) -- replaced by: Artifact structure follows established plugin conventions
+- Code quality: JSON manifests are valid; SKILL.md follows YAML frontmatter + markdown conventions
 
 ## Contract checks
-- `PD-01`: required -- verify each agent file is thin wrapper format
-- `PD-02`: required -- verify SKILL.md contains shared pre-flight section
-- `FN-01`: required -- verify no content lost from agent-to-role merge
-- `FN-02`: required -- verify command files reference shared pre-flight
-- `CQ-01`: required -- verify agent file line reduction (~280 lines)
-- `CQ-02`: required -- verify command file line reduction (~100 lines)
+- `PD-01` (required): plugin.json exists at plugins/harness-sdlc-suite/.claude-plugin/plugin.json with correct fields
+- `FN-01` (required): All 5 domain skills exist under plugins/harness-sdlc-suite/skills/ with SKILL.md files
+- `FN-02` (required): plugins/harness/skills/ contains ONLY harness/ directory
+- `FN-03` (required): Index SKILL.md exists with all 7 required content sections
+- `VD-01` (advisory): Directory tree matches spec.md architecture diagram
+- `CQ-01` (required): plugin.json is valid JSON; SKILL.md has valid YAML frontmatter
 
 ## Risks
-- Agent files may contain unique content not in role files (mitigated by diff-before-simplify)
-- plugin.json agents[] and commands[] arrays must remain unchanged (verified by not renaming or deleting files)
+- File move on Windows may need special handling (use git mv or cp+rm)
+- Index SKILL.md content extraction from core SKILL.md must be accurate

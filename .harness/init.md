@@ -3,68 +3,77 @@
 ## Metadata
 - Role: initializer
 - Agent: initializer-1
-- Inputs: spec.md, 19 target kernel files
+- Inputs: spec.md, plugins/harness/skills/ directory listing, .claude-plugin/marketplace.json, .codex-plugin/plugin.json, install.sh, install.bat, README.md, release.json
 - Status: accepted
 
 ## Project overview
 
-This is a refactoring release for the harness kernel plugin. The goal is to reduce total prose by approximately 22% (from ~2,614 lines to ~2,214 lines) across 19 core files while preserving all functionality and maintaining dual-runtime compatibility.
+Refactor the harness from a single-plugin monolith into a two-plugin architecture: **harness** (domain-blind core) and **harness-sdlc-suite** (software delivery domain skills). This is a v2.0.0 release -- breaking change to plugin structure.
 
-Version bump: 0.9.1 to 1.0.0.
+Current state: v1.0.0 monorepo at `C:\Users\zhijie\Desktop\ai\harness`. All 5 domain skills live under `plugins/harness/skills/` alongside the core `harness/` skill.
 
-## Target files inventory
+Target state: Two plugins under `plugins/`, updated manifests, updated install scripts, updated documentation. Domain skills moved to `plugins/harness-sdlc-suite/skills/`.
 
-All 19 target files verified present:
+## Current structure verification
 
-### Agent files (6)
-1. plugins/harness/agents/coordinator.md (130 lines)
-2. plugins/harness/agents/evaluator.md (135 lines)
-3. plugins/harness/agents/generator.md (45 lines)
-4. plugins/harness/agents/initializer.md (33 lines)
-5. plugins/harness/agents/planner.md (37 lines)
-6. plugins/harness/agents/releaser.md (55 lines)
+### Core plugin (plugins/harness/)
+- agents/: 6 agent files (coordinator, evaluator, generator, initializer, planner, releaser)
+- commands/: 5 command files (init, release, reset, run, session)
+- skills/harness/: Core skill with SKILL.md, 6 role files, 2 reference files
+- skills/harness-sdlc/: Domain skill (to be moved)
+- skills/harness-ea/: Domain skill (to be moved)
+- skills/harness-ba/: Domain skill (to be moved)
+- skills/harness-sa/: Domain skill (to be moved)
+- skills/harness-ops/: Domain skill (to be moved)
 
-### Command files (5)
-7. plugins/harness/commands/init.md (46 lines)
-8. plugins/harness/commands/release.md (41 lines)
-9. plugins/harness/commands/reset.md (58 lines)
-10. plugins/harness/commands/run.md (49 lines)
-11. plugins/harness/commands/session.md (111 lines)
+### Manifests
+- .claude-plugin/marketplace.json: Single plugin entry
+- .codex-plugin/plugin.json: Single skills path (string)
+- plugins/harness/.claude-plugin/plugin.json: Core plugin manifest at v1.0.0
 
-### Core files (2)
-12. plugins/harness/skills/harness/SKILL.md (777 lines)
-13. plugins/harness/skills/harness/references/patterns.md (738 lines)
+### Install scripts
+- install.sh: Copies from plugins/harness/ only
+- install.bat: Copies from plugins/harness/ only
 
-### Role files (6)
-14. plugins/harness/skills/harness/roles/coordinator.md (66 lines)
-15. plugins/harness/skills/harness/roles/evaluator.md (104 lines)
-16. plugins/harness/skills/harness/roles/generator.md (56 lines)
-17. plugins/harness/skills/harness/roles/initializer.md (40 lines)
-18. plugins/harness/skills/harness/roles/planner.md (38 lines)
-19. plugins/harness/skills/harness/roles/releaser.md (55 lines)
+### Documentation
+- README.md: Documents single-plugin architecture
 
-### New file (created during sprints)
-- plugins/harness/skills/harness/references/advanced.md (does not yet exist)
+## Features (7 total)
 
-## Baseline metrics
+| ID | Title | Priority | Dependencies |
+|----|-------|----------|-------------|
+| F-001 | Create harness-sdlc-suite plugin structure | high | none |
+| F-002 | Create harness-sdlc-suite index skill | high | none |
+| F-003 | Make core SKILL.md domain-blind | high | F-001, F-002 |
+| F-004 | Update marketplace manifest | medium | F-001 |
+| F-005 | Update Codex manifest | medium | F-001 |
+| F-006 | Update install scripts | medium | F-001 |
+| F-007 | Update README | medium | F-001 |
 
-- Total lines: 2,614
-- Agent files subtotal: 435 lines
-- Command files subtotal: 305 lines
-- SKILL.md: 777 lines
-- patterns.md: 738 lines
-- Role files subtotal: 359 lines
-- Target total after refactoring: 2,214 lines or fewer (400+ line reduction)
+## Sprint plan (4 sprints)
+
+1. Sprint 1: F-001 + F-002 -- foundational structure and index skill
+2. Sprint 2: F-003 -- surgical core SKILL.md domain-blind refactor
+3. Sprint 3: F-004 + F-005 + F-006 -- manifest and script updates
+4. Sprint 4: F-007 -- documentation wrap-up
 
 ## Invariants
 
-1. File-count invariant: The Claude Code plugin.json agents[] array (6 files) and commands[] array (5 files) must remain unchanged. No file merges, deletions, or renames.
-2. Behavioral invariant: Artifact structure, evaluation flow, and stop conditions must be identical before and after refactoring.
+1. No changes to agent or command file behavior -- pure structural refactor
+2. Domain skill SKILL.md files must be content-identical before and after move
+3. Dual-runtime compatibility (Claude Code marketplace + Codex CLI) must be maintained
+4. Core SKILL.md must retain all orchestration logic (dispatch rules, execution loop, stop conditions)
+5. Authenticity gate remains fully domain-agnostic
 
 ## Setup
 
-No build step, no dev server, no dependencies. This is a pure Markdown/JSON refactoring project. Verification is done by line counting and manual read-through.
+No build step, no dev server, no dependencies. This is a pure Markdown/JSON/shell-script refactoring project. Verification is done by file existence checks, content comparison, and manual read-through.
 
 ## Smoke test
 
-Verification that all 19 target files exist and are non-empty. Both plugin.json manifests must remain unmodified.
+Verification that:
+1. All 5 domain skills exist under plugins/harness/skills/ (pre-refactor baseline)
+2. Core skill exists at plugins/harness/skills/harness/SKILL.md
+3. Both manifest files exist and are valid JSON
+4. install.sh and install.bat exist
+5. README.md exists

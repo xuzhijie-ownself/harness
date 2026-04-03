@@ -1,52 +1,45 @@
 # Progress Log
 
 ## Metadata
-- Role: coordinator
-- Agent: coordinator-1
-- Inputs: spec.md, all 19 target kernel files
-- Status: complete
+- Role: initializer
+- Agent: initializer-1
+- Inputs: spec.md, plugins/harness/skills/ directory listing, prior run artifacts
+- Status: active
 
 ## Current target
-- All features complete. Run finished at round 3.
+- F-001 + F-002 (Sprint 1): Create harness-sdlc-suite plugin structure and index skill
 
 ## Baseline
 
-Total line count across 19 target files: 2,614 lines.
+Current state (v1.0.0 monolith, prior refactoring run complete):
 
-## Sprint 1 (F-001 + F-002)
-rounds_since_reset: 1 / 3
+**What already works:**
+- Single-plugin harness at plugins/harness/ with 6 agents, 5 commands, core skill, 6 role files, 2 reference files
+- 5 domain skills live under plugins/harness/skills/: harness-sdlc, harness-ea, harness-ba, harness-sa, harness-ops
+- Core SKILL.md contains domain-specific content (Domain Profiles table, Domain Skill Routing, Domain Skill References, Delivery Pipeline diagram)
+- Dual-runtime manifests (.claude-plugin/marketplace.json, .codex-plugin/plugin.json) both point to single plugin
+- install.sh and install.bat copy from single plugin directory
+- README.md documents single-plugin architecture
+- release.json at v1.0.0
 
-- F-001: 6 agent files converted to thin YAML wrappers (435 -> 118 lines, -317). Unique content merged into role files.
-- F-002: Shared Command Pre-Flight Validation added to SKILL.md. 5 command files reference it (305 -> 273 lines, -32).
-- Result: PASS
+**What is currently failing (all 7 features):**
+- F-001: harness-sdlc-suite plugin directory does not exist. Domain skills still in core plugin.
+- F-002: Index skill (harness-sdlc-suite/SKILL.md) does not exist.
+- F-003: Core SKILL.md still contains all domain-specific content and named skill references.
+- F-004: marketplace.json lists only one plugin.
+- F-005: Codex plugin.json has single skills path (string, not array).
+- F-006: Install scripts only copy from core plugin.
+- F-007: README.md documents single-plugin architecture.
 
-## Sprint 2 (F-003 + F-004)
-rounds_since_reset: 2 / 3
-
-- F-003: references/advanced.md created with 7 extracted sections. SKILL.md trimmed (787 -> 727 lines, -60).
-- F-004: Codex detection condensed from ~25 lines to ~10-line decision tree. Detailed procedure in advanced.md.
-- Result: PASS
-
-## Sprint 3 (F-005 + F-006)
-rounds_since_reset: 3 / 3
-
-- F-005: Calibration conditional on expected_sprint_count > 3. Coordinator, evaluator, SKILL.md updated.
-- F-006: Retro template removed from patterns.md (-22 lines). Retros append inline to progress.md.
-- Result: PASS
-
-## Final line counts
-- 19 original files: 2,614 -> 2,382 (-232 lines, 9%)
-- With new advanced.md (118 lines): net -114 lines across all files
+## This round
+- Initialization round. No code changes made. Feature ledger and baseline established.
 
 ## Latest evidence
-- All 6 features pass. Release v1.0.0 created.
-- Both plugin.json manifests updated to version 1.0.0.
+- `ls plugins/harness/skills/` shows: harness, harness-ba, harness-ea, harness-ops, harness-sa, harness-sdlc (6 directories, 5 are domain skills that need to move)
+- `ls plugins/harness-sdlc-suite/` fails (directory does not exist)
+- Old sprint artifacts from prior run (v1.0.0 refactoring) cleaned
 
 ## Next step
-- Run complete. No further action needed.
+- The coordinator should begin Sprint 1 targeting F-001 + F-002: create the harness-sdlc-suite plugin structure and move the 5 domain skills, then create the index skill SKILL.md.
 
-## Retrospective -- Rounds 1-3
-- **What Worked**: Grouping 2 features per sprint kept the pace fast. Each sprint was clean with no failures. Content merge before simplification prevented content loss.
-- **What Didn't Work**: F-002 line reduction estimate was too optimistic (100 vs actual 32). The shared State Validation block was smaller than anticipated.
-- **Adjustments**: For future refactoring runs, measure the actual block size before estimating reduction.
-- **Patterns**: Role files grew significantly (+202 lines) to absorb agent file content -- this is expected and correct. The net reduction is smaller than the spec target (114 vs 400) but the functional goals are all met.
+rounds_since_reset: 1 / 4

@@ -2,28 +2,33 @@
 
 ## Metadata
 - Role: evaluator
-- Agent: coordinator-as-evaluator
+- Agent: evaluator-1
 - Inputs: 01-contract.md, spec.md, features.json
 - Status: accepted
-- Reviewed by: coordinator-as-evaluator
+- Reviewed by: evaluator-1
 - Decision: accept
+
+## Target feature IDs
+- F-001
+- F-002
 
 ## Review
 
-The contract correctly targets F-001 and F-002 as independent refactors with no file overlap. The grouping waiver is justified -- these are orthogonal changes.
+### Grouping waiver
+Accepted. Both features create new files only. F-002 depends on F-001's directory structure. No modification overlap. Consistent with the execution strategy in spec.md.
 
-### F-001 Assessment
-- The agent dedup pattern is well-defined: YAML frontmatter + role-file pointer + ownership
-- Critical constraint acknowledged: must merge unique agent content into role files BEFORE simplifying
-- Risk of content loss is mitigated by the diff-before-simplify approach
+### Deliverables
+All deliverables are well-specified and match the spec requirements. The 7 required content sections for the index SKILL.md are explicitly enumerated.
 
-### F-002 Assessment
-- The shared pre-flight extraction is straightforward -- the 4-step State Validation block is identical across all 5 command files
-- SKILL.md is the right location for the shared section (already the central reference)
-- Command-specific pre-flight steps remain inline -- correct approach
+### Contract checks
+- PD-01, FN-01, FN-02, FN-03, CQ-01 are all required -- appropriate for foundational structure.
+- VD-01 as advisory is reasonable since there is no UI.
 
-### Concerns
-- None blocking. The contract is well-scoped and the verification criteria are measurable.
+### Verification
+Verification steps are concrete and automatable (directory listings, JSON validation, content section checks).
 
-## Decision
-ACCEPT -- proceed to implementation.
+### Risks
+File move risk on Windows is acknowledged. Recommendation: use cp + rm rather than mv to avoid cross-device link issues.
+
+### Decision
+**ACCEPT** -- contract is complete, verification is concrete, risks are acknowledged.

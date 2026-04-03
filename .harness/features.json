@@ -1,145 +1,173 @@
 {
   "version": 1,
-  "updated_by": "evaluator-3",
+  "updated_by": "initializer-1",
   "features": [
     {
       "id": "F-001",
-      "title": "Agent file deduplication",
-      "category": "refactoring",
-      "description": "Convert 6 agent files from prose-heavy duplications into thin YAML-frontmatter wrappers pointing to role files as single source of truth.",
+      "title": "Create harness-sdlc-suite plugin structure",
+      "category": "functional",
+      "description": "Create the harness-sdlc-suite plugin directory tree with plugin.json manifest (skills-only, no agents or commands). Move the 5 domain skills (harness-sdlc, harness-ea, harness-ba, harness-sa, harness-ops) from plugins/harness/skills/ to plugins/harness-sdlc-suite/skills/. After completion, plugins/harness/skills/ contains only the harness/ directory.",
       "required": true,
       "priority": "high",
-      "status": "completed",
-      "passes": true,
+      "status": "not_started",
+      "passes": false,
       "depends_on": [],
-      "maturity": "reviewed",
+      "maturity": "draft",
       "source_requirement": "spec.md F-001",
       "steps": [
-        "Read all 6 agent files",
-        "Verify each is thin wrapper",
-        "Verify no duplicated procedural prose",
-        "Verify role files contain canonical content",
-        "Count lines and confirm reduction"
+        "Verify plugins/harness-sdlc-suite/.claude-plugin/plugin.json exists and is valid JSON with skills-only manifest",
+        "Verify plugins/harness-sdlc-suite/skills/ directory exists",
+        "Verify all 5 domain skills exist under plugins/harness-sdlc-suite/skills/ (harness-sdlc, harness-ea, harness-ba, harness-sa, harness-ops) with SKILL.md in each",
+        "Verify plugins/harness/skills/ contains ONLY the harness/ directory -- no domain skill directories remain",
+        "Verify domain skill SKILL.md files are content-identical before and after move"
       ],
-      "evidence": [
-        "Sprint 1: 6 agent files -> thin wrappers (435 -> 118 lines, -317)"
-      ],
-      "notes": ""
+      "evidence": [],
+      "notes": "Foundation feature. All other features depend on or follow from this."
     },
     {
       "id": "F-002",
-      "title": "Command file shared pre-flight extraction",
-      "category": "refactoring",
-      "description": "Extract shared State Validation block into SKILL.md. Command files reference it.",
+      "title": "Create harness-sdlc-suite index skill",
+      "category": "functional",
+      "description": "Create plugins/harness-sdlc-suite/skills/harness-sdlc-suite/SKILL.md as the domain registry for software delivery. Contains Domain Profiles table, Domain Skill Routing table, End-to-End Delivery Pipeline diagram, Phase routing table, Domain Skills summary table, Cross-Domain Composability note, and Business Analysis Foundation note.",
       "required": true,
       "priority": "high",
-      "status": "completed",
-      "passes": true,
+      "status": "not_started",
+      "passes": false,
       "depends_on": [],
-      "maturity": "reviewed",
+      "maturity": "draft",
       "source_requirement": "spec.md F-002",
       "steps": [
-        "Verify SKILL.md has Command Pre-Flight Validation section",
-        "Verify each command file references it",
-        "Verify command-specific steps remain inline",
-        "Count lines and confirm reduction"
+        "Verify plugins/harness-sdlc-suite/skills/harness-sdlc-suite/SKILL.md exists",
+        "Verify it has YAML frontmatter with skill name and description",
+        "Verify it contains the Domain Profiles table with all profiles (software, architecture, business_analysis, solution_architecture, ops)",
+        "Verify it contains the Domain Skill Routing table mapping domain_profile to skill name and relative path",
+        "Verify it contains the End-to-End Delivery Pipeline phases diagram",
+        "Verify it contains the Phase routing table",
+        "Verify it contains the Domain Skills summary table",
+        "Verify it contains Cross-Domain Composability and Business Analysis Foundation notes"
       ],
-      "evidence": [
-        "Sprint 1: Shared pre-flight in SKILL.md. All 5 commands reference it (305 -> 273 lines, -32)"
-      ],
-      "notes": ""
+      "evidence": [],
+      "notes": "Grouped with F-001 in Sprint 1. Both create new files without modifying existing ones."
     },
     {
       "id": "F-003",
-      "title": "SKILL.md non-core section extraction",
-      "category": "refactoring",
-      "description": "Move non-core sections to references/advanced.md with one-line pointers in SKILL.md.",
+      "title": "Make core SKILL.md domain-blind",
+      "category": "functional",
+      "description": "Remove all named references to specific domain skills from plugins/harness/skills/harness/SKILL.md. Remove Domain Profiles table, Domain Skill Routing section, Domain Skill References section, Delivery Pipeline diagram. Keep profile system definition, domain_profile field docs, custom profile example, authenticity gate, all orchestration logic. Rewrite Runtime Verification Requirement to reference 'the active domain skill' generically.",
       "required": true,
-      "priority": "medium",
-      "status": "completed",
-      "passes": true,
-      "depends_on": [],
-      "maturity": "reviewed",
+      "priority": "high",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001", "F-002"],
+      "maturity": "draft",
       "source_requirement": "spec.md F-003",
       "steps": [
-        "Verify advanced.md exists with extracted sections",
-        "Verify SKILL.md has pointer references",
-        "Verify full sections removed from SKILL.md",
-        "Count lines and confirm reduction"
+        "Verify core SKILL.md has zero mentions of 'harness-sdlc', 'harness-ea', 'harness-ba', 'harness-sa', 'harness-ops' by name",
+        "Verify core SKILL.md still documents the profile system abstractly (how profiles work, what '4 criteria' means)",
+        "Verify core SKILL.md still contains the custom profile as inline example",
+        "Verify core SKILL.md still contains the authenticity gate section",
+        "Verify core SKILL.md still contains all orchestration logic (dispatch rules, execution loop, stop conditions)",
+        "Verify Domain Profiles table is removed",
+        "Verify Domain Skill Routing section is removed",
+        "Verify Domain Skill References section is removed",
+        "Verify Delivery Pipeline diagram is removed",
+        "Verify Runtime Verification Requirement references 'the active domain skill' generically"
       ],
-      "evidence": [
-        "Sprint 2: advanced.md created with 7 sections. SKILL.md 787 -> 727 (-60 lines)"
-      ],
-      "notes": ""
+      "evidence": [],
+      "notes": "Most complex and riskiest feature. Requires surgical editing. Standalone sprint."
     },
     {
       "id": "F-004",
-      "title": "Codex detection simplification",
-      "category": "refactoring",
-      "description": "Condense Codex detection to decision tree. Move detailed procedure to advanced.md.",
+      "title": "Update marketplace manifest",
+      "category": "functional",
+      "description": "Update .claude-plugin/marketplace.json to list two plugins in the plugins[] array: harness (existing, updated) and harness-sdlc-suite (new entry). Both entries include name, source, description, version (2.0.0), author, and metadata.",
       "required": true,
       "priority": "medium",
-      "status": "completed",
-      "passes": true,
-      "depends_on": ["F-001", "F-003"],
-      "maturity": "reviewed",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001"],
+      "maturity": "draft",
       "source_requirement": "spec.md F-004",
       "steps": [
-        "Verify decision tree in evaluator role file",
-        "Verify 5 output fields preserved",
-        "Verify detailed procedure in advanced.md",
-        "Count lines and confirm reduction"
+        "Verify .claude-plugin/marketplace.json exists and is valid JSON",
+        "Verify plugins[] array contains exactly two entries",
+        "Verify harness entry has correct source path, description, and version 2.0.0",
+        "Verify harness-sdlc-suite entry has correct source path (./plugins/harness-sdlc-suite), description, and version 2.0.0",
+        "Verify both entries include name, author, and metadata fields"
       ],
-      "evidence": [
-        "Sprint 2: Codex pre-flight condensed to ~10-line decision tree. All 5 output fields preserved."
-      ],
-      "notes": ""
+      "evidence": [],
+      "notes": "Grouped with F-005 and F-006 in Sprint 3. Small manifest update."
     },
     {
       "id": "F-005",
-      "title": "Conditional evaluator calibration",
-      "category": "refactoring",
-      "description": "Calibration required only when expected_sprint_count > 3.",
+      "title": "Update Codex manifest",
+      "category": "functional",
+      "description": "Update .codex-plugin/plugin.json: change skills from a single string to an array of two paths (./plugins/harness/skills/ and ./plugins/harness-sdlc-suite/skills/). Update version to 2.0.0. Update description to reflect two-plugin architecture.",
       "required": true,
-      "priority": "low",
-      "status": "completed",
-      "passes": true,
-      "depends_on": [],
-      "maturity": "reviewed",
+      "priority": "medium",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001"],
+      "maturity": "draft",
       "source_requirement": "spec.md F-005",
       "steps": [
-        "Verify conditional enforcement in coordinator",
-        "Verify conditional requirement in evaluator",
-        "Verify short runs skip calibration file",
-        "Verify scoring still works without file"
+        "Verify .codex-plugin/plugin.json exists and is valid JSON",
+        "Verify skills field is an array with two paths",
+        "Verify first path is './plugins/harness/skills/'",
+        "Verify second path is './plugins/harness-sdlc-suite/skills/'",
+        "Verify version is '2.0.0'",
+        "Verify description reflects two-plugin architecture"
       ],
-      "evidence": [
-        "Sprint 3: Calibration conditional on expected_sprint_count > 3. Coordinator, evaluator, and SKILL.md all updated."
-      ],
-      "notes": ""
+      "evidence": [],
+      "notes": "Grouped with F-004 and F-006 in Sprint 3. Small manifest update."
     },
     {
       "id": "F-006",
-      "title": "Merge retrospective into progress log",
-      "category": "refactoring",
-      "description": "Append retros to progress.md instead of separate retro-RX-RY.md files.",
+      "title": "Update install scripts",
+      "category": "functional",
+      "description": "Modify install.sh and install.bat to: create target directories for all domain skills under .claude/skills/, copy core skill from plugins/harness/skills/harness/ (existing), copy domain skills from plugins/harness-sdlc-suite/skills/ (new), support --uninstall for both plugin trees, maintain existing hooks merge and agents/commands copy behavior.",
       "required": true,
-      "priority": "low",
-      "status": "completed",
-      "passes": true,
-      "depends_on": [],
-      "maturity": "reviewed",
+      "priority": "medium",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001"],
+      "maturity": "draft",
       "source_requirement": "spec.md F-006",
       "steps": [
-        "Verify retro template removed from patterns.md",
-        "Verify progress.md template has retro section",
-        "Verify coordinator appends to progress.md",
-        "Verify SKILL.md references inline format"
+        "Verify install.sh copies core skill from plugins/harness/skills/harness/",
+        "Verify install.sh copies domain skills from plugins/harness-sdlc-suite/skills/",
+        "Verify install.sh creates directories for all domain skills under .claude/skills/",
+        "Verify install.sh --uninstall removes skill directories from both plugin trees",
+        "Verify install.bat mirrors the same behavior as install.sh",
+        "Verify install.bat --uninstall removes skill directories from both plugin trees",
+        "Verify existing hooks merge behavior is unchanged",
+        "Verify existing agents and commands copy behavior is unchanged (still from core plugin only)"
       ],
-      "evidence": [
-        "Sprint 3: Retro template removed from patterns.md (-22 lines). Retro section added to progress.md template. Coordinator appends inline."
+      "evidence": [],
+      "notes": "Grouped with F-004 and F-005 in Sprint 3."
+    },
+    {
+      "id": "F-007",
+      "title": "Update README",
+      "category": "documentation",
+      "description": "Update README.md to document: two-plugin architecture overview (core + SDLC suite), updated install commands, updated architecture diagram showing both plugin directory trees, updated Domain Skills table referencing SDLC suite, updated artifact layout, note that core can be used standalone with custom profile.",
+      "required": true,
+      "priority": "medium",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001"],
+      "maturity": "draft",
+      "source_requirement": "spec.md F-007",
+      "steps": [
+        "Verify README.md documents two-plugin architecture overview",
+        "Verify README.md has updated install commands mentioning both plugins",
+        "Verify README.md has updated architecture diagram showing plugins/harness/ and plugins/harness-sdlc-suite/ trees",
+        "Verify README.md has updated Domain Skills table referencing SDLC suite plugin",
+        "Verify README.md notes that core harness can be used standalone with custom profile",
+        "Verify README.md artifact layout shows plugins/harness-sdlc-suite/"
       ],
-      "notes": ""
+      "evidence": [],
+      "notes": "Documentation wrap-up. Standalone sprint after all structural changes verified."
     }
   ]
 }

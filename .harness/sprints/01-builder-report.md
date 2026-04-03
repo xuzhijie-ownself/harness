@@ -2,8 +2,8 @@
 
 ## Metadata
 - Role: generator
-- Agent: coordinator-as-generator
-- Inputs: accepted contract 01-contract.md, spec.md, features.json, all 6 agent files, all 6 role files, all 5 command files, SKILL.md
+- Agent: generator-1
+- Inputs: accepted contract 01-contract.md, spec.md, features.json
 - Status: completed
 
 ## Target feature IDs
@@ -12,42 +12,49 @@
 
 ## Implemented
 
-### F-001: Agent file deduplication
+### F-001: Create harness-sdlc-suite plugin structure
+1. Created `plugins/harness-sdlc-suite/.claude-plugin/plugin.json` with skills-only manifest (name, version 2.0.0, description, author, homepage, license, keywords, skills array)
+2. Created `plugins/harness-sdlc-suite/skills/` directory
+3. Copied all 5 domain skills from `plugins/harness/skills/` to `plugins/harness-sdlc-suite/skills/`:
+   - harness-sdlc/SKILL.md
+   - harness-ea/SKILL.md
+   - harness-ba/SKILL.md
+   - harness-sa/SKILL.md
+   - harness-ops/SKILL.md
+4. Removed all 5 domain skill directories from `plugins/harness/skills/`
+5. Verified `plugins/harness/skills/` contains only `harness/`
 
-1. **Content merge phase**: Read each agent file and its corresponding role file. Identified unique content in each agent file not present in the role file. Merged all unique content into role files:
-   - coordinator.md role: Added Loop Per Round (21 steps), Release section, Auto-Commit Protocol, Error Recovery, Context Freshness with Trace, Codex Detection Enforcement, Ownership (66 -> 140 lines)
-   - evaluator.md role: Added Skepticism Calibration, Browser Testing, Feature Completeness Watch, Feature Acceptance Rule, Required Outputs Per Round, detailed 5-step Three Jobs structure (104 -> 152 lines)
-   - generator.md role: Added Ownership, Sprint Round Sequence, Authenticity Pre-Implementation Checklist (detailed), Post-Implementation Commit (56 -> 77 lines)
-   - initializer.md role: Added Ownership, Required Outputs list (6 items), methodology note (40 -> 62 lines)
-   - planner.md role: Added Ownership, Domain Profile instructions, Required Output with methodology note (38 -> 62 lines)
-   - releaser.md role: Added Step 0 Migration Check, Responsibilities list, Manifest Synchronization (55 -> 81 lines)
-
-2. **Simplification phase**: Converted all 6 agent files to thin YAML-frontmatter wrappers:
-   - Each file retains: YAML frontmatter (name, description, tools), "read role file" instruction, ownership declaration
-   - All duplicated procedural prose removed
-   - Total agent file lines: 435 -> 118 (reduction: 317 lines)
-
-### F-002: Command pre-flight extraction
-
-1. Added "Command Pre-Flight Validation" section to SKILL.md under Workflow Entry (after Integrity Invariants)
-2. Replaced inline "State Validation" blocks in all 5 command files with single-line reference: "Run the Command Pre-Flight Validation from SKILL.md before proceeding."
-3. Kept command-specific pre-flight steps inline in each file
-4. Total command file lines: 305 -> 273 (reduction: 32 lines)
+### F-002: Create harness-sdlc-suite index skill
+1. Created `plugins/harness-sdlc-suite/skills/harness-sdlc-suite/SKILL.md` with:
+   - YAML frontmatter (name: harness-sdlc-suite, description)
+   - Domain Profiles table (software, architecture, business_analysis, solution_architecture, ops)
+   - Domain Skill Routing table (domain_profile to skill name + relative path)
+   - End-to-End Delivery Pipeline diagram (8 phases)
+   - Phase Routing table (4 project types)
+   - Domain Skills summary table (5 skills)
+   - Cross-Domain Composability note
+   - Business Analysis Foundation note
 
 ## Commands run
-- `wc -l` on all modified files to verify line counts
-- Visual inspection of each file for content completeness
+- `mkdir -p plugins/harness-sdlc-suite/.claude-plugin`
+- `mkdir -p plugins/harness-sdlc-suite/skills`
+- `cp -r` for each of the 5 domain skills
+- `rm -rf` for each of the 5 domain skills from core
+- `ls plugins/harness/skills/` -- confirmed only `harness/` remains
+- `ls plugins/harness-sdlc-suite/skills/` -- confirmed 5 domain skills + index skill directory
 
 ## Self-check
-- What appears complete: All 6 agent files are thin wrappers. All 5 command files reference shared pre-flight. All unique content preserved in role files.
-- What is still risky: The command file reduction (32 lines) is less than the estimated 100 lines because the shared block was only ~6 lines per file, not 20. The spec overestimated the block size.
+- Plugin.json is valid JSON with all required fields
+- All 5 domain SKILL.md files are byte-identical (cp preserves content)
+- Index SKILL.md contains all 7 required sections
+- Core plugin skills/ contains only harness/ directory
 
 ## Authenticity self-check
-- **Internal consistency**: All agent files follow identical structure: YAML frontmatter + read-role-file instruction + ownership. All command files use identical reference pattern for pre-flight.
-- **Intentionality**: Each agent file was individually analyzed for unique content before simplification. Role files received targeted merges, not bulk copies.
-- **Craft**: YAML frontmatter preserved exactly (name, description, tools fields unchanged). File paths in plugin.json remain valid. Markdown formatting consistent.
-- **Fitness for purpose**: Agent files clearly direct to role files. Command files clearly reference shared pre-flight. No ambiguity about where to find procedural content.
+- **Internal consistency**: Plugin.json follows the same structure as the core plugin.json. Index SKILL.md uses the same YAML frontmatter convention as all other skill files.
+- **Intentionality**: The index SKILL.md content was specifically extracted and reorganized from core SKILL.md sections. Routing paths use relative references appropriate to the new directory structure.
+- **Craft**: JSON is well-formatted. SKILL.md follows markdown conventions with consistent table formatting and section hierarchy.
+- **Fitness for purpose**: The index skill serves as a complete domain registry. A consumer can read it to understand available profiles and route to the correct domain skill.
 
 ## Suggested feature updates
-- F-001: May now pass -- all 6 agent files are thin wrappers with 317-line reduction
-- F-002: May now pass -- shared pre-flight in SKILL.md, all 5 command files reference it, 32-line reduction (lower than 100-line estimate but the contract check targets "approximately 100 lines" which may need adjustment)
+- F-001: Should pass -- all directory structure requirements met, domain skills moved, core contains only harness/
+- F-002: Should pass -- index SKILL.md contains all 7 required content sections with correct routing information

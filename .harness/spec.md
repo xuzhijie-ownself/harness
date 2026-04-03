@@ -3,131 +3,218 @@
 ## Metadata
 - Role: planner
 - Agent: planner-1
-- Inputs: user prompt, all 17 harness kernel files (6 agents, 5 commands, SKILL.md, patterns.md, 2 role files, 2 plugin.json manifests)
+- Inputs: user prompt, harness-marketplace-refactor.md, plugin.json (core), marketplace.json, codex plugin.json, SKILL.md, install.sh, install.bat, README.md, release.json
 - Status: accepted
 
 ## Overview
 
-Simplify the harness kernel to reduce total prose by approximately 22% while preserving all functionality and maintaining dual-runtime compatibility (Claude Code plugin.json + Codex plugin.json). The harness currently distributes ~1,966 lines across 17 core files. Duplicated content between agent files and role files, repeated pre-flight blocks across commands, and non-essential sections in SKILL.md account for the excess.
+Refactor the harness from a single-plugin monolith into a two-plugin architecture: **harness** (domain-blind core) and **harness-sdlc-suite** (software delivery domain skills). The core plugin retains all orchestration machinery (6 agents, 5 commands, profile system mechanics, authenticity gate, sprint loop) but removes all named references to specific domain skills. The SDLC suite plugin bundles the 5 existing domain skills (harness-sdlc, harness-ea, harness-ba, harness-sa, harness-ops) under a new index skill that serves as the domain registry.
 
-This is a refactoring release -- no behavioral changes, no new features, no removed capabilities. The version bumps from 0.9.1 to 1.0.0, marking the harness as mature.
+This is a v2.0.0 release -- breaking change to plugin structure. Dual-runtime compatibility (Claude Code marketplace + Codex CLI) must be maintained throughout.
+
+**Current state**: v1.0.0 monorepo at `C:\Users\zhijie\Desktop\ai\harness`. All 5 domain skills live under `plugins/harness/skills/` alongside the core `harness/` skill.
+
+**Target state**: Two plugins under `plugins/`, updated manifests, updated install scripts, updated documentation. Domain skills moved to `plugins/harness-sdlc-suite/skills/`.
 
 ## Domain Profile
 - Primary: software
 - Secondary: (none)
 - Criteria: product_depth, functionality, visual_design, code_quality
-- Artifact types: Code (Markdown, JSON, YAML frontmatter)
-- Stakeholder lens: Plugin authors, harness users (developers running the harness)
-
-## Design direction
-
-Every change must satisfy two invariants:
-
-1. **File-count invariant**: The Claude Code plugin.json `agents[]` array (6 files) and `commands[]` array (5 files) remain unchanged. No file merges, no file deletions, no renames.
-2. **Behavioral invariant**: A harness run before and after this refactor must produce identical artifact structure, identical evaluation flow, and identical stop conditions.
+- Artifact types: Plugin manifests (JSON), skill files (Markdown), shell scripts (bash/bat), documentation (Markdown)
+- Stakeholder lens: Plugin consumers (developers using the harness), plugin maintainers
 
 ## Shipped scope
 
-### F-001: Agent file deduplication
+### F-001: Create harness-sdlc-suite plugin structure
 
-Convert 6 agent files (evaluator.md, coordinator.md, generator.md, initializer.md, planner.md, releaser.md) from prose-heavy duplications of their role files into thin YAML-frontmatter wrappers that point to the role file as single source of truth. Each agent file retains its frontmatter (name, description, tools) and adds a short body that says "read and follow the role file." All duplicated procedural prose is removed from agent files. Role files become the canonical reference.
+Create `plugins/harness-sdlc-suite/.claude-plugin/plugin.json` manifest (skills-only plugin, no agents or commands). Create `plugins/harness-sdlc-suite/skills/` directory tree. Move the 5 domain skills from `plugins/harness/skills/` to `plugins/harness-sdlc-suite/skills/`:
+- `harness-sdlc/` (with SKILL.md)
+- `harness-ea/` (with SKILL.md)
+- `harness-ba/` (with SKILL.md)
+- `harness-sa/` (with SKILL.md)
+- `harness-ops/` (with SKILL.md)
 
-Estimated savings: ~280 lines across 6 files.
+After this feature, `plugins/harness/skills/` contains only the `harness/` directory (core skill). No domain skill directories remain in the core plugin.
 
-### F-002: Command file shared pre-flight extraction
+### F-002: Create harness-sdlc-suite index skill
 
-The 4-step State Validation block is duplicated verbatim across all 5 command files (init.md, run.md, session.md, reset.md, release.md). Extract this shared validation into a named section in SKILL.md ("Command Pre-Flight Validation"). Each command file replaces its inline copy with a pointer: "Run the Command Pre-Flight Validation from SKILL.md before proceeding." Command-specific pre-flight steps remain inline.
+Create `plugins/harness-sdlc-suite/skills/harness-sdlc-suite/SKILL.md` as the domain registry for software delivery. Content is extracted from core SKILL.md and includes:
+- YAML frontmatter with skill name and description
+- Domain Profiles table (software, architecture, business_analysis, solution_architecture, ops) with criteria, artifact types, and stakeholder lens
+- Domain Skill Routing table (domain_profile value to skill name and relative path mapping)
+- End-to-End Delivery Pipeline phases diagram (Discovery, BA, EA, SA, Planning, SDLC, Testing, Ops)
+- Phase routing table (project type to phases mapping)
+- Domain Skills summary table (skill name, domain, profile, what it provides)
+- Cross-Domain Composability note
+- Business Analysis Foundation note
 
-Estimated savings: ~100 lines across 5 files (20 lines removed per file, offset by ~5 lines added to SKILL.md).
+### F-003: Make core SKILL.md domain-blind
 
-### F-003: SKILL.md non-core section extraction
+Remove from `plugins/harness/skills/harness/SKILL.md`:
+- The full Domain Profiles table (rows: software, architecture, tender, research, content, business_analysis, solution_architecture, ops, custom)
+- The Domain Skill Routing section under "Workflow Entry" (the routing block that maps domain_profile to skill names)
+- The Domain Skill References section (paragraphs describing when to read harness-sdlc, harness-ea, harness-ba, harness-sa, harness-ops)
+- The Delivery Pipeline diagram and phase routing table
+- The Domain Skills summary table
+- All named references to harness-sdlc, harness-ea, harness-ba, harness-sa, harness-ops
 
-Move these sections from SKILL.md to a new file `references/advanced.md`:
-- "Harness Decay" section (lines 689-701)
-- "Simplify Methodically" section (lines 721-731)
-- "Review The Harness" section (lines 762-777)
-- Variant B and Variant C full descriptions (keep one-line summaries with pointer to advanced.md)
-- Trim "Context Reset vs Compaction" section from ~18 lines to 5 lines with pointer
+Keep in core SKILL.md:
+- Profile SYSTEM definition (how profiles work, what "4 criteria" means, how the evaluator uses them)
+- The `domain_profile` field documentation in state.json schema references
+- The `custom` profile as the inline example of how profiles work
+- Authenticity gate (fully domain-agnostic, no changes needed)
+- All orchestration (dispatch rules, execution loop, stop conditions, reliability, etc.)
+- Abstract references to "domain skills" as a concept (e.g., "when a domain skill is available, the evaluator reads it") without naming specific ones
+- The Runtime Verification Requirement section rewritten to reference "the active domain skill" instead of harness-sdlc by name
 
-SKILL.md gains a single line: "For advanced topics (decay testing, simplification policy, harness review checklist, Variant B/C details, context reset guidance), see references/advanced.md."
+**Depends on**: F-001, F-002.
 
-Estimated savings: ~70 lines net from SKILL.md.
+### F-004: Update marketplace manifest
 
-### F-004: Codex detection simplification
+Update `.claude-plugin/marketplace.json` to list two plugins in the `plugins[]` array:
+- `harness` (source: `./plugins/harness`, existing entry updated)
+- `harness-sdlc-suite` (source: `./plugins/harness-sdlc-suite`, new entry)
 
-The 45-line 4-step Codex detection pre-flight appears in both the evaluator agent file and the evaluator role file. After F-001 deduplicates the agent file, condense the role file's version from a 4-step procedure to a 3-line decision tree:
+Both entries include name, source, description, version (2.0.0), author, and metadata.
 
-```
-Codex review mode: read config.json use_codex ->
-  "off" -> claude | "on" -> try codex, fallback claude |
-  "auto" -> check .claude/settings.json for openai-codex, use codex if found, else claude.
-Record: review_mode, config_use_codex, codex_available, detection_result, fallback_reason.
-```
+**Depends on**: F-001.
 
-Same logic, same output fields, fewer words. The detailed Step 1-4 procedure moves to references/advanced.md as a reference for debugging.
+### F-005: Update Codex manifest
 
-Estimated savings: ~30 lines from the evaluator role file.
+Update `.codex-plugin/plugin.json`:
+- Change `skills` from a single string (`"./plugins/harness/skills/"`) to an array of two paths:
+  - `"./plugins/harness/skills/"`
+  - `"./plugins/harness-sdlc-suite/skills/"`
+- Update version to 2.0.0
+- Update description to reflect two-plugin architecture
 
-### F-005: Conditional evaluator calibration
+**Depends on**: F-001.
 
-Make `.harness/evaluator-calibration.md` required only when `expected_sprint_count > 3` in the execution strategy. For shorter runs (3 or fewer sprints), calibration is optional -- the evaluator still scores with anchors but does not need to persist them to a separate file. Update the coordinator's calibration enforcement and the evaluator's calibration section accordingly.
+### F-006: Update install scripts
 
-Estimated savings: ~20 lines of conditional logic simplified across evaluator and coordinator files.
+Modify `install.sh` and `install.bat` to:
+- Create target directories for all domain skills under `.claude/skills/` (harness-sdlc-suite/, harness-sdlc/, harness-ea/, harness-ba/, harness-sa/, harness-ops/)
+- Copy core skill from `plugins/harness/skills/harness/` (existing behavior)
+- Copy domain skills from `plugins/harness-sdlc-suite/skills/` (new behavior)
+- Support `--uninstall` for both plugin trees (remove all skill directories)
+- Maintain existing hooks merge behavior unchanged
+- Maintain existing agents and commands copy behavior unchanged (still from core plugin only)
 
-### F-006: Merge retrospective into progress log
+**Depends on**: F-001.
 
-Instead of creating separate `retro-RX-RY.md` files, append retrospective sections directly to `.harness/progress.md` under a `## Retrospective -- Rounds X-Y` heading. Update the retro template in patterns.md, the coordinator's retro generation logic, and SKILL.md's retrospective section. Remove the `retro-RX-RY.md` template from patterns.md.
+### F-007: Update README
 
-Estimated savings: ~15 lines from patterns.md template removal and simplified coordinator retro logic.
+Update `README.md` to document:
+- Two-plugin architecture overview (core + SDLC suite)
+- Updated install commands (marketplace installs both plugins)
+- Updated architecture diagram showing both plugin directory trees
+- Updated Domain Skills table referencing the SDLC suite plugin
+- Updated artifact layout showing `plugins/harness-sdlc-suite/`
+- Note that core can be used standalone with `custom` profile
+
+**Depends on**: F-001.
 
 ## User stories
 
-- As a harness maintainer, I want agent files to be thin wrappers so I only update procedural logic in one place (the role file).
-- As a command author, I want shared validation defined once so adding a new command does not require copying boilerplate.
-- As a new contributor, I want SKILL.md to be focused on core workflow so I can understand the harness without reading advanced-topic prose.
-- As an evaluator agent, I want Codex detection expressed concisely so I spend fewer tokens parsing the procedure.
-- As a coordinator, I want calibration to be conditional so short runs do not produce unnecessary artifacts.
-- As a harness user, I want retrospectives inline in progress.md so I have one file to read for run history.
+- As a harness user, I want to install the core harness without any domain skills so that I can use it with custom profiles only.
+- As a harness user, I want to install the SDLC suite alongside core so that I get all 5 software delivery domain skills automatically.
+- As a plugin maintainer, I want the core SKILL.md to contain zero references to specific domain skills so that adding new skill suites requires no core changes.
+- As a Codex CLI user, I want the Codex manifest to discover skills from both plugins so that domain skills load automatically.
+- As a local installer, I want install.sh and install.bat to copy from both plugin directories so that all skills are available after local install.
 
 ## Execution strategy
 
 - **Variant**: Variant A (Full-Stack Sprinted Harness)
 - **Mode**: continuous
-- **Expected sprint count**: 3 sprints
-  - Sprint 1: F-001 (agent dedup) + F-002 (command pre-flight) -- grouped because they are independent file-level refactors with no interaction risk; grouping waiver applies
-  - Sprint 2: F-003 (SKILL.md trim) + F-004 (Codex simplification) -- grouped because F-004 moves content to the same advanced.md file created by F-003; natural co-location
-  - Sprint 3: F-005 (conditional calibration) + F-006 (retro merge) -- grouped because both simplify coordinator enforcement logic in the same code paths
-- **Default target ordering**: F-001 -> F-002 -> F-003 -> F-004 -> F-005 -> F-006 (dependency order: F-001 before F-004 because Codex simplification in the role file depends on agent dedup removing the duplicate from the agent file first)
-- **Multi-feature sprint policy**: Allowed. Each sprint groups 2 features that are either independent or naturally co-located. Grouping waivers documented per sprint in the contract.
-- **Simplification policy**: Not justified. Sprint decomposition is load-bearing here because each pair of changes touches different files and needs separate verification. Simplified mode would risk undetected regressions across file boundaries.
+- **Expected sprint count**: 4 sprints
+  - Sprint 1: F-001 + F-002 (grouped -- F-002 requires the directory structure created by F-001; both are foundational setup with no verification risk from grouping since they create new files without modifying existing ones)
+  - Sprint 2: F-003 (standalone -- the most complex feature requiring surgical editing of core SKILL.md; needs dedicated evaluator review to verify no orchestration logic was removed)
+  - Sprint 3: F-004 + F-005 + F-006 (grouped -- three small manifest/script updates that all depend on F-001 only, are independent of each other, and each is under 30 lines of changes)
+  - Sprint 4: F-007 (standalone -- documentation wrap-up after all structural changes are verified)
+- **Default target ordering**: F-001 > F-002 > F-003 > F-004 > F-005 > F-006 > F-007 (dependency-driven: F-003 blocked until F-001 + F-002 pass; F-004/F-005/F-006/F-007 blocked until F-001 passes)
+- **Multi-feature sprint policy**: Allowed when features are small, share a dependency, and do not modify the same files. Grouping waiver required in each sprint contract.
+- **Simplification policy**: Not justified. The core SKILL.md surgery (F-003) is the riskiest change in this project -- it requires line-by-line verification that no orchestration logic was removed alongside the domain-specific content. Sprint contracts with evaluator review are load-bearing for this class of refactor.
 - **Methodology**: agile (default)
 
 ## High-level technical design
 
-- **Files modified**: 6 agent files, 5 command files, SKILL.md, patterns.md, evaluator role file, coordinator role file
-- **Files created**: `references/advanced.md` (new, receives extracted content from SKILL.md)
-- **Files unchanged**: All other role files (initializer, planner, generator, releaser roles), all plugin.json manifests (file arrays stay identical), all domain skill files (harness-sdlc, harness-ea, etc.)
-- **Verification method**: Line-count diff before/after each sprint. Manual read-through of each modified file to confirm no behavioral change. Structural check that plugin.json arrays still resolve to valid files.
+### Plugin structure (target)
+
+```
+plugins/
+  harness/                              # Plugin 1: Core (domain-blind)
+    .claude-plugin/plugin.json          # agents[], commands[], skills[]
+    agents/ (6 YAML stubs)
+    commands/ (5 command files)
+    hooks/hooks.json
+    skills/
+      harness/                          # Core skill ONLY
+        SKILL.md
+        roles/ (6 role files)
+        references/ (patterns.md, advanced.md)
+        agents/ (openai.yaml)
+
+  harness-sdlc-suite/                   # Plugin 2: SDLC Suite (skills-only)
+    .claude-plugin/plugin.json          # skills[] only, no agents/commands
+    skills/
+      harness-sdlc-suite/              # Index skill (domain registry)
+        SKILL.md
+      harness-sdlc/SKILL.md            # Software domain
+      harness-ea/SKILL.md              # Enterprise Architecture domain
+      harness-ba/SKILL.md              # Business Analysis domain
+      harness-sa/SKILL.md              # Solution Architecture domain
+      harness-ops/SKILL.md             # Deployment & Ops domain
+```
+
+### Manifests
+
+- `.claude-plugin/marketplace.json`: two entries in `plugins[]`
+- `plugins/harness/.claude-plugin/plugin.json`: unchanged (skills path `./skills/` still resolves to core skill only after domain skills are moved out)
+- `plugins/harness-sdlc-suite/.claude-plugin/plugin.json`: new, skills-only plugin manifest
+- `.codex-plugin/plugin.json`: `skills` becomes array of two paths
+
+### Install scripts
+
+- `install.sh` / `install.bat`: add a second copy loop for `plugins/harness-sdlc-suite/skills/` targeting `.claude/skills/`
+- Uninstall path: remove all skill directories from both plugins
+
+### Content extraction strategy
+
+Sections moving from SKILL.md to index SKILL.md:
+1. Domain Profiles table (the `| Profile | Criteria | ... |` table)
+2. Cross-Domain Composability paragraph
+3. Business Analysis Foundation paragraph
+4. Domain Skill References paragraphs (5 "When domain_profile is X..." blocks)
+5. Domain Skill Routing block (under Workflow Entry)
+6. Delivery Pipeline diagram and phase routing table
+7. Domain Skills summary (if present as a separate section)
+
+Core SKILL.md replacements:
+- Domain Profiles table replaced with abstract profile system description + `custom` inline example
+- Domain Skill Routing replaced with generic: "If a domain skill suite is installed, read its index skill for routing"
+- Domain Skill References removed entirely (routing handled by index skill)
+- Runtime Verification Requirement rewritten to reference "the active domain skill" generically
 
 ## Definition of done
 
-1. All 6 agent files are thin wrappers (frontmatter + read-role-file instruction + ownership declaration only, no duplicated procedural prose).
-2. All 5 command files reference shared pre-flight from SKILL.md instead of inline duplication.
-3. SKILL.md is shorter by at least 60 lines with non-core content moved to references/advanced.md.
-4. Codex detection in evaluator role file is 10 lines or fewer (down from ~45).
-5. Evaluator calibration is conditional on expected_sprint_count > 3.
-6. Retrospectives append to progress.md instead of creating separate retro files.
-7. Total line reduction across all modified files is at least 400 lines (~20%).
-8. Both plugin.json files (Claude Code and Codex) are unmodified -- file arrays unchanged.
-9. No behavioral change: artifact structure, evaluation flow, stop conditions, and dispatch rules remain identical.
-10. Version in release.json bumps to 1.0.0.
+1. `plugins/harness/skills/` contains only the `harness/` directory -- no domain skill directories (harness-sdlc, harness-ea, harness-ba, harness-sa, harness-ops)
+2. `plugins/harness-sdlc-suite/skills/` contains 6 directories: harness-sdlc-suite (index), harness-sdlc, harness-ea, harness-ba, harness-sa, harness-ops
+3. Core SKILL.md has zero mentions of "harness-sdlc", "harness-ea", "harness-ba", "harness-sa", "harness-ops" by name
+4. Core SKILL.md still documents the profile system abstractly (how profiles work, custom profile example, domain_profile field)
+5. Index SKILL.md contains the full Domain Profiles table, Domain Skill Routing, and Delivery Pipeline diagram
+6. `.claude-plugin/marketplace.json` lists two plugins
+7. `.codex-plugin/plugin.json` has dual skill paths as an array
+8. `install.sh` and `install.bat` copy skills from both plugin directories
+9. `README.md` reflects two-plugin architecture with updated diagrams
+10. All 5 domain skill SKILL.md files are byte-identical before and after the move (content unchanged)
+11. Version bumped to 2.0.0 in all manifests via releaser after all features pass
 
 ## Non-goals
 
-- Adding new features or capabilities to the harness.
-- Changing the plugin.json manifest structure or file arrays.
-- Modifying domain skill files (harness-sdlc, harness-ea, harness-ba, harness-sa, harness-ops).
-- Changing JSON schemas in patterns.md (features.json, state.json, config.json, evaluation.json schemas stay identical).
-- Rewriting patterns.md templates beyond removing the retro-RX-RY.md template.
-- Changing the GAN pattern, dispatch rules, or role ownership boundaries.
-- Performance optimization or runtime changes.
+- Creating additional domain suites (e.g., harness-research-suite) -- future work
+- Changing any agent or command file behavior -- pure structural refactor
+- Modifying any of the 5 domain skill SKILL.md files themselves -- content moves unchanged
+- Changing the harness orchestration logic in core SKILL.md (dispatch rules, execution loop, stop conditions, etc.)
+- Publishing to a new GitHub repository -- post-release manual step
+- Updating `.claude/settings.json` or memory files -- user handles manually
+- Adding new domain profiles or changing existing profile criteria
