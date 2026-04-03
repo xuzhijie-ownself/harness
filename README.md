@@ -1,11 +1,15 @@
 # Harness
 
-Multi-agent sprint orchestration harness for long-running application
-development, implementing Anthropic's harness patterns. Domain-agnostic —
-works for any project type.
+Multi-agent sprint orchestration middleware for long-running application
+development. Domain-agnostic PDCA cycle with adversarial role separation —
+the generator builds, the evaluator grades (and never edits code).
 
 **6 agents:** initializer, planner, generator, evaluator, coordinator, releaser.
-The evaluator handles testing, code review, and grading in one pass.
+**Dual-runtime:** Works with both Claude Code and OpenAI Codex CLI.
+
+**Methodology:** PDCA (Plan-Do-Check-Act) + two innovations:
+1. **Evaluator-never-edits-code** — tool-access-level role purity
+2. **Authenticity gate** — binary overlay catching generic/template AI output
 
 **References:**
 - https://www.anthropic.com/engineering/harness-design-long-running-apps
@@ -98,7 +102,22 @@ cd plugins/long-running-harness && git pull && bash install.sh
 | coordinator | `/harness:run` | `plugins/harness/skills/harness/roles/coordinator.md` |
 | releaser | `/harness:release`, coordinator | `plugins/harness/skills/harness/roles/releaser.md` |
 
-The harness follows a **GAN-like pattern**: the generator produces artifacts and the evaluator adversarially grades them. The generator cannot self-approve; the evaluator cannot edit product artifacts. This separation prevents the common failure mode where a model is too lenient grading its own work. The loop iterates (generate, evaluate, feedback, regenerate) until the evaluator accepts.
+The harness follows an **adversarial PDCA pattern**: the generator produces artifacts (Do) and the evaluator grades them (Check). The generator cannot self-approve; the evaluator cannot edit product artifacts. This separation prevents the common failure mode where a model is too lenient grading its own work. Agent files are thin YAML wrappers — all instructions live in role files as the single source of truth.
+
+---
+
+## Authenticity Gate
+
+Every evaluation round applies a binary pass/fail Authenticity Gate after domain criteria scoring. This catches technically-competent-but-generic output — artifacts that score adequately on domain criteria yet show no evidence of project-specific decision-making.
+
+| Dimension | What it checks |
+|-----------|---------------|
+| `internal_consistency` | Artifacts share consistent conventions — structure, terminology, style form a unified whole |
+| `intentionality` | Evidence of project-specific decisions, not unmodified defaults or template output |
+| `craft` | Technical fundamentals correct — hierarchy, structure, naming, formatting |
+| `fitness_for_purpose` | Deliverables usable by target audience without additional explanation |
+
+The gate is **dual-side**: generators apply a pre-implementation checklist (prevention), evaluators apply a post-grading gate (detection). Any dimension failure fails the round regardless of domain scores.
 
 ---
 
@@ -108,9 +127,11 @@ Both Claude Code and Codex share:
 
 | Element | Location |
 |---------|----------|
-| Role instructions | `plugins/harness/skills/harness/roles/` |
+| Role instructions (single source of truth) | `plugins/harness/skills/harness/roles/` |
+| Agent wrappers (YAML stubs) | `plugins/harness/agents/` |
 | Artifact schemas + templates | `plugins/harness/skills/harness/references/patterns.md` |
-| Harness spec (variants, eval, stop conditions) | `plugins/harness/skills/harness/SKILL.md` |
+| Advanced variants + decay guidance | `plugins/harness/skills/harness/references/advanced.md` |
+| Harness spec (eval, stop conditions) | `plugins/harness/skills/harness/SKILL.md` |
 | Artifact layout | `.harness/` in project root |
 
 ---
@@ -206,11 +227,32 @@ Domain skills are loaded automatically when the matching domain profile is selec
 
 ## Harness Variants
 
-| Variant | When |
-|---------|------|
-| A: Full-Stack Sprinted | Default -- coordinator loop, continuous compaction OK |
-| B: Reset-Based | Context anxiety -- use `/harness:reset` + `.harness/handoff.md` |
-| C: Simplified | Sprint decomposition no longer adds lift (evidence required) |
+**Variant A (default)**: Full-Stack Sprinted — coordinator loop with continuous compaction.
+
+Variants B (reset-based) and C (simplified) are documented in `references/advanced.md` for specialized use cases.
+
+---
+
+## Architecture
+
+```
+plugins/harness/
+  .claude-plugin/plugin.json    # Claude Code manifest
+  agents/*.md                   # Thin YAML wrappers (→ role files)
+  commands/*.md                 # Entry points (→ shared pre-flight)
+  skills/
+    harness/
+      SKILL.md                  # Master spec (~700 lines)
+      roles/*.md                # Single source of truth per agent
+      references/
+        patterns.md             # Schemas, templates, contracts
+        advanced.md             # Variant B/C, decay, audit
+    harness-sdlc/SKILL.md      # Software domain
+    harness-ea/SKILL.md         # Enterprise Architecture domain
+    harness-ba/SKILL.md         # Business Analysis domain
+    harness-sa/SKILL.md         # Solution Architecture domain
+    harness-ops/SKILL.md        # Deployment & Ops domain
+```
 
 ---
 
