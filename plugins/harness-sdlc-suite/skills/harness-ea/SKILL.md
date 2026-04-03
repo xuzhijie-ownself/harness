@@ -1,13 +1,13 @@
 ---
 name: harness-ea
-description: Enterprise Architecture domain skill for the harness plugin. Provides architecture methodology selection (TOGAF 10, Zachman, FEAF, ArchiMate 3.2, SAFe, Lean EA), development methodology (ADR-First, Capability-First, Viewpoint-Driven, Gap Analysis, Reference Architecture), verification strategy, deliverable verification, evaluation criteria, and industry-specific reference architectures. Activated when domain_profile is "architecture".
+description: Enterprise Architecture domain skill for the harness plugin. Provides architecture methodology selection (TOGAF 10, Zachman, FEAF, ArchiMate 3.2, SAFe, Lean EA), development methodology (ADR-First, Capability-First, Viewpoint-Driven, Gap Analysis, Reference Architecture), verification strategy, deliverable verification, evaluation criteria, and industry-specific reference architectures. Activated when domain_profile is "enterprise_architecture".
 ---
 
 # Enterprise Architecture Domain Skill
 
 > **Domain-specific.** This skill provides the HOW for enterprise architecture projects. The harness provides the WHEN (orchestration, sprint contracts, feature ledger). This skill provides the HOW (framework selection, development methodology, deliverable verification, evaluation criteria anchors, and industry-specific patterns).
 
-Activated when `domain_profile: architecture` is declared in `.harness/spec.md`.
+Activated when `domain_profile: enterprise_architecture` is declared in `.harness/spec.md`.
 
 ## Scope of This Skill
 
@@ -22,7 +22,7 @@ It is framework-agnostic at its core — any of the supported methodologies can 
 
 ## Activation Check
 
-This skill activates when `domain_profile: architecture` is set in `.harness/spec.md` or `.harness/state.json`.
+This skill activates when `domain_profile: enterprise_architecture` is set in `.harness/spec.md` or `.harness/state.json`.
 
 Before using this skill's procedures:
 1. Verify the project produces architecture deliverables (documents, diagrams, decision records -- not primarily code)
@@ -34,7 +34,7 @@ Before using this skill's procedures:
 
 ## Section 1: Architecture Methodology
 
-Select based on project characteristics during `/harness:init`:
+Select based on project characteristics during `/harness:start`:
 
 | Framework | When to Use | Phase Structure | Harness Mapping |
 |-----------|-------------|-----------------|-----------------|

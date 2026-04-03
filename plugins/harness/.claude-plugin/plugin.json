@@ -29,7 +29,7 @@
     "./agents/releaser.md"
   ],
   "commands": [
-    "./commands/init.md",
+    "./commands/start.md",
     "./commands/run.md",
     "./commands/session.md",
     "./commands/reset.md",

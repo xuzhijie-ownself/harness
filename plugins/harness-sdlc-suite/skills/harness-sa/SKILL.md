@@ -37,7 +37,7 @@ Before using this skill's procedures:
 
 ## Section 1: SA Methodology
 
-Select based on project characteristics during `/harness:init`:
+Select based on project characteristics during `/harness:start`:
 
 | Framework | When to Use | Phase Structure | Harness Mapping |
 |-----------|-------------|-----------------|-----------------|

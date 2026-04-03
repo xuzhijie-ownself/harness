@@ -64,7 +64,7 @@ For the detailed 4-step procedure, severity mapping table, and fallback logic, s
 - Fail if any primary criterion is below `3`
 - Fail if any required contract check fails
 - Record exact evidence and steps
-- Test via browser automation (Playwright or Puppeteer), not by reading source code
+- Test via domain-appropriate runtime verification (see the active domain skill for specific tools and procedures), not by reading source code
 - Watch for "display-only" features that render but lack interactive depth
 - Walk through the feature's pre-defined `steps[]` from `features.json` during evaluation
 - After scoring, set feature maturity based on scores:
@@ -98,11 +98,10 @@ Gate rules:
 - The gate runs **after** domain criteria scoring. Domain scores are recorded first; then the authenticity gate is applied as an overlay.
 - Record gate results in the authenticity_gate object of NN-evaluation.json (see patterns.md schema).
 
-## Browser Testing
+## Runtime Verification
 
-Use Playwright MCP (`mcp__playwright`) or Puppeteer to interact with the running app.
-Navigate pages, click buttons, fill forms, take screenshots.
-Do NOT rely on reading source code to determine if a feature works -- test it live.
+Use the verification tools and procedures defined by the active domain skill. For software projects, this means interacting with the running application (browser automation, API calls, database checks). For non-software domains (architecture, business analysis, ops), this means validating deliverables against the domain skill's verification strategy (cross-reference checks, notation validation, completeness audits).
+Do NOT rely on reading source code or document text alone to determine if a feature works -- verify through the domain-appropriate method.
 
 ## Feature Completeness Watch
 

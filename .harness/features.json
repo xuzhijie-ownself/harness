@@ -1,59 +1,213 @@
 {
   "version": 1,
-  "updated_by": "evaluator-2",
+  "updated_by": "session",
   "features": [
     {
       "id": "F-001",
-      "title": "Add README Sync to releaser",
-      "category": "functional",
-      "description": "Add a README Sync section to the releaser role file that instructs the releaser to verify and update README.md during every release. The section covers version references, directory layout diagrams, and skill/profile tables. Positioned after Manifest Synchronization and before Version Bump Rules.",
+      "title": "Complete architecture to enterprise_architecture rename",
+      "category": "fix",
+      "description": "Complete the partial domain_profile rename from architecture to enterprise_architecture. The routing table and patterns.md were already updated manually. The EA skill itself still uses the old value in frontmatter and activation text.",
       "required": true,
       "priority": "high",
-      "status": "complete",
-      "passes": true,
+      "status": "not_started",
+      "passes": false,
       "depends_on": [],
-      "maturity": "reviewed",
-      "source_requirement": "spec.md F-001",
+      "maturity": "draft",
+      "source_requirement": "Codex adversarial review BLOCKING finding",
       "steps": [
-        "Verify plugins/harness/skills/harness/roles/releaser.md contains a README Sync section",
-        "Verify the README Sync section is positioned after Manifest Synchronization and before Version Bump Rules",
-        "Verify the section includes sub-steps for reading README.md, checking version references, verifying directory layout, verifying skill/profile tables, updating stale factual content, and staging README.md",
-        "Verify the instructions prohibit prose rewriting and only allow factual content updates",
-        "Verify skill discovery uses glob patterns, not hardcoded skill names",
-        "Verify plugins/harness/agents/releaser.md still delegates to the role file and needs no changes",
-        "Verify the total addition is approximately 10-15 lines of Markdown"
+        "Verify harness-ea/SKILL.md frontmatter says enterprise_architecture not architecture",
+        "Verify harness-ea/SKILL.md line 10 activation says enterprise_architecture",
+        "Verify harness-ea/SKILL.md line 25 activation check says enterprise_architecture",
+        "Verify grep for domain_profile.*architecture without underscore returns zero results across plugins/"
       ],
-      "evidence": [
-        "01-evaluation.json: all contract checks pass, feature_evidence confirms passes: true"
-      ],
-      "notes": "Completed in sprint 1. All contract checks passed."
+      "evidence": [],
+      "notes": ""
     },
     {
       "id": "F-002",
-      "title": "Fix Codex evaluation detection and review integration",
-      "category": "functional",
-      "description": "Fix the evaluator Codex detection pre-flight which always falls back to Claude-only review. Update detection logic in advanced.md to check 3 sources with any-one-passes semantics. Replace raw codex CLI call with /codex:adversarial-review plugin skill. Update evaluator.md condensed decision tree to match.",
+      "title": "Remove domain-specific leaks from core",
+      "category": "fix",
+      "description": "Make core framework files domain-agnostic: generic evaluation JSON schema in patterns.md, remove hardcoded profile list, generic runtime verification in evaluator.md, cross-domain composability guidance.",
       "required": true,
       "priority": "high",
-      "status": "complete",
-      "passes": true,
+      "status": "not_started",
+      "passes": false,
       "depends_on": [],
-      "maturity": "polished",
-      "source_requirement": "user request: codex evaluation always not working",
+      "maturity": "draft",
+      "source_requirement": "SDLC suite audit: core must be generic",
       "steps": [
-        "Verify advanced.md Step 2 (auto mode) checks 3 sources: project enabledPlugins, global extraKnownMarketplaces, CLI on PATH",
-        "Verify advanced.md Step 2 uses any-one-passes semantics",
-        "Verify advanced.md Step 3 uses /codex:adversarial-review --wait as primary method with raw CLI fallback",
-        "Verify advanced.md Step 3 includes severity-to-BLOCKING/NON-BLOCKING mapping",
-        "Verify advanced.md Step 4 includes detection_method field",
-        "Verify evaluator.md Read list references both project and global settings files",
-        "Verify evaluator.md Section 0 auto mode matches the 3-check procedure",
-        "Verify evaluator.md Section 0 references /codex:adversarial-review as review method"
+        "Verify patterns.md evaluation JSON uses placeholder keys not software-specific keys",
+        "Verify patterns.md state.json field ref says profiles defined by installed suite not hardcoded list",
+        "Verify evaluator.md Browser Testing section uses generic language not Playwright-specific",
+        "Verify patterns.md or SKILL.md has cross-domain composability guidance for secondary_profile"
       ],
-      "evidence": [
-        "02-evaluation.json: all 8 contract checks pass, feature_evidence confirms passes: true"
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-003",
+      "title": "Rename /init command to /start",
+      "category": "fix",
+      "description": "Rename the harness /init command to /start to avoid collision with Claude Code built-in /init. Rename file, update plugin.json, find-replace all references.",
+      "required": true,
+      "priority": "high",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": [],
+      "maturity": "draft",
+      "source_requirement": "User report: init command causes confusion",
+      "steps": [
+        "Verify commands/start.md exists with name: start in frontmatter",
+        "Verify commands/init.md no longer exists",
+        "Verify plugin.json references commands/start.md",
+        "Verify grep for harness:init across plugins/ and README.md returns zero results"
       ],
-      "notes": "Completed in sprint 2. All contract checks passed. Maturity set to polished (all criteria >= 4)."
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-004",
+      "title": "Cross-phase handoff protocol in index skill",
+      "category": "functional",
+      "description": "Add Phase Handoff Protocol section to harness-sdlc-suite index skill. Covers required outputs per phase, artifact handoff format, phase dependency table, and scope change escalation.",
+      "required": true,
+      "priority": "medium",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001"],
+      "maturity": "draft",
+      "source_requirement": "SDLC suite audit: 100% missing cross-phase handoff",
+      "steps": [
+        "Verify index skill has Phase Handoff Protocol section",
+        "Verify required outputs per phase are defined for all 8 pipeline phases",
+        "Verify phase dependency table exists showing sequential vs parallel",
+        "Verify scope change escalation procedure is documented"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-005",
+      "title": "Evaluation JSON schema guidance for non-software domains",
+      "category": "functional",
+      "description": "Add criteria key mapping table to index skill showing which JSON keys each domain profile uses in NN-evaluation.json.",
+      "required": true,
+      "priority": "medium",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-002"],
+      "maturity": "draft",
+      "source_requirement": "SDLC suite audit: no evaluation JSON schema per domain",
+      "steps": [
+        "Verify index skill has criteria key mapping table for all 5 profiles",
+        "Verify each profile lists exactly 4 criteria keys matching its domain skill"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-006",
+      "title": "Runtime verification fallbacks for non-software domains",
+      "category": "functional",
+      "description": "Add verification method table to index skill defining what runtime verification means for each domain profile.",
+      "required": true,
+      "priority": "medium",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-002"],
+      "maturity": "draft",
+      "source_requirement": "SDLC suite audit: runtime verification only for software",
+      "steps": [
+        "Verify index skill has domain verification methods table for all 5 profiles",
+        "Verify each profile has specific verification method and what-to-check guidance"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-007",
+      "title": "EA skill depth: Zachman, FEAF, templates, tools",
+      "category": "functional",
+      "description": "Flesh out harness-ea skill with Zachman framework detail, FEAF detail, ADR template, tool guidance, and stakeholder workshop template.",
+      "required": true,
+      "priority": "low",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001"],
+      "maturity": "draft",
+      "source_requirement": "SDLC suite audit: EA under-specified methodologies",
+      "steps": [
+        "Verify Zachman matrix template and sprint mapping exist",
+        "Verify FEAF phase mapping exists",
+        "Verify ADR template is provided",
+        "Verify tool guidance section with recommended tools exists"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-008",
+      "title": "BA skill depth: elicitation, prioritization, sign-off",
+      "category": "functional",
+      "description": "Flesh out harness-ba skill with elicitation interview template, prioritization templates, requirements sign-off workflow, and traceability matrix template.",
+      "required": true,
+      "priority": "low",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": [],
+      "maturity": "draft",
+      "source_requirement": "SDLC suite audit: BA practical templates missing",
+      "steps": [
+        "Verify elicitation interview template exists",
+        "Verify prioritization templates (MoSCoW, Kano, weighted scoring) exist",
+        "Verify requirements sign-off workflow is documented",
+        "Verify traceability matrix template exists"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-009",
+      "title": "SA skill depth: DDD, API contracts, threat modeling",
+      "category": "functional",
+      "description": "Flesh out harness-sa skill with DDD specifics, API contract templates, threat modeling procedures, and capacity modeling template.",
+      "required": true,
+      "priority": "low",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": [],
+      "maturity": "draft",
+      "source_requirement": "SDLC suite audit: SA under-specified methodologies",
+      "steps": [
+        "Verify DDD strategic and tactical design sections exist",
+        "Verify API contract template (OpenAPI/AsyncAPI) exists",
+        "Verify threat modeling procedure (STRIDE) exists",
+        "Verify capacity modeling template exists"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-010",
+      "title": "Ops skill depth: GitOps, SRE, runbooks, incident response",
+      "category": "functional",
+      "description": "Flesh out harness-ops skill with GitOps implementation, SRE procedures, runbook template, incident response, and DORA metrics.",
+      "required": true,
+      "priority": "low",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": [],
+      "maturity": "draft",
+      "source_requirement": "SDLC suite audit: Ops under-specified procedures",
+      "steps": [
+        "Verify GitOps implementation section exists",
+        "Verify SRE procedures (SLO/SLI, error budgets) exist",
+        "Verify runbook template exists",
+        "Verify incident response and severity classification exist",
+        "Verify DORA metrics guidance exists"
+      ],
+      "evidence": [],
+      "notes": ""
     }
   ]
 }

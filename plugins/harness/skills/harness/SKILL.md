@@ -1,6 +1,6 @@
 ---
 name: harness
-description: Designs and runs Anthropic-style long-running application harnesses for autonomous coding. Use when turning a short prompt into a multi-agent workflow, dispatching initializer/planner/generator/evaluator/coordinator roles, tracking completion through a machine-readable feature list, negotiating sprint contracts before coding, making incremental progress on failing features across sessions, or running until the required feature set passes. Also activate for /init, /session, /run, /reset commands, context reset with handoff files, supervised vs continuous execution modes, or questions about Anthropic harness design patterns and context anxiety.
+description: Designs and runs Anthropic-style long-running application harnesses for autonomous coding. Use when turning a short prompt into a multi-agent workflow, dispatching initializer/planner/generator/evaluator/coordinator roles, tracking completion through a machine-readable feature list, negotiating sprint contracts before coding, making incremental progress on failing features across sessions, or running until the required feature set passes. Also activate for /start, /session, /run, /reset commands, context reset with handoff files, supervised vs continuous execution modes, or questions about Anthropic harness design patterns and context anxiety.
 ---
 
 # Harness
@@ -49,7 +49,7 @@ The adversarial tension between generator and evaluator prevents the common fail
 Whenever this skill is activated (by any agent, command, or direct invocation):
 
 ### State Check
-1. Verify `.harness/` directory exists. If not -> suggest `/harness:init`
+1. Verify `.harness/` directory exists. If not -> suggest `/harness:start`
 2. Read `.harness/state.json` -> verify `mode`, `variant`, `current_sprint_phase` exist
 3. Read `.harness/features.json` -> verify at least one feature exists
 4. Read `.harness/config.json` -> use defaults for missing fields
@@ -71,9 +71,9 @@ Domain profiles are provided by domain skill suites (e.g., harness-sdlc-suite). 
 
 ### Command Pre-Flight Validation
 
-Every command (/init, /run, /session, /reset, /release) must run these validation steps before proceeding:
+Every command (/start, /run, /session, /reset, /release) must run these validation steps before proceeding:
 
-1. If the command requires `.harness/`: verify directory exists. If not -> "No harness found. Run /harness:init first." STOP.
+1. If the command requires `.harness/`: verify directory exists. If not -> "No harness found. Run /harness:start first." STOP.
 2. If reading `state.json`: verify it contains `mode`, `variant`, `current_sprint_phase`. If missing fields -> warn and use defaults.
 3. If reading `features.json`: verify it is valid JSON with at least one feature. If malformed -> STOP with error.
 4. If reading `config.json`: verify it is valid JSON. If missing -> use defaults silently.
@@ -82,7 +82,7 @@ Every command (/init, /run, /session, /reset, /release) must run these validatio
 
 The harness uses `.harness/config.json` as the single configuration source for persistent preferences. State.json holds runtime state (round, phase, errors); config.json holds tunable settings.
 
-The initializer creates a default `config.json` during `/init`. Users can edit it manually between sessions. Config.json values take precedence over state.json defaults when both define the same field (e.g., `context_reset_threshold`).
+The initializer creates a default `config.json` during `/start`. Users can edit it manually between sessions. Config.json values take precedence over state.json defaults when both define the same field (e.g., `context_reset_threshold`).
 
 Key fields: `use_codex` (auto/on/off), `context_reset_threshold`, `auto_commit`, `auto_retro`, `retro_interval`, `max_retry_on_failure`, `evaluator_strictness` (lenient/standard/strict), `commit_prefix_pass`, `commit_prefix_fail`, `commit_tag`. See [references/patterns.md](references/patterns.md) for the full schema and field descriptions.
 
@@ -283,7 +283,9 @@ Domain profiles are provided by domain skill suites (e.g., harness-sdlc-suite). 
 
 The `custom` profile allows any project to define its own 4 criteria inline in `spec.md` without requiring a domain skill suite. This makes the core harness fully self-contained for projects that do not fit a predefined domain.
 
-A project can declare a primary profile + optional secondary profile for cross-domain work. The evaluator scores both sets of criteria when a secondary profile is active.
+### Cross-Domain Composability
+
+A project can declare a primary profile + optional secondary profile in `state.json` (`secondary_profile` field) for cross-domain work. When a secondary profile is active, the evaluator loads both domain skills and scores both sets of criteria (8 criteria total: 4 primary + 4 secondary). The primary profile's criteria determine the pass/fail threshold; the secondary profile's criteria are scored but treated as advisory unless all 4 are below 3, in which case they trigger a warning. This allows, for example, a software project with `secondary: ops` to track operational readiness alongside code quality without letting ops criteria block feature acceptance during early development.
 
 ## Quantified Evaluation
 

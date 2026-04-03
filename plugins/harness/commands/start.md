@@ -1,15 +1,15 @@
 ---
-name: init
+name: start
 description: Initialize a harness scaffold for a new project.
   Spawns planner and initializer agents. Run once per project.
 allowed_tools: ["Bash", "Read", "Write", "Glob", "Agent"]
 ---
 
-# /init
+# /start
 
 Set up the harness scaffold for this project.
 
-Run the **Command Pre-Flight Validation** from SKILL.md before proceeding. Note: For `/init`, the `.harness/` directory is not required to exist yet (this command creates it). The validation applies only when `.harness/` already exists (re-init scenario).
+Run the **Command Pre-Flight Validation** from SKILL.md before proceeding. Note: For `/start`, the `.harness/` directory is not required to exist yet (this command creates it). The validation applies only when `.harness/` already exists (re-init scenario).
 
 ## Pre-flight
 

@@ -2,30 +2,25 @@
 
 ## Metadata
 - Role: session
-- Status: complete
+- Status: active
 
-## Round 1 (F-001) -- PASS
-- Add README Sync to releaser
-- All 4 contract checks passed, scores 4/4/4/4
-- Released as v2.0.1
+## Prior Rounds (v2.1.0)
+- Round 1 (F-001): Add README Sync -- PASS
+- Round 2 (F-002): Fix Codex evaluation -- PASS
 
-## Round 2 (F-002) -- PASS
-- Fix Codex evaluation detection and review integration
-- All 8 contract checks passed (FN-01 through FN-08), scores 4/5/4/4
-- Changes: advanced.md (Codex Detection Procedure rewritten), evaluator.md (Read list + Section 0 updated)
-- Root cause: detection logic was ambiguous about which settings.json to check, used raw CLI instead of plugin skill
-- Fix: 3-source detection with any-one-passes semantics, /codex:adversarial-review as primary review method
+## New Cycle: Core Fixes + SDLC Suite Completeness
 
-## All required features pass
-- F-001: passes (reviewed)
-- F-002: passes (polished)
+## Current target
+- Sprint 1: F-001 + F-002 + F-003 (core fixes, grouped -- tightly coupled)
 
-## Release v2.1.0
-- AuditEvent: releaser created release v2.1.0 on 2026-04-04
-- Updated: release.json, CHANGELOG.md, marketplace.json, plugin.json (harness), plugin.json (codex)
-- Git tag: v2.1.0
-- Features shipped: F-001, F-002
-- Sprint count: 2
+## Baseline
+- architecture → enterprise_architecture rename partially done (routing table + patterns.md by user, EA skill pending)
+- Core patterns.md has software-specific evaluation JSON keys
+- /init command collides with Claude Code built-in
+- Codex adversarial review flagged the partial rename as BLOCKING
+
+## Next step
+- Contract phase for Sprint 1 (F-001 + F-002 + F-003)
 
 ## Last commit
-- 2026-04-03T17:21:58.879Z
+- 2026-04-03T17:38:31.833Z

@@ -23,7 +23,7 @@ Before using this skill's procedures:
 
 ## Section 1: Project Management Methodology
 
-Select based on project characteristics during `/harness:init`:
+Select based on project characteristics during `/harness:start`:
 
 | Methodology | When to Use | Sprint Structure | Harness Mapping |
 |-------------|-------------|-----------------|-----------------|

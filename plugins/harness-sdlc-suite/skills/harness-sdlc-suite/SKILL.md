@@ -40,7 +40,7 @@ Domain skills map to phases in a delivery workflow. Not every project needs ever
 ```
 Customer Request
     |
-    +- Phase 1: Discovery & Intake        (harness core -- /init + planner)
+    +- Phase 1: Discovery & Intake        (harness core -- /start + planner)
     +- Phase 2: Business Analysis          (harness-ba)
     +- Phase 3: Enterprise Architecture    (harness-ea)
     +- Phase 4: Solution Architecture      (harness-sa)
@@ -62,7 +62,7 @@ Delivered Product
 | Enterprise system | 1 -> 2 -> 3 -> 4 -> 6 -> 8 | "Modernize our claims platform" |
 | Architecture only | 1 -> 2 -> 3 | "Design our target-state EA" |
 
-Each phase is a separate harness run (`/init` -> `/run` -> `/release`). Each run's output becomes the next run's input context.
+Each phase is a separate harness run (`/start` -> `/run` -> `/release`). Each run's output becomes the next run's input context.
 
 ## Domain Skills
 
@@ -74,7 +74,7 @@ Each phase is a separate harness run (`/init` -> `/run` -> `/release`). Each run
 | `harness-sa` | Solution Architecture | `solution_architecture` | SA methodology (C4/Arc42/4+1/DDD/Microservices), API design verification, NFR compliance, evaluation criteria anchors |
 | `harness-ops` | Deployment & Ops | `ops` | Ops methodology (GitOps/Platform Engineering/SRE/DevOps/IaC), deployment readiness, runbook verification, evaluation criteria anchors |
 
-Domain skills are loaded automatically when the matching domain profile is selected during `/harness:init`.
+Domain skills are loaded automatically when the matching domain profile is selected during `/harness:start`.
 
 ## Cross-Domain Composability
 

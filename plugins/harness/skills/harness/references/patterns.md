@@ -146,9 +146,9 @@ Field reference:
 - `context_reset_threshold`: Number of rounds before coordinator pauses for context refresh. Default: 3.
 - `rounds_since_reset`: Counter incremented each round; triggers context refresh handoff at `context_reset_threshold`.
 - `current_sprint_phase`: One of `idle`, `contract`, `implementation`, `evaluation`. Used for sprint resume.
-- `domain_profile`: Primary domain profile. One of `software` (default), `enterprise_architecture`, `tender`, `research`, `content`, `business_analysis`, `custom`. Determines the 4 primary evaluation criteria.
+- `domain_profile`: Primary domain profile. Defaults to `software`. Available profiles are defined by installed domain skill suites (e.g., `harness-sdlc-suite` provides `software`, `enterprise_architecture`, `business_analysis`, `solution_architecture`, `ops`). The `custom` profile is built into the core harness and requires no suite. Determines the 4 primary evaluation criteria.
 - `secondary_profile`: Optional secondary domain profile for cross-domain projects. Empty string if not used.
-- `methodology`: One of `agile` (default), `waterfall`, `scrum`, `kanban`. Set during `/init`.
+- `methodology`: One of `agile` (default), `waterfall`, `scrum`, `kanban`. Set during `/start`.
 - `errors`: Array of `{ "round", "agent", "error", "timestamp" }` objects logged on agent spawn failures.
 - `cost_tracking`: Per-round timestamps for duration tracking across phases.
 
@@ -182,9 +182,11 @@ Field reference:
 - `commit_prefix_fail`: Git commit prefix for failing evaluations. Default: `"wip"`.
 - `commit_tag`: Tag appended to all harness-generated commit messages. Default: `"[harness]"`.
 
-State.json holds runtime state (round, phase, errors). Config.json holds persistent preferences. The initializer creates a default config.json during `/init`. Users can edit it manually between sessions. Config.json values take precedence over state.json defaults when both define the same field.
+State.json holds runtime state (round, phase, errors). Config.json holds persistent preferences. The initializer creates a default config.json during `/start`. Users can edit it manually between sessions. Config.json values take precedence over state.json defaults when both define the same field.
 
 ### `NN-evaluation.json`
+
+The `primary_scores` keys below are placeholders (`<criterion_1>` through `<criterion_4>`). Replace them with the 4 criteria from the active domain profile. For example, the `software` profile uses `product_depth`, `functionality`, `visual_design`, `code_quality`. See the installed domain skill suite's index skill for the criteria mapping per profile.
 
 ```json
 {
@@ -192,27 +194,27 @@ State.json holds runtime state (round, phase, errors). Config.json holds persist
   "decision": "PASS",
   "target_feature_ids": ["F-002"],
   "primary_scores": {
-    "product_depth": {
+    "<criterion_1>": {
       "score": 4,
-      "justification": "Matches anchor 4: interactive depth beyond display-only.",
+      "justification": "Matches anchor 4 for this criterion.",
       "prior_round_score": 3,
-      "drift_check": "Higher because F-002 added real data persistence; F-001 was scaffold-only."
+      "drift_check": "Higher because [specific improvement]; prior round was [reason for lower score]."
     },
-    "functionality": {
+    "<criterion_2>": {
       "score": 4,
-      "justification": "Full CRUD with validation. Matches anchor 4.",
+      "justification": "Matches anchor 4 for this criterion.",
       "prior_round_score": 4,
       "drift_check": "Same as prior round."
     },
-    "visual_design": {
+    "<criterion_3>": {
       "score": 4,
-      "justification": "Consistent component styling. Matches anchor 4.",
+      "justification": "Matches anchor 4 for this criterion.",
       "prior_round_score": 3,
-      "drift_check": "Higher because responsive layout added this round."
+      "drift_check": "Higher because [specific improvement added this round]."
     },
-    "code_quality": {
+    "<criterion_4>": {
       "score": 3,
-      "justification": "Clean structure, acceptable error handling. Matches anchor 3.",
+      "justification": "Matches anchor 3 for this criterion.",
       "prior_round_score": 3,
       "drift_check": "Same as prior round."
     }
@@ -222,7 +224,7 @@ State.json holds runtime state (round, phase, errors). Config.json holds persist
       "id": "FN-01",
       "required": true,
       "result": "pass",
-      "evidence": "Playwright flow: create-edit-reload"
+      "evidence": "Verification steps performed and passed"
     }
   ],
   "blockers": [],

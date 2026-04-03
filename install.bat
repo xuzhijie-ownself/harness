@@ -105,7 +105,7 @@ if exist "%HOOKS_DST%" (
 echo.
 echo [OK] Installed. Available immediately -- no restart needed.
 echo.
-echo   /harness:init       scaffold harness for a new project
+echo   /harness:start      scaffold harness for a new project
 echo   /harness:session    run one supervised sprint round
 echo   /harness:run        continuous mode (unattended)
 echo   /harness:reset      checkpoint + handoff when context fills
