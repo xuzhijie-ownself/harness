@@ -101,7 +101,8 @@ If any are missing, set `stop_reason` to `"missing required sprint artifacts for
 
 After reading `NN-evaluation.json` for each round, verify:
 1. `review_findings.codex_detection` exists -- if missing, flag as process violation and instruct evaluator to re-run with pre-flight.
-2. If `config_use_codex` is `"auto"` or `"on"` AND `settings_codex_enabled` is `true` AND `review_mode` is `"claude"` AND `fallback_reason` is null or empty -> flag as process violation (codex should have been used but wasn't without explanation).
+2. If `config_use_codex` is `"on"` AND `review_mode` is `"claude"` AND `fallback_reason` is null or empty -> flag as process violation (codex was explicitly requested but wasn't used without explanation).
+3. If `config_use_codex` is `"auto"` AND `codex_available` is `true` AND `review_mode` is `"claude"` AND `fallback_reason` is null or empty -> flag as process violation (codex was detected but wasn't used without explanation).
 
 ## Calibration Enforcement
 

@@ -30,18 +30,18 @@ Execute these steps IN ORDER and record results in the evaluation artifact:
 **Step 2**: Decide review mode:
 - If `"off"` → set review_mode to `"claude"`. Skip to Step 4.
 - If `"on"` → set review_mode to `"codex"`. Go to Step 3.
-- If `"auto"` or missing → Read `.claude/settings.json`. If `"codex@openai-codex": true` exists in `enabledPlugins`, set review_mode to `"codex"`. Otherwise set to `"claude"`.
+- If `"auto"` or missing → Read `.claude/settings.json`. Check if `"openai-codex"` exists as a key in `extraKnownMarketplaces` OR if `"codex@openai-codex": true` exists in `enabledPlugins`. If either is true, set review_mode to `"codex"`. Otherwise set to `"claude"`.
 
-**Step 3** (codex mode only): Invoke codex review:
+**Step 3** (codex mode only): Run the adversarial review command:
 ```
-Skill({ skill: "codex:rescue", args: "review the code changes for this sprint — check quality, security, patterns" })
+Bash({ command: "codex --approval-mode full-auto --quiet 'Review these code changes adversarially. Check quality, security, patterns, and design choices. Output findings as BLOCKING or NON-BLOCKING.'", timeout: 120000 })
 ```
-If the skill call fails or codex is unavailable, set review_mode to `"claude"` and record fallback_reason.
+If the command fails (codex CLI not installed, not authenticated, or errors), set review_mode to `"claude"` and record fallback_reason with the error message. The evaluator continues with Claude-only review — codex failure is never a hard block.
 
 **Step 4**: Record in BOTH `NN-evaluation.md` and `NN-evaluation.json`:
 - `review_mode`: codex or claude
 - `config_use_codex`: value from config.json
-- `settings_codex_enabled`: whether codex was found in settings
+- `codex_available`: whether openai-codex was found in settings (extraKnownMarketplaces or enabledPlugins)
 - `detection_result`: what detection found
 - `fallback_reason`: why codex wasn't used (if applicable)
 

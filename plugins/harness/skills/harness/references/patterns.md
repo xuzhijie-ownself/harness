@@ -245,8 +245,9 @@ State.json holds runtime state (round, phase, errors). Config.json holds persist
     "review_mode": "claude",
     "codex_detection": {
         "config_use_codex": "auto",
-        "settings_codex_enabled": false,
-        "detection_result": "codex plugin not found in .claude/settings.json",
+        "codex_available": false,
+        "detection_method": "extraKnownMarketplaces or enabledPlugins in .claude/settings.json",
+        "detection_result": "openai-codex not found in settings",
         "fallback_reason": null
     },
     "blocking": [],
@@ -458,7 +459,7 @@ For each criterion, reference the anchor from evaluator-calibration.md and compa
 ## Code Review
 - Review mode: codex | claude
 - Config use_codex: [value from config.json]
-- Settings codex enabled: [true|false from .claude/settings.json]
+- Codex available: [true|false — openai-codex found in extraKnownMarketplaces or enabledPlugins]
 - Detection result: [what was found]
 - Fallback reason: [if codex was expected but claude used, why]
 - Blocking findings: [list]

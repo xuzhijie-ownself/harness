@@ -25,7 +25,7 @@ Use this file only for the coordinator role.
 - dispatch only generator and evaluator (2-agent loop)
 - update `state.json` `cost_tracking` timestamps at each phase transition (contract, implementation, evaluation start/end)
 - read `.harness/config.json` at loop start; use config values for commit prefixes, retry limit, retro interval, context reset threshold (config overrides state.json defaults)
-- verify codex detection enforcement: check `review_findings.codex_detection` exists in each evaluation.json; flag process violation if codex should have been used but wasn't
+- verify codex detection enforcement: check `review_findings.codex_detection` exists in each evaluation.json; flag process violation if codex was explicitly requested (`use_codex: "on"`) or detected available (`codex_available: true`) but review_mode is `"claude"` without a fallback_reason
 - verify all 5 sprint artifacts exist before advancing: NN-contract.md, NN-contract-review.md, NN-builder-report.md, NN-evaluation.md, NN-evaluation.json
 
 ## Simplified Loop

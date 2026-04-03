@@ -1,96 +1,139 @@
 {
   "version": 1,
-  "updated_by": "evaluator-1",
+  "updated_by": "initializer-1",
   "features": [
     {
       "id": "F-001",
-      "title": "Business Analysis Domain Skill (harness-ba)",
+      "title": "SKILL.md Authenticity Gate Section",
       "category": "functional",
-      "description": "Create plugins/harness/skills/harness-ba/SKILL.md following the 10-section pattern. Activated when domain_profile: business_analysis.",
+      "description": "Add an Authenticity Gate section to SKILL.md after the Quantified Evaluation section. Defines 4 dimensions (coherence, intentionality, craft, fitness for purpose) as binary pass/fail, runs after domain criteria scoring, any dimension failure fails the round. Uses generic middleware language only.",
       "required": true,
       "priority": "high",
-      "status": "complete",
-      "passes": true,
+      "status": "not_started",
+      "passes": false,
       "depends_on": [],
-      "maturity": "reviewed",
-      "source_requirement": "spec.md F-001",
-      "steps": [],
-      "evidence": [
-        "01-evaluation.json: all contract checks passed, all criteria scored 4"
+      "maturity": "draft",
+      "source_requirement": "Authenticity Gate middleware layer -- foundation section in SKILL.md",
+      "steps": [
+        "Read current SKILL.md and locate the Quantified Evaluation section",
+        "Verify an Authenticity Gate section exists immediately after Quantified Evaluation",
+        "Verify all 4 dimensions are defined with generic definitions: coherence, intentionality, craft, fitness for purpose",
+        "Verify binary pass/fail semantics are specified",
+        "Verify ordering is specified: gate runs AFTER domain criteria scoring",
+        "Verify failure rule is stated: any dimension fail = round fail",
+        "Verify no domain-specific terminology is present in the new section"
       ],
-      "notes": "Sprint 1 PASS. 373 lines, 10 sections, 4 criteria."
+      "evidence": [],
+      "notes": ""
     },
     {
       "id": "F-002",
-      "title": "Solution Architecture Domain Skill (harness-sa)",
+      "title": "Evaluation Schema and Builder Report Template Updates",
       "category": "functional",
-      "description": "Create plugins/harness/skills/harness-sa/SKILL.md following the 10-section pattern. Activated when domain_profile: solution_architecture.",
+      "description": "Add authenticity_gate object to the NN-evaluation.json schema in patterns.md (4 dimensions, each with pass/fail + justification). Add authenticity self-check section to the NN-builder-report.md template.",
       "required": true,
       "priority": "high",
-      "status": "complete",
-      "passes": true,
-      "depends_on": [],
-      "maturity": "reviewed",
-      "source_requirement": "spec.md F-002",
-      "steps": [],
-      "evidence": [
-        "02-evaluation.json: all contract checks passed, all criteria scored 4"
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001"],
+      "maturity": "draft",
+      "source_requirement": "Evaluation schema and builder report template updates for authenticity gate",
+      "steps": [
+        "Read current patterns.md",
+        "Verify authenticity_gate object is added to NN-evaluation.json schema with 4 dimensions (coherence, intentionality, craft, fitness_for_purpose), each with pass/fail boolean and justification string",
+        "Verify the JSON schema is syntactically valid",
+        "Verify authenticity self-check section is added to NN-builder-report.md template",
+        "Verify builder report template section uses generic middleware language"
       ],
-      "notes": "Sprint 2 PASS. 395 lines, 10 sections, 4 criteria."
+      "evidence": [],
+      "notes": ""
     },
     {
       "id": "F-003",
-      "title": "Deployment & Ops Domain Skill (harness-ops)",
+      "title": "Generator Pre-Implementation Checklist",
       "category": "functional",
-      "description": "Create plugins/harness/skills/harness-ops/SKILL.md following the 10-section pattern. Activated when domain_profile: ops.",
+      "description": "Add an authenticity pre-implementation checklist to the generator agent file (generator.md). Checklist instructs the generator to define conventions, customize defaults, verify fundamentals, and ensure usability. Prevention side of dual-side control.",
       "required": true,
-      "priority": "medium",
-      "status": "complete",
-      "passes": true,
-      "depends_on": [],
-      "maturity": "reviewed",
-      "source_requirement": "spec.md F-003",
-      "steps": [],
-      "evidence": [
-        "03-evaluation.json: all contract checks passed, all criteria scored 4"
+      "priority": "high",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001"],
+      "maturity": "draft",
+      "source_requirement": "Generator-side prevention via pre-implementation authenticity checklist",
+      "steps": [
+        "Read current plugins/harness/agents/generator.md",
+        "Verify an Authenticity Pre-Implementation Checklist section exists",
+        "Verify 4 checklist items are present, mapping to the 4 dimensions",
+        "Verify checklist uses generic middleware language (no domain-specific terms)",
+        "Verify it integrates naturally with the existing sprint round sequence"
       ],
-      "notes": "Sprint 3 PASS. 379 lines, 10 sections, 4 criteria."
+      "evidence": [],
+      "notes": ""
     },
     {
       "id": "F-004",
-      "title": "Phase Routing Table in SKILL.md",
+      "title": "Generator Role Reference Update",
       "category": "functional",
-      "description": "Update SKILL.md routing table, Domain Profiles table, and Domain Skill References for 3 new domain skills.",
+      "description": "Add authenticity instructions to roles/generator.md so the role-scoped reference includes pre-implementation checklist guidance.",
       "required": true,
-      "priority": "high",
-      "status": "complete",
-      "passes": true,
-      "depends_on": ["F-001", "F-002", "F-003"],
-      "maturity": "reviewed",
-      "source_requirement": "spec.md F-004",
-      "steps": [],
-      "evidence": [
-        "04-evaluation.json: 3 routing entries, 2 table rows, 3 reference paragraphs verified. No planner/coordinator pollution."
+      "priority": "medium",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-003"],
+      "maturity": "draft",
+      "source_requirement": "Role reference update for generator authenticity guidance",
+      "steps": [
+        "Read current plugins/harness/skills/harness/roles/generator.md",
+        "Verify an Authenticity section exists with focus-level guidance",
+        "Verify it references the pre-implementation checklist without duplicating full details",
+        "Verify generic middleware language is used throughout"
       ],
-      "notes": "Sprint 4 PASS (grouped with F-005)."
+      "evidence": [],
+      "notes": ""
     },
     {
       "id": "F-005",
-      "title": "Plugin Registration",
-      "category": "structural",
-      "description": "Verify plugin.json skill discovery covers new directories.",
+      "title": "Evaluator Post-Grading Gate",
+      "category": "functional",
+      "description": "Add the authenticity post-grading gate to the evaluator agent file (evaluator.md). After existing grading, checks coherence, intentionality, craft, and fitness for purpose. Binary pass/fail -- any dimension failure fails the round.",
       "required": true,
       "priority": "high",
-      "status": "complete",
-      "passes": true,
-      "depends_on": ["F-001", "F-002", "F-003"],
-      "maturity": "reviewed",
-      "source_requirement": "spec.md F-005",
-      "steps": [],
-      "evidence": [
-        "04-evaluation.json: './skills/' glob covers all 6 skill directories. No changes needed."
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-001"],
+      "maturity": "draft",
+      "source_requirement": "Evaluator-side detection via post-grading authenticity gate",
+      "steps": [
+        "Read current plugins/harness/agents/evaluator.md",
+        "Verify a step for Authenticity Gate exists after the existing grading/calibration steps",
+        "Verify 4 dimension checks are included with verification methods",
+        "Verify binary pass/fail semantics are specified",
+        "Verify that authenticity failure overrides domain criteria pass",
+        "Verify generic middleware language is used throughout"
       ],
-      "notes": "Sprint 4 PASS (grouped with F-004). Glob already covers new directories."
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-006",
+      "title": "Evaluator Role Reference Update",
+      "category": "functional",
+      "description": "Add the authenticity gate to roles/evaluator.md so the role-scoped reference includes post-grading gate instructions.",
+      "required": true,
+      "priority": "medium",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": ["F-005"],
+      "maturity": "draft",
+      "source_requirement": "Role reference update for evaluator authenticity gate",
+      "steps": [
+        "Read current plugins/harness/skills/harness/roles/evaluator.md",
+        "Verify an Authenticity Gate section exists under grading responsibilities",
+        "Verify it references the post-grading gate without duplicating full details",
+        "Verify generic middleware language is used throughout"
+      ],
+      "evidence": [],
+      "notes": ""
     }
   ]
 }

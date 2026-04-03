@@ -171,7 +171,7 @@ If the run finishes in one sprint, the planner or coordinator should state why s
 - Grade against hard thresholds for product depth, functionality, visual design, and code quality.
 - Fail the sprint or round if any one criterion misses the bar.
 - Update acceptance only after verification evidence exists.
-- If Codex plugin is detected (`.claude/settings.json` has `"codex@openai-codex": true`), use `/codex:adversarial-review` for deeper code review.
+- If Codex plugin is detected (`.claude/settings.json` has `"openai-codex"` in `extraKnownMarketplaces` or `"codex@openai-codex": true` in `enabledPlugins`), use the `codex` CLI for adversarial code review. Falls back to Claude-only review if the CLI is not installed or not authenticated.
 
 ### Runtime Verification Requirement
 
