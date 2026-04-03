@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "initializer-1",
+  "updated_by": "evaluator-1",
   "features": [
     {
       "id": "F-001",
@@ -9,10 +9,10 @@
       "description": "Add an Authenticity Gate section to SKILL.md after the Quantified Evaluation section. Defines 4 dimensions (coherence, intentionality, craft, fitness for purpose) as binary pass/fail, runs after domain criteria scoring, any dimension failure fails the round. Uses generic middleware language only.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "reviewed",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "Authenticity Gate middleware layer -- foundation section in SKILL.md",
       "steps": [
         "Read current SKILL.md and locate the Quantified Evaluation section",
@@ -23,7 +23,9 @@
         "Verify failure rule is stated: any dimension fail = round fail",
         "Verify no domain-specific terminology is present in the new section"
       ],
-      "evidence": [],
+      "evidence": [
+        "Round 1: All 7 verification steps satisfied. Section placed after Quantified Evaluation with 4 dimensions, binary pass/fail, ordering, failure rule, coherence disambiguation. Zero domain-specific terms (automated scan)."
+      ],
       "notes": ""
     },
     {
@@ -33,10 +35,10 @@
       "description": "Add authenticity_gate object to the NN-evaluation.json schema in patterns.md (4 dimensions, each with pass/fail + justification). Add authenticity self-check section to the NN-builder-report.md template.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "reviewed",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "Evaluation schema and builder report template updates for authenticity gate",
       "steps": [
         "Read current patterns.md",
@@ -45,7 +47,9 @@
         "Verify authenticity self-check section is added to NN-builder-report.md template",
         "Verify builder report template section uses generic middleware language"
       ],
-      "evidence": [],
+      "evidence": [
+        "Round 1: All 5 verification steps satisfied. authenticity_gate object with gate_result + 4 dimensions in NN-evaluation.json schema. JSON validated via python json.loads(). Self-check section in builder report template. Generic language throughout."
+      ],
       "notes": ""
     },
     {
