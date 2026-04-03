@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 :: Install Harness into Claude Code's auto-load directories.
-:: Run once from anywhere: plugins\long-running-harness\install.bat
+:: Run once from anywhere: install.bat
 ::
 :: Options:
 ::   --uninstall   Remove all harness files from .claude\
@@ -30,9 +30,15 @@ if "%~1"=="--uninstall" (
     )
     echo   [OK] Removed agents
 
-    :: Skill directory
+    :: Core skill directory
     if exist "%CLAUDE_DIR%\skills\harness" rmdir /S /Q "%CLAUDE_DIR%\skills\harness"
     echo   [OK] Removed skills\harness\
+
+    :: Domain skill directories from harness-sdlc-suite
+    for %%s in (harness-sdlc-suite harness-sdlc harness-ea harness-ba harness-sa harness-ops) do (
+        if exist "%CLAUDE_DIR%\skills\%%s" rmdir /S /Q "%CLAUDE_DIR%\skills\%%s"
+    )
+    echo   [OK] Removed SDLC suite skills
 
     echo.
     echo [OK] Uninstalled. Hooks.json left intact (may contain other hooks).
@@ -45,14 +51,14 @@ echo   Plugin : %PLUGIN_DIR%
 echo   Project: %PROJECT_ROOT%
 echo.
 
-:: Create target directories
+:: Create target directories for core skill
 if not exist "%CLAUDE_DIR%\commands" mkdir "%CLAUDE_DIR%\commands"
 if not exist "%CLAUDE_DIR%\agents" mkdir "%CLAUDE_DIR%\agents"
 if not exist "%CLAUDE_DIR%\skills\harness" mkdir "%CLAUDE_DIR%\skills\harness"
 if not exist "%CLAUDE_DIR%\skills\harness\roles" mkdir "%CLAUDE_DIR%\skills\harness\roles"
 if not exist "%CLAUDE_DIR%\skills\harness\references" mkdir "%CLAUDE_DIR%\skills\harness\references"
 
-:: Commands — simple filenames (init.md, run.md, etc.)
+:: Commands -- simple filenames (init.md, run.md, etc.)
 for %%f in ("%PLUGIN_DIR%\plugins\harness\commands\*.md") do copy /Y "%%f" "%CLAUDE_DIR%\commands\" > nul
 echo   [OK] Commands    -^> .claude\commands\
 
@@ -60,7 +66,7 @@ echo   [OK] Commands    -^> .claude\commands\
 copy /Y "%PLUGIN_DIR%\plugins\harness\agents\*.md" "%CLAUDE_DIR%\agents\" > nul
 echo   [OK] Agents      -^> .claude\agents\
 
-:: Skill
+:: Core skill
 copy /Y "%PLUGIN_DIR%\plugins\harness\skills\harness\SKILL.md" "%CLAUDE_DIR%\skills\harness\SKILL.md" > nul
 
 :: Roles
@@ -68,7 +74,21 @@ copy /Y "%PLUGIN_DIR%\plugins\harness\skills\harness\roles\*.md" "%CLAUDE_DIR%\s
 
 :: References
 copy /Y "%PLUGIN_DIR%\plugins\harness\skills\harness\references\*.md" "%CLAUDE_DIR%\skills\harness\references\" > nul
-echo   [OK] Skill       -^> .claude\skills\harness\ (+ roles\ + references\)
+echo   [OK] Core skill  -^> .claude\skills\harness\ (+ roles\ + references\)
+
+:: Domain skills from harness-sdlc-suite
+set "SUITE_DIR=%PLUGIN_DIR%\plugins\harness-sdlc-suite\skills"
+if exist "%SUITE_DIR%" (
+    for %%s in (harness-sdlc-suite harness-sdlc harness-ea harness-ba harness-sa harness-ops) do (
+        if exist "%SUITE_DIR%\%%s" (
+            if not exist "%CLAUDE_DIR%\skills\%%s" mkdir "%CLAUDE_DIR%\skills\%%s"
+            copy /Y "%SUITE_DIR%\%%s\*.md" "%CLAUDE_DIR%\skills\%%s\" > nul 2>nul
+        )
+    )
+    echo   [OK] SDLC suite  -^> .claude\skills\ (6 domain skills^)
+) else (
+    echo   [--] SDLC suite not found at %SUITE_DIR% (skipped^)
+)
 
 :: Hooks -- merge if .claude\hooks.json exists, otherwise copy
 set "HOOKS_SRC=%PLUGIN_DIR%\plugins\harness\hooks\hooks.json"

@@ -1,14 +1,14 @@
 {
   "name": "harness",
-  "version": "1.0.0",
-  "description": "Multi-agent sprint orchestration harness for long-running application development.",
+  "version": "2.0.0",
+  "description": "Multi-agent sprint orchestration harness with two-plugin architecture: domain-blind core and pluggable domain skill suites.",
   "author": {
     "name": "xuzhijie-ownself",
     "email": "kidtsui@outlook.com",
     "url": "https://github.com/xuzhijie-ownself"
   },
-  "homepage": "https://github.com/xuzhijie-ownself/long-running-harness",
-  "repository": "https://github.com/xuzhijie-ownself/long-running-harness",
+  "homepage": "https://github.com/xuzhijie-ownself/harness",
+  "repository": "https://github.com/xuzhijie-ownself/harness",
   "license": "MIT",
   "keywords": [
     "harness",
@@ -19,20 +19,23 @@
     "orchestration",
     "multi-agent"
   ],
-  "skills": "./plugins/harness/skills/",
+  "skills": [
+    "./plugins/harness/skills/",
+    "./plugins/harness-sdlc-suite/skills/"
+  ],
   "interface": {
     "displayName": "Harness",
     "shortDescription": "Multi-agent sprint orchestration harness",
-    "longDescription": "Runs an Anthropic-style application harness with 6 agents: initializer, planner, generator, evaluator, coordinator, and releaser. Domain-agnostic with support for software, architecture, tender, research, content, business analysis, solution architecture, and ops profiles.",
+    "longDescription": "Runs an Anthropic-style application harness with 6 agents: initializer, planner, generator, evaluator, coordinator, and releaser. Domain-blind core with pluggable domain skill suites. Includes the SDLC suite for software, architecture, business analysis, solution architecture, and ops profiles.",
     "developerName": "xuzhijie-ownself",
     "category": "Productivity",
     "capabilities": [
       "Interactive",
       "Write"
     ],
-    "websiteURL": "https://github.com/xuzhijie-ownself/long-running-harness",
-    "privacyPolicyURL": "https://github.com/xuzhijie-ownself/long-running-harness",
-    "termsOfServiceURL": "https://github.com/xuzhijie-ownself/long-running-harness",
+    "websiteURL": "https://github.com/xuzhijie-ownself/harness",
+    "privacyPolicyURL": "https://github.com/xuzhijie-ownself/harness",
+    "termsOfServiceURL": "https://github.com/xuzhijie-ownself/harness",
     "defaultPrompt": [
       "Build an app using the harness.",
       "Review whether this harness really followed the sprint plan.",
