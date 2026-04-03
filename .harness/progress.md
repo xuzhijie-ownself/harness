@@ -61,4 +61,4 @@ What is currently failing:
 - Sprint 1 should target F-001 (agent dedup) + F-002 (command pre-flight extraction) as specified in the execution strategy. These are independent file-level refactors with no interaction risk.
 
 ## Last commit
-- 2026-04-03T13:04:20.887Z
+- 2026-04-03T13:10:11.814Z

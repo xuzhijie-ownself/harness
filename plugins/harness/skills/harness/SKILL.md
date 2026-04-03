@@ -527,26 +527,11 @@ Use this by default when the user asks to follow the 2026 app-harness article.
 
 ### Variant B: Reset-Based Compatibility Harness
 
-Use this only when the model shows context anxiety, loses coherence over long runs, or the environment cannot sustain continuous-session work.
-
-- Keep the initializer/planner/generator/evaluator split.
-- Reset the active coding session between chunks when needed.
-- Use `.harness/handoff.md` so the next generator session can resume.
-
-This is a fallback, not the default reading of the 2026 article.
+Fallback for context anxiety or environments that cannot sustain continuous sessions. See [references/advanced.md](references/advanced.md) for full details.
 
 ### Variant C: Simplified Harness
 
-Use this only after evidence shows sprint decomposition is no longer adding enough lift.
-
-- Keep the feature list.
-- Keep the planner if the prompt still under-specifies the app.
-- Remove sprint decomposition.
-- Let the generator work on a larger build round.
-- Keep evaluator-led QA rounds and the pass/fail feature ledger.
-
-Do not simplify this into a one-shot build plus a single final QA pass.
-Do not enter this variant silently; write down the evidence that sprint decomposition stopped adding value.
+Remove sprint decomposition when evidence shows it is no longer adding value. See [references/advanced.md](references/advanced.md) for full details.
 
 ## Required Evidence
 
@@ -698,46 +683,15 @@ The coordinator reads the latest retrospective before starting each new round an
 
 ## Harness Decay
 
-Harness assumptions decay with model improvements. Components that were load-bearing with one model generation may be unnecessary with the next.
-
-Test removal methodically:
-
-- Remove one component at a time and measure whether output quality drops.
-- Document the evidence in `.harness/evaluator-calibration.md`.
-- Re-baseline the execution strategy after each removal.
-- A component that was required for Sonnet may be overhead for Opus, and vice versa.
-
-When a component is removed, keep the feature list and evaluator-led QA as the last line of defense. These are the most durable parts of the harness.
+Harness assumptions decay with model improvements. Test removal methodically. See [references/advanced.md](references/advanced.md).
 
 ## Context Reset vs Compaction
 
-Compaction summarizes context in-place but preserves anxiety patterns. Context resets (Variant B) provide clean slates via structured handoff files.
-
-Use compaction when:
-
-- The model maintains coherence and does not rush features.
-- Context usage is below ~60%.
-- Quality has not degraded in later sprints compared to earlier ones.
-
-Use a full reset (`/reset`) when:
-
-- Context is above ~75%.
-- The model shows premature closure, rushing behavior, or "context anxiety."
-- Quality drops noticeably in later sprints.
-- The evaluator reports increasing leniency or declining specificity.
-
-Context resets are not a failure — they are a deliberate strategy for long runs.
+Use compaction when context < 60% and quality is stable. Use /reset when context > 75% or model shows context anxiety. See [references/advanced.md](references/advanced.md).
 
 ## Simplify Methodically
 
-Remove one component at a time and observe the impact.
-
-- Keep the initializer and feature list unless another proven ledger replaces them.
-- Keep the planner if raw prompts still produce under-scoped apps.
-- Keep the evaluator if the generator still ships broken or shallow results.
-- Remove sprint decomposition only when the model can sustain coherent long builds without it.
-- Keep iterative QA even after sprint removal until evidence shows it is no longer load-bearing.
-- Re-baseline the execution strategy whenever you simplify, instead of silently drifting into a different mode.
+Remove one component at a time and observe impact. Keep the feature list and evaluator-led QA as last line of defense. See [references/advanced.md](references/advanced.md).
 
 ## Reliability
 
@@ -770,18 +724,4 @@ The initializer generates both `init.sh` (bash) and `init.bat` (Windows CMD) so 
 
 ## Review The Harness
 
-When reviewing whether the harness was actually followed, check:
-
-- Was an initializer used?
-- Does a machine-readable feature list exist?
-- Were separate planner/generator/evaluator agents explicitly dispatched?
-- In continuous mode, was a coordinator used to advance rounds automatically?
-- Did the spec explain the execution strategy and sprinting rationale?
-- Did each sprint target one failing required feature unless a written grouping waiver existed?
-- Is there a contract review artifact before implementation?
-- Is there both Markdown and JSON evaluation output for each accepted round?
-- Does the evaluation include test results and code review findings?
-- Did the number of failing required features go down?
-- Did the run stop because required features passed, not because another sprint was invented?
-
-If the answer to the first six questions is no, or the feature count does not go down across rounds, the harness is drifting.
+Use the review checklist in [references/advanced.md](references/advanced.md) to verify whether a run truly followed the harness.

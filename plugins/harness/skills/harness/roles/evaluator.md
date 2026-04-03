@@ -29,29 +29,16 @@ Integer scores only -- never "3-ish".
 
 ### 0. Code Review Pre-Flight (MANDATORY -- do this BEFORE reviewing any code)
 
-Execute these steps IN ORDER and record results in the evaluation artifact:
+Read config.json `use_codex` value, then decide review mode:
+- `"off"` -> review_mode = `"claude"`
+- `"on"` -> try codex CLI; if it fails, fallback to `"claude"` with fallback_reason
+- `"auto"` (default) -> check `.claude/settings.json` for `"openai-codex"` in extraKnownMarketplaces or enabledPlugins; if found use `"codex"`, else `"claude"`
 
-**Step 1**: Read `.harness/config.json`. Extract `use_codex` value. If file missing, default to `"auto"`.
+Record in both NN-evaluation.md and NN-evaluation.json: review_mode, config_use_codex, codex_available, detection_result, fallback_reason.
 
-**Step 2**: Decide review mode:
-- If `"off"` -> set review_mode to `"claude"`. Skip to Step 4.
-- If `"on"` -> set review_mode to `"codex"`. Go to Step 3.
-- If `"auto"` or missing -> Read `.claude/settings.json`. Check if `"openai-codex"` exists as a key in `extraKnownMarketplaces` OR if `"codex@openai-codex": true` exists in `enabledPlugins`. If either is true, set review_mode to `"codex"`. Otherwise set to `"claude"`.
+For the detailed 4-step procedure and codex CLI command, see [references/advanced.md](../references/advanced.md) "Codex Detection Detailed Procedure".
 
-**Step 3** (codex mode only): Run the adversarial review command:
-```
-Bash({ command: "codex --approval-mode full-auto --quiet 'Review these code changes adversarially. Check quality, security, patterns, and design choices. Output findings as BLOCKING or NON-BLOCKING.'", timeout: 120000 })
-```
-If the command fails (codex CLI not installed, not authenticated, or errors), set review_mode to `"claude"` and record fallback_reason with the error message. The evaluator continues with Claude-only review -- codex failure is never a hard block.
-
-**Step 4**: Record in BOTH `NN-evaluation.md` and `NN-evaluation.json`:
-- `review_mode`: codex or claude
-- `config_use_codex`: value from config.json
-- `codex_available`: whether openai-codex was found in settings (extraKnownMarketplaces or enabledPlugins)
-- `detection_result`: what detection found
-- `fallback_reason`: why codex wasn't used (if applicable)
-
-**CRITICAL**: If you skip this pre-flight or default to "claude" without documenting the detection steps, the evaluation is INVALID.
+**CRITICAL**: If you skip this pre-flight or default to "claude" without documenting detection, the evaluation is INVALID.
 
 ### 1. Testing
 - Write and run tests (TDD for code, BDD for user-facing, smoke for infra)
