@@ -1,6 +1,15 @@
 {
-  "current_version": "0.9.1",
+  "current_version": "1.0.0",
   "releases": [
+    {
+      "version": "1.0.0",
+      "date": "2026-04-03",
+      "features_shipped": ["F-001", "F-002", "F-003", "F-004", "F-005", "F-006"],
+      "features_deferred": [],
+      "changelog": "Harness Kernel Simplification: Deduplicated 6 agent files into thin YAML wrappers (-317 lines), extracted shared command pre-flight to SKILL.md, moved non-core SKILL.md sections to references/advanced.md (-60 lines), condensed Codex detection to decision tree, made calibration conditional on expected_sprint_count > 3, merged retrospectives inline into progress.md. No behavioral changes. Marks harness as mature at v1.0.0.",
+      "sprint_count": 3,
+      "previous_version": "0.9.1"
+    },
     {
       "version": "0.9.1",
       "date": "2026-04-03",
@@ -38,5 +47,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "0.10.0"
+  "next_version": "1.1.0"
 }
