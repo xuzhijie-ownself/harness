@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "evaluator-1",
+  "updated_by": "evaluator-2",
   "features": [
     {
       "id": "F-001",
@@ -57,10 +57,10 @@
       "description": "Move Harness Decay, Simplify Methodically, Review The Harness, Variant B/C full descriptions, and Context Reset details from SKILL.md to references/advanced.md. Keep one-line summaries with pointers.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-003",
       "steps": [
         "Verify references/advanced.md exists and contains the extracted sections",
@@ -69,7 +69,9 @@
         "Verify Variant B/C have only one-line summaries in SKILL.md with pointer to advanced.md",
         "Count SKILL.md lines and confirm reduction of at least 60 lines from baseline (777 lines)"
       ],
-      "evidence": [],
+      "evidence": [
+        "Sprint 2: advanced.md created with 7 sections. SKILL.md reduced from 787 to 727 lines (60-line reduction). 6 pointer references added."
+      ],
       "notes": "Baseline: SKILL.md is 777 lines. Target: 717 or fewer. Creates new file references/advanced.md."
     },
     {
@@ -79,10 +81,10 @@
       "description": "Condense the 45-line 4-step Codex detection procedure in the evaluator role file to a 3-line decision tree. Move the detailed procedure to references/advanced.md.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "depends_on": ["F-001", "F-003"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-004",
       "steps": [
         "Read evaluator role file (roles/evaluator.md)",
@@ -91,7 +93,9 @@
         "Verify detailed Step 1-4 procedure exists in references/advanced.md",
         "Count evaluator role file lines and confirm reduction of approximately 30 lines from baseline (104 lines)"
       ],
-      "evidence": [],
+      "evidence": [
+        "Sprint 2: Codex detection condensed from ~25 lines to ~10-line decision tree. All 5 output fields preserved. Detailed procedure in advanced.md."
+      ],
       "notes": "Depends on F-001 (agent dedup removes duplicate from agent file) and F-003 (advanced.md exists for the moved content)."
     },
     {
