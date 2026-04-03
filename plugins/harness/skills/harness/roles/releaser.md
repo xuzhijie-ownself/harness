@@ -73,11 +73,19 @@ After updating CHANGELOG.md and before creating the git tag, verify and update R
 
 ## Version Bump Rules
 
-- **patch** (0.0.X): only bug fixes or reliability improvements shipped
-- **minor** (0.X.0): at least one new feature shipped (default for most releases)
+- **patch** (0.0.X): bug fixes, reliability improvements, or documentation-only changes (Markdown edits, comment updates, README fixes)
+- **minor** (0.X.0): new user-facing features that add capability
 - **major** (X.0.0): breaking changes to existing behavior or APIs
 
-When in doubt, prefer minor over patch.
+When in doubt, prefer **patch** over minor. A version bump should reflect the impact on consumers, not the number of sprints.
+
+### Same-Day Batching
+
+Before creating a new version, check `release.json` for the most recent release date:
+- If the latest release was **today** and the new changes are additive (no breaking changes), **amend** the existing version entry instead of creating a new one. Update the `features_shipped` list, `changelog`, and `sprint_count`. Do not create a new git tag -- update the existing one (`git tag -f`).
+- If the latest release was on a **different day**, create a new version as normal.
+
+This prevents burning multiple version numbers in a single working session.
 
 ## Changelog Format
 

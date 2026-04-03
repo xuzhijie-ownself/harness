@@ -42,18 +42,15 @@ Owns: .harness/state.json, .harness/summary.md, .harness/decomposition.md
 18. Auto-commit: `git add -A && git commit -m "feat/wip(F-XXX): <title> -- sprint N [harness]"`
 19. Update `.harness/features.json` from evaluator feature_evidence
 20. Check stop conditions (all required features pass, or hard blocker)
-21. If all required features pass: spawn `releaser` agent before writing summary
+21. If all required features pass: note this in summary and suggest the user run `/harness:release`
 
-### Release (MANDATORY when all features pass)
+### Release (User-Triggered)
 
-When all required features have `passes: true`, you MUST complete these steps before writing summary:
+When all required features have `passes: true`:
 
-1. Spawn `releaser` agent with input: `.harness/features.json`, `.harness/state.json`
-2. Verify releaser created `release.json` at project root and `CHANGELOG.md` at project root
-3. Verify releaser created a git tag (`git tag -l` shows new version)
-4. If any release artifact is missing, log a warning in progress.md but do NOT block the summary
-
-**CRITICAL**: Do not skip the releaser. If the releaser agent spawn fails, record the failure in state.json errors array and proceed to summary with a note that release was skipped.
+1. Print: "All required features pass. Run `/harness:release` when you are ready to cut a version."
+2. Do NOT auto-spawn the releaser. The user decides when to release -- multiple runs may land before a version bump is warranted.
+3. Proceed to writing summary with a note that the run is release-ready.
 
 ### Auto-Commit Protocol
 

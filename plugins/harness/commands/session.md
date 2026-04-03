@@ -81,9 +81,8 @@ Set `current_sprint_phase` to `idle` in `state.json` after completing the round.
 
 After updating features.json:
 1. Check if ALL required features now have `passes: true`
-2. If yes: print "All features pass. Triggering release..." -> spawn releaser agent
-3. Verify release artifacts created (release.json at root, CHANGELOG.md, git tag)
-4. If releaser fails: log warning but don't block session completion
+2. If yes: print "All required features pass. Run `/harness:release` when you are ready to cut a version."
+3. Do NOT auto-spawn the releaser -- the user decides when to release. Multiple sessions may land before the user wants a version bump.
 
 ## Auto-Commit
 
