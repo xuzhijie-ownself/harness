@@ -102,17 +102,40 @@ This is the expanded 4-step Codex detection procedure. The evaluator role file c
 **Step 2**: Decide review mode:
 - If `"off"` -> set review_mode to `"claude"`. Skip to Step 4.
 - If `"on"` -> set review_mode to `"codex"`. Go to Step 3.
-- If `"auto"` or missing -> Read `.claude/settings.json`. Check if `"openai-codex"` exists as a key in `extraKnownMarketplaces` OR if `"codex@openai-codex": true` exists in `enabledPlugins`. If either is true, set review_mode to `"codex"`. Otherwise set to `"claude"`.
+- If `"auto"` or missing -> run the following three checks in order. If **any one passes**, set review_mode to `"codex"` and go to Step 3. All three must fail to fall back to `"claude"`.
+  1. **Project enabledPlugins**: Read `.claude/settings.json` (project-level). Check if `"codex@openai-codex": true` exists in the `enabledPlugins` object.
+  2. **Global extraKnownMarketplaces**: Read `~/.claude/settings.json` (user-level global). Check if `"openai-codex"` exists as a key in the `extraKnownMarketplaces` object.
+  3. **CLI on PATH**: Run `which codex` (or `where codex` on Windows). If the command exits 0 and returns a path, Codex CLI is available.
 
-**Step 3** (codex mode only): Run the adversarial review command:
+**Step 3** (codex mode only): Run the adversarial review.
+
+**Primary method** -- invoke the plugin skill:
+```
+/codex:adversarial-review --wait
+```
+This delegates the review to the Codex adversarial-review skill and blocks until it returns findings.
+
+**Fallback** -- if the skill invocation fails (skill not registered, plugin unavailable, or timeout), fall back to the raw CLI:
 ```
 Bash({ command: "codex --approval-mode full-auto --quiet 'Review these code changes adversarially. Check quality, security, patterns, and design choices. Output findings as BLOCKING or NON-BLOCKING.'", timeout: 120000 })
 ```
-If the command fails (codex CLI not installed, not authenticated, or errors), set review_mode to `"claude"` and record fallback_reason with the error message. The evaluator continues with Claude-only review -- codex failure is never a hard block.
+
+If **both** the skill and the CLI fallback fail, set review_mode to `"claude"` and record fallback_reason with the error message. The evaluator continues with Claude-only review -- codex failure is never a hard block.
+
+**Severity mapping** -- map Codex review findings to harness categories:
+
+| Codex severity | Harness category | Action |
+|----------------|-----------------|--------|
+| critical | BLOCKING | Round fails if unresolved |
+| high | BLOCKING | Round fails if unresolved |
+| medium | NON-BLOCKING | Logged; does not block the round |
+| low | NON-BLOCKING | Logged; does not block the round |
+| info | NON-BLOCKING | Logged for awareness only |
 
 **Step 4**: Record in BOTH `NN-evaluation.md` and `NN-evaluation.json`:
 - `review_mode`: codex or claude
 - `config_use_codex`: value from config.json
-- `codex_available`: whether openai-codex was found in settings (extraKnownMarketplaces or enabledPlugins)
-- `detection_result`: what detection found
-- `fallback_reason`: why codex wasn't used (if applicable)
+- `codex_available`: whether any of the three detection checks passed
+- `detection_method`: which check triggered the detection. One of `"project enabledPlugins"`, `"global extraKnownMarketplaces"`, `"CLI on PATH"`, or `null` if none passed.
+- `detection_result`: what detection found (e.g., `"codex@openai-codex enabled in project settings"`)
+- `fallback_reason`: why codex was not used, if applicable (e.g., skill and CLI both failed, or all three detection checks failed)

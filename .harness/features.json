@@ -27,6 +27,31 @@
         "01-evaluation.json: all contract checks pass, feature_evidence confirms passes: true"
       ],
       "notes": "Completed in sprint 1. All contract checks passed."
+    },
+    {
+      "id": "F-002",
+      "title": "Fix Codex evaluation detection and review integration",
+      "category": "functional",
+      "description": "Fix the evaluator Codex detection pre-flight which always falls back to Claude-only review. Update detection logic in advanced.md to check 3 sources with any-one-passes semantics. Replace raw codex CLI call with /codex:adversarial-review plugin skill. Update evaluator.md condensed decision tree to match.",
+      "required": true,
+      "priority": "high",
+      "status": "not_started",
+      "passes": false,
+      "depends_on": [],
+      "maturity": "draft",
+      "source_requirement": "user request: codex evaluation always not working",
+      "steps": [
+        "Verify advanced.md Step 2 (auto mode) checks 3 sources: project enabledPlugins, global extraKnownMarketplaces, CLI on PATH",
+        "Verify advanced.md Step 2 uses any-one-passes semantics",
+        "Verify advanced.md Step 3 uses /codex:adversarial-review --wait as primary method with raw CLI fallback",
+        "Verify advanced.md Step 3 includes severity-to-BLOCKING/NON-BLOCKING mapping",
+        "Verify advanced.md Step 4 includes detection_method field",
+        "Verify evaluator.md Read list references both project and global settings files",
+        "Verify evaluator.md Section 0 auto mode matches the 3-check procedure",
+        "Verify evaluator.md Section 0 references /codex:adversarial-review as review method"
+      ],
+      "evidence": [],
+      "notes": ""
     }
   ]
 }

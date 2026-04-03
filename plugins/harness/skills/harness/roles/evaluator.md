@@ -8,7 +8,8 @@ Use this file only for the evaluator role.
 - builder report
 - running app
 - `.harness/features.json`
-- `.claude/settings.json` (for Codex detection)
+- `.claude/settings.json` (project-level, for Codex detection -- check `enabledPlugins`)
+- `~/.claude/settings.json` (user-level global, for Codex detection -- check `extraKnownMarketplaces`)
 - `git diff HEAD~1 --name-only` (changed files)
 - evaluator calibration if it exists
 - `plugins/harness/skills/harness-sdlc/SKILL.md` (when domain_profile is "software") for runtime verification procedures
@@ -31,12 +32,18 @@ Integer scores only -- never "3-ish".
 
 Read config.json `use_codex` value, then decide review mode:
 - `"off"` -> review_mode = `"claude"`
-- `"on"` -> try codex CLI; if it fails, fallback to `"claude"` with fallback_reason
-- `"auto"` (default) -> check `.claude/settings.json` for `"openai-codex"` in extraKnownMarketplaces or enabledPlugins; if found use `"codex"`, else `"claude"`
+- `"on"` -> try `/codex:adversarial-review --wait`; if skill fails, try raw CLI; if both fail, fallback to `"claude"` with fallback_reason
+- `"auto"` (default) -> run three checks in order (any-one-passes):
+  1. Project `.claude/settings.json` -- `enabledPlugins` contains `"codex@openai-codex": true`
+  2. Global `~/.claude/settings.json` -- `extraKnownMarketplaces` contains `"openai-codex"`
+  3. `which codex` on PATH -- exits 0
+  If any passes -> review_mode = `"codex"`. All three fail -> review_mode = `"claude"`.
 
-Record in both NN-evaluation.md and NN-evaluation.json: review_mode, config_use_codex, codex_available, detection_result, fallback_reason.
+When review_mode is `"codex"`, invoke `/codex:adversarial-review --wait` as the primary review method. Fall back to raw CLI if the skill fails. Map findings: critical/high -> BLOCKING, medium/low/info -> NON-BLOCKING.
 
-For the detailed 4-step procedure and codex CLI command, see [references/advanced.md](../references/advanced.md) "Codex Detection Detailed Procedure".
+Record in both NN-evaluation.md and NN-evaluation.json: review_mode, config_use_codex, codex_available, detection_method, detection_result, fallback_reason.
+
+For the detailed 4-step procedure, severity mapping table, and fallback logic, see [references/advanced.md](../references/advanced.md) "Codex Detection Detailed Procedure".
 
 **CRITICAL**: If you skip this pre-flight or default to "claude" without documenting detection, the evaluation is INVALID.
 

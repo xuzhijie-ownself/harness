@@ -1,0 +1,8 @@
+{
+  "enabledPlugins": {
+    "harness@harness": true,
+    "harness-sdlc-suite@harness": true,
+    "everything-claude-code@everything-claude-code": true,
+    "codex@openai-codex": true
+  }
+}
