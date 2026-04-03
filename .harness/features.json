@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "session",
+  "updated_by": "evaluator-1",
   "features": [
     {
       "id": "F-001",
@@ -9,10 +9,10 @@
       "description": "Complete the partial domain_profile rename from architecture to enterprise_architecture. The routing table and patterns.md were already updated manually. The EA skill itself still uses the old value in frontmatter and activation text.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "Codex adversarial review BLOCKING finding",
       "steps": [
         "Verify harness-ea/SKILL.md frontmatter says enterprise_architecture not architecture",
@@ -20,7 +20,7 @@
         "Verify harness-ea/SKILL.md line 25 activation check says enterprise_architecture",
         "Verify grep for domain_profile.*architecture without underscore returns zero results across plugins/"
       ],
-      "evidence": [],
+      "evidence": ["Round 3 evaluation: all 3 lines updated, grep confirms zero bare architecture values"],
       "notes": ""
     },
     {
@@ -30,10 +30,10 @@
       "description": "Make core framework files domain-agnostic: generic evaluation JSON schema in patterns.md, remove hardcoded profile list, generic runtime verification in evaluator.md, cross-domain composability guidance.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "SDLC suite audit: core must be generic",
       "steps": [
         "Verify patterns.md evaluation JSON uses placeholder keys not software-specific keys",
@@ -41,8 +41,8 @@
         "Verify evaluator.md Browser Testing section uses generic language not Playwright-specific",
         "Verify patterns.md or SKILL.md has cross-domain composability guidance for secondary_profile"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Round 3 evaluation: schema generic, evaluator.md generic, composability guidance added"],
+      "notes": "Non-blocking: SKILL.md lines 176-182 retain Playwright reference (deferred)"
     },
     {
       "id": "F-003",
@@ -51,10 +51,10 @@
       "description": "Rename the harness /init command to /start to avoid collision with Claude Code built-in /init. Rename file, update plugin.json, find-replace all references.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "User report: init command causes confusion",
       "steps": [
         "Verify commands/start.md exists with name: start in frontmatter",
@@ -62,7 +62,7 @@
         "Verify plugin.json references commands/start.md",
         "Verify grep for harness:init across plugins/ and README.md returns zero results"
       ],
-      "evidence": [],
+      "evidence": ["Round 3 evaluation: 15+ files updated, zero stale harness:init references"],
       "notes": ""
     },
     {
