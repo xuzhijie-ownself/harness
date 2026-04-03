@@ -59,10 +59,10 @@
       "description": "Add an authenticity pre-implementation checklist to the generator agent file (generator.md). Checklist instructs the generator to define conventions, customize defaults, verify fundamentals, and ensure usability. Prevention side of dual-side control.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "reviewed",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "Generator-side prevention via pre-implementation authenticity checklist",
       "steps": [
         "Read current plugins/harness/agents/generator.md",
@@ -71,7 +71,9 @@
         "Verify checklist uses generic middleware language (no domain-specific terms)",
         "Verify it integrates naturally with the existing sprint round sequence"
       ],
-      "evidence": [],
+      "evidence": [
+        "Round 2: All 5 verification steps satisfied. Checklist exists in generator.md under Sprint Round Sequence with 4 items mapping to coherence, intentionality, craft, fitness_for_purpose. Generic language (automated scan). Integrates between step 5 and Post-Implementation Commit."
+      ],
       "notes": ""
     },
     {
@@ -81,10 +83,10 @@
       "description": "Add authenticity instructions to roles/generator.md so the role-scoped reference includes pre-implementation checklist guidance.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "reviewed",
+      "passes": true,
       "depends_on": ["F-003"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "Role reference update for generator authenticity guidance",
       "steps": [
         "Read current plugins/harness/skills/harness/roles/generator.md",
@@ -92,7 +94,9 @@
         "Verify it references the pre-implementation checklist without duplicating full details",
         "Verify generic middleware language is used throughout"
       ],
-      "evidence": [],
+      "evidence": [
+        "Round 2: All 4 verification steps satisfied. Authenticity section exists in roles/generator.md with focus-level guidance. References Pre-Implementation Checklist from generator agent file. No duplication of full details. Generic language throughout."
+      ],
       "notes": ""
     },
     {
@@ -102,10 +106,10 @@
       "description": "Add the authenticity post-grading gate to the evaluator agent file (evaluator.md). After existing grading, checks coherence, intentionality, craft, and fitness for purpose. Binary pass/fail -- any dimension failure fails the round.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "reviewed",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "Evaluator-side detection via post-grading authenticity gate",
       "steps": [
         "Read current plugins/harness/agents/evaluator.md",
@@ -115,7 +119,9 @@
         "Verify that authenticity failure overrides domain criteria pass",
         "Verify generic middleware language is used throughout"
       ],
-      "evidence": [],
+      "evidence": [
+        "Round 2: All 6 verification steps satisfied. Step 5 Authenticity Gate exists after step 4 Calibration. 4 dimension checks with verification methods in table. Binary pass/fail specified. Override rule: 'any dimension fails, the round FAILS -- regardless of domain criteria scores'. Generic language (automated scan)."
+      ],
       "notes": ""
     },
     {
@@ -125,10 +131,10 @@
       "description": "Add the authenticity gate to roles/evaluator.md so the role-scoped reference includes post-grading gate instructions.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "reviewed",
+      "passes": true,
       "depends_on": ["F-005"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "Role reference update for evaluator authenticity gate",
       "steps": [
         "Read current plugins/harness/skills/harness/roles/evaluator.md",
@@ -136,7 +142,9 @@
         "Verify it references the post-grading gate without duplicating full details",
         "Verify generic middleware language is used throughout"
       ],
-      "evidence": [],
+      "evidence": [
+        "Round 2: All 4 verification steps satisfied. Authenticity Gate section in roles/evaluator.md before Disagreement Rule. References post-grading gate in evaluator agent file. No duplication of full details. Generic language throughout."
+      ],
       "notes": ""
     }
   ]

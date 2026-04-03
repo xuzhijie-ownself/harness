@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.9.0] - 2026-04-03
+
+### Features Shipped
+- **F-001**: SKILL.md Authenticity Gate Section
+- **F-002**: Evaluation Schema and Builder Report Template Updates
+- **F-003**: Generator Pre-Implementation Checklist
+- **F-004**: Generator Role Reference Update
+- **F-005**: Evaluator Post-Grading Gate
+- **F-006**: Evaluator Role Reference Update
+
+### Deferred
+- None
+
+### Stats
+- Sprint count: 2
+- Required features: 6/6 passing
+
+### Summary
+Added a domain-agnostic Authenticity Gate to the harness base framework as a cross-cutting binary pass/fail quality gate. The gate prevents AI-generated generic/template output by enforcing 4 dimensions -- coherence, intentionality, craft, and fitness for purpose -- after domain criteria scoring.
+
+Key changes:
+- SKILL.md: New "Authenticity Gate" section after "Quantified Evaluation" defining all 4 dimensions, gate rules, and dual-side control
+- patterns.md: Added `authenticity_gate` object to NN-evaluation.json schema (4 dimensions with pass/justification each) and authenticity self-check section to NN-builder-report.md template
+- generator.md: Added pre-implementation authenticity checklist (prevention side)
+- evaluator.md: Added step 5 post-grading authenticity gate (detection side)
+- roles/generator.md and roles/evaluator.md: Added corresponding role reference sections
+
+All new text uses generic middleware language with zero domain-specific terminology.
+
 ## [0.8.0] - 2026-04-02
 
 ### Features Shipped

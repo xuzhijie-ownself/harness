@@ -1,6 +1,6 @@
 {
   "name": "harness",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Multi-agent sprint orchestration harness with GAN-like generator/evaluator loop and domain-agnostic profiles",
   "author": {
     "name": "xuzhijie-ownself",
@@ -9,7 +9,17 @@
   "homepage": "https://github.com/xuzhijie-ownself/long-running-harness",
   "repository": "https://github.com/xuzhijie-ownself/long-running-harness",
   "license": "MIT",
-  "keywords": ["harness", "agents", "multi-agent", "sprints", "evaluation", "orchestration", "GAN-pattern", "domain-agnostic", "claude-code"],
+  "keywords": [
+    "harness",
+    "agents",
+    "multi-agent",
+    "sprints",
+    "evaluation",
+    "orchestration",
+    "GAN-pattern",
+    "domain-agnostic",
+    "claude-code"
+  ],
   "agents": [
     "./agents/coordinator.md",
     "./agents/evaluator.md",

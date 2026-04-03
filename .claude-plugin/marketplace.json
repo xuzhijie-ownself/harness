@@ -14,7 +14,7 @@
       "name": "harness",
       "source": "./plugins/harness",
       "description": "Anthropic-style harness with 6 agents, GAN-like adversarial evaluation, domain profiles, sprint contracts, and quantified 0-5 grading",
-      "version": "0.8.0",
+      "version": "0.9.0",
       "author": {
         "name": "xuzhijie-ownself",
         "email": "kidtsui@outlook.com"
@@ -22,9 +22,22 @@
       "homepage": "https://github.com/xuzhijie-ownself/long-running-harness",
       "repository": "https://github.com/xuzhijie-ownself/long-running-harness",
       "license": "MIT",
-      "keywords": ["harness", "agents", "sprints", "evaluation", "orchestration"],
+      "keywords": [
+        "harness",
+        "agents",
+        "sprints",
+        "evaluation",
+        "orchestration"
+      ],
       "category": "workflow",
-      "tags": ["harness", "agents", "sprints", "evaluation", "orchestration", "planning"],
+      "tags": [
+        "harness",
+        "agents",
+        "sprints",
+        "evaluation",
+        "orchestration",
+        "planning"
+      ],
       "strict": false
     }
   ]

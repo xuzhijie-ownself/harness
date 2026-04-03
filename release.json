@@ -1,6 +1,15 @@
 {
-  "current_version": "0.8.0",
+  "current_version": "0.9.0",
   "releases": [
+    {
+      "version": "0.9.0",
+      "date": "2026-04-03",
+      "features_shipped": ["F-001", "F-002", "F-003", "F-004", "F-005", "F-006"],
+      "features_deferred": [],
+      "changelog": "Authenticity Gate: Added domain-agnostic binary pass/fail quality gate with 4 dimensions (coherence, intentionality, craft, fitness for purpose) to the harness base framework. Gate runs after domain criteria scoring as a cross-cutting overlay. Dual-side control: generator pre-implementation checklist (prevention) and evaluator post-grading gate (detection). All text uses generic middleware language.",
+      "sprint_count": 2,
+      "previous_version": "0.8.0"
+    },
     {
       "version": "0.8.0",
       "date": "2026-04-02",
@@ -20,5 +29,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "0.9.0"
+  "next_version": "0.10.0"
 }
