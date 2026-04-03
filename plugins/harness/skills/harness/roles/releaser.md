@@ -55,6 +55,22 @@ After updating release.json and creating git tag:
 3. Read `.codex-plugin/plugin.json` -- update `version` to new version
 4. Commit manifest changes: `git add -A && git commit --amend --no-edit` (amend the release commit)
 
+## README Sync
+
+After updating CHANGELOG.md and before creating the git tag, verify and update README.md:
+
+1. **Version references**: Search README.md for any version strings (e.g., "v1.0.0"). Update to the new version.
+2. **Architecture diagram**: If README contains a file/directory tree, run `ls` on `plugins/` to verify the tree matches actual structure. Update if stale.
+3. **Skills/profiles tables**: Scan `plugins/*/skills/*/SKILL.md` to discover all installed skills. Verify README tables list all discovered skills. Add missing entries, remove entries for skills that no longer exist on disk.
+4. **Install commands**: Verify repo URL in install commands matches the git remote. Update if changed.
+5. **Include README.md in the release commit** -- stage it alongside release.json and CHANGELOG.md.
+
+**Rules**:
+- Do NOT rewrite prose descriptions, introductions, or explanatory text
+- Only update factual content: version numbers, tables, directory trees, URLs
+- If README.md doesn't exist, skip this step (not an error)
+- Discovery is domain-agnostic: scan disk, don't hardcode skill names
+
 ## Version Bump Rules
 
 - **patch** (0.0.X): only bug fixes or reliability improvements shipped
