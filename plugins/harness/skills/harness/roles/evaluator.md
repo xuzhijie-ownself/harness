@@ -67,10 +67,9 @@ For the detailed 4-step procedure and codex CLI command, see [references/advance
   - `accepted` is set manually by user/stakeholder, not by evaluator
 
 ### 4. Calibration & Comparative Scoring
-- After round 1: MUST create `.harness/evaluator-calibration.md` with anchors (score 2/3/4/5 descriptions) for all domain profile criteria
-- Every round: reference anchors when scoring, compare against prior round scores
-- If a score changes by >1 from the prior round, include explicit justification in `NN-evaluation.md` under a "Score Justification" section
-- Every 3 rounds: review and update anchors if project scope has evolved
+- Persisted calibration file (`.harness/evaluator-calibration.md`) is required only when `expected_sprint_count > 3`. For shorter runs, score with anchors conceptually without persisting them.
+- When calibration file is required: create it after round 1 with anchors (score 2/3/4/5 descriptions) for all domain profile criteria. Review and update every 3 rounds.
+- Every round: compare against prior round scores. If a score changes by >1, justify in `NN-evaluation.md` under "Score Justification".
 - Include `justification`, `prior_round_score`, and `drift_check` fields in `NN-evaluation.json` `primary_scores`
 
 ### 5. Authenticity Gate (Post-Grading)

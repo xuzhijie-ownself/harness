@@ -644,42 +644,23 @@ The evaluator uses a structured rubric system with **anchored examples** to prev
 
 ### Rubric Anchors
 
-After the first evaluation round, the evaluator MUST create `.harness/evaluator-calibration.md` with concrete score anchors (descriptions of what 2, 3, 4, and 5 look like) for each of the domain profile's primary criteria. These anchors are project-specific — the framework provides the structure, the project provides the examples.
+Persisted calibration file (`.harness/evaluator-calibration.md`) is required only when `expected_sprint_count > 3`. For shorter runs (3 or fewer sprints), the evaluator scores with anchors conceptually without persisting them to a file.
+
+When required: after the first evaluation round, create `evaluator-calibration.md` with concrete score anchors (descriptions of what 2, 3, 4, and 5 look like) for each of the domain profile's primary criteria. Review and update every 3 rounds.
 
 ### Comparative Scoring
 
 For each criterion every round, the evaluator must:
-- Reference the anchor descriptions when assigning a score
 - Compare against the prior round's score for the same criterion
 - If a score changes by more than 1 from the prior round, justify WHY in the evaluation artifact
 - Record the comparison in `NN-evaluation.md` under a "Score Justification" section
-
-### Calibration Enforcement
-
-The coordinator enforces calibration:
-- After round 1: evaluator MUST create `evaluator-calibration.md` with anchors for all criteria
-- Every 3 rounds: evaluator reviews and updates anchors if the project scope has evolved
-- If the evaluator scores differ by >1 from the prior round without justification, the coordinator flags it
-
-### Calibration Principles
-
-- Keep criterion wording stable across rounds
-- Avoid inflating later scores just because the project is larger
-- Write anchors to `.harness/evaluator-calibration.md` so future evaluator rounds inherit the same standard
-
-The evaluator should become more consistent over time, not merely more detailed.
+- The coordinator flags unjustified score jumps >1
 
 ## Sprint Retrospective
 
-The harness includes a learning loop to prevent mistakes from repeating across rounds. After every `retro_interval` rounds (from config.json, default 3) or after any FAIL evaluation, the coordinator generates a retrospective stored as `.harness/sprints/retro-RX-RY.md`.
+After every `retro_interval` rounds (from config.json, default 3) or after any FAIL evaluation, the coordinator appends a `## Retrospective -- Rounds X-Y` section to `.harness/progress.md` (not a separate file). The section covers: what worked, what didn't, adjustments for next rounds, patterns detected.
 
-The retrospective covers:
-- **What Worked** — effective patterns observed during the covered rounds
-- **What Didn't Work** — failures and their root causes
-- **Adjustments for Next Rounds** — concrete changes to apply going forward
-- **Patterns Detected** — recurring issues or strengths
-
-The coordinator reads the latest retrospective before starting each new round and incorporates learnings into generator/evaluator prompts. This creates a feedback loop where the harness improves its own execution over time.
+The coordinator reads the latest retrospective section in progress.md before starting each new round and incorporates learnings into generator/evaluator dispatch instructions.
 
 ## Harness Decay
 

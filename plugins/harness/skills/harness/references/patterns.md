@@ -304,6 +304,12 @@ State.json holds runtime state (round, phase, errors). Config.json holds persist
 
 ## Next step
 - The first thing the next agent should verify or do
+
+## Retrospective -- Rounds X-Y
+- **What Worked**: [effective patterns observed]
+- **What Didn't Work**: [failures and their root causes]
+- **Adjustments**: [concrete changes to apply]
+- **Patterns**: [recurring issues or strengths]
 ```
 
 ### `spec.md`
@@ -665,28 +671,6 @@ if %ERRORLEVEL% EQU 0 (
 ```
 
 Repeat the criterion section for each of the domain profile's 4 primary criteria. Anchors are project-specific — the framework provides the structure, the project provides the examples.
-
-### `retro-RX-RY.md`
-
-```md
-# Sprint Retrospective — Rounds X-Y
-
-## Metadata
-- Role: coordinator
-- Status: completed
-
-## What Worked
-- [effective patterns observed]
-
-## What Didn't Work
-- [failures and their root causes]
-
-## Adjustments for Next Rounds
-- [concrete changes to apply]
-
-## Patterns Detected
-- [recurring issues or strengths]
-```
 
 ### Domain Profile section in `spec.md`
 

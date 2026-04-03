@@ -110,18 +110,19 @@ After reading `NN-evaluation.json` for each round, verify:
 
 ## Calibration Enforcement
 
-After round 1 evaluation, verify that `.harness/evaluator-calibration.md` exists. If missing, instruct the evaluator to create it before proceeding.
+Calibration file (`.harness/evaluator-calibration.md`) is required only when `expected_sprint_count > 3` in state.json. For runs with 3 or fewer sprints, calibration is optional -- the evaluator still scores with anchors conceptually but does not need to persist them to a separate file.
 
-When reviewing evaluation artifacts, check for score jumps >1 from the prior round on any criterion. If a jump >1 exists without a `drift_check` justification in `NN-evaluation.json`, flag it and request the evaluator to re-justify the score.
+When `expected_sprint_count > 3`: after round 1 evaluation, verify that `.harness/evaluator-calibration.md` exists. If missing, instruct the evaluator to create it before proceeding.
+
+Score drift detection applies regardless: check for score jumps >1 from the prior round on any criterion. If a jump >1 exists without a `drift_check` justification in `NN-evaluation.json`, flag it and request the evaluator to re-justify the score.
 
 ## Sprint Retrospective
 
 After every `retro_interval` rounds (read from config.json, default 3) or after any FAIL evaluation:
-1. Generate `.harness/sprints/retro-RX-RY.md` covering the rounds since the last retro (or since round 1 if no prior retro exists).
+1. Append a `## Retrospective -- Rounds X-Y` section to `.harness/progress.md` (do not create separate retro-RX-RY.md files).
 2. Include: what worked, what didn't, adjustments for next rounds, patterns detected.
-3. Use the retro template from patterns.md.
 
-Before starting each new round, read the latest `retro-RX-RY.md` file (if any) and incorporate its adjustments into generator/evaluator dispatch instructions.
+Before starting each new round, read the latest retrospective section in progress.md (if any) and incorporate its adjustments into generator/evaluator dispatch instructions.
 
 ## Pause Rules
 
