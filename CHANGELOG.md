@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.9.1] - 2026-04-03
+
+### Features Shipped
+- **F-001**: Rename Authenticity Gate dimension `coherence` to `internal_consistency`
+
+### Deferred
+- None
+
+### Stats
+- Sprint count: 1
+- Required features: 1/1 passing
+
+### Summary
+Renamed the Authenticity Gate dimension `coherence` to `internal_consistency` across all 6 base framework files to eliminate naming overlap with the harness-ea domain criterion `coherence`. Removed 3 disambiguation notes that existed solely because of the naming conflict. No logic changes -- text substitution only.
+
+Files modified:
+- `plugins/harness/skills/harness/SKILL.md` -- dimension table rename, disambiguation note removed
+- `plugins/harness/skills/harness/references/patterns.md` -- JSON key rename, display label rename
+- `plugins/harness/agents/generator.md` -- checklist item rename
+- `plugins/harness/skills/harness/roles/generator.md` -- bullet label rename
+- `plugins/harness/agents/evaluator.md` -- verification table rename, disambiguation note removed
+- `plugins/harness/skills/harness/roles/evaluator.md` -- dimension list rename, disambiguation instruction removed
+
 ## [0.9.0] - 2026-04-03
 
 ### Features Shipped

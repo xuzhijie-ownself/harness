@@ -1,6 +1,15 @@
 {
-  "current_version": "0.9.0",
+  "current_version": "0.9.1",
   "releases": [
+    {
+      "version": "0.9.1",
+      "date": "2026-04-03",
+      "features_shipped": ["F-001"],
+      "features_deferred": [],
+      "changelog": "Renamed Authenticity Gate dimension 'coherence' to 'internal_consistency' across all 6 base framework files. Removed 3 disambiguation notes that are no longer needed. No logic changes -- text substitution only.",
+      "sprint_count": 1,
+      "previous_version": "0.9.0"
+    },
     {
       "version": "0.9.0",
       "date": "2026-04-03",
