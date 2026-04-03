@@ -6,22 +6,28 @@
 - Inputs: state.json, features.json, spec.md
 - Status: active
 
-## Round 1
-rounds_since_reset: 1 / 3
+## Round 2
+rounds_since_reset: 2 / 3
 
 ## Current target
-- F-001: SKILL.md Authenticity Gate Section
-- F-002: Evaluation Schema and Builder Report Template Updates
+- F-003: Generator Pre-Implementation Checklist
+- F-004: Generator Role Reference Update
+- F-005: Evaluator Post-Grading Gate
+- F-006: Evaluator Role Reference Update
 
 ## Baseline
-- All 6 features are failing (not_started)
-- No prior sprint artifacts exist
+- F-001: PASSES (round 1)
+- F-002: PASSES (round 1)
+- F-003, F-004, F-005, F-006: not_started
 
 ## This round
-- Sprint 1 begins: F-001 + F-002 (grouped per spec execution strategy)
+- Sprint 2 begins: F-003 + F-004 + F-005 + F-006 (grouped per spec execution strategy -- dual-side control pair)
+
+## Round 1 result
+- PASS: F-001 + F-002 shipped. Authenticity Gate section added to SKILL.md. Evaluation schema and builder report template updated in patterns.md.
 
 ## Next step
-- Generator: propose sprint contract for F-001 + F-002
+- Generator: propose sprint contract for F-003 + F-004 + F-005 + F-006
 
 ## Last commit
-- 2026-04-03T10:48:48.146Z
+- 2026-04-03T10:54:00.900Z

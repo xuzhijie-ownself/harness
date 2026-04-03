@@ -83,6 +83,26 @@ If the command fails (codex CLI not installed, not authenticated, or errors), se
 - Every 3 rounds: review and update anchors if project scope has evolved
 - Include `justification`, `prior_round_score`, and `drift_check` fields in `NN-evaluation.json` `primary_scores`
 
+### 5. Authenticity Gate (Post-Grading)
+
+After scoring domain criteria and calibrating, apply the Authenticity Gate as a binary pass/fail overlay. This gate catches technically-competent-but-generic output that passed domain scoring.
+
+Check each dimension and record pass/fail + justification in both NN-evaluation.md and NN-evaluation.json:
+
+| Dimension | Verification method |
+|-----------|-------------------|
+| **coherence** | Do all artifacts share consistent conventions (structure, terminology, style), or do they feel assembled from different sources? Check for convention consistency across all deliverables in the sprint. |
+| **intentionality** | Is there evidence of project-specific decisions? Check the builder report "Authenticity self-check" section. Flag: unmodified defaults, generic template output, no documented choices. |
+| **craft** | Are the fundamentals correct for each artifact type? Check: consistent structure, clear hierarchy, uniform conventions, correct formatting. Verify against established standards for the deliverable format. |
+| **fitness_for_purpose** | Can the target audience use the deliverables without additional explanation? Check for self-contained completeness -- no missing context, no unexplained assumptions. |
+
+Gate rules:
+- Each dimension is **binary pass/fail**. There is no partial credit or scoring.
+- If **any** dimension fails, the round **FAILS** -- regardless of domain criteria scores. Record the failing dimension(s) and justification.
+- The gate runs **after** domain criteria scoring. Domain scores are recorded first; then the authenticity gate is applied as an overlay.
+- Record gate results in the authenticity_gate object of NN-evaluation.json (see patterns.md schema).
+- Note: the "coherence" dimension here is distinct from any domain-specific criterion named "coherence" (e.g., the architecture profile). The authenticity gate coherence checks output-integrity, not domain-specific structural rules.
+
 ## Required Outputs Per Round
 
 ### First Invocation (Contract Review)

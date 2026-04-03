@@ -2,16 +2,16 @@
   "mode": "continuous",
   "status": "active",
   "variant": "variant-a-sprinted",
-  "current_round": 1,
+  "current_round": 2,
   "last_completed_round": 1,
-  "active_feature_ids": [],
+  "active_feature_ids": ["F-003", "F-004", "F-005", "F-006"],
   "expected_sprint_count": 2,
   "current_failure_streak": 0,
   "last_feature_pass_delta": 2,
   "stop_reason": "",
   "context_reset_threshold": 3,
-  "rounds_since_reset": 1,
-  "current_sprint_phase": "idle",
+  "rounds_since_reset": 2,
+  "current_sprint_phase": "implementation",
   "domain_profile": "software",
   "secondary_profile": "",
   "methodology": "agile",
@@ -28,6 +28,18 @@
           "contract": { "started_at": "2026-04-03T10:00:00Z", "completed_at": "2026-04-03T10:01:00Z" },
           "implementation": { "started_at": "2026-04-03T10:01:00Z", "completed_at": "2026-04-03T10:02:00Z" },
           "evaluation": { "started_at": "2026-04-03T10:02:00Z", "completed_at": "2026-04-03T10:03:00Z" }
+        }
+      },
+      {
+        "round": 2,
+        "started_at": "2026-04-03T10:04:00Z",
+        "completed_at": "",
+        "feature_id": "F-003, F-004, F-005, F-006",
+        "outcome": "",
+        "phases": {
+          "contract": { "started_at": "2026-04-03T10:04:00Z", "completed_at": "2026-04-03T10:05:00Z" },
+          "implementation": { "started_at": "2026-04-03T10:05:00Z", "completed_at": "" },
+          "evaluation": { "started_at": "", "completed_at": "" }
         }
       }
     ]

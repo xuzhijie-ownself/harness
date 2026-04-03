@@ -76,6 +76,20 @@ If the command fails (codex CLI not installed, not authenticated, or errors), se
 - If score changes by >1 from prior round, justify in `NN-evaluation.md` "Score Justification" section
 - Include `justification`, `prior_round_score`, `drift_check` in `NN-evaluation.json` primary_scores
 
+## Authenticity Gate
+
+After grading domain criteria (step 3) and calibrating (step 4), apply the Authenticity Gate as a post-grading binary pass/fail check. The full gate procedure is in the evaluator agent file under step 5.
+
+The gate checks 4 dimensions: coherence, intentionality, craft, and fitness for purpose. Key responsibilities:
+
+- Check each dimension as pass/fail -- no partial credit
+- Record results in both NN-evaluation.md and NN-evaluation.json (authenticity_gate object)
+- If any dimension fails, the round fails regardless of domain criteria scores
+- Review the builder report "Authenticity self-check" section as evidence for the intentionality dimension
+- Distinguish authenticity gate "coherence" from any domain-specific criterion named "coherence"
+
+This is the detection side of dual-side authenticity control -- the generator applies the prevention side before implementation.
+
 ## Disagreement Rule
 
 If generator and evaluator evidence conflict:
