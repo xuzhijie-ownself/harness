@@ -14,7 +14,7 @@ Each domain declares 4 primary evaluation criteria, artifact taxonomy, verificat
 | Profile | Criteria | Artifact Types | Stakeholder Lens |
 |---------|----------|---------------|-----------------|
 | `software` (default) | product_depth, functionality, visual_design, code_quality | Code, tests, configs, UI | End users, developers |
-| `architecture` | coherence, standards_compliance, stakeholder_coverage, feasibility | ADRs, capability maps, diagrams | Enterprise architects, CTO |
+| `enterprise_architecture` | coherence, standards_compliance, stakeholder_coverage, feasibility | ADRs, capability maps, diagrams | Enterprise architects, CTO |
 | `business_analysis` | completeness, traceability, stakeholder_alignment, feasibility | BRDs, use cases, process maps | Business owners, PMs |
 | `solution_architecture` | design_coherence, technical_depth, integration_clarity, implementability | HLDs, API specs, data models, C4 diagrams | Solution architects, tech leads |
 | `ops` | operational_readiness, automation_coverage, reliability_design, security_posture | IaC configs, pipelines, runbooks, dashboards | SREs, platform engineers, DevOps |
@@ -26,7 +26,7 @@ Based on `domain_profile` in `state.json` or `spec.md`, load the matching domain
 | `domain_profile` | Skill Name | Relative Path |
 |-------------------|------------|---------------|
 | `software` | harness-sdlc | `../harness-sdlc/SKILL.md` |
-| `architecture` | harness-ea | `../harness-ea/SKILL.md` |
+| `enterprise_architecture` | harness-ea | `../harness-ea/SKILL.md` |
 | `business_analysis` | harness-ba | `../harness-ba/SKILL.md` |
 | `solution_architecture` | harness-sa | `../harness-sa/SKILL.md` |
 | `ops` | harness-ops | `../harness-ops/SKILL.md` |
@@ -69,7 +69,7 @@ Each phase is a separate harness run (`/init` -> `/run` -> `/release`). Each run
 | Skill | Domain | Profile | What it provides |
 |-------|--------|---------|-----------------|
 | `harness-sdlc` | Software Development | `software` | Methodology selection, testing strategy, build/runtime verification, evaluation criteria anchors |
-| `harness-ea` | Enterprise Architecture | `architecture` | Architecture methodology (TOGAF/Zachman/FEAF), deliverable verification, TOGAF phase gates, evaluation criteria anchors |
+| `harness-ea` | Enterprise Architecture | `enterprise_architecture` | Architecture methodology (TOGAF/Zachman/FEAF), deliverable verification, TOGAF phase gates, evaluation criteria anchors |
 | `harness-ba` | Business Analysis | `business_analysis` | BA methodology (Waterfall/Agile/Lean/Design Thinking/Six Sigma), requirements traceability, BRD verification, evaluation criteria anchors |
 | `harness-sa` | Solution Architecture | `solution_architecture` | SA methodology (C4/Arc42/4+1/DDD/Microservices), API design verification, NFR compliance, evaluation criteria anchors |
 | `harness-ops` | Deployment & Ops | `ops` | Ops methodology (GitOps/Platform Engineering/SRE/DevOps/IaC), deployment readiness, runbook verification, evaluation criteria anchors |
@@ -82,4 +82,4 @@ A project can declare a primary profile + optional secondary profile. The evalua
 
 ## Business Analysis Foundation
 
-The `source_requirement` field in `features.json` links features to original business needs. This is particularly relevant for `business_analysis`, `architecture`, and `solution_architecture` profiles where requirements traceability is a core evaluation criterion. Deliverables are classified as: primary, supporting, governance. The stakeholder lens influences how the evaluator grades quality.
+The `source_requirement` field in `features.json` links features to original business needs. This is particularly relevant for `business_analysis`, `enterprise_architecture`, and `solution_architecture` profiles where requirements traceability is a core evaluation criterion. Deliverables are classified as: primary, supporting, governance. The stakeholder lens influences how the evaluator grades quality.

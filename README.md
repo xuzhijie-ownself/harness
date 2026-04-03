@@ -212,7 +212,7 @@ The harness supports multiple domains through a profile system. Each profile def
 | Profile | Criteria | Stakeholder Lens |
 |---------|----------|-----------------|
 | `software` (default) | product_depth, functionality, visual_design, code_quality | End users, developers |
-| `architecture` | coherence, standards_compliance, stakeholder_coverage, feasibility | Enterprise architects, CTO |
+| `enterprise_architecture` | coherence, standards_compliance, stakeholder_coverage, feasibility | Enterprise architects, CTO |
 | `business_analysis` | completeness, traceability, stakeholder_alignment, feasibility | Business owners, PMs |
 | `solution_architecture` | design_coherence, technical_depth, integration_clarity, implementability | Solution architects, dev leads |
 | `ops` | operational_readiness, automation_coverage, reliability_design, security_posture | SREs, platform engineers |
@@ -229,7 +229,7 @@ The SDLC suite delegates domain-specific knowledge to companion skills:
 | Skill | Domain | Profile | What it provides |
 |-------|--------|---------|-----------------|
 | `harness-sdlc` | Software Development | `software` | Methodology selection, testing strategy, build/runtime verification, evaluation criteria anchors |
-| `harness-ea` | Enterprise Architecture | `architecture` | Architecture methodology (TOGAF/Zachman/FEAF), deliverable verification, TOGAF phase gates, evaluation criteria anchors |
+| `harness-ea` | Enterprise Architecture | `enterprise_architecture` | Architecture methodology (TOGAF/Zachman/FEAF), deliverable verification, TOGAF phase gates, evaluation criteria anchors |
 | `harness-ba` | Business Analysis | `business_analysis` | BA methodology (Waterfall/Agile/Lean/Design Thinking/Six Sigma), requirements traceability, BRD verification, evaluation criteria anchors |
 | `harness-sa` | Solution Architecture | `solution_architecture` | SA methodology (C4/Arc42/4+1/DDD/Microservices), API design verification, NFR compliance, evaluation criteria anchors |
 | `harness-ops` | Deployment & Ops | `ops` | Ops methodology (GitOps/Platform Engineering/SRE/DevOps/IaC), deployment readiness, runbook verification, evaluation criteria anchors |

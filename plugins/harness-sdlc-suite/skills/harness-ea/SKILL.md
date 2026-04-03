@@ -137,7 +137,7 @@ Since EA produces documents, not running software, "build verification" means:
 
 ## Section 5: Evaluation Criteria (Architecture Profile)
 
-The 4 primary criteria for the `architecture` domain profile. The evaluator MUST use these anchors for consistent scoring across sprints.
+The 4 primary criteria for the `enterprise_architecture` domain profile. The evaluator MUST use these anchors for consistent scoring across sprints.
 
 ### coherence (0-5)
 

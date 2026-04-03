@@ -146,7 +146,7 @@ Field reference:
 - `context_reset_threshold`: Number of rounds before coordinator pauses for context refresh. Default: 3.
 - `rounds_since_reset`: Counter incremented each round; triggers context refresh handoff at `context_reset_threshold`.
 - `current_sprint_phase`: One of `idle`, `contract`, `implementation`, `evaluation`. Used for sprint resume.
-- `domain_profile`: Primary domain profile. One of `software` (default), `architecture`, `tender`, `research`, `content`, `business_analysis`, `custom`. Determines the 4 primary evaluation criteria.
+- `domain_profile`: Primary domain profile. One of `software` (default), `enterprise_architecture`, `tender`, `research`, `content`, `business_analysis`, `custom`. Determines the 4 primary evaluation criteria.
 - `secondary_profile`: Optional secondary domain profile for cross-domain projects. Empty string if not used.
 - `methodology`: One of `agile` (default), `waterfall`, `scrum`, `kanban`. Set during `/init`.
 - `errors`: Array of `{ "round", "agent", "error", "timestamp" }` objects logged on agent spawn failures.
