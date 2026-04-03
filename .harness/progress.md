@@ -43,3 +43,5 @@ Current state (v1.0.0 monolith, prior refactoring run complete):
 - The coordinator should begin Sprint 1 targeting F-001 + F-002: create the harness-sdlc-suite plugin structure and move the 5 domain skills, then create the index skill SKILL.md.
 
 rounds_since_reset: 1 / 4
+
+rounds_since_reset: 2 / 4

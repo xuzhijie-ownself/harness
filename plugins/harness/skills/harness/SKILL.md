@@ -57,13 +57,11 @@ Whenever this skill is activated (by any agent, command, or direct invocation):
 
 ### Domain Skill Routing
 Based on `domain_profile` in state.json or spec.md:
-- `software` -> also read `harness-sdlc` skill
-- `architecture` -> also read `harness-ea` skill
-- `business_analysis` -> also read `harness-ba` skill
-- `solution_architecture` -> also read `harness-sa` skill
-- `ops` -> also read `harness-ops` skill
+- If a domain skill suite is installed, read its index skill for profile-to-skill routing
 - `custom` -> read spec.md for custom criteria
 - If missing -> default to `software`
+
+Domain profiles are provided by domain skill suites (e.g., harness-sdlc-suite). See the installed suite's index skill for available profiles and routing.
 
 ### Integrity Invariants
 - features.json `passes` field only changed by evaluator evidence
@@ -185,13 +183,13 @@ If the run finishes in one sprint, the planner or coordinator should state why s
 
 ### Runtime Verification Requirement
 
-For software projects (`domain_profile: software`), the evaluator MUST read `skills/harness-sdlc/SKILL.md` for runtime verification procedures. Build-only verification (`npm run build` passing) is NOT sufficient — the evaluator must also:
-1. Verify database is initialized (detect ORM, run migrations)
+For projects with a runtime component, the evaluator MUST read the active domain skill for runtime verification procedures. Build-only verification (e.g., `npm run build` passing) is NOT sufficient — the evaluator must also:
+1. Verify any required data stores are initialized (detect ORM, run migrations)
 2. Verify the application starts without errors
-3. Verify at least one API endpoint responds successfully
-4. Verify health check passes
+3. Verify at least one endpoint or entry point responds successfully
+4. Verify health check passes (if applicable)
 
-The SingPost project demonstrated that 14 features can pass build verification while the app crashes on startup due to an uninitialized database. Runtime verification prevents this class of failures.
+Runtime verification prevents the class of failures where all features pass build verification while the app crashes on startup.
 
 ## Coordinator
 
@@ -253,7 +251,7 @@ The releaser creates an annotated git tag for each release: `git tag -a vX.Y.Z -
 
 After creating the release commit and git tag, the releaser syncs the new version into all plugin manifest files:
 
-1. `.claude-plugin/marketplace.json` -- update `plugins[0].version`
+1. `.claude-plugin/marketplace.json` -- update version in each plugin entry
 2. `plugins/harness/.claude-plugin/plugin.json` -- update `version`
 3. `.codex-plugin/plugin.json` -- update `version`
 
@@ -275,75 +273,17 @@ Features have a `maturity` field alongside the binary `passes` flag. Maturity ad
 | `polished` | Production-ready quality | All criteria >= 4 |
 | `accepted` | Stakeholder sign-off | Set manually by user/stakeholder, not by evaluator |
 
-The evaluator sets maturity automatically based on scores after grading. The `accepted` level is never set by the evaluator — it requires explicit stakeholder sign-off, which is particularly relevant for architecture, tender, and business_analysis domain profiles.
+The evaluator sets maturity automatically based on scores after grading. The `accepted` level is never set by the evaluator — it requires explicit stakeholder sign-off, which is particularly relevant for domain profiles where stakeholder approval is a core evaluation criterion.
 
 ## Domain Profiles
 
-The harness supports multiple domains through a profile system. Each profile defines 4 primary evaluation criteria, artifact taxonomy, verification methods, and stakeholder lens.
+The harness supports multiple domains through a profile system. Each domain declares 4 primary evaluation criteria, artifact taxonomy, verification methods, and stakeholder lens.
 
-| Profile | Criteria | Artifact Types | Stakeholder Lens |
-|---------|----------|---------------|-----------------|
-| `software` (default) | product_depth, functionality, visual_design, code_quality | Code, tests, configs, UI | End users, developers |
-| `architecture` | coherence, standards_compliance, stakeholder_coverage, feasibility | ADRs, capability maps, diagrams | Enterprise architects, CTO |
-| `tender` | requirements_coverage, regulatory_alignment, cost_justification, risk_mitigation | Spec docs, compliance matrices | Procurement, legal |
-| `research` | rigor, novelty, reproducibility, clarity | Papers, notebooks, citations | Reviewers, peers |
-| `content` | clarity, engagement, accuracy, brand_alignment | Articles, scripts, briefs | Audience, editors |
-| `business_analysis` | completeness, traceability, stakeholder_alignment, feasibility | BRDs, use cases, process maps | Business owners, PMs |
-| `solution_architecture` | design_coherence, technical_depth, integration_clarity, implementability | HLDs, API specs, data models, C4 diagrams | Solution architects, tech leads |
-| `ops` | operational_readiness, automation_coverage, reliability_design, security_posture | IaC configs, pipelines, runbooks, dashboards | SREs, platform engineers, DevOps |
-| `custom` | User-defined (4 criteria in spec) | User-defined | User-defined |
+Domain profiles are provided by domain skill suites (e.g., harness-sdlc-suite). See the installed suite's index skill for available profiles and routing.
 
-### Cross-Domain Composability
-A project can declare a primary profile + optional secondary profile. The evaluator scores both sets of criteria.
+The `custom` profile allows any project to define its own 4 criteria inline in `spec.md` without requiring a domain skill suite. This makes the core harness fully self-contained for projects that do not fit a predefined domain.
 
-### Business Analysis Foundation
-- `source_requirement` field in features.json links features to original business needs
-- Deliverables classified as: primary, supporting, governance
-- Stakeholder lens influences how the evaluator grades quality
-
-### Domain Skill References
-
-When `domain_profile` is `software`, the evaluator and generator should read the `harness-sdlc` domain skill at `skills/harness-sdlc/SKILL.md` for:
-- Tech-stack-specific verification procedures
-- ORM/database detection and migration commands
-- Server framework detection and startup verification
-- Test framework detection and execution
-- Evaluation criteria anchors with concrete 0-5 descriptions
-- Sprint contract checklist templates
-
-The domain skill provides the HOW; the harness provides the WHEN.
-
-When `domain_profile` is `architecture`, the evaluator and generator should read the `harness-ea` domain skill at `skills/harness-ea/SKILL.md` for:
-- Architecture framework selection (TOGAF, Zachman, FEAF, ArchiMate, SAFe, Lean EA)
-- Architecture development methodology (ADR-First, Capability-First, Viewpoint-Driven)
-- Deliverable verification procedures (document structure, cross-references, notation)
-- TOGAF phase gate checks with required deliverables
-- Evaluation criteria anchors (coherence, standards_compliance, stakeholder_coverage, feasibility)
-- Sprint contract checklist templates for each TOGAF phase
-
-When `domain_profile` is `business_analysis`, the evaluator and generator should read the `harness-ba` domain skill at `skills/harness-ba/SKILL.md` for:
-- BA methodology selection (Waterfall BA, Agile BA, Lean BA, Design Thinking BA, Six Sigma BA)
-- Development methodology (Requirements-First, User-Story-First, Process-First, Data-First, Stakeholder-First)
-- Deliverable verification procedures (document structure, cross-references, traceability)
-- BRD section gate checks with required content
-- Evaluation criteria anchors (completeness, traceability, stakeholder_alignment, feasibility)
-- Sprint contract checklist templates for BA phases
-
-When `domain_profile` is `solution_architecture`, the evaluator and generator should read the `harness-sa` domain skill at `skills/harness-sa/SKILL.md` for:
-- SA framework selection (C4 Model, Arc42, 4+1 View, Domain-Driven Design, Microservices Patterns)
-- Development methodology (API-First, Component-First, Data-First, Event-First, Contract-First)
-- Deliverable verification procedures (API spec linting, component boundary checks, data model consistency)
-- C4 level gate checks and Arc42 section gate checks
-- Evaluation criteria anchors (design_coherence, technical_depth, integration_clarity, implementability)
-- Sprint contract checklist templates for SA phases
-
-When `domain_profile` is `ops`, the evaluator and generator should read the `harness-ops` domain skill at `skills/harness-ops/SKILL.md` for:
-- Ops methodology selection (GitOps, Platform Engineering, SRE, DevOps, Infrastructure-as-Code)
-- Development methodology (Pipeline-First, Infrastructure-First, Monitoring-First, Runbook-First, Security-First)
-- Deliverable verification procedures (IaC linting, pipeline syntax validation, secret scanning)
-- Pipeline stage gate checks with required stages
-- Evaluation criteria anchors (operational_readiness, automation_coverage, reliability_design, security_posture)
-- Sprint contract checklist templates for ops phases
+A project can declare a primary profile + optional secondary profile for cross-domain work. The evaluator scores both sets of criteria when a secondary profile is active.
 
 ## Quantified Evaluation
 
