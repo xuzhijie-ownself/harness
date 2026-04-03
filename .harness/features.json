@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "initializer-1",
+  "updated_by": "evaluator-1",
   "features": [
     {
       "id": "F-001",
@@ -9,10 +9,10 @@
       "description": "Atomic rename of the Authenticity Gate dimension 'coherence' to 'internal_consistency' in SKILL.md, patterns.md, agents/generator.md, roles/generator.md, agents/evaluator.md, and roles/evaluator.md. Includes removing 3 disambiguation notes that are no longer needed after the rename.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "completed",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "spec.md Shipped Scope - v0.9.1 patch rename",
       "steps": [
         "Verify all 6 target files exist in the plugin tree",
@@ -25,7 +25,9 @@
         "In roles/evaluator.md (~line 83): confirm 'coherence' renamed to 'internal_consistency' and disambiguation instruction at ~line 89 removed",
         "Grep all 6 files for 'coherence' in dimension-name contexts and confirm zero hits (prose references to the concept are acceptable)"
       ],
-      "evidence": [],
+      "evidence": [
+        "Round 1 evaluation: PASS. All 6 files renamed, 3 disambiguation notes removed. Grep verification: zero dimension-name hits for coherence, 7 hits for internal_consistency across 6 files."
+      ],
       "notes": "All edits are text substitutions. No logic changes, no new sections. Domain skill files (harness-ea, harness-sdlc, etc.) must NOT be touched."
     }
   ]
