@@ -3,65 +3,76 @@
 ## Metadata
 - Role: initializer
 - Agent: initializer-1
-- Inputs: spec.md, features.json (prior cycle), release.json (v2.2.0)
+- Inputs: spec.md, features.json (prior cycle v2.2.1), release.json, harness-companion.mjs, lib/*.mjs
 - Status: accepted
 
 ## Project Overview
 
-This harness cycle adds script automation to the harness core framework. The project builds `harness-companion.mjs` -- a zero-dependency Node.js ES module script with subcommands that agents call via Bash instead of performing mechanical state management inline. It also fixes a process gap in the evaluator's codex review scope.
+Harness v2.2.2 is an observability and hardening cycle for the harness-companion script layer introduced in v2.2.1. That release delivered 7 subcommands and 5 lib modules with zero npm dependencies. This cycle builds on that foundation in four areas:
 
-Continuing from v2.2.0 (F-001 through F-010 shipped). Feature IDs F-011 through F-014.
+1. Script hardening -- JSDoc, runtime validation, circular dependency detection, error handling standardization, git escaping fixes.
+2. Feature-update subcommand -- CLI-driven feature mutation to eliminate manual JSON editing.
+3. Per-step metrics and structured event logging -- file change counts, evaluation scores in cost_tracking, JSONL event log, metrics-summary and log-event subcommands.
+4. Postmortem command and hook integration -- /harness:postmortem command plus hooks wiring for automatic event logging.
+
+Continuing from v2.2.1 (F-011 through F-014 shipped). Feature IDs F-015 through F-020.
 
 ## Baseline Verification
 
 Before starting, verify the following:
 
-1. Node.js is available: `node --version` (confirmed v24.14.0)
-2. The target scripts directory does not yet exist: `plugins/harness/scripts/` (will be created in Sprint 1)
-3. The evaluator role file exists: `plugins/harness/skills/harness/roles/evaluator.md`
-4. hooks.json exists at project root level for the harness plugin
-5. session.md and coordinator.md exist under roles/
+1. Node.js is available: `node --version`
+2. Scripts directory exists: `ls plugins/harness/scripts/harness-companion.mjs`
+3. All 5 lib modules exist: `ls plugins/harness/scripts/lib/`
+4. Existing subcommands respond: `node plugins/harness/scripts/harness-companion.mjs --help`
+5. Harness state files exist: `ls .harness/features.json .harness/state.json`
 
 ## Setup
 
-No dev server or build process is needed. This project creates Node.js ES module scripts and modifies Markdown role documentation.
+No dev server or build process is needed. This project modifies Node.js ES module scripts and Markdown role/command documentation. Zero npm dependencies are maintained throughout.
 
 To verify the baseline:
 
 ```bash
 node --version
-ls plugins/harness/skills/harness/roles/evaluator.md
-ls plugins/harness/skills/harness/roles/coordinator.md
-ls plugins/harness/skills/harness/roles/session.md
+node plugins/harness/scripts/harness-companion.mjs --help
+ls plugins/harness/scripts/lib/
+ls .harness/features.json .harness/state.json
 ```
 
-## Features (4 total)
+## Features (6 total)
 
-| ID | Title | Priority | Dependencies |
-|----|-------|----------|-------------|
-| F-011 | Fix evaluator codex scope | high | none |
-| F-012 | Build harness-companion.mjs entry point and lib modules | high | none |
-| F-013 | Wire scripts into hooks and update role docs | high | F-012 |
-| F-014 | End-to-end verification | medium | F-012, F-013 |
+| ID | Title | Priority | Dependencies | Sprint |
+|----|-------|----------|-------------|--------|
+| F-015 | Script hardening | high | none | 1 |
+| F-016 | Feature-update subcommand | high | F-015 | 1 |
+| F-017 | Per-step metrics recording | medium | F-015 | 2 |
+| F-018 | Structured event logging | medium | F-015 | 2 |
+| F-019 | Postmortem command | medium | F-017, F-018 | 3 |
+| F-020 | Hook integration for auto-logging | medium | F-018, F-019 | 4 |
 
-## Sprint Plan (2-3 sprints)
+## Sprint Plan (4 sprints)
 
-1. Sprint 1: F-011 + F-012 -- evaluator codex fix (small edit) + build all scripts (main deliverable). Grouped because F-011 is a single-file edit.
-2. Sprint 2: F-013 -- wire scripts into hooks.json, session.md, coordinator.md. Depends on F-012.
-3. Sprint 3 (if needed): F-014 -- end-to-end verification or rework from prior failures.
+1. Sprint 1: F-015 + F-016 -- Script hardening (JSDoc, validation, error handling, escaping) paired with feature-update subcommand. Both touch lib modules and the entry point. F-016 depends on standardized error handling from F-015.
+2. Sprint 2: F-017 + F-018 -- Per-step metrics paired with structured event logging. Both add new subcommands and lib code. F-018 creates events.mjs which F-017 metrics-summary can reference.
+3. Sprint 3: F-019 -- Postmortem command. New command + role file. Depends on metrics and events from F-017/F-018.
+4. Sprint 4: F-020 -- Hook integration. Wires log-event into hooks.json and role docs. Depends on F-018 and F-019.
 
 ## Technical Notes
 
-- Entry point: `plugins/harness/scripts/harness-companion.mjs`
-- Lib modules: `plugins/harness/scripts/lib/{state,features,git,artifacts,progress}.mjs`
-- All JSON writes use write-to-temp-then-rename for atomicity
-- Zero npm dependencies -- Node.js built-ins only (fs, path, child_process, url)
-- JSON to stdout, human-readable errors to stderr
-- Exit codes: 0 success, 1 user error, 2 system error
+- Entry point: `plugins/harness/scripts/harness-companion.mjs` -- gains 3 new subcommands (feature-update, metrics-summary, log-event), total 10
+- Existing lib modules (5): state.mjs, features.mjs, git.mjs, artifacts.mjs, progress.mjs -- all get JSDoc and targeted hardening
+- New lib module: `plugins/harness/scripts/lib/events.mjs` -- manages .harness/events.jsonl
+- New command file: `plugins/harness/commands/postmortem.md`
+- New role file: `plugins/harness/skills/harness/roles/postmortem.md`
+- Zero dependency constraint maintained throughout
+- cost_tracking schema extended with optional file_changes and evaluation_scores (backward compatible)
 
 ## Artifacts
 
-- `.harness/features.json` -- F-011 through F-014, all starting at passes: false
-- `.harness/progress.md` -- current state and next steps
-- `.harness/state.json` -- supervised mode, round 1, phase idle, 3 expected sprints
+- `.harness/features.json` -- F-015 through F-020, all starting at passes: false
+- `.harness/progress.md` -- current baseline and next steps
+- `.harness/state.json` -- continuous mode, round 1, phase idle, 4 expected sprints
 - `.harness/config.json` -- default harness configuration with use_codex: auto
+- `.harness/init.sh` -- baseline smoke test (bash)
+- `.harness/init.bat` -- baseline smoke test (Windows CMD)
