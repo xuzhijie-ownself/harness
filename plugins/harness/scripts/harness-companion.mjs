@@ -14,6 +14,8 @@ import { readState, writeState, setPhase, incrementRound, appendCost } from './l
 import { autoCommit } from './lib/git.mjs';
 import { validateArtifacts, cleanupSprints } from './lib/artifacts.mjs';
 import { appendProgress, updateTimestamp } from './lib/progress.mjs';
+import { collectMetrics, summarizeMetrics, recordMetrics, readMetrics } from './lib/metrics.mjs';
+import { logEvent, readEvents } from './lib/events.mjs';
 
 const SUBCOMMANDS = {
   'feature-select':     'Pick the next eligible feature (highest priority, passes=false, deps met)',
@@ -24,6 +26,9 @@ const SUBCOMMANDS = {
   'progress-append':    'Append to progress.md: --round <n> --feature <id> --status <s> [--scores <json>] | --timestamp-only',
   'check-stop':         'Check if all required features pass or failure streak exceeded',
   'cleanup-sprints':    'Remove old sprint files: --before-round <n>',
+  'metrics-summary':    'Aggregate metrics from all rounds in cost_tracking',
+  'log-event':          'Log a structured event: --type <type> [--round <n>] [--feature <id>] [--data <json>]',
+  'read-events':        'Read events from events.jsonl: [--type <filter>] [--since <iso-date>] [--round <n>]',
 };
 
 function printHelp() {
@@ -160,6 +165,41 @@ async function main() {
         throw new UserError('cleanup-sprints requires --before-round <n>');
       }
       const result = cleanupSprints(parseInt(flags['before-round'], 10));
+      out(result);
+      break;
+    }
+    case 'metrics-summary': {
+      const result = summarizeMetrics();
+      out(result);
+      break;
+    }
+    case 'log-event': {
+      if (!flags.type) {
+        throw new UserError('log-event requires --type <event_type>');
+      }
+      const eventParams = {
+        type: flags.type,
+      };
+      if (flags.round) eventParams.round = parseInt(flags.round, 10);
+      if (flags.feature) eventParams.feature_id = flags.feature;
+      if (flags.data) {
+        try {
+          eventParams.data = JSON.parse(flags.data);
+        } catch (e) {
+          throw new UserError(`--data must be valid JSON: ${e.message}`);
+        }
+      }
+      const result = logEvent(eventParams);
+      out(result);
+      break;
+    }
+    case 'read-events': {
+      const filter = {};
+      if (flags.type) filter.type = flags.type;
+      if (flags.since) filter.since = flags.since;
+      if (flags.round) filter.round = parseInt(flags.round, 10);
+      if (flags.feature) filter.feature_id = flags.feature;
+      const result = readEvents(Object.keys(filter).length > 0 ? filter : undefined);
       out(result);
       break;
     }

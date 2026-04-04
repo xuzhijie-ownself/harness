@@ -60,12 +60,12 @@
       "description": "New lib/metrics.mjs module with recordMetrics() and readMetrics(). Enhanced cost_tracking with file_changes and evaluation_scores. New metrics-summary subcommand for aggregated output.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [
         "F-015"
       ],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-017",
       "steps": [
         "Verify lib/metrics.mjs exports recordMetrics(), readMetrics(), and summarizeMetrics()",
@@ -85,12 +85,12 @@
       "description": "New lib/events.mjs with logEvent() and readEvents(). Append-only .harness/events.jsonl with typed events. New log-event and read-events subcommands.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [
         "F-015"
       ],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-018",
       "steps": [
         "Verify lib/events.mjs exports logEvent(type, payload) and readEvents(filter?)",
