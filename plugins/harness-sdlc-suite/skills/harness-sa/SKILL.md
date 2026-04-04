@@ -393,3 +393,635 @@ The evaluator should flag these common SA anti-patterns when grading:
 | **Missing Failure Modes** | Happy path designed but no error handling, retry, or degradation strategy | technical_depth: -1 | Require failure mode analysis |
 | **API Inconsistency** | Different naming conventions, error formats, or auth patterns across APIs | integration_clarity: -1 | Flag as integration risk |
 | **Data Ownership Vacuum** | Data entities with no clear owning service or shared mutable state | design_coherence: -1 | Require explicit data ownership |
+
+---
+
+## Section 11: Domain-Driven Design Specifics
+
+This section provides actionable DDD guidance for solution architects designing complex business domains. Use these templates during the Strategic Design and Tactical Design phases of a DDD-driven architecture.
+
+### Strategic Design
+
+Strategic design establishes the high-level structure of the domain by identifying bounded contexts and their relationships. Complete these steps before moving to tactical design.
+
+#### Bounded Context Identification Checklist
+
+Use this checklist when decomposing a domain into bounded contexts:
+
+- [ ] Identify distinct sub-domains by analyzing business capabilities and organizational boundaries
+- [ ] For each candidate context, verify it has its own ubiquitous language (same term has different meaning across contexts)
+- [ ] Confirm each context can be developed and deployed independently
+- [ ] Verify each context has a single team owner (or a clear ownership split rationale)
+- [ ] Check that no entity spans multiple contexts without an explicit mapping strategy
+- [ ] Document the context boundary with inputs, outputs, and invariants it protects
+- [ ] Validate with domain experts that context boundaries align with real business divisions
+
+#### Context Mapping Patterns
+
+Use the following patterns to define relationships between bounded contexts. Each pattern describes a different integration strategy depending on team dynamics, power relationships, and coupling tolerance.
+
+| Pattern | Description | When to Use | Team Dynamic |
+|---------|-------------|-------------|-------------|
+| Shared Kernel | Two contexts share a subset of the domain model; changes require agreement from both teams | Small, tightly collaborating teams working on overlapping functionality | Co-equal partnership, high trust |
+| Customer-Supplier | Upstream context (supplier) provides data or services; downstream context (customer) depends on it | Clear producer-consumer relationship with negotiable interface | Upstream accommodates downstream needs |
+| Conformist | Downstream context adopts the upstream model as-is without translation | Upstream team has no incentive or capacity to support downstream needs | Downstream adapts, no negotiation |
+| Anti-Corruption Layer | Downstream context translates the upstream model into its own domain language through an isolation layer | Upstream model is legacy, unstable, or conceptually misaligned with downstream needs | Downstream protects itself from external model pollution |
+| Open Host Service | Upstream context exposes a well-defined public API (protocol) that multiple consumers can use | Multiple downstream consumers with similar needs; upstream wants a single integration surface | Upstream publishes, many consume |
+| Published Language | Contexts communicate through a shared, documented data format (schema, standard, or specification) | Cross-organization integration, industry standards (EDI, FHIR, FIX) | Format-driven, decoupled teams |
+| Separate Ways | Contexts do not integrate at all; each solves the overlapping need independently | Cost of integration exceeds benefit; overlap is minor or temporary | No relationship, full independence |
+
+#### Context Map Template
+
+Document the full context map for a solution using this format:
+
+```
+Context Map: [Solution Name]
+
+[Context A] <-> [Context B] : Shared Kernel
+  - Shared elements: [list shared entities/value objects]
+  - Governance: [who approves changes to the shared kernel]
+
+[Context C] -> [Context D] : Customer-Supplier
+  - Upstream (Supplier): Context C
+  - Downstream (Customer): Context D
+  - Contract: [API spec or event schema reference]
+
+[Context E] -> [Context F] : Anti-Corruption Layer
+  - ACL Location: Context F inbound adapter
+  - Translation: [upstream model element] -> [downstream model element]
+```
+
+### Tactical Design
+
+Tactical design defines the internal structure of each bounded context. Use these templates to design entities, value objects, and aggregates within a single context.
+
+#### Entity vs Value Object Decision Table
+
+| Criterion | Entity | Value Object |
+|-----------|--------|-------------|
+| Identity | Has a unique, persistent identity (ID) that distinguishes it even when all attributes are identical | Defined entirely by its attributes; two instances with the same values are interchangeable |
+| Lifecycle | Created, modified, persisted, and eventually archived or deleted | Immutable once created; replaced rather than modified |
+| Equality | Compared by identity (ID), not by attribute values | Compared by structural equality (all attribute values match) |
+| Examples | Customer, Order, Account, Product (catalog item) | Money (amount + currency), Address, DateRange, EmailAddress, Coordinates |
+| Persistence | Own table/document with a primary key | Embedded within an entity or stored as a composite column |
+| Mutability | Attributes change over time; state transitions are meaningful | No state changes; create a new instance instead |
+
+**Decision rule:** If the concept must be tracked over time and distinguished from other instances with the same attributes, it is an Entity. Otherwise, prefer a Value Object for simplicity and immutability.
+
+#### Aggregate Design Rules
+
+An aggregate is a cluster of entities and value objects with a single root entity that enforces invariants. Follow these rules when designing aggregates:
+
+1. **Single responsibility for invariants**: Each aggregate protects one consistency boundary. If an invariant spans two aggregates, reconsider the boundary.
+2. **Reference by identity**: Aggregates reference other aggregates by ID, not by direct object reference. This prevents transactional coupling.
+3. **Small aggregates**: Prefer small aggregates (one root entity + value objects). Large aggregates cause contention and performance issues.
+4. **Eventual consistency between aggregates**: Use domain events to synchronize state across aggregate boundaries. Only enforce immediate consistency within a single aggregate.
+5. **Root entity is the sole entry point**: All external access goes through the aggregate root. Child entities and value objects are not directly accessible from outside.
+
+| Aggregate Component | Role | Access Rule |
+|--------------------|------|-------------|
+| Aggregate Root (Entity) | Entry point; enforces all invariants; controls lifecycle of children | Directly accessible by repositories and application services |
+| Child Entity | Exists only within the aggregate; has local identity (unique within the aggregate, not globally) | Accessed only through the aggregate root |
+| Value Object | Describes attributes of the root or child entities; immutable | Accessed only through the aggregate root |
+
+#### Domain Service vs Application Service
+
+| Aspect | Domain Service | Application Service |
+|--------|---------------|-------------------|
+| Purpose | Encapsulates domain logic that does not belong to a single entity or value object | Orchestrates use cases by coordinating domain objects, repositories, and infrastructure |
+| Domain knowledge | Contains business rules and domain logic | Contains no business rules; delegates to domain layer |
+| Dependencies | Other domain objects (entities, value objects, domain events) | Domain services, repositories, external service adapters |
+| Example | PricingService.calculateDiscount(order, customer) | PlaceOrderUseCase.execute(command) -- coordinates Order aggregate, PricingService, PaymentGateway |
+| Layer | Domain layer | Application layer |
+
+### Ubiquitous Language Glossary
+
+Maintain a glossary per bounded context to ensure all team members (developers, domain experts, product owners) use the same terms with the same meaning.
+
+| Term | Definition | Bounded Context | Examples | Anti-Examples |
+|------|-----------|----------------|----------|--------------|
+| [Term] | [Precise definition as used within this context] | [Context name] | [Correct usage examples] | [Common misuses or confusions with terms from other contexts] |
+
+**Glossary rules:**
+- One entry per term per context. The same word in different contexts gets separate entries.
+- Definitions must be validated by a domain expert, not invented by developers.
+- Anti-examples column prevents drift by documenting how the term is misused or confused.
+- Review the glossary at every sprint boundary; remove terms that are no longer used.
+
+---
+
+## Section 12: API Contract Templates
+
+This section provides starter templates for API specifications. Use these when a sprint contract requires API design deliverables.
+
+### OpenAPI 3.1 Starter Skeleton
+
+The following is a minimal but complete OpenAPI 3.1 specification that a generator can copy and customize. It includes standard error responses, pagination, and a bearer auth security scheme.
+
+```yaml
+openapi: "3.1.0"
+info:
+  title: "[Service Name] API"
+  version: "1.0.0"
+  description: "[Brief description of what this API provides]"
+  contact:
+    name: "[Team Name]"
+    email: "[team-email@example.com]"
+
+servers:
+  - url: https://api.example.com/v1
+    description: Production
+  - url: https://api.staging.example.com/v1
+    description: Staging
+
+security:
+  - bearerAuth: []
+
+paths:
+  /resources:
+    get:
+      summary: List resources
+      operationId: listResources
+      tags:
+        - Resources
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [created_at, updated_at, name]
+            default: created_at
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    post:
+      summary: Create a resource
+      operationId: createResource
+      tags:
+        - Resources
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateResourceRequest"
+      responses:
+        "201":
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "422":
+          $ref: "#/components/responses/ValidationError"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /resources/{resource_id}:
+    get:
+      summary: Get a resource by ID
+      operationId: getResource
+      tags:
+        - Resources
+      parameters:
+        - name: resource_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Resource:
+      type: object
+      required: [id, name, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 2000
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CreateResourceRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 2000
+
+    ResourceListResponse:
+      type: object
+      required: [data, pagination]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Resource"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+
+    Pagination:
+      type: object
+      required: [page, page_size, total_items, total_pages]
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total_items:
+          type: integer
+        total_pages:
+          type: integer
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code
+            message:
+              type: string
+              description: Human-readable error description
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                  reason:
+                    type: string
+            request_id:
+              type: string
+              format: uuid
+
+  responses:
+    BadRequest:
+      description: Bad request -- malformed syntax or missing required fields
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Unauthorized:
+      description: Authentication required or token invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    ValidationError:
+      description: Request body failed validation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+```
+
+### AsyncAPI for Event-Driven Systems
+
+Use this AsyncAPI 3.0 skeleton when designing event-driven interfaces between bounded contexts or microservices.
+
+```yaml
+asyncapi: "3.0.0"
+info:
+  title: "[Service Name] Events"
+  version: "1.0.0"
+  description: "[Brief description of the events this service produces or consumes]"
+
+defaultContentType: application/json
+
+channels:
+  resourceCreated:
+    address: "events.resources.created"
+    description: Published when a new resource is created
+    messages:
+      resourceCreatedMessage:
+        $ref: "#/components/messages/ResourceCreatedEvent"
+
+  resourceUpdated:
+    address: "events.resources.updated"
+    description: Published when a resource is modified
+    messages:
+      resourceUpdatedMessage:
+        $ref: "#/components/messages/ResourceUpdatedEvent"
+
+operations:
+  publishResourceCreated:
+    action: send
+    channel:
+      $ref: "#/channels/resourceCreated"
+    summary: Publish a resource-created event
+    messages:
+      - $ref: "#/channels/resourceCreated/messages/resourceCreatedMessage"
+
+  publishResourceUpdated:
+    action: send
+    channel:
+      $ref: "#/channels/resourceUpdated"
+    summary: Publish a resource-updated event
+    messages:
+      - $ref: "#/channels/resourceUpdated/messages/resourceUpdatedMessage"
+
+components:
+  messages:
+    ResourceCreatedEvent:
+      name: ResourceCreatedEvent
+      title: Resource Created
+      contentType: application/json
+      headers:
+        type: object
+        properties:
+          event_id:
+            type: string
+            format: uuid
+          event_type:
+            type: string
+            const: "resource.created"
+          timestamp:
+            type: string
+            format: date-time
+          correlation_id:
+            type: string
+            format: uuid
+      payload:
+        type: object
+        required: [resource_id, name, created_at]
+        properties:
+          resource_id:
+            type: string
+            format: uuid
+          name:
+            type: string
+          created_at:
+            type: string
+            format: date-time
+
+    ResourceUpdatedEvent:
+      name: ResourceUpdatedEvent
+      title: Resource Updated
+      contentType: application/json
+      headers:
+        type: object
+        properties:
+          event_id:
+            type: string
+            format: uuid
+          event_type:
+            type: string
+            const: "resource.updated"
+          timestamp:
+            type: string
+            format: date-time
+          correlation_id:
+            type: string
+            format: uuid
+      payload:
+        type: object
+        required: [resource_id, changed_fields, updated_at]
+        properties:
+          resource_id:
+            type: string
+            format: uuid
+          changed_fields:
+            type: array
+            items:
+              type: string
+          updated_at:
+            type: string
+            format: date-time
+```
+
+### API Versioning Strategy
+
+Choose a versioning approach based on the integration context. The table below compares the three common strategies.
+
+| Strategy | Mechanism | When to Use | Advantages | Disadvantages |
+|----------|-----------|-------------|-----------|--------------|
+| URL Path | `/v1/resources`, `/v2/resources` | Public APIs, consumer-facing services, APIs with infrequent breaking changes | Simple to understand, easy to route, clear in documentation and logs | URL pollution, harder to sunset old versions, clients must update URLs |
+| Header | `Accept: application/vnd.api.v2+json` or custom `API-Version: 2` | Internal APIs, APIs where URL stability matters, content-negotiation-aware clients | Clean URLs, supports content negotiation, version hidden from casual inspection | Less discoverable, requires header-aware tooling, harder to test in browser |
+| Query Parameter | `/resources?version=2` | Transitional versioning, quick experiments, APIs where header support is limited | Easy to add without URL changes, simple for testing | Caching complications (query string affects cache keys), less conventional |
+
+**Recommended defaults:**
+- **Public APIs**: URL path versioning (simplest for external consumers)
+- **Internal service-to-service**: Header versioning (cleaner, service meshes handle headers well)
+- **Experimental or transitional**: Query parameter (low-effort, easy to remove)
+
+#### Deprecation Policy Template
+
+| Element | Policy |
+|---------|--------|
+| Deprecation notice period | Minimum [N] months before removal |
+| Communication channel | Changelog entry, `Sunset` HTTP header on deprecated endpoints, API portal banner |
+| Sunset header format | `Sunset: Sat, 01 Jan 2028 00:00:00 GMT` (RFC 7231 date) |
+| Migration guide | Published before deprecation notice; includes before/after examples |
+| Monitoring | Track usage of deprecated endpoints; alert if usage exceeds threshold after sunset date |
+| Removal criteria | Zero traffic for [N] consecutive days after sunset date, or explicit stakeholder sign-off |
+
+#### Breaking vs Non-Breaking Change Classification
+
+| Change Type | Classification | Action Required |
+|-------------|---------------|----------------|
+| Add optional field to response | Non-breaking | No version bump; document in changelog |
+| Add optional query parameter | Non-breaking | No version bump; document in changelog |
+| Add new endpoint | Non-breaking | No version bump; document in changelog |
+| Remove field from response | Breaking | New version required |
+| Rename field | Breaking | New version required |
+| Change field type | Breaking | New version required |
+| Add required field to request | Breaking | New version required |
+| Change URL structure | Breaking | New version required |
+| Change authentication method | Breaking | New version required |
+| Change error response format | Breaking | New version required |
+
+---
+
+## Section 13: Threat Modeling
+
+This section provides a structured approach to identifying and prioritizing security threats during solution architecture design. Use these templates when a sprint contract requires threat analysis deliverables.
+
+### STRIDE Analysis Template
+
+STRIDE is a threat classification model developed at Microsoft. Each category represents a distinct class of security threat. Complete one row per identified threat.
+
+| Threat Category | Description | Affected Component | Likelihood (1-5) | Impact (1-5) | Risk Score | Mitigation |
+|----------------|-------------|-------------------|-------------------|---------------|------------|-----------|
+| **Spoofing** | Attacker impersonates a legitimate user, service, or system component | [Component name] | [1-5] | [1-5] | [L x I] | [Specific countermeasure] |
+| **Tampering** | Attacker modifies data in transit, at rest, or in processing to alter system behavior | [Component name] | [1-5] | [1-5] | [L x I] | [Specific countermeasure] |
+| **Repudiation** | Actor denies performing an action and the system cannot prove otherwise | [Component name] | [1-5] | [1-5] | [L x I] | [Specific countermeasure] |
+| **Information Disclosure** | Sensitive data is exposed to unauthorized parties through leaks, logs, or side channels | [Component name] | [1-5] | [1-5] | [L x I] | [Specific countermeasure] |
+| **Denial of Service** | Attacker degrades or prevents legitimate access to the system through resource exhaustion or abuse | [Component name] | [1-5] | [1-5] | [L x I] | [Specific countermeasure] |
+| **Elevation of Privilege** | Attacker gains higher access rights than authorized, bypassing access controls | [Component name] | [1-5] | [1-5] | [L x I] | [Specific countermeasure] |
+
+**How to use this template:**
+1. Draw or reference the system's data flow diagram (DFD) showing trust boundaries
+2. For each component that crosses a trust boundary, enumerate threats in each STRIDE category
+3. Score likelihood and impact independently, then calculate the risk score
+4. Prioritize mitigations by risk score (highest first)
+5. Record mitigations as architecture decisions (ADRs) or backlog items
+
+### Risk Scoring Matrix
+
+Risk Score = Likelihood x Impact. Use this matrix to classify threats.
+
+| | Impact 1 (Negligible) | Impact 2 (Minor) | Impact 3 (Moderate) | Impact 4 (Major) | Impact 5 (Severe) |
+|---|---|---|---|---|---|
+| **Likelihood 5 (Almost Certain)** | 5 - Medium | 10 - High | 15 - Critical | 20 - Critical | 25 - Critical |
+| **Likelihood 4 (Likely)** | 4 - Low | 8 - Medium | 12 - High | 16 - Critical | 20 - Critical |
+| **Likelihood 3 (Possible)** | 3 - Low | 6 - Medium | 9 - High | 12 - High | 15 - Critical |
+| **Likelihood 2 (Unlikely)** | 2 - Low | 4 - Low | 6 - Medium | 8 - Medium | 10 - High |
+| **Likelihood 1 (Rare)** | 1 - Low | 2 - Low | 3 - Low | 4 - Low | 5 - Medium |
+
+#### Risk Classification Thresholds
+
+| Classification | Score Range | Required Action |
+|---------------|-------------|----------------|
+| Critical | 15-25 | Must mitigate before deployment; architecture change required |
+| High | 9-14 | Must mitigate before production release; document accepted residual risk |
+| Medium | 5-8 | Should mitigate; acceptable to defer with documented rationale and timeline |
+| Low | 1-4 | Monitor and review; mitigate opportunistically |
+
+### Threat Matrix Summary Format
+
+Use this summary table to present the overall threat landscape to stakeholders after completing the STRIDE analysis.
+
+| Component | Spoofing | Tampering | Repudiation | Info Disclosure | DoS | Elevation | Highest Risk |
+|-----------|----------|-----------|-------------|----------------|-----|-----------|-------------|
+| [Component A] | [Risk Score] | [Risk Score] | [Risk Score] | [Risk Score] | [Risk Score] | [Risk Score] | [Max Score] |
+| [Component B] | [Risk Score] | [Risk Score] | [Risk Score] | [Risk Score] | [Risk Score] | [Risk Score] | [Max Score] |
+
+---
+
+## Section 14: Capacity Modeling Template
+
+This section provides templates for estimating resource requirements and defining scaling thresholds. Use these when a sprint contract requires capacity planning deliverables.
+
+### Resource Estimation Table
+
+Estimate resource needs per component. Fill in current load from measurements; project peak load from traffic analysis or business growth assumptions.
+
+| Component | Metric | Current Load | Peak Load | Growth Rate (monthly) | Target Capacity | Headroom |
+|-----------|--------|-------------|-----------|----------------------|----------------|----------|
+| [API Gateway] | Requests/sec | [measured] | [projected] | [%] | [provisioned] | [% above peak] |
+| [Application Tier] | CPU cores | [measured] | [projected] | [%] | [provisioned] | [% above peak] |
+| [Application Tier] | Memory (GB) | [measured] | [projected] | [%] | [provisioned] | [% above peak] |
+| [Database] | Connections | [measured] | [projected] | [%] | [provisioned] | [% above peak] |
+| [Database] | Storage (GB) | [measured] | [projected] | [%] | [provisioned] | [% above peak] |
+| [Cache Layer] | Hit rate (%) | [measured] | [target] | N/A | [provisioned] | N/A |
+| [Message Queue] | Messages/sec | [measured] | [projected] | [%] | [provisioned] | [% above peak] |
+| [Network] | Bandwidth (Mbps) | [measured] | [projected] | [%] | [provisioned] | [% above peak] |
+
+**Headroom guidance:** Maintain a minimum of 30% headroom above projected peak load. For databases and stateful services, maintain 50% headroom to accommodate growth between scaling events.
+
+### Scaling Thresholds and Triggers
+
+Define the thresholds at which scaling actions are triggered. Each threshold should have both a warning level (alert and prepare) and a critical level (act immediately).
+
+| Resource | Metric | Warning Threshold | Critical Threshold | Scaling Action | Cooldown Period |
+|----------|--------|------------------|-------------------|----------------|----------------|
+| [Compute] | CPU utilization | 60% sustained 5 min | 80% sustained 2 min | Add [N] instances (horizontal) | 5 minutes |
+| [Compute] | Memory utilization | 70% sustained 5 min | 85% sustained 2 min | Add [N] instances (horizontal) | 5 minutes |
+| [Database] | Connection pool usage | 70% of max | 90% of max | Increase pool size or add read replica | 15 minutes |
+| [Database] | Storage usage | 75% of provisioned | 90% of provisioned | Expand storage volume | N/A (manual) |
+| [Queue] | Queue depth | [N] messages pending | [N x 3] messages pending | Add [N] consumers | 3 minutes |
+| [Network] | Bandwidth utilization | 60% of provisioned | 80% of provisioned | Upgrade bandwidth tier or add CDN | N/A (manual) |
+
+### Horizontal vs Vertical Scaling Decision Criteria
+
+| Factor | Horizontal (scale out) | Vertical (scale up) |
+|--------|----------------------|-------------------|
+| Application architecture | Stateless services, shared-nothing design | Stateful services, single-instance databases |
+| Cost curve | Linear cost increase; cost-efficient at scale | Exponential cost increase at upper tiers |
+| Failure impact | Loss of one instance is tolerable; others absorb load | Loss of the single instance is total failure |
+| Scaling speed | Seconds to minutes (add instances to pool) | Minutes to hours (resize requires restart) |
+| Upper bound | Limited by load balancer and coordination overhead | Limited by largest available instance type |
+| Preferred for | Web servers, API gateways, workers, cache nodes | Databases (primary), in-memory stores, legacy applications |
+
+### Load Projection Template
+
+Use this table to project load growth and estimate when scaling actions will be needed.
+
+| Month | Projected Users | Projected Requests/sec | Compute Needed | Storage Needed | Scaling Event Required |
+|-------|----------------|----------------------|----------------|---------------|----------------------|
+| Current | [N] | [N] | [N instances x size] | [N GB] | Baseline |
+| +3 months | [N x growth] | [N x growth] | [estimate] | [estimate] | [Yes/No -- describe] |
+| +6 months | [N x growth] | [N x growth] | [estimate] | [estimate] | [Yes/No -- describe] |
+| +12 months | [N x growth] | [N x growth] | [estimate] | [estimate] | [Yes/No -- describe] |
+
+**Cost estimation note:** For each scaling event row, include an estimated monthly cost delta so stakeholders can budget for infrastructure growth alongside feature development.
