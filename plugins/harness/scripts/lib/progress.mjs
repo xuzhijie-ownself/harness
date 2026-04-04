@@ -1,0 +1,43 @@
+/**
+ * progress.mjs -- structured progress.md append.
+ * Zero npm dependencies.
+ */
+
+import { readFileSync, writeFileSync, renameSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+function progressPath() {
+  return join(process.cwd(), '.harness', 'progress.md');
+}
+
+export function appendProgress({ round, featureId, status, scores }) {
+  const target = progressPath();
+
+  if (!existsSync(target)) {
+    const err = new Error('.harness/progress.md does not exist.');
+    err.name = 'UserError';
+    throw err;
+  }
+
+  const existing = readFileSync(target, 'utf8');
+
+  const scoreLines = Object.entries(scores || {})
+    .map(([key, val]) => `- ${key}: ${val}`)
+    .join('\n');
+
+  const timestamp = new Date().toISOString();
+  const entry = [
+    '',
+    `## Round ${round} (${featureId}) -- ${status.toUpperCase()}`,
+    `- Timestamp: ${timestamp}`,
+    scoreLines || '- (no scores provided)',
+    '',
+  ].join('\n');
+
+  const updated = existing.trimEnd() + '\n' + entry;
+  const tmp = target + '.tmp';
+  writeFileSync(tmp, updated, 'utf8');
+  renameSync(tmp, target);
+
+  return { ok: true, round, featureId, status };
+}

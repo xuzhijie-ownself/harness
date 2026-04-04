@@ -45,6 +45,8 @@ Record in both NN-evaluation.md and NN-evaluation.json: review_mode, config_use_
 
 For the detailed 4-step procedure, severity mapping table, and fallback logic, see [references/advanced.md](../references/advanced.md) "Codex Detection Detailed Procedure".
 
+**Scope**: The code review pre-flight applies to ALL changed files regardless of file type -- this includes documentation, Markdown, role files, reference files, configuration, and any other non-code artifacts. Documentation-only changes are not exempt. The only valid condition for skipping the code review pre-flight entirely is when `git diff HEAD~1 --name-only` returns zero files (i.e., no files were changed at all).
+
 **CRITICAL**: If you skip this pre-flight or default to "claude" without documenting detection, the evaluation is INVALID.
 
 ### 1. Testing
