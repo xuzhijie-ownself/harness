@@ -83,3 +83,83 @@ A project can declare a primary profile + optional secondary profile. The evalua
 ## Business Analysis Foundation
 
 The `source_requirement` field in `features.json` links features to original business needs. This is particularly relevant for `business_analysis`, `enterprise_architecture`, and `solution_architecture` profiles where requirements traceability is a core evaluation criterion. Deliverables are classified as: primary, supporting, governance. The stakeholder lens influences how the evaluator grades quality.
+
+## Phase Handoff Protocol
+
+When a project spans multiple delivery phases, each phase must produce defined outputs before the next phase can start. This protocol governs what crosses phase boundaries.
+
+### Required Outputs per Phase
+
+| Phase | Owning Skill | Required Output Artifacts | Format |
+|-------|-------------|--------------------------|--------|
+| 1. Discovery & Intake | harness core (planner) | `features.json`, `spec.md`, `state.json` | JSON + Markdown in `.harness/` |
+| 2. Business Analysis | harness-ba | BRD, use case catalog, requirements traceability matrix | Markdown deliverables + updated `features.json` |
+| 3. Enterprise Architecture | harness-ea | Capability map, target-state architecture, ADRs | Markdown deliverables + updated `features.json` |
+| 4. Solution Architecture | harness-sa | HLD, API specs, data model, C4 diagrams | Markdown deliverables + updated `features.json` |
+| 5. Project Planning | harness core (coordinator) | Decomposition, sprint plan, `state.json` with round targets | JSON + Markdown in `.harness/` |
+| 6. Software Development | harness-sdlc | Working code, tests, build artifacts | Code + `.harness/sprints/` artifacts |
+| 7. Testing & QA | harness-sdlc (evaluator) | Evaluation reports, test results, `NN-evaluation.json` | JSON + Markdown in `.harness/sprints/` |
+| 8. Deployment & Handover | harness-ops | Deployment configs, runbooks, release artifacts | IaC configs + Markdown + `release.json` |
+
+### Phase Dependencies
+
+Phases are sequential by default. The output of each phase is the input context for the next.
+
+| Dependency | Relationship | Notes |
+|-----------|-------------|-------|
+| Phase 1 -> Phase 2 | Sequential | `spec.md` and `features.json` feed BA analysis |
+| Phase 2 -> Phase 3 | Sequential | BRD and requirements feed EA design |
+| Phase 3 -> Phase 4 | Sequential | Target-state architecture constrains solution design |
+| Phase 2 -> Phase 4 | Parallel-eligible | SA can start from BRD if EA is not needed (e.g., internal tools) |
+| Phase 4 -> Phase 5 | Sequential | HLD informs sprint decomposition and feature ordering |
+| Phase 5 -> Phase 6 | Sequential | Sprint plan drives development rounds |
+| Phase 6 -> Phase 7 | Sequential | Code must exist before evaluation |
+| Phase 7 -> Phase 8 | Sequential | Passing evaluation required before deployment |
+
+The Phase Routing table (above) shows which phases are included per project type. Skipped phases do not produce artifacts, and downstream phases accept the most recent upstream output as input.
+
+### Artifact Handoff Format
+
+Phase handoff uses the existing `.harness/` artifact layout:
+
+- `features.json` carries forward across all phases, with each phase updating feature status and evidence.
+- `spec.md` is the cross-phase contract -- downstream phases read it but do not modify it.
+- Each phase run produces its own `sprints/` directory with contracts, evaluations, and builder reports.
+- When starting a new phase, the planner reads the prior phase's final evaluation and `progress.md` as input context.
+
+### Scope Change Escalation
+
+When a downstream phase discovers that an upstream phase's outputs are insufficient:
+
+1. **Detection**: The current phase's evaluator identifies the gap as a blocker in `NN-evaluation.md`.
+2. **Logging**: The coordinator adds a blocker entry to `progress.md` referencing the upstream phase and the specific missing artifact or content.
+3. **Re-entry**: The upstream phase is re-entered with a targeted sprint that addresses only the identified gap. The coordinator creates a new round scoped to the upstream phase's domain skill.
+4. **Resumption**: Once the upstream gap is resolved and passes evaluation, the downstream phase resumes from where it was blocked.
+
+## Criteria Key Mapping
+
+The `primary_scores` object in `NN-evaluation.json` uses 4 keys determined by the active domain profile. Replace the `<criterion_N>` placeholders from `patterns.md` with the exact keys below.
+
+| Profile | `criterion_1` | `criterion_2` | `criterion_3` | `criterion_4` |
+|---------|--------------|--------------|--------------|--------------|
+| `software` | `product_depth` | `functionality` | `visual_design` | `code_quality` |
+| `enterprise_architecture` | `coherence` | `standards_compliance` | `stakeholder_coverage` | `feasibility` |
+| `business_analysis` | `completeness` | `traceability` | `stakeholder_alignment` | `feasibility` |
+| `solution_architecture` | `design_coherence` | `technical_depth` | `integration_clarity` | `implementability` |
+| `ops` | `operational_readiness` | `automation_coverage` | `reliability_design` | `security_posture` |
+
+The `custom` profile defines its own 4 keys inline in the `spec.md` Domain Profile section. The evaluator reads those keys at evaluation time and uses them as `primary_scores` keys in `NN-evaluation.json`.
+
+## Domain Verification Methods
+
+Each domain profile defines what constitutes "runtime verification" for its artifact types. The evaluator uses the method below matching the active `domain_profile`.
+
+| Profile | Verification Method | What to Check | Tooling |
+|---------|-------------------|---------------|---------|
+| `software` | Build + runtime + browser | App compiles, starts, responds to HTTP, UI renders correctly | Build tools, curl/HTTP, Playwright/browser |
+| `enterprise_architecture` | Deliverable completeness + cross-reference integrity | Required docs exist per phase, internal references resolve, no dangling IDs | Grep, file existence checks |
+| `business_analysis` | Deliverable completeness + scenario walkthrough | Required sections present, requirement IDs trace end-to-end, no orphaned requirements | Grep, traceability matrix validation |
+| `solution_architecture` | Deliverable completeness + contract validation | Design docs exist, API specs parse, cross-references resolve, ADRs cover key decisions | Grep, schema validation (OpenAPI/AsyncAPI) |
+| `ops` | Config validation + dry-run + completeness | IaC configs lint-clean, pipeline definitions parse, runbooks have required sections | Linters (terraform validate, kubeval), file checks |
+
+The `custom` profile defines its own verification method in `spec.md`. When no domain-specific tooling is available, the evaluator falls back to deliverable completeness checks: file existence and required section presence.
