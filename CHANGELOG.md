@@ -1,5 +1,33 @@
 # Changelog
 
+## [2.2.0] - 2026-04-04
+
+### Breaking
+- **F-003**: `/harness:init` renamed to `/harness:start` to avoid collision with Claude Code built-in `/init`
+
+### Core Fixes
+- **F-001**: Complete `architecture` to `enterprise_architecture` domain profile rename
+- **F-002**: Remove domain-specific leaks from core — generic evaluation schema, runtime verification, cross-domain composability
+- **F-003**: Rename `/init` command to `/start`
+
+### Suite Index Additions
+- **F-004**: Cross-phase handoff protocol with 8-phase output table, dependency matrix, scope escalation
+- **F-005**: Criteria key mapping table for all 5 domain profiles
+- **F-006**: Domain verification methods table (what "runtime verification" means per profile)
+
+### Domain Skill Depth
+- **F-007**: EA — Zachman framework, FEAF phases, ADR template, ArchiMate tool guidance, workshop template
+- **F-008**: BA — Elicitation interview template, MoSCoW/Kano/weighted prioritization, sign-off workflow, traceability matrix
+- **F-009**: SA — DDD strategic+tactical design, OpenAPI/AsyncAPI templates, STRIDE threat modeling, capacity modeling
+- **F-010**: Ops — GitOps reconciliation, SRE SLO/SLI/error budgets, runbook template, P0-P4 incident response, DORA metrics
+
+### Stats
+- Sprint count: 6
+- Required features: 10/10 passing
+
+### Summary
+Major SDLC suite completeness release. Core framework made fully domain-agnostic. All 5 domain skills (software, EA, BA, SA, ops) now have practical templates, tool guidance, and methodology depth. ~2,700 lines added across the suite.
+
 ## [2.1.0] - 2026-04-04
 
 ### Features Shipped

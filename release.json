@@ -1,6 +1,15 @@
 {
-  "current_version": "2.1.0",
+  "current_version": "2.2.0",
   "releases": [
+    {
+      "version": "2.2.0",
+      "date": "2026-04-04",
+      "features_shipped": ["F-001", "F-002", "F-003", "F-004", "F-005", "F-006", "F-007", "F-008", "F-009", "F-010"],
+      "features_deferred": [],
+      "changelog": "BREAKING: /harness:init renamed to /harness:start (F-003). Core framework made domain-agnostic: generic evaluation schema, runtime verification, cross-domain composability (F-001, F-002). SDLC suite index gains cross-phase handoff protocol, criteria key mapping, domain verification methods (F-004-F-006). All 4 non-software domain skills fleshed out with practical templates: EA (Zachman, FEAF, ADR, ArchiMate tools), BA (elicitation, prioritization, sign-off, traceability), SA (DDD, API contracts, STRIDE, capacity modeling), Ops (GitOps, SRE, runbooks, incident response, DORA metrics) (F-007-F-010).",
+      "sprint_count": 6,
+      "previous_version": "2.1.0"
+    },
     {
       "version": "2.1.0",
       "date": "2026-04-04",
@@ -74,5 +83,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "2.1.1"
+  "next_version": "2.2.1"
 }

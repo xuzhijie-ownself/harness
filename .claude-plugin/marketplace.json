@@ -14,7 +14,7 @@
       "name": "harness",
       "source": "./plugins/harness",
       "description": "Domain-blind core harness with 6 agents, GAN-like adversarial evaluation, profile system, sprint contracts, and quantified 0-5 grading",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "author": {
         "name": "xuzhijie-ownself",
         "email": "kidtsui@outlook.com"
@@ -44,7 +44,7 @@
       "name": "harness-sdlc-suite",
       "source": "./plugins/harness-sdlc-suite",
       "description": "Software delivery lifecycle domain skills for the harness framework. Provides 5 domain skills (SDLC, EA, BA, SA, Ops) and an index skill for profile routing.",
-      "version": "2.1.0",
+      "version": "2.2.0",
       "author": {
         "name": "xuzhijie-ownself",
         "email": "kidtsui@outlook.com"
