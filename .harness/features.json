@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "evaluator-1-round5",
+  "updated_by": "evaluator-1-round6",
   "features": [
     {
       "id": "F-001",
@@ -173,10 +173,10 @@
       "description": "Flesh out harness-sa skill with DDD specifics, API contract templates, threat modeling procedures, and capacity modeling template.",
       "required": true,
       "priority": "low",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "SDLC suite audit: SA under-specified methodologies",
       "steps": [
         "Verify DDD strategic and tactical design sections exist",
@@ -184,7 +184,7 @@
         "Verify threat modeling procedure (STRIDE) exists",
         "Verify capacity modeling template exists"
       ],
-      "evidence": [],
+      "evidence": ["Round 6 evaluation: 4 new sections (11-14) appended. DDD strategic design with 7 context mapping patterns, tactical design with entity/VO table and aggregate rules, ubiquitous language glossary. OpenAPI 3.1 skeleton (234 lines) and AsyncAPI 3.0 skeleton. STRIDE template with all 6 categories and 5x5 risk matrix. Capacity modeling with resource estimation, scaling thresholds, horizontal/vertical comparison, load projection. All 12 checks pass."],
       "notes": ""
     },
     {
@@ -194,10 +194,10 @@
       "description": "Flesh out harness-ops skill with GitOps implementation, SRE procedures, runbook template, incident response, and DORA metrics.",
       "required": true,
       "priority": "low",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "SDLC suite audit: Ops under-specified procedures",
       "steps": [
         "Verify GitOps implementation section exists",
@@ -206,7 +206,7 @@
         "Verify incident response and severity classification exist",
         "Verify DORA metrics guidance exists"
       ],
-      "evidence": [],
+      "evidence": ["Round 6 evaluation: 5 new sections (11-15) appended. GitOps reconciliation loop with FluxCD/ArgoCD comparison, repo layout, drift detection. SRE SLO/SLI template, error budget formula with 3 verified examples, burn-rate alerting, budget policy, toil tracking. Complete runbook template with 7 sections. P0-P4 severity classification, 5-phase incident lifecycle, post-incident review template. All 4 DORA metrics with Elite/High/Medium/Low thresholds and dashboard template. All 12 checks pass."],
       "notes": ""
     }
   ]
