@@ -9,10 +9,10 @@
       "description": "JSDoc type annotations on all lib exports, runtime schema validation in readState() and readFeatures(), circular dependency detection in selectNextFeature(), standardized error handling (UserError throws), and git message injection fix via spawnSync args array.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-015",
       "steps": [
         "Verify all 5 lib modules (state.mjs, features.mjs, git.mjs, progress.mjs, artifacts.mjs) have JSDoc @typedef and @param/@returns on every exported function",
@@ -34,12 +34,12 @@
       "description": "New feature-update subcommand in harness-companion.mjs with --id, --set-passes, --set-status, --set-maturity flags. New writeFeatures() and updateFeature() functions in features.mjs with atomic write and validation.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [
         "F-015"
       ],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-016",
       "steps": [
         "Run feature-update --id F-015 --set-passes true and verify features.json is updated atomically",
