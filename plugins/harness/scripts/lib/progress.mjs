@@ -1,26 +1,57 @@
 /**
- * progress.mjs -- structured progress.md append.
+ * progress.mjs -- structured progress.md append and timestamp update.
  * Zero npm dependencies.
  */
 
 import { readFileSync, writeFileSync, renameSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+/**
+ * @typedef {Object} AppendProgressInput
+ * @property {number} round - Sprint round number
+ * @property {string} featureId - Feature ID (e.g. "F-015")
+ * @property {string} status - "pass" | "fail"
+ * @property {Record<string, number>} [scores] - Optional score map (e.g. { product_depth: 4 })
+ */
+
+/**
+ * @typedef {Object} AppendProgressResult
+ * @property {boolean} ok - Always true on success
+ * @property {number} round
+ * @property {string} featureId
+ * @property {string} status
+ */
+
+/**
+ * @typedef {Object} UpdateTimestampResult
+ * @property {boolean} ok - Always true on success (throws on failure)
+ * @property {string} timestamp - ISO timestamp written
+ */
+
+class UserError extends Error {
+  /** @param {string} msg */
+  constructor(msg) { super(msg); this.name = 'UserError'; }
+}
+
+/**
+ * Return the absolute path to progress.md.
+ * @returns {string}
+ */
 function progressPath() {
   return join(process.cwd(), '.harness', 'progress.md');
 }
 
 /**
  * Append a structured round summary to progress.md.
- * Requires round, featureId, and status.
+ * Throws UserError if progress.md does not exist.
+ * @param {AppendProgressInput} input
+ * @returns {AppendProgressResult}
  */
 export function appendProgress({ round, featureId, status, scores }) {
   const target = progressPath();
 
   if (!existsSync(target)) {
-    const err = new Error('.harness/progress.md does not exist.');
-    err.name = 'UserError';
-    throw err;
+    throw new UserError('.harness/progress.md does not exist.');
   }
 
   const existing = readFileSync(target, 'utf8');
@@ -48,13 +79,14 @@ export function appendProgress({ round, featureId, status, scores }) {
 
 /**
  * Update the "Last commit" timestamp in progress.md.
- * Lightweight operation for hook use -- no round/feature context needed.
+ * Throws UserError when progress.md is missing.
+ * @returns {UpdateTimestampResult}
  */
 export function updateTimestamp() {
   const target = progressPath();
 
   if (!existsSync(target)) {
-    return { ok: false, reason: 'progress.md does not exist' };
+    throw new UserError('.harness/progress.md does not exist.');
   }
 
   const existing = readFileSync(target, 'utf8');

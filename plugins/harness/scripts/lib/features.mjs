@@ -1,20 +1,110 @@
 /**
- * features.mjs -- feature selection with dependency resolution and stop checks.
+ * features.mjs -- feature selection with dependency resolution, stop checks,
+ * schema validation, circular dependency detection, and feature mutation.
  * Zero npm dependencies.
  */
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, renameSync } from 'node:fs';
 import { join } from 'node:path';
 
+/**
+ * @typedef {Object} Feature
+ * @property {string} id - Unique feature identifier (e.g. "F-001")
+ * @property {string} title - Human-readable title
+ * @property {string} [category] - "functional" | "non-functional" | etc.
+ * @property {string} [description]
+ * @property {boolean} required - Whether this feature must pass for release
+ * @property {string} [priority] - "high" | "medium" | "low"
+ * @property {string} [status] - "not_started" | "in_progress" | "done"
+ * @property {boolean} passes - Whether the feature currently passes evaluation
+ * @property {string[]} [depends_on] - Feature IDs that must pass before this one
+ * @property {string} [maturity] - "draft" | "functional" | "reviewed" | "polished" | "accepted"
+ * @property {string} [source_requirement]
+ * @property {string[]} [steps] - Verification steps
+ * @property {string[]} [evidence]
+ * @property {string} [notes]
+ */
+
+/**
+ * @typedef {Object} FeaturesFile
+ * @property {number} version - Schema version (must be a number)
+ * @property {string} [updated_by]
+ * @property {Feature[]} features - Array of feature objects
+ */
+
+const VALID_MATURITY = ['draft', 'functional', 'reviewed', 'polished', 'accepted'];
+
+class UserError extends Error {
+  /** @param {string} msg */
+  constructor(msg) { super(msg); this.name = 'UserError'; }
+}
+
+/**
+ * Return the absolute path to the .harness directory.
+ * @returns {string}
+ */
 function harnessDir() {
   return join(process.cwd(), '.harness');
 }
 
-export function readFeatures() {
-  const raw = readFileSync(join(harnessDir(), 'features.json'), 'utf8');
-  return JSON.parse(raw);
+/**
+ * Return the absolute path to features.json.
+ * @returns {string}
+ */
+function featuresPath() {
+  return join(harnessDir(), 'features.json');
 }
 
+/**
+ * Read and validate .harness/features.json.
+ * Throws UserError if schema validation fails:
+ * - version must be a number
+ * - features must be an array
+ * - each feature must have id (string), required (boolean), passes (boolean)
+ * @returns {FeaturesFile}
+ */
+export function readFeatures() {
+  const raw = readFileSync(featuresPath(), 'utf8');
+  const data = JSON.parse(raw);
+
+  if (typeof data.version !== 'number') {
+    throw new UserError(
+      `features.json "version" must be a number, got ${typeof data.version}.`
+    );
+  }
+
+  if (!Array.isArray(data.features)) {
+    throw new UserError(
+      `features.json "features" must be an array, got ${typeof data.features}.`
+    );
+  }
+
+  for (let i = 0; i < data.features.length; i++) {
+    const f = data.features[i];
+    if (typeof f.id !== 'string') {
+      throw new UserError(
+        `features.json features[${i}] is missing required field "id" (string).`
+      );
+    }
+    if (typeof f.required !== 'boolean') {
+      throw new UserError(
+        `features.json feature "${f.id || i}" is missing required field "required" (boolean).`
+      );
+    }
+    if (typeof f.passes !== 'boolean') {
+      throw new UserError(
+        `features.json feature "${f.id || i}" is missing required field "passes" (boolean).`
+      );
+    }
+  }
+
+  return data;
+}
+
+/**
+ * Read state.json (internal helper -- uses the validated readState from state.mjs pattern).
+ * @returns {import('./state.mjs').StateShape}
+ */
 function readState() {
   const raw = readFileSync(join(harnessDir(), 'state.json'), 'utf8');
   return JSON.parse(raw);
@@ -22,8 +112,67 @@ function readState() {
 
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
 
+/**
+ * Detect circular dependencies in the features dependency graph.
+ * Uses DFS with a visited-set and recursion-stack approach.
+ * Throws UserError if a cycle is detected, naming the cycle path.
+ * @param {Feature[]} features
+ */
+function detectCircularDeps(features) {
+  const idSet = new Set(features.map((f) => f.id));
+  const adjList = {};
+  for (const f of features) {
+    adjList[f.id] = (f.depends_on || []).filter((d) => idSet.has(d));
+  }
+
+  const visited = new Set();
+  const inStack = new Set();
+
+  /**
+   * @param {string} nodeId
+   * @param {string[]} path
+   */
+  function dfs(nodeId, path) {
+    if (inStack.has(nodeId)) {
+      const cycleStart = path.indexOf(nodeId);
+      const cycle = path.slice(cycleStart).concat(nodeId);
+      throw new UserError(
+        `Circular dependency detected: ${cycle.join(' -> ')}`
+      );
+    }
+    if (visited.has(nodeId)) return;
+
+    visited.add(nodeId);
+    inStack.add(nodeId);
+    path.push(nodeId);
+
+    for (const dep of (adjList[nodeId] || [])) {
+      dfs(dep, path);
+    }
+
+    path.pop();
+    inStack.delete(nodeId);
+  }
+
+  for (const f of features) {
+    if (!visited.has(f.id)) {
+      dfs(f.id, []);
+    }
+  }
+}
+
+/**
+ * Select the next eligible feature: highest priority, passes=false, required=true,
+ * all depends_on features have passes=true.
+ * Detects circular dependencies before selection and throws UserError if found.
+ * @returns {{ feature_id: string|null, title: string|null, priority: string, depends_on: string[], eligible: boolean, reason: string }}
+ */
 export function selectNextFeature() {
   const { features } = readFeatures();
+
+  // Detect circular dependencies before attempting selection
+  detectCircularDeps(features);
+
   const passMap = {};
   for (const f of features) {
     passMap[f.id] = f.passes;
@@ -58,6 +207,10 @@ export function selectNextFeature() {
   return eligible[0];
 }
 
+/**
+ * Check if all required features pass or failure streak exceeded.
+ * @returns {{ should_stop: boolean, reason: string, required_total: number, required_passing: number, current_failure_streak: number, all_required_pass?: boolean }}
+ */
 export function checkStop() {
   const { features } = readFeatures();
   const state = readState();
@@ -71,6 +224,7 @@ export function checkStop() {
 
   return {
     should_stop: allPass || streakExceeded,
+    all_required_pass: allPass,
     reason: allPass
       ? 'All required features pass.'
       : streakExceeded
@@ -80,4 +234,78 @@ export function checkStop() {
     required_passing: passing.length,
     current_failure_streak: state.current_failure_streak,
   };
+}
+
+/**
+ * Atomically write the features file to .harness/features.json.
+ * Writes to a .tmp file first, then renames for crash safety.
+ * @param {FeaturesFile} data - The full features file object to write.
+ * @returns {FeaturesFile} The written data.
+ */
+export function writeFeatures(data) {
+  // Validate before writing
+  if (typeof data.version !== 'number') {
+    throw new UserError(`Cannot write features.json: "version" must be a number.`);
+  }
+  if (!Array.isArray(data.features)) {
+    throw new UserError(`Cannot write features.json: "features" must be an array.`);
+  }
+
+  const target = featuresPath();
+  const tmp = target + '.tmp';
+  writeFileSync(tmp, JSON.stringify(data, null, 2) + '\n', 'utf8');
+  renameSync(tmp, target);
+  return data;
+}
+
+/**
+ * Update a single feature by ID in features.json.
+ * Reads, validates, mutates the target feature, and atomically writes back.
+ * @param {string} id - Feature ID to update (e.g. "F-015")
+ * @param {{ passes?: boolean, status?: string, maturity?: string }} updates - Fields to update
+ * @returns {{ ok: true, feature_id: string, updated_fields: string[] }}
+ */
+export function updateFeature(id, updates) {
+  const data = readFeatures();
+  const feature = data.features.find((f) => f.id === id);
+
+  if (!feature) {
+    throw new UserError(`Unknown feature ID: "${id}". Available: ${data.features.map(f => f.id).join(', ')}`);
+  }
+
+  const updatedFields = [];
+
+  if ('passes' in updates) {
+    if (typeof updates.passes !== 'boolean') {
+      throw new UserError(`--set-passes must be "true" or "false", got "${updates.passes}".`);
+    }
+    feature.passes = updates.passes;
+    updatedFields.push('passes');
+  }
+
+  if ('status' in updates) {
+    if (typeof updates.status !== 'string' || updates.status.length === 0) {
+      throw new UserError(`--set-status must be a non-empty string.`);
+    }
+    feature.status = updates.status;
+    updatedFields.push('status');
+  }
+
+  if ('maturity' in updates) {
+    if (!VALID_MATURITY.includes(updates.maturity)) {
+      throw new UserError(
+        `Invalid maturity value: "${updates.maturity}". Must be one of: ${VALID_MATURITY.join(', ')}`
+      );
+    }
+    feature.maturity = updates.maturity;
+    updatedFields.push('maturity');
+  }
+
+  if (updatedFields.length === 0) {
+    throw new UserError(`No valid update fields provided. Use --set-passes, --set-status, or --set-maturity.`);
+  }
+
+  writeFeatures(data);
+
+  return { ok: true, feature_id: id, updated_fields: updatedFields };
 }

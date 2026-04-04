@@ -1,25 +1,47 @@
 {
   "mode": "continuous",
-  "status": "paused",
+  "status": "active",
   "variant": "variant-a-sprinted",
-  "current_round": 1,
-  "last_completed_round": 0,
+  "current_round": 2,
+  "last_completed_round": 1,
   "active_feature_ids": [
     "F-015",
     "F-016"
   ],
-  "expected_sprint_count": 4,
+  "expected_sprint_count": 3,
   "current_failure_streak": 0,
   "last_feature_pass_delta": 0,
-  "stop_reason": "context reset via /reset",
+  "stop_reason": "",
   "context_reset_threshold": 3,
-  "rounds_since_reset": 0,
-  "current_sprint_phase": "contract",
+  "rounds_since_reset": 1,
+  "current_sprint_phase": "implementation",
   "domain_profile": "software",
   "secondary_profile": "",
   "methodology": "agile",
   "errors": [],
   "cost_tracking": {
-    "rounds": []
+    "rounds": [
+      {
+        "round": 2,
+        "started_at": "2026-04-04T04:00:00Z",
+        "completed_at": "",
+        "feature_id": "F-015+F-016",
+        "outcome": "",
+        "phases": {
+          "contract": {
+            "started_at": "",
+            "completed_at": ""
+          },
+          "implementation": {
+            "started_at": "",
+            "completed_at": ""
+          },
+          "evaluation": {
+            "started_at": "",
+            "completed_at": ""
+          }
+        }
+      }
+    ]
   }
 }

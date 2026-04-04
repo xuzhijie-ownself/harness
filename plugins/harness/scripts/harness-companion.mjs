@@ -9,7 +9,7 @@
  * JSON to stdout, human-readable errors to stderr.
  */
 
-import { selectNextFeature, checkStop } from './lib/features.mjs';
+import { selectNextFeature, checkStop, updateFeature } from './lib/features.mjs';
 import { readState, writeState, setPhase, incrementRound, appendCost } from './lib/state.mjs';
 import { autoCommit } from './lib/git.mjs';
 import { validateArtifacts, cleanupSprints } from './lib/artifacts.mjs';
@@ -17,6 +17,7 @@ import { appendProgress, updateTimestamp } from './lib/progress.mjs';
 
 const SUBCOMMANDS = {
   'feature-select':     'Pick the next eligible feature (highest priority, passes=false, deps met)',
+  'feature-update':     'Update a feature: --id <id> [--set-passes true|false] [--set-status <s>] [--set-maturity <m>]',
   'state-mutate':       'Mutate state.json: --set-phase <phase> | --increment-round | --append-cost <json>',
   'auto-commit':        'Git commit: --feature <id> --title <text> --round <n> --status <pass|fail>',
   'validate-artifacts': 'Check sprint artifact existence: --round <n>',
@@ -70,6 +71,27 @@ async function main() {
   switch (cmd) {
     case 'feature-select': {
       const result = selectNextFeature();
+      out(result);
+      break;
+    }
+    case 'feature-update': {
+      if (!flags.id) {
+        throw new UserError('feature-update requires --id <feature-id>');
+      }
+      const updates = {};
+      if ('set-passes' in flags) {
+        const val = flags['set-passes'];
+        if (val === 'true') updates.passes = true;
+        else if (val === 'false') updates.passes = false;
+        else throw new UserError(`--set-passes must be "true" or "false", got "${val}".`);
+      }
+      if ('set-status' in flags) {
+        updates.status = flags['set-status'];
+      }
+      if ('set-maturity' in flags) {
+        updates.maturity = flags['set-maturity'];
+      }
+      const result = updateFeature(flags.id, updates);
       out(result);
       break;
     }

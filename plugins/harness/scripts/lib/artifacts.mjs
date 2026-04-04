@@ -6,14 +6,42 @@
 import { existsSync, readdirSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
 
+/**
+ * @typedef {Object} ValidateResult
+ * @property {number} round - The round number validated
+ * @property {boolean} complete - True if all expected artifacts exist
+ * @property {string[]} missing - List of missing artifact filenames
+ */
+
+/**
+ * @typedef {Object} CleanupResult
+ * @property {string[]} removed - List of removed filenames
+ */
+
+/**
+ * Return the absolute path to the sprints directory.
+ * @returns {string}
+ */
 function sprintsDir() {
   return join(process.cwd(), '.harness', 'sprints');
 }
 
+/**
+ * Zero-pad a number to 2 digits.
+ * @param {number} n
+ * @returns {string}
+ */
 function pad(n) {
   return String(n).padStart(2, '0');
 }
 
+/**
+ * Validate that all expected sprint artifacts exist for a given round.
+ * Expected artifacts: NN-contract.md, NN-contract-review.md, NN-builder-report.md,
+ * NN-evaluation.md, NN-evaluation.json.
+ * @param {number} round - The round number to validate
+ * @returns {ValidateResult}
+ */
 export function validateArtifacts(round) {
   const dir = sprintsDir();
   const prefix = pad(round);
@@ -35,6 +63,11 @@ export function validateArtifacts(round) {
   return { round, complete: missing.length === 0, missing };
 }
 
+/**
+ * Remove sprint artifact files for rounds before the specified round number.
+ * @param {number} beforeRound - Remove files for rounds strictly less than this number
+ * @returns {CleanupResult}
+ */
 export function cleanupSprints(beforeRound) {
   const dir = sprintsDir();
   if (!existsSync(dir)) {
