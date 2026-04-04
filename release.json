@@ -1,6 +1,15 @@
 {
-  "current_version": "2.2.0",
+  "current_version": "2.2.1",
   "releases": [
+    {
+      "version": "2.2.1",
+      "date": "2026-04-04",
+      "features_shipped": ["F-011", "F-012", "F-013", "F-014"],
+      "features_deferred": [],
+      "changelog": "Script automation for harness mechanical operations. Added harness-companion.mjs with 7 subcommands (feature-select, state-mutate, auto-commit, validate-artifacts, progress-append, check-stop, cleanup-sprints). Zero npm dependencies, atomic JSON writes, structured JSON stdout. Wired into hooks.json, session.md, and coordinator.md. Fixed evaluator codex documentation-only exemption.",
+      "sprint_count": 3,
+      "previous_version": "2.2.0"
+    },
     {
       "version": "2.2.0",
       "date": "2026-04-04",
@@ -83,5 +92,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "2.2.1"
+  "next_version": "2.2.2"
 }

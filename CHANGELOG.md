@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.2.1] - 2026-04-04
+
+### Features Shipped
+- **F-011**: Fix evaluator codex scope -- codex review now applies to all changes including documentation
+- **F-012**: Build harness-companion.mjs -- 7 subcommands for mechanical harness operations (feature-select, state-mutate, auto-commit, validate-artifacts, progress-append, check-stop, cleanup-sprints)
+- **F-013**: Wire scripts into hooks and docs -- hooks.json, session.md, coordinator.md updated to call scripts
+- **F-014**: End-to-end verification -- all subcommands tested against real harness artifacts
+
+### Stats
+- Sprint count: 3
+- Required features: 4/4 passing
+
+### Summary
+Script automation for harness mechanical operations. ~60% of the harness workflow (state updates, feature selection, auto-commit, artifact validation, progress tracking) is now handled by `harness-companion.mjs` — a zero-dependency Node.js ES module with atomic JSON writes and structured stdout. Reduces LLM token burn on deterministic tasks. Also fixed the evaluator's implicit documentation-only exemption for codex review.
+
 ## [2.2.0] - 2026-04-04
 
 ### Breaking
