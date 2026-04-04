@@ -74,10 +74,10 @@
       "description": "Run script subcommands against real harness artifacts to confirm feature-select returns valid JSON with dependency resolution, state-mutate updates atomically, validate-artifacts reports correctly, and progress-append produces well-formed entries.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-012", "F-013"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-014",
       "steps": [
         "Run feature-select and verify valid JSON with correct dependency resolution",
