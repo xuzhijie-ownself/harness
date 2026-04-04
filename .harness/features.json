@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "evaluator-1-round4",
+  "updated_by": "evaluator-1-round5",
   "features": [
     {
       "id": "F-001",
@@ -131,10 +131,10 @@
       "description": "Flesh out harness-ea skill with Zachman framework detail, FEAF detail, ADR template, tool guidance, and stakeholder workshop template.",
       "required": true,
       "priority": "low",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "SDLC suite audit: EA under-specified methodologies",
       "steps": [
         "Verify Zachman matrix template and sprint mapping exist",
@@ -142,7 +142,7 @@
         "Verify ADR template is provided",
         "Verify tool guidance section with recommended tools exists"
       ],
-      "evidence": [],
+      "evidence": ["Round 5 evaluation: 5 new sections (11-15) appended. 6x6 Zachman matrix with 4 sprint strategies, FEAF 5-model mapping with federal compliance, ADR template with lifecycle, 5-tool comparison with validation rules, workshop template with 8 roles and 4 types. All 10 checks pass."],
       "notes": ""
     },
     {
@@ -152,10 +152,10 @@
       "description": "Flesh out harness-ba skill with elicitation interview template, prioritization templates, requirements sign-off workflow, and traceability matrix template.",
       "required": true,
       "priority": "low",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "SDLC suite audit: BA practical templates missing",
       "steps": [
         "Verify elicitation interview template exists",
@@ -163,7 +163,7 @@
         "Verify requirements sign-off workflow is documented",
         "Verify traceability matrix template exists"
       ],
-      "evidence": [],
+      "evidence": ["Round 5 evaluation: 4 new sections (11-14) appended. Interview template with 7-item checklist and 5 question categories, MoSCoW+Kano+weighted scoring with full Kano 5x5 matrix, 5-stage sign-off workflow with change control, 9-column traceability matrix with 6 validation rules. All 8 checks pass."],
       "notes": ""
     },
     {
