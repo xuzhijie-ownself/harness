@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "evaluator-1",
+  "updated_by": "evaluator-1-round4",
   "features": [
     {
       "id": "F-001",
@@ -72,10 +72,10 @@
       "description": "Add Phase Handoff Protocol section to harness-sdlc-suite index skill. Covers required outputs per phase, artifact handoff format, phase dependency table, and scope change escalation.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "SDLC suite audit: 100% missing cross-phase handoff",
       "steps": [
         "Verify index skill has Phase Handoff Protocol section",
@@ -83,7 +83,7 @@
         "Verify phase dependency table exists showing sequential vs parallel",
         "Verify scope change escalation procedure is documented"
       ],
-      "evidence": [],
+      "evidence": ["Round 4 evaluation: Phase Handoff Protocol at line 87, 8-phase outputs table, 8 dependency entries, 4-step escalation procedure. All checks PD-01/FN-01/FN-02/FN-03 pass."],
       "notes": ""
     },
     {
@@ -93,16 +93,16 @@
       "description": "Add criteria key mapping table to index skill showing which JSON keys each domain profile uses in NN-evaluation.json.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-002"],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "SDLC suite audit: no evaluation JSON schema per domain",
       "steps": [
         "Verify index skill has criteria key mapping table for all 5 profiles",
         "Verify each profile lists exactly 4 criteria keys matching its domain skill"
       ],
-      "evidence": [],
+      "evidence": ["Round 4 evaluation: Criteria Key Mapping at line 139, 5 profiles x 4 keys = 20 keys verified. EA and Ops spot-checked against source skill files. All checks PD-02/FN-04-09 pass."],
       "notes": ""
     },
     {
@@ -112,16 +112,16 @@
       "description": "Add verification method table to index skill defining what runtime verification means for each domain profile.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-002"],
-      "maturity": "draft",
+      "maturity": "polished",
       "source_requirement": "SDLC suite audit: runtime verification only for software",
       "steps": [
         "Verify index skill has domain verification methods table for all 5 profiles",
         "Verify each profile has specific verification method and what-to-check guidance"
       ],
-      "evidence": [],
+      "evidence": ["Round 4 evaluation: Domain Verification Methods at line 153, 5 profiles with distinct verification guidance. All checks PD-03/FN-10/FN-11 pass."],
       "notes": ""
     },
     {
