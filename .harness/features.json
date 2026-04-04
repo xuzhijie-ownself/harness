@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "initializer-1",
+  "updated_by": "coordinator-1",
   "features": [
     {
       "id": "F-011",
@@ -53,10 +53,10 @@
       "description": "Update hooks.json to call harness-companion.mjs subcommands instead of inline Node one-liners. Update session.md and coordinator.md to instruct agents to call scripts for mechanical steps.",
       "required": true,
       "priority": "high",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-012"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-013",
       "steps": [
         "Verify hooks.json calls harness-companion.mjs instead of inline one-liners",
