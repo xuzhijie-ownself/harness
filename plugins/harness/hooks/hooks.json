@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"const fs=require('fs'),path=require('path');const p=path.join(process.cwd(),'.harness','progress.md');if(fs.existsSync(p)){const now=new Date().toISOString();let txt=fs.readFileSync(p,'utf8');txt=txt.replace(/\\n## Last commit\\n.*$/ms,'')+'\\n## Last commit\\n- '+now;fs.writeFileSync(p,txt);}\""
+            "command": "node plugins/harness/scripts/harness-companion.mjs progress-append --timestamp-only"
           }
         ],
         "description": "Update .harness/progress.md with timestamp after git commits",

@@ -13,14 +13,14 @@ import { selectNextFeature, checkStop } from './lib/features.mjs';
 import { readState, writeState, setPhase, incrementRound, appendCost } from './lib/state.mjs';
 import { autoCommit } from './lib/git.mjs';
 import { validateArtifacts, cleanupSprints } from './lib/artifacts.mjs';
-import { appendProgress } from './lib/progress.mjs';
+import { appendProgress, updateTimestamp } from './lib/progress.mjs';
 
 const SUBCOMMANDS = {
   'feature-select':     'Pick the next eligible feature (highest priority, passes=false, deps met)',
   'state-mutate':       'Mutate state.json: --set-phase <phase> | --increment-round | --append-cost <json>',
   'auto-commit':        'Git commit: --feature <id> --title <text> --round <n> --status <pass|fail>',
   'validate-artifacts': 'Check sprint artifact existence: --round <n>',
-  'progress-append':    'Append to progress.md: --round <n> --feature <id> --status <s> --scores <json>',
+  'progress-append':    'Append to progress.md: --round <n> --feature <id> --status <s> [--scores <json>] | --timestamp-only',
   'check-stop':         'Check if all required features pass or failure streak exceeded',
   'cleanup-sprints':    'Remove old sprint files: --before-round <n>',
 };
@@ -111,17 +111,21 @@ async function main() {
       break;
     }
     case 'progress-append': {
-      if (!flags.round || !flags.feature || !flags.status) {
-        throw new UserError('progress-append requires --round <n> --feature <id> --status <pass|fail> [--scores <json>]');
+      if (flags['timestamp-only']) {
+        const result = updateTimestamp();
+        out(result);
+      } else if (!flags.round || !flags.feature || !flags.status) {
+        throw new UserError('progress-append requires --round <n> --feature <id> --status <pass|fail> [--scores <json>] or --timestamp-only');
+      } else {
+        const scores = flags.scores ? JSON.parse(flags.scores) : {};
+        const result = appendProgress({
+          round: parseInt(flags.round, 10),
+          featureId: flags.feature,
+          status: flags.status,
+          scores,
+        });
+        out(result);
       }
-      const scores = flags.scores ? JSON.parse(flags.scores) : {};
-      const result = appendProgress({
-        round: parseInt(flags.round, 10),
-        featureId: flags.feature,
-        status: flags.status,
-        scores,
-      });
-      out(result);
       break;
     }
     case 'check-stop': {

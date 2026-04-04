@@ -13,6 +13,34 @@ Run one supervised sprint round (Variant A or B, supervised mode).
 
 Run the **Command Pre-Flight Validation** from SKILL.md before proceeding.
 
+## Script Calls for Mechanical Steps
+
+All mechanical state management steps use `harness-companion.mjs` subcommands instead of inline JSON editing. Run from the project root:
+
+```bash
+# Select next eligible feature (highest priority, passes=false, deps met)
+node plugins/harness/scripts/harness-companion.mjs feature-select
+
+# Transition sprint phase
+node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase <phase>
+# where <phase> is one of: idle, contract, implementation, evaluation
+
+# Auto-commit after evaluation
+node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "feature title" --round N --status pass
+# --status is pass or fail
+
+# Validate sprint artifacts exist
+node plugins/harness/scripts/harness-companion.mjs validate-artifacts --round N
+
+# Append round summary to progress.md
+node plugins/harness/scripts/harness-companion.mjs progress-append --round N --feature F-XXX --status pass --scores '{"product_depth":4,"functionality":4}'
+
+# Check stop conditions
+node plugins/harness/scripts/harness-companion.mjs check-stop
+```
+
+All subcommands emit JSON to stdout. Parse the output to get structured results. Errors go to stderr with exit code 1 (user error) or 2 (system error).
+
 ## Sprint Resume
 
 Before starting fresh, check `.harness/state.json` `current_sprint_phase`:
@@ -24,8 +52,7 @@ Before starting fresh, check `.harness/state.json` `current_sprint_phase`:
 | `implementation` | Resume at Implementation Phase (step 9) -- contract was accepted, implementation in progress |
 | `evaluation` | Resume at Evaluation Phase (step 10) -- implementation complete, evaluation in progress |
 
-Update `current_sprint_phase` in `state.json` at the start of each phase transition.
-If `current_sprint_phase` is not `idle`, skip ahead to the corresponding phase instead of restarting the sprint.
+Transition phases using: `node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase <phase>`
 
 ## Session Startup
 
@@ -33,18 +60,18 @@ If `current_sprint_phase` is not `idle`, skip ahead to the corresponding phase i
 2. Run `git log --oneline -10` to recover context from recent commits.
 3. Check for `.harness/handoff.md` -- if present, read it and resume from `next_step`.
 4. Run `bash .harness/init.sh` (or the command from `.harness/init.md`) -- STOP and report if baseline fails.
-5. Read `.harness/features.json` -- find highest-priority `passes: false` required feature.
-
-## Feature Selection
-
-When selecting the next failing feature:
-1. Read `depends_on` array for each candidate
-2. Skip features whose dependencies haven't passed yet
-3. If no eligible feature exists: print "All remaining features are dependency-blocked:" followed by the blockers. STOP.
+5. Select the next target feature:
+   ```bash
+   node plugins/harness/scripts/harness-companion.mjs feature-select
+   ```
+   If the result has `"eligible": false`, print the blocking reason and STOP.
 
 ## Contract Phase
 
-Set `current_sprint_phase` to `contract` in `state.json`.
+Transition to contract phase:
+```bash
+node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase contract
+```
 
 6. Spawn the `generator` agent: "Propose a sprint contract for [feature-id]."
    -> `.harness/sprints/NN-contract.md`
@@ -56,39 +83,67 @@ Set `current_sprint_phase` to `contract` in `state.json`.
 
 ## Implementation Phase
 
-Set `current_sprint_phase` to `implementation` in `state.json`.
+Transition to implementation phase:
+```bash
+node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase implementation
+```
 
 9. Spawn the `generator` agent: "Implement the accepted contract at .harness/sprints/NN-contract.md."
    -> code changes + `.harness/sprints/NN-builder-report.md`
 
 ## Evaluation Phase
 
-Set `current_sprint_phase` to `evaluation` in `state.json`.
+Transition to evaluation phase:
+```bash
+node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase evaluation
+```
 
 10. Spawn the `evaluator` agent:
     "Grade the implementation. Contract: NN-contract.md. Builder report: NN-builder-report.md."
     -> `.harness/sprints/NN-evaluation.md`
     -> `.harness/sprints/NN-evaluation.json`
 11. Update `.harness/features.json` based on evaluator `feature_evidence`.
-12. Update `.harness/progress.md`.
+12. Append round summary to progress.md:
+    ```bash
+    node plugins/harness/scripts/harness-companion.mjs progress-append --round N --feature F-XXX --status pass --scores '{"product_depth":4,"functionality":4,"visual_design":4,"code_quality":4}'
+    ```
 13. Show result to user:
     - **PASS** -> score breakdown + recommended next action.
     - **FAIL** -> specific blockers from evaluation + suggest re-running /session.
 
-Set `current_sprint_phase` to `idle` in `state.json` after completing the round.
+Reset phase to idle:
+```bash
+node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase idle
+```
 
 ## Post-flight
 
-After updating features.json:
-1. Check if ALL required features now have `passes: true`
-2. If yes: print "All required features pass. Run `/harness:release` when you are ready to cut a version."
-3. Do NOT auto-spawn the releaser -- the user decides when to release. Multiple sessions may land before the user wants a version bump.
+After updating features.json, check stop conditions:
+```bash
+node plugins/harness/scripts/harness-companion.mjs check-stop
+```
+If the result shows `"all_required_pass": true`: print "All required features pass. Run `/harness:release` when you are ready to cut a version."
+
+Do NOT auto-spawn the releaser -- the user decides when to release. Multiple sessions may land before the user wants a version bump.
 
 ## Auto-Commit
 
-After evaluation completes:
-- PASS: `git add -A && git commit -m "feat(F-XXX): <feature title> -- sprint N [harness]"`
-- FAIL: `git add -A && git commit -m "wip(F-XXX): <feature title> -- sprint N attempt [harness]"`
+After evaluation completes, use the auto-commit subcommand:
+```bash
+# PASS:
+node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "feature title" --round N --status pass
+
+# FAIL:
+node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "feature title" --round N --status fail
+```
+
+## Artifact Validation
+
+Before advancing to the next round, validate all required artifacts exist:
+```bash
+node plugins/harness/scripts/harness-companion.mjs validate-artifacts --round N
+```
+If any artifacts are missing, STOP and report.
 
 ## Session End -- Clean State
 

@@ -20,29 +20,95 @@ Use this file only for the coordinator role.
 
 Owns: .harness/state.json, .harness/summary.md, .harness/decomposition.md
 
+## Script Calls for Mechanical Steps
+
+All mechanical state management uses `harness-companion.mjs` subcommands. Run from the project root:
+
+```bash
+SCRIPT="node plugins/harness/scripts/harness-companion.mjs"
+
+# Select next eligible feature
+$SCRIPT feature-select
+
+# Increment round counter
+$SCRIPT state-mutate --increment-round
+
+# Set sprint phase
+$SCRIPT state-mutate --set-phase <phase>
+# <phase>: idle | contract | implementation | evaluation
+
+# Auto-commit after evaluation
+$SCRIPT auto-commit --feature F-XXX --title "feature title" --round N --status pass
+
+# Validate sprint artifacts
+$SCRIPT validate-artifacts --round N
+
+# Append round summary to progress.md
+$SCRIPT progress-append --round N --feature F-XXX --status pass --scores '{"product_depth":4}'
+
+# Check stop conditions (all required pass? failure streak?)
+$SCRIPT check-stop
+
+# Clean up old sprint files
+$SCRIPT cleanup-sprints --before-round N
+```
+
+All subcommands emit JSON to stdout. Parse the JSON output to get structured results. Errors go to stderr with exit code 1 (user error) or 2 (system error).
+
 ## Loop Per Round
 
 1. Read `.harness/config.json` at loop start. Use config values for: commit prefixes (`commit_prefix_pass`, `commit_prefix_fail`), retry limit (`max_retry_on_failure`), retro interval (`retro_interval`), context reset threshold (`context_reset_threshold` -- overrides state.json if present in config), commit tag (`commit_tag`).
-2. Update `.harness/state.json` -- increment current_round
+2. Increment round:
+   ```bash
+   node plugins/harness/scripts/harness-companion.mjs state-mutate --increment-round
+   ```
 3. Append a new entry to `state.json` `cost_tracking.rounds[]`: `{ "round": N, "started_at": "<ISO timestamp>", "completed_at": "", "feature_id": "<target feature>", "outcome": "", "phases": { "contract": { "started_at": "", "completed_at": "" }, "implementation": { "started_at": "", "completed_at": "" }, "evaluation": { "started_at": "", "completed_at": "" } } }`
-4. Pick highest-priority `passes: false` required feature whose `depends_on` features all have `passes: true`. If no eligible feature exists, pause with `stop_reason`: `"All remaining features are dependency-blocked."`
-5. Set `cost_tracking.rounds[N].phases.contract.started_at` to current ISO timestamp
+4. Select the next target feature:
+   ```bash
+   node plugins/harness/scripts/harness-companion.mjs feature-select
+   ```
+   Pick highest-priority `passes: false` required feature whose `depends_on` features all have `passes: true`. If the result has `"eligible": false`, pause with `stop_reason`: `"All remaining features are dependency-blocked."`
+5. Set contract phase and record timestamp:
+   ```bash
+   node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase contract
+   ```
 6. Spawn `generator` agent (propose contract)
 7. Spawn `evaluator` agent (review contract)
 8. If rejected: request contract revision; re-spawn evaluator
-9. Set `cost_tracking.rounds[N].phases.contract.completed_at` to current ISO timestamp
-10. Set `cost_tracking.rounds[N].phases.implementation.started_at` to current ISO timestamp
-11. Spawn `generator` agent (implement)
-12. Auto-commit: `git add -A && git commit -m "wip(F-XXX): implement <title> -- sprint N [harness]"`
-13. Set `cost_tracking.rounds[N].phases.implementation.completed_at` to current ISO timestamp
-14. Set `cost_tracking.rounds[N].phases.evaluation.started_at` to current ISO timestamp
-15. Spawn `evaluator` agent (test + review + grade -- all-in-one)
-16. Set `cost_tracking.rounds[N].phases.evaluation.completed_at` to current ISO timestamp
-17. Set `cost_tracking.rounds[N].completed_at` to current ISO timestamp and `outcome` to `"pass"` or `"fail"`
-18. Auto-commit: `git add -A && git commit -m "feat/wip(F-XXX): <title> -- sprint N [harness]"`
-19. Update `.harness/features.json` from evaluator feature_evidence
-20. Check stop conditions (all required features pass, or hard blocker)
-21. If all required features pass: note this in summary and suggest the user run `/harness:release`
+9. Set implementation phase:
+   ```bash
+   node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase implementation
+   ```
+10. Spawn `generator` agent (implement)
+11. Auto-commit implementation work:
+    ```bash
+    node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "implement <title>" --round N --status fail
+    ```
+12. Set evaluation phase:
+    ```bash
+    node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase evaluation
+    ```
+13. Spawn `evaluator` agent (test + review + grade -- all-in-one)
+14. Record round completion timestamps in cost_tracking
+15. Auto-commit with final status:
+    ```bash
+    node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "<title>" --round N --status pass
+    ```
+16. Update `.harness/features.json` from evaluator feature_evidence
+17. Append round summary to progress:
+    ```bash
+    node plugins/harness/scripts/harness-companion.mjs progress-append --round N --feature F-XXX --status pass --scores '{"product_depth":4,"functionality":4,"visual_design":4,"code_quality":4}'
+    ```
+18. Check stop conditions:
+    ```bash
+    node plugins/harness/scripts/harness-companion.mjs check-stop
+    ```
+    If `"all_required_pass": true`: note this in summary and suggest the user run `/harness:release`.
+19. Validate all required artifacts exist for this round:
+    ```bash
+    node plugins/harness/scripts/harness-companion.mjs validate-artifacts --round N
+    ```
+    If any are missing, set `stop_reason` to `"missing required sprint artifacts for round NN"` and STOP.
 
 ### Release (User-Triggered)
 
@@ -54,13 +120,15 @@ When all required features have `passes: true`:
 
 ### Auto-Commit Protocol
 
-After each completed evaluation round:
-1. Stage all changes: `git add -A`
-2. If evaluation PASSED:
-   - Commit: `git commit -m "feat(F-XXX): <feature title> -- sprint N [harness]"`
-3. If evaluation FAILED:
-   - Commit: `git commit -m "wip(F-XXX): <feature title> -- sprint N attempt [harness]"`
-4. Never leave work uncommitted between sprints
+After each completed evaluation round, use the auto-commit subcommand:
+```bash
+# PASS:
+node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "<feature title>" --round N --status pass
+
+# FAIL:
+node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "<feature title>" --round N --status fail
+```
+Never leave work uncommitted between sprints.
 
 ## Error Recovery
 
@@ -89,14 +157,11 @@ This makes it visible whether the counter is advancing.
 The coordinator MUST NOT update `.harness/features.json` directly.
 Only evaluator-backed evidence in `NN-evaluation.json` `feature_evidence` may flip pass/fail.
 
-Before advancing to the next round, verify ALL of these artifacts exist for round NN:
-- `.harness/sprints/NN-contract.md`
-- `.harness/sprints/NN-contract-review.md`
-- `.harness/sprints/NN-builder-report.md`
-- `.harness/sprints/NN-evaluation.md`
-- `.harness/sprints/NN-evaluation.json`
-
-If any are missing, set `stop_reason` to `"missing required sprint artifacts for round NN"` and STOP.
+Before advancing to the next round, validate artifacts:
+```bash
+node plugins/harness/scripts/harness-companion.mjs validate-artifacts --round NN
+```
+If the result shows any missing artifacts, set `stop_reason` to `"missing required sprint artifacts for round NN"` and STOP.
 
 ## Codex Detection Enforcement
 
