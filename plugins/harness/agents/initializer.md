@@ -1,7 +1,7 @@
 ---
 name: initializer
 description: Set up a harness scaffold. Creates .harness/features.json,
-  .harness/progress.md, and .harness/init.md. Spawn once at project start.
+  .harness/progress.md, and .harness/init.sh. Spawn once at project start.
 tools: Read, Write, Bash, Glob
 ---
 
@@ -17,6 +17,5 @@ Follow all instructions in the role file. The role file is the single source of 
 
 ## Ownership
 
-Owns: .harness/features.json, .harness/progress.md, .harness/init.md,
-      .harness/state.json (continuous mode only)
+Owns: .harness/features.json, .harness/progress.md, .harness/state.json
 Does NOT modify: product code, .harness/spec.md

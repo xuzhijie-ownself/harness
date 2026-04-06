@@ -41,8 +41,8 @@ else
   exit 1
 fi
 
-# 4. Verify all 7 lib modules (pre-v3.0.0 baseline -- events.mjs and metrics.mjs still present)
-LIBS="state.mjs features.mjs git.mjs artifacts.mjs progress.mjs metrics.mjs events.mjs"
+# 4. Verify all 5 lib modules (v3.0.0 -- events.mjs and metrics.mjs removed)
+LIBS="state.mjs features.mjs git.mjs artifacts.mjs progress.mjs"
 for lib in $LIBS; do
   if [ -f "$SCRIPTS_DIR/lib/$lib" ]; then
     echo "OK -- lib/$lib exists"

@@ -33,8 +33,8 @@ if exist "%SCRIPTS_DIR%\harness-companion.mjs" (
   exit /b 1
 )
 
-REM 4. Verify lib modules exist (pre-v3.0.0 baseline -- events.mjs and metrics.mjs still present)
-for %%m in (state.mjs features.mjs git.mjs artifacts.mjs progress.mjs metrics.mjs events.mjs) do (
+REM 4. Verify lib modules exist (v3.0.0 -- events.mjs and metrics.mjs removed)
+for %%m in (state.mjs features.mjs git.mjs artifacts.mjs progress.mjs) do (
   if exist "%SCRIPTS_DIR%\lib\%%m" (
     echo OK -- lib\%%m exists
   ) else (

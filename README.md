@@ -192,15 +192,15 @@ Both Claude Code and Codex share:
   config.json          # persistent preferences (codex, retro, commits)
   progress.md          # progress log across sprints
   spec.md              # product spec with execution strategy
-  init.md              # human-readable setup docs
-  init.sh              # dev server startup + smoke test
-  handoff.md           # context handoff (Variant B)
+  init.sh / init.bat   # dev server startup + smoke test
+  postmortem.md        # auto-generated on completion
+  handoff.md           # context handoff (Variant B, transient)
   sprints/
-    NN-contract.md       # sprint contract per round
-    NN-contract-review.md # evaluator contract review
-    NN-builder-report.md  # generator implementation report
-    NN-evaluation.md     # evaluation (tests + review + grade)
-    NN-evaluation.json   # machine-readable evaluation
+    NN-proposal.md       # sprint contract proposal per round
+    NN-review.md         # evaluator contract review
+    NN-report.md         # generator implementation report
+    NN-eval.md           # evaluation (tests + review + grade)
+    NN-eval.json         # machine-readable evaluation
 ```
 
 ---

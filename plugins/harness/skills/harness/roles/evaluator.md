@@ -34,7 +34,7 @@ Integer scores only -- never "3-ish".
 
 ### 2. Code Review
 
-If a code review plugin is available (codex, copilot, or other), the evaluator MAY invoke it for adversarial review. This is optional and runtime-dependent. Record whether external review was used in review_findings.review_mode.
+If a code review plugin is available (codex, copilot, or other), the evaluator MAY invoke it for adversarial review. This is optional and runtime-dependent.
 
 - Check code quality: readability, security, patterns compliance, performance, error handling
 - Classify findings as BLOCKING or NON-BLOCKING

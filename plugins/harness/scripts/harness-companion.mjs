@@ -57,7 +57,7 @@ class UserError extends Error { constructor(msg) { super(msg); this.name = 'User
 
 /**
  * Inline metrics summary -- aggregates data from state.json cost_tracking.
- * Replaces the former lib/metrics.mjs summarizeMetrics export.
+ * Inline metrics summary from state.json cost_tracking.
  */
 function summarizeMetricsInline(state) {
   const rounds = state.cost_tracking?.rounds || [];
@@ -188,7 +188,7 @@ async function main() {
       const state = readState();
       const metrics = summarizeMetricsInline(state);
 
-      // Git log timeline (replaces events.jsonl)
+      // Git log timeline for postmortem
       const gitLogResult = spawnSync('git', ['log', '--oneline', '-50'], {
         cwd: process.cwd(), stdio: 'pipe', encoding: 'utf8',
       });

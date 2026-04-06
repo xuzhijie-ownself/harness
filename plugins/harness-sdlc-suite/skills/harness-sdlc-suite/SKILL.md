@@ -98,7 +98,7 @@ When a project spans multiple delivery phases, each phase must produce defined o
 | 4. Solution Architecture | harness-sa | HLD, API specs, data model, C4 diagrams | Markdown deliverables + updated `features.json` |
 | 5. Project Planning | harness core (coordinator) | Decomposition, sprint plan, `state.json` with round targets | JSON + Markdown in `.harness/` |
 | 6. Software Development | harness-sdlc | Working code, tests, build artifacts | Code + `.harness/sprints/` artifacts |
-| 7. Testing & QA | harness-sdlc (evaluator) | Evaluation reports, test results, `NN-evaluation.json` | JSON + Markdown in `.harness/sprints/` |
+| 7. Testing & QA | harness-sdlc (evaluator) | Evaluation reports, test results, `NN-eval.json` | JSON + Markdown in `.harness/sprints/` |
 | 8. Deployment & Handover | harness-ops | Deployment configs, runbooks, release artifacts | IaC configs + Markdown + `release.json` |
 
 ### Phase Dependencies
@@ -124,21 +124,21 @@ Phase handoff uses the existing `.harness/` artifact layout:
 
 - `features.json` carries forward across all phases, with each phase updating feature status and evidence.
 - `spec.md` is the cross-phase contract -- downstream phases read it but do not modify it.
-- Each phase run produces its own `sprints/` directory with contracts, evaluations, and builder reports.
+- Each phase run produces its own `sprints/` directory with proposals, reviews, reports, and evaluations.
 - When starting a new phase, the planner reads the prior phase's final evaluation and `progress.md` as input context.
 
 ### Scope Change Escalation
 
 When a downstream phase discovers that an upstream phase's outputs are insufficient:
 
-1. **Detection**: The current phase's evaluator identifies the gap as a blocker in `NN-evaluation.md`.
+1. **Detection**: The current phase's evaluator identifies the gap as a blocker in `NN-eval.md`.
 2. **Logging**: The coordinator adds a blocker entry to `progress.md` referencing the upstream phase and the specific missing artifact or content.
 3. **Re-entry**: The upstream phase is re-entered with a targeted sprint that addresses only the identified gap. The coordinator creates a new round scoped to the upstream phase's domain skill.
 4. **Resumption**: Once the upstream gap is resolved and passes evaluation, the downstream phase resumes from where it was blocked.
 
 ## Criteria Key Mapping
 
-The `primary_scores` object in `NN-evaluation.json` uses 4 keys determined by the active domain profile. Replace the `<criterion_N>` placeholders from `patterns.md` with the exact keys below.
+The `primary_scores` object in `NN-eval.json` uses 4 keys determined by the active domain profile. Replace the `<criterion_N>` placeholders from `patterns.md` with the exact keys below.
 
 | Profile | `criterion_1` | `criterion_2` | `criterion_3` | `criterion_4` |
 |---------|--------------|--------------|--------------|--------------|
@@ -148,7 +148,7 @@ The `primary_scores` object in `NN-evaluation.json` uses 4 keys determined by th
 | `solution_architecture` | `design_coherence` | `technical_depth` | `integration_clarity` | `implementability` |
 | `ops` | `operational_readiness` | `automation_coverage` | `reliability_design` | `security_posture` |
 
-The `custom` profile defines its own 4 keys inline in the `spec.md` Domain Profile section. The evaluator reads those keys at evaluation time and uses them as `primary_scores` keys in `NN-evaluation.json`.
+The `custom` profile defines its own 4 keys inline in the `spec.md` Domain Profile section. The evaluator reads those keys at evaluation time and uses them as `primary_scores` keys in `NN-eval.json`.
 
 ## Domain Verification Methods
 

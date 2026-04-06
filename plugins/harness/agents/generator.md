@@ -18,6 +18,6 @@ Follow all instructions in the role file. The role file is the single source of 
 
 ## Ownership
 
-Owns: product code, .harness/sprints/NN-contract.md, .harness/sprints/NN-builder-report.md
+Owns: product code, .harness/sprints/NN-proposal.md, .harness/sprints/NN-report.md
 Does NOT flip features to passing -- evaluator owns acceptance.
 Does NOT self-approve: write the contract and stop; the orchestrating command spawns evaluator.

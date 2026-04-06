@@ -242,7 +242,6 @@ The `primary_scores` keys below are placeholders (`<criterion_1>` through `<crit
     "coverage": ""
   },
   "review_findings": {
-    "review_mode": "claude",
     "blocking": [],
     "non_blocking": []
   },

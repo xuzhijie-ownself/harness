@@ -23,16 +23,15 @@ Run the **Command Pre-Flight Validation** from SKILL.md before proceeding. Note:
 
 1. Read the current working directory for any existing README or spec.
 2. Ask: "Describe your project goal in 1-3 sentences."
-3. Ask: "Use Codex for code review? (auto/on/off, default: auto)" -- set this value in `.harness/config.json` `use_codex` field.
-4. Ask: "What domain? (software/architecture/tender/research/content/business_analysis/custom, default: software)" -- pass this to the planner for the Domain Profile section in spec.md.
-5. Spawn the `planner` agent:
+3. Ask: "What domain? (software/enterprise_architecture/business_analysis/solution_architecture/ops/custom, default: software)" -- pass this to the planner for the Domain Profile section in spec.md.
+4. Spawn the `planner` agent:
    - Input: user goal + domain choice + any existing README context
    - Output: `.harness/spec.md` (must include Execution strategy and Domain Profile sections)
-6. Spawn the `initializer` agent:
+5. Spawn the `initializer` agent:
    - Input: `.harness/spec.md`
-   - Output: `.harness/features.json`, `.harness/progress.md`, `.harness/init.md`, `.harness/config.json`
-7. Run the command from `.harness/init.md` -- confirm baseline passes. STOP if it fails.
-8. Show the Execution strategy from `.harness/spec.md` for user confirmation.
-9. Print result based on declared execution mode:
+   - Output: `.harness/features.json`, `.harness/progress.md`, `.harness/config.json`, `.harness/init.sh`, `.harness/init.bat`
+6. Run `bash .harness/init.sh` -- confirm baseline passes. STOP if it fails.
+7. Show the Execution strategy from `.harness/spec.md` for user confirmation.
+8. Print result based on declared execution mode:
    - **supervised**: "Harness ready. Run /session to begin the first sprint."
    - **continuous**: "Harness ready. Run /run to start the coordinator loop."

@@ -18,4 +18,4 @@ Follow all instructions in the role file. The role file is the single source of 
 
 ## Ownership
 
-Owns: .harness/state.json, .harness/summary.md, .harness/decomposition.md
+Owns: .harness/state.json

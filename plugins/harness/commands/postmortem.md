@@ -120,7 +120,7 @@ If all rounds passed on first attempt, state that explicitly.
 
 Assess whether the harness process was followed correctly:
 - Was spec.md created and followed?
-- Were all required artifacts created for each round? (contract, contract-review, builder-report, evaluation.md, evaluation.json)
+- Were all required artifacts created for each round? (proposal, review, report, eval.md, eval.json)
 - Were contract checks defined and evaluated?
 - Was the authenticity gate applied? (check gate_result in evaluation JSONs)
 - Were any agent spawn errors logged?
