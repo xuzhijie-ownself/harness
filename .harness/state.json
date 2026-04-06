@@ -15,7 +15,7 @@
   "stop_reason": "",
   "context_reset_threshold": 3,
   "rounds_since_reset": 1,
-  "current_sprint_phase": "implementation",
+  "current_sprint_phase": "evaluation",
   "domain_profile": "software",
   "secondary_profile": "",
   "methodology": "agile",
