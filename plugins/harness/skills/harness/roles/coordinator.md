@@ -132,11 +132,13 @@ Never leave work uncommitted between sprints.
 
 ## Error Recovery
 
-If an agent spawn fails (timeout, API error, crash):
+If an agent spawn fails (timeout, API error, crash, connection refused):
 1. Log the error in `.harness/state.json` `errors` array with `{ "round": N, "agent": "<name>", "error": "<message>", "timestamp": "<ISO>" }`.
-2. Wait 30 seconds, then retry the same spawn once.
-3. If the retry also fails, set `stop_reason` to `"agent spawn failed after retry: <agent> -- <error>"` and STOP.
-4. Never silently swallow spawn failures or continue as if the agent succeeded.
+2. Write `.harness/handoff.md` with current progress so the next session can resume cleanly.
+3. Auto-commit any uncommitted work: `node plugins/harness/scripts/harness-companion.mjs auto-commit --feature <id> --title "error recovery checkpoint" --round N --status fail`
+4. Wait 30 seconds, then retry the same spawn once.
+5. If the retry also fails, set `stop_reason` to `"agent spawn failed after retry: <agent> -- <error>"` and STOP.
+6. Never silently swallow spawn failures or continue as if the agent succeeded.
 
 ## Context Freshness
 

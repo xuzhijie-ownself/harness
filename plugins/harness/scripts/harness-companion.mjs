@@ -29,6 +29,7 @@ const SUBCOMMANDS = {
   'metrics-summary':    'Aggregate metrics from all rounds in cost_tracking',
   'log-event':          'Log a structured event: --type <type> [--round <n>] [--feature <id>] [--data <json>]',
   'read-events':        'Read events from events.jsonl: [--type <filter>] [--since <iso-date>] [--round <n>]',
+  'postmortem-data':    'Gather all postmortem data sources into a single JSON object for LLM synthesis',
 };
 
 function printHelp() {
@@ -201,6 +202,31 @@ async function main() {
       if (flags.feature) filter.feature_id = flags.feature;
       const result = readEvents(Object.keys(filter).length > 0 ? filter : undefined);
       out(result);
+      break;
+    }
+    case 'postmortem-data': {
+      const { readFileSync, readdirSync, existsSync } = await import('node:fs');
+      const { join } = await import('node:path');
+      const harness = join(process.cwd(), '.harness');
+      const state = readState();
+      const features = (await import('./lib/features.mjs')).default || JSON.parse(readFileSync(join(harness, 'features.json'), 'utf8'));
+      const metrics = summarizeMetrics();
+      const events = readEvents();
+      const sprintsDir = join(harness, 'sprints');
+      const evaluations = [];
+      if (existsSync(sprintsDir)) {
+        for (const f of readdirSync(sprintsDir).filter(f => f.endsWith('-evaluation.json')).sort()) {
+          try { evaluations.push(JSON.parse(readFileSync(join(sprintsDir, f), 'utf8'))); } catch { /* skip malformed */ }
+        }
+      }
+      out({
+        state,
+        features: JSON.parse(readFileSync(join(harness, 'features.json'), 'utf8')),
+        metrics,
+        events: events.events || [],
+        evaluations,
+        rounds_completed: state.last_completed_round || state.current_round,
+      });
       break;
     }
   }

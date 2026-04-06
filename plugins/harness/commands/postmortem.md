@@ -24,7 +24,13 @@ If no evaluation artifacts exist, REFUSE. Print: "Cannot generate postmortem: no
 
 ## Data Gathering
 
-Read all of the following data sources before writing the postmortem. Use the script subcommands for structured data where available.
+**Quick path**: Run the `postmortem-data` subcommand to get all data in one JSON object:
+```bash
+node plugins/harness/scripts/harness-companion.mjs postmortem-data
+```
+This returns `{ state, features, metrics, events, evaluations, rounds_completed }` — all data sources needed for the postmortem sections below.
+
+**Manual path** (if you need more detail): Read each data source individually:
 
 ### 1. Evaluation Artifacts
 

@@ -1,0 +1,136 @@
+{
+  "version": 1,
+  "updated_by": "initializer-1",
+  "features": [
+    {
+      "id": "F-015",
+      "title": "Script hardening",
+      "category": "functional",
+      "description": "JSDoc type annotations on all lib exports, runtime schema validation in readState() and readFeatures(), circular dependency detection in selectNextFeature(), standardized error handling (UserError throws), and git message injection fix via spawnSync args array.",
+      "required": true,
+      "priority": "high",
+      "status": "done",
+      "passes": true,
+      "depends_on": [],
+      "maturity": "reviewed",
+      "source_requirement": "spec.md F-015",
+      "steps": [
+        "Verify all 5 lib modules (state.mjs, features.mjs, git.mjs, progress.mjs, artifacts.mjs) have JSDoc @typedef and @param/@returns on every exported function",
+        "Call readState() with JSON missing required fields and verify it throws UserError with descriptive message",
+        "Call readFeatures() with malformed JSON (missing version, non-array features, feature missing id/required/passes) and verify UserError thrown",
+        "Create a features.json with circular depends_on (A->B->A) and verify selectNextFeature() reports the cycle as an error",
+        "Verify autoCommit() in git.mjs uses spawnSync with args array (no shell string concatenation)",
+        "Verify autoCommit() throws UserError on git failure instead of returning {ok: false}",
+        "Verify updateTimestamp() in progress.mjs throws UserError when progress.md is missing",
+        "Run all existing subcommands and confirm no regressions"
+      ],
+      "evidence": [],
+      "notes": "Foundation feature -- all other features depend on the hardened lib."
+    },
+    {
+      "id": "F-016",
+      "title": "Feature-update subcommand",
+      "category": "functional",
+      "description": "New feature-update subcommand in harness-companion.mjs with --id, --set-passes, --set-status, --set-maturity flags. New writeFeatures() and updateFeature() functions in features.mjs with atomic write and validation.",
+      "required": true,
+      "priority": "high",
+      "status": "done",
+      "passes": true,
+      "depends_on": [
+        "F-015"
+      ],
+      "maturity": "reviewed",
+      "source_requirement": "spec.md F-016",
+      "steps": [
+        "Run feature-update --id F-015 --set-passes true and verify features.json is updated atomically",
+        "Run feature-update --id F-015 --set-status done --set-maturity reviewed and verify both fields updated",
+        "Run feature-update --id INVALID-ID and verify UserError with unknown feature ID message",
+        "Run feature-update --id F-015 --set-maturity bogus and verify UserError for invalid maturity value",
+        "Verify writeFeatures() uses atomic write pattern (write .tmp then rename)",
+        "Verify updateFeature() reads, validates, mutates single feature, and writes back",
+        "Verify feature-update is registered in harness-companion.mjs subcommand dispatch"
+      ],
+      "evidence": [],
+      "notes": "Depends on F-015 for hardened features.mjs with schema validation."
+    },
+    {
+      "id": "F-017",
+      "title": "Per-step metrics",
+      "category": "functional",
+      "description": "New lib/metrics.mjs module with recordMetrics() and readMetrics(). Enhanced cost_tracking with file_changes and evaluation_scores. New metrics-summary subcommand for aggregated output.",
+      "required": true,
+      "priority": "medium",
+      "status": "done",
+      "passes": true,
+      "depends_on": [
+        "F-015"
+      ],
+      "maturity": "reviewed",
+      "source_requirement": "spec.md F-017",
+      "steps": [
+        "Verify lib/metrics.mjs exports recordMetrics(), readMetrics(), and summarizeMetrics()",
+        "Call recordMetrics() with file_changes and evaluation_scores data and verify it writes to cost_tracking in state.json",
+        "Run metrics-summary subcommand and verify JSON output contains total rounds, total duration, total file changes, and score trends",
+        "Verify atomic write via writeState() for metric data",
+        "Verify zero npm dependencies maintained",
+        "Verify metrics-summary is registered in harness-companion.mjs"
+      ],
+      "evidence": [],
+      "notes": "Depends on F-015 for hardened state.mjs. Simplification policy: may drop score-trend aggregation if duration tracking alone passes."
+    },
+    {
+      "id": "F-018",
+      "title": "Structured event logging",
+      "category": "functional",
+      "description": "New lib/events.mjs with logEvent() and readEvents(). Append-only .harness/events.jsonl with typed events. New log-event and read-events subcommands.",
+      "required": true,
+      "priority": "medium",
+      "status": "done",
+      "passes": true,
+      "depends_on": [
+        "F-015"
+      ],
+      "maturity": "reviewed",
+      "source_requirement": "spec.md F-018",
+      "steps": [
+        "Verify lib/events.mjs exports logEvent(type, payload) and readEvents(filter?)",
+        "Call logEvent('agent_spawned', {agent: 'test'}) and verify .harness/events.jsonl has one JSON line with timestamp, event_type, and payload",
+        "Call logEvent() multiple times and verify append-only behavior (no read-modify-write)",
+        "Run log-event --type phase_changed --payload '{\"phase\":\"contract\"}' and verify events.jsonl updated",
+        "Run read-events and verify all events returned as JSON array",
+        "Run read-events --type agent_spawned and verify filtered results",
+        "Run read-events --since 2026-04-01T00:00:00Z and verify date filtering works",
+        "Verify event types include: agent_spawned, phase_changed, feature_selected, evaluation_completed, commit_made",
+        "Verify log-event and read-events registered in harness-companion.mjs"
+      ],
+      "evidence": [],
+      "notes": "Depends on F-015 for hardened lib foundation. Independent of F-017."
+    },
+    {
+      "id": "F-019",
+      "title": "Postmortem command",
+      "category": "functional",
+      "description": "New plugins/harness/commands/postmortem.md skill command that reads evaluation artifacts, state.json, features.json, and events.jsonl to generate .harness/postmortem.md with Timeline, Score Trends, Failure Analysis, Process Compliance, and Recommendations sections.",
+      "required": true,
+      "priority": "medium",
+      "status": "done",
+      "passes": true,
+      "depends_on": [
+        "F-017",
+        "F-018"
+      ],
+      "maturity": "reviewed",
+      "source_requirement": "spec.md F-019",
+      "steps": [
+        "Verify plugins/harness/commands/postmortem.md exists and is a valid command file",
+        "Verify postmortem.md is registered in plugin.json commands array",
+        "Verify the command instructs the agent to read: evaluation artifacts, state.json, features.json, events.jsonl",
+        "Verify the command template includes all 5 sections: Timeline, Score Trends, Failure Analysis, Process Compliance, Recommendations",
+        "Verify the command delegates synthesis to the LLM (not the script layer)",
+        "Run the postmortem command and verify .harness/postmortem.md is generated with correct structure"
+      ],
+      "evidence": [],
+      "notes": "Depends on F-017 (metrics data) and F-018 (event log). Simplification policy: may drop Recommendations section if synthesis proves unreliable."
+    }
+  ]
+}

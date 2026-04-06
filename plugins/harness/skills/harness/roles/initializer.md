@@ -38,6 +38,8 @@ Generate both init.sh (bash) and init.bat (Windows CMD) using templates from pat
 
 When creating `.harness/state.json`, include a `"methodology"` field set to the chosen methodology (one of: `"agile"`, `"scrum"`, `"waterfall"`, `"kanban"`). Default to `"agile"` if not specified.
 
+Set `current_round` to `0` (not 1). The coordinator's first action is `--increment-round`, which will bring it to 1. Starting at 1 causes a round-numbering offset where Sprint 1 artifacts are numbered 02-*.
+
 All artifacts must include the shared metadata block defined in patterns.md.
 
 ## Focus
