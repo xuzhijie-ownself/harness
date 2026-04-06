@@ -1,6 +1,15 @@
 {
-  "current_version": "2.2.1",
+  "current_version": "2.2.2",
   "releases": [
+    {
+      "version": "2.2.2",
+      "date": "2026-04-06",
+      "features_shipped": ["F-015", "F-016", "F-017", "F-018", "F-019"],
+      "features_deferred": [],
+      "changelog": "Script hardening (JSDoc, validation, circular dep detection, error standardization, git escaping fix), feature-update subcommand, per-step metrics with metrics-summary, structured event logging (events.jsonl), postmortem command (/harness:postmortem), postmortem-data subcommand for deterministic data gathering. Also fixes: round numbering offset (initializer starts at 0), error recovery writes handoff before retry.",
+      "sprint_count": 3,
+      "previous_version": "2.2.1"
+    },
     {
       "version": "2.2.1",
       "date": "2026-04-04",
@@ -92,5 +101,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "2.2.2"
+  "next_version": "2.2.3"
 }

@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.2.2] - 2026-04-06
+
+### Features Shipped
+- **F-015**: Script hardening — JSDoc annotations, runtime validation, circular dep detection, error standardization, git escaping fix
+- **F-016**: Feature-update subcommand — CLI mutation of feature.passes/status/maturity
+- **F-017**: Per-step metrics — lib/metrics.mjs, metrics-summary subcommand, file_changes + evaluation_scores in cost_tracking
+- **F-018**: Structured event logging — lib/events.mjs, log-event/read-events subcommands, append-only events.jsonl
+- **F-019**: Postmortem command — `/harness:postmortem` with Timeline, Score Trends, Failure Analysis, Process Compliance, Recommendations
+
+### Fixes
+- Round numbering offset: initializer now documents `current_round: 0` so first increment lands on 1
+- Error recovery: coordinator writes handoff.md before retry on connection errors
+- `postmortem-data` subcommand: deterministic data gathering for LLM synthesis
+
+### Stats
+- Sprint count: 3
+- Required features: 5/5 passing
+- Total subcommands: 12 (was 7 in v2.2.1)
+
 ## [2.2.1] - 2026-04-04
 
 ### Features Shipped
