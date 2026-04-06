@@ -54,6 +54,9 @@ $SCRIPT cleanup-sprints --before-round N
 
 # Verify sprint artifact round numbering
 $SCRIPT verify-round-numbering
+
+# Finalize round -- fill empty cost_tracking timestamps and set outcome
+$SCRIPT finalize-round --round N
 ```
 
 All subcommands emit JSON to stdout. Parse the JSON output to get structured results. Errors go to stderr with exit code 1 (user error) or 2 (system error).
@@ -91,6 +94,9 @@ spawn evaluator (grade) --> FAIL? --> increment failure_streak
   |                          |           |--> next round
   v                          v
 [feature-update --set-passes true]
+  |
+  v
+[finalize-round --round N]
   |
   v
 [check-stop] --> all_required_pass=true? --> STOP (success)
@@ -138,7 +144,11 @@ spawn evaluator (grade) --> FAIL? --> increment failure_streak
     node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase evaluation
     ```
 13. Spawn `evaluator` agent (test + review + grade -- all-in-one)
-14. Record round completion timestamps in cost_tracking
+14. Finalize round -- fill empty cost_tracking timestamps and set outcome from evaluation:
+    ```bash
+    node plugins/harness/scripts/harness-companion.mjs finalize-round --round N
+    ```
+    This reads NN-evaluation.json for the decision field and populates all empty timestamps in cost_tracking.rounds[N]. Falls back to `--outcome pass|fail` flag if evaluation.json is missing.
 15. Auto-commit with final status:
     ```bash
     node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "<title>" --round N --status pass

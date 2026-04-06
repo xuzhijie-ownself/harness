@@ -109,18 +109,24 @@ This is the expanded 4-step Codex detection procedure. The evaluator role file c
 
 **Step 3** (codex mode only): Run the adversarial review.
 
-**Primary method** -- invoke the plugin skill:
+**Primary method** -- invoke the Codex CLI directly:
+```
+codex review --commit HEAD
+```
+This runs the Codex CLI review against the latest commit. It is the most reliable invocation method and should be attempted first.
+
+**Fallback** -- if the CLI review fails (command not found, timeout, or error), fall back to the plugin skill:
 ```
 /codex:adversarial-review --wait
 ```
 This delegates the review to the Codex adversarial-review skill and blocks until it returns findings.
 
-**Fallback** -- if the skill invocation fails (skill not registered, plugin unavailable, or timeout), fall back to the raw CLI:
+**Last resort** -- if both the CLI and the skill invocation fail, fall back to the raw CLI with full-auto mode:
 ```
 Bash({ command: "codex --approval-mode full-auto --quiet 'Review these code changes adversarially. Check quality, security, patterns, and design choices. Output findings as BLOCKING or NON-BLOCKING.'", timeout: 120000 })
 ```
 
-If **both** the skill and the CLI fallback fail, set review_mode to `"claude"` and record fallback_reason with the error message. The evaluator continues with Claude-only review -- codex failure is never a hard block.
+If **all** methods fail, set review_mode to `"claude"` and record fallback_reason with the error message. The evaluator continues with Claude-only review -- codex failure is never a hard block.
 
 **Severity mapping** -- map Codex review findings to harness categories:
 

@@ -31,6 +31,7 @@ const SUBCOMMANDS = {
   'read-events':             'Read events from events.jsonl: [--type <filter>] [--since <iso-date>] [--round <n>]',
   'postmortem-data':         'Gather all postmortem data sources into a single JSON object for LLM synthesis',
   'verify-round-numbering':  'Verify sprint artifact NN prefixes match state.json cost_tracking rounds',
+  'finalize-round':          'Fill empty cost_tracking timestamps and set outcome: --round <n> [--outcome pass|fail]',
 };
 
 function printHelp() {
@@ -283,6 +284,63 @@ async function main() {
         mismatches,
         rounds_found_in_files: [...roundsFromFiles].sort((a, b) => a - b),
         rounds_in_state: stateRounds,
+      });
+      break;
+    }
+    case 'finalize-round': {
+      if (!flags.round) {
+        throw new UserError('finalize-round requires --round <n>');
+      }
+      const roundNum = parseInt(flags.round, 10);
+      const state = readState();
+      const now = new Date().toISOString();
+
+      // Find the target round in cost_tracking
+      const roundEntry = (state.cost_tracking?.rounds || []).find(r => r.round === roundNum);
+      if (!roundEntry) {
+        throw new UserError(`Round ${roundNum} not found in state.json cost_tracking.rounds.`);
+      }
+
+      // Fill empty timestamps with current time
+      if (!roundEntry.completed_at) roundEntry.completed_at = now;
+      if (roundEntry.phases) {
+        for (const phase of ['contract', 'implementation', 'evaluation']) {
+          if (roundEntry.phases[phase]) {
+            if (!roundEntry.phases[phase].started_at) roundEntry.phases[phase].started_at = now;
+            if (!roundEntry.phases[phase].completed_at) roundEntry.phases[phase].completed_at = now;
+          }
+        }
+      }
+
+      // Determine outcome: try reading NN-evaluation.json, fall back to --outcome flag
+      let outcome = flags.outcome || '';
+      if (!outcome) {
+        try {
+          const { readFileSync } = await import('node:fs');
+          const { join } = await import('node:path');
+          const paddedRound = String(roundNum).padStart(2, '0');
+          const evalPath = join(process.cwd(), '.harness', 'sprints', `${paddedRound}-evaluation.json`);
+          const evalData = JSON.parse(readFileSync(evalPath, 'utf8'));
+          if (evalData.decision) {
+            outcome = evalData.decision.toLowerCase();
+          }
+        } catch {
+          // evaluation.json missing or unreadable -- outcome stays empty unless --outcome provided
+        }
+      }
+
+      if (outcome) {
+        roundEntry.outcome = outcome;
+      }
+
+      writeState(state);
+
+      out({
+        ok: true,
+        round: roundNum,
+        completed_at: roundEntry.completed_at,
+        outcome: roundEntry.outcome || '(not set)',
+        timestamps_filled: true,
       });
       break;
     }

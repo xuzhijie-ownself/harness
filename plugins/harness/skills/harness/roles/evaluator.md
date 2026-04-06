@@ -32,14 +32,14 @@ Integer scores only -- never "3-ish".
 
 Read config.json `use_codex` value, then decide review mode:
 - `"off"` -> review_mode = `"claude"`
-- `"on"` -> try `/codex:adversarial-review --wait`; if skill fails, try raw CLI; if both fail, fallback to `"claude"` with fallback_reason
+- `"on"` -> try `codex review --commit HEAD` (CLI); if CLI fails, try `/codex:adversarial-review --wait` (skill); if both fail, fallback to `"claude"` with fallback_reason
 - `"auto"` (default) -> run three checks in order (any-one-passes):
   1. Project `.claude/settings.json` -- `enabledPlugins` contains `"codex@openai-codex": true`
   2. Global `~/.claude/settings.json` -- `extraKnownMarketplaces` contains `"openai-codex"`
   3. `which codex` on PATH -- exits 0
   If any passes -> review_mode = `"codex"`. All three fail -> review_mode = `"claude"`.
 
-When review_mode is `"codex"`, invoke `/codex:adversarial-review --wait` as the primary review method. Fall back to raw CLI if the skill fails. Map findings: critical/high -> BLOCKING, medium/low/info -> NON-BLOCKING.
+When review_mode is `"codex"`, invoke `codex review --commit HEAD` as the primary review method (CLI-first). Fall back to `/codex:adversarial-review --wait` (skill invocation) if the CLI fails. Map findings: critical/high -> BLOCKING, medium/low/info -> NON-BLOCKING.
 
 Record in both NN-evaluation.md and NN-evaluation.json: review_mode, config_use_codex, codex_available, detection_method, detection_result, fallback_reason.
 
