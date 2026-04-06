@@ -1,0 +1,130 @@
+{
+  "round": 4,
+  "decision": "PASS",
+  "target_feature_ids": ["F-019"],
+  "primary_scores": {
+    "product_depth": {
+      "score": 4,
+      "justification": "Comprehensive retrospective structure with all 5 required sections, concrete extraction instructions, and output templates with table formats. Actionable -- gathers data from 6 sources for synthesis.",
+      "prior_round_score": 4,
+      "drift_check": "Same as prior round. Different feature (F-019 vs F-017/F-018) but same depth of coverage."
+    },
+    "functionality": {
+      "score": 4,
+      "justification": "Valid YAML frontmatter, registered in plugin.json, references all required data sources (evaluation JSONs, state.json, features.json, events.jsonl, metrics-summary). Precondition checks prevent running without artifacts.",
+      "prior_round_score": 4,
+      "drift_check": "Same as prior round. All functional contract checks pass."
+    },
+    "visual_design": {
+      "score": 4,
+      "justification": "Command file follows exact format of existing commands (release.md, session.md). Same frontmatter fields, section hierarchy, and markdown formatting conventions.",
+      "prior_round_score": 4,
+      "drift_check": "Same as prior round. Format consistency verified against sibling commands."
+    },
+    "code_quality": {
+      "score": 4,
+      "justification": "Clean separation between data gathering (script subcommands) and synthesis (LLM). No script-level generation. Uses established subcommand names. Instructions specific enough for agent execution.",
+      "prior_round_score": 4,
+      "drift_check": "Same as prior round. Architectural separation is clean."
+    }
+  },
+  "contract_checks": [
+    {
+      "id": "PD-01",
+      "required": true,
+      "result": "pass",
+      "evidence": "All 5 sections present: Timeline, Score Trends, Failure Analysis, Process Compliance, Recommendations"
+    },
+    {
+      "id": "FN-01",
+      "required": true,
+      "result": "pass",
+      "evidence": "Data sources referenced: NN-evaluation.json, metrics-summary, state.json, features.json, read-events, NN-evaluation.md"
+    },
+    {
+      "id": "FN-02",
+      "required": true,
+      "result": "pass",
+      "evidence": "./commands/postmortem.md present in plugin.json commands array at index 5"
+    },
+    {
+      "id": "VD-01",
+      "required": false,
+      "result": "pass",
+      "evidence": "Frontmatter and section structure match release.md and session.md conventions"
+    },
+    {
+      "id": "CQ-01",
+      "required": true,
+      "result": "pass",
+      "evidence": "Synthesis delegated to LLM agent. No script-level markdown generation. Data gathering uses established subcommands."
+    }
+  ],
+  "blockers": [],
+  "non_blocking_issues": [
+    "Process Compliance section asks about spec.md but Data Gathering does not instruct reading it",
+    "Sprint artifact completeness (contract, builder-report) not explicitly verified in data gathering",
+    "metrics-summary total_rounds may include in-progress rounds; should use last_completed_round instead"
+  ],
+  "feature_evidence": [
+    {
+      "feature_id": "F-019",
+      "passes": true,
+      "reason": "Command file exists with valid frontmatter, all 5 sections, all data sources referenced, registered in plugin.json, and delegates synthesis to LLM. All required contract checks pass."
+    }
+  ],
+  "test_results": {
+    "tests_written": [],
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "coverage": "Manual verification of Markdown command file structure and content"
+  },
+  "review_findings": {
+    "review_mode": "codex",
+    "codex_detection": {
+      "config_use_codex": "auto",
+      "codex_available": true,
+      "detection_method": "enabledPlugins in .claude/settings.json + which codex on PATH",
+      "detection_result": "codex@openai-codex found in enabledPlugins; /opt/homebrew/bin/codex on PATH",
+      "fallback_reason": "codex:adversarial-review skill failed (disable-model-invocation); raw CLI codex review --commit HEAD succeeded"
+    },
+    "blocking": [],
+    "non_blocking": [
+      {
+        "severity": "medium",
+        "finding": "spec.md not included in data gathering for Process Compliance verification",
+        "source": "codex review (gpt-5.4)"
+      },
+      {
+        "severity": "medium",
+        "finding": "Sprint artifact completeness not explicitly verified for non-evaluation artifacts",
+        "source": "codex review (gpt-5.4)"
+      },
+      {
+        "severity": "medium",
+        "finding": "In-progress rounds may inflate Rounds completed count via metrics-summary",
+        "source": "codex review (gpt-5.4)"
+      }
+    ]
+  },
+  "authenticity_gate": {
+    "gate_result": "pass",
+    "internal_consistency": {
+      "pass": true,
+      "justification": "Command uses same frontmatter schema and section structure as existing commands. Data source references use exact subcommand names from harness-companion.mjs."
+    },
+    "intentionality": {
+      "pass": true,
+      "justification": "References harness-specific artifact schemas and field names. 5 output sections map to F-019 spec. Builder report documents deliberate design choices."
+    },
+    "craft": {
+      "pass": true,
+      "justification": "Valid YAML frontmatter, consistent heading hierarchy, proper markdown table syntax, sequential section numbering."
+    },
+    "fitness_for_purpose": {
+      "pass": true,
+      "justification": "Self-contained command with explicit extraction instructions per data source and exact output template column headers. Agent can follow without external docs."
+    }
+  }
+}

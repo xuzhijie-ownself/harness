@@ -113,13 +113,13 @@
       "description": "New plugins/harness/commands/postmortem.md skill command that reads evaluation artifacts, state.json, features.json, and events.jsonl to generate .harness/postmortem.md with Timeline, Score Trends, Failure Analysis, Process Compliance, and Recommendations sections.",
       "required": true,
       "priority": "medium",
-      "status": "not_started",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [
         "F-017",
         "F-018"
       ],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md F-019",
       "steps": [
         "Verify plugins/harness/commands/postmortem.md exists and is a valid command file",
