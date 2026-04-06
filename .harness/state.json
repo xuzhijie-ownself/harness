@@ -1,16 +1,16 @@
 {
   "mode": "continuous",
-  "status": "active",
+  "status": "complete",
   "variant": "variant-a-sprinted",
-  "current_round": 2,
-  "last_completed_round": 2,
+  "current_round": 3,
+  "last_completed_round": 3,
   "active_feature_ids": [],
   "expected_sprint_count": 4,
   "current_failure_streak": 0,
   "last_feature_pass_delta": 2,
-  "stop_reason": "",
+  "stop_reason": "all_required_pass",
   "context_reset_threshold": 3,
-  "rounds_since_reset": 2,
+  "rounds_since_reset": 3,
   "current_sprint_phase": "idle",
   "domain_profile": "software",
   "secondary_profile": "",
@@ -40,6 +40,18 @@
           "contract": { "started_at": "2026-04-06T16:55:03.960Z", "completed_at": "2026-04-06T16:55:03.960Z" },
           "implementation": { "started_at": "2026-04-06T16:55:03.960Z", "completed_at": "2026-04-06T16:55:03.960Z" },
           "evaluation": { "started_at": "2026-04-06T16:55:03.960Z", "completed_at": "2026-04-06T16:55:03.960Z" }
+        }
+      },
+      {
+        "round": 3,
+        "started_at": "2026-04-07T10:40:00Z",
+        "completed_at": "2026-04-06T18:24:14.475Z",
+        "feature_id": "F-030,F-031",
+        "outcome": "pass",
+        "phases": {
+          "contract": { "started_at": "2026-04-06T18:24:14.475Z", "completed_at": "2026-04-06T18:24:14.475Z" },
+          "implementation": { "started_at": "2026-04-06T18:24:14.475Z", "completed_at": "2026-04-06T18:24:14.475Z" },
+          "evaluation": { "started_at": "2026-04-06T18:24:14.475Z", "completed_at": "2026-04-06T18:24:14.475Z" }
         }
       }
     ]

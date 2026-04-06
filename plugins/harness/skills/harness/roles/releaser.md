@@ -36,6 +36,11 @@ Before creating or updating release artifacts:
 - git tag creation for each release
 - manifest version synchronization across plugin descriptors
 
+## Preconditions
+
+Before creating a release, verify:
+- `.harness/postmortem.md` exists. If missing, warn: "postmortem.md not found -- run /harness:postmortem or let the coordinator auto-generate it before releasing."
+
 ## Responsibilities
 
 1. Read `.harness/features.json` to determine shipped features

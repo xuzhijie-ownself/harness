@@ -14,7 +14,6 @@ import { readState, writeState, setPhase, incrementRound, appendCost } from './l
 import { autoCommit } from './lib/git.mjs';
 import { validateArtifacts, cleanupSprints } from './lib/artifacts.mjs';
 import { appendProgress, updateTimestamp } from './lib/progress.mjs';
-import { collectMetrics, summarizeMetrics, recordMetrics, readMetrics } from './lib/metrics.mjs';
 
 const SUBCOMMANDS = {
   'feature-select':          'Pick the next eligible feature (highest priority, passes=false, deps met)',
@@ -55,6 +54,43 @@ function out(obj) {
 }
 
 class UserError extends Error { constructor(msg) { super(msg); this.name = 'UserError'; } }
+
+/**
+ * Inline metrics summary -- aggregates data from state.json cost_tracking.
+ * Replaces the former lib/metrics.mjs summarizeMetrics export.
+ */
+function summarizeMetricsInline(state) {
+  const rounds = state.cost_tracking?.rounds || [];
+  let total_duration_ms = 0;
+  const total_file_changes = { files_changed: 0, insertions: 0, deletions: 0 };
+  const score_trends = {};
+  const round_details = [];
+
+  for (const entry of rounds) {
+    let duration_ms = 0;
+    if (entry.started_at && entry.completed_at) {
+      duration_ms = new Date(entry.completed_at).getTime() - new Date(entry.started_at).getTime();
+      if (duration_ms > 0) total_duration_ms += duration_ms;
+    }
+    if (entry.file_changes) {
+      total_file_changes.files_changed += entry.file_changes.files_changed || 0;
+      total_file_changes.insertions += entry.file_changes.insertions || 0;
+      total_file_changes.deletions += entry.file_changes.deletions || 0;
+    }
+    if (entry.evaluation_scores) {
+      for (const [criterion, data] of Object.entries(entry.evaluation_scores)) {
+        if (!score_trends[criterion]) score_trends[criterion] = [];
+        const score = typeof data === 'object' && data !== null && 'score' in data
+          ? data.score
+          : (typeof data === 'number' ? data : null);
+        if (score !== null) score_trends[criterion].push(score);
+      }
+    }
+    round_details.push({ round: entry.round, outcome: entry.outcome || '', duration_ms });
+  }
+
+  return { total_rounds: rounds.length, total_duration_ms, total_file_changes, score_trends, round_details };
+}
 
 async function main() {
   const args = process.argv.slice(2);
@@ -147,9 +183,17 @@ async function main() {
     case 'postmortem-data': {
       const { readFileSync, readdirSync, existsSync } = await import('node:fs');
       const { join } = await import('node:path');
+      const { spawnSync } = await import('node:child_process');
       const harness = join(process.cwd(), '.harness');
       const state = readState();
-      const metrics = summarizeMetrics();
+      const metrics = summarizeMetricsInline(state);
+
+      // Git log timeline (replaces events.jsonl)
+      const gitLogResult = spawnSync('git', ['log', '--oneline', '-50'], {
+        cwd: process.cwd(), stdio: 'pipe', encoding: 'utf8',
+      });
+      const gitTimeline = gitLogResult.status === 0 ? gitLogResult.stdout.trim().split('\n') : [];
+
       const sprintsDir = join(harness, 'sprints');
       const evaluations = [];
       if (existsSync(sprintsDir)) {
@@ -161,6 +205,7 @@ async function main() {
         state,
         features: JSON.parse(readFileSync(join(harness, 'features.json'), 'utf8')),
         metrics,
+        git_timeline: gitTimeline,
         evaluations,
         rounds_completed: state.last_completed_round || state.current_round,
       });
@@ -193,6 +238,7 @@ async function main() {
 
       // Determine outcome: try reading NN-eval.json, fall back to --outcome flag
       let outcome = flags.outcome || '';
+      let currentScores = null;
       if (!outcome) {
         try {
           const { readFileSync } = await import('node:fs');
@@ -203,8 +249,9 @@ async function main() {
           if (evalData.decision) {
             outcome = evalData.decision.toLowerCase();
           }
+          currentScores = evalData.primary_scores || null;
         } catch {
-          // eval.json missing or unreadable -- outcome stays empty unless --outcome provided
+          // eval.json missing or unreadable
         }
       }
 
@@ -212,15 +259,46 @@ async function main() {
         roundEntry.outcome = outcome;
       }
 
+      // Drift detection: compare current round scores vs previous round
+      let drift_warning = null;
+      if (currentScores && roundNum > 1) {
+        try {
+          const { readFileSync } = await import('node:fs');
+          const { join } = await import('node:path');
+          const prevPadded = String(roundNum - 1).padStart(2, '0');
+          const prevPath = join(process.cwd(), '.harness', 'sprints', `${prevPadded}-eval.json`);
+          const prevData = JSON.parse(readFileSync(prevPath, 'utf8'));
+          const prevScores = prevData.primary_scores || {};
+          const drifts = [];
+          for (const [criterion, scoreObj] of Object.entries(currentScores)) {
+            const curScore = typeof scoreObj === 'object' ? scoreObj.score : scoreObj;
+            const prevObj = prevScores[criterion];
+            const prevScore = prevObj ? (typeof prevObj === 'object' ? prevObj.score : prevObj) : null;
+            if (prevScore !== null && curScore !== null && (prevScore - curScore) > 1) {
+              drifts.push({ criterion, current: curScore, previous: prevScore, drop: prevScore - curScore });
+            }
+          }
+          if (drifts.length > 0) {
+            drift_warning = { message: 'Score drop >1 detected on one or more criteria', drifts };
+          }
+        } catch {
+          // Previous eval not readable -- skip drift check
+        }
+      }
+
       writeState(state);
 
-      out({
+      const result = {
         ok: true,
         round: roundNum,
         completed_at: roundEntry.completed_at,
         outcome: roundEntry.outcome || '(not set)',
         timestamps_filled: true,
-      });
+      };
+      if (drift_warning) {
+        result.drift_warning = drift_warning;
+      }
+      out(result);
       break;
     }
   }

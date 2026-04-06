@@ -154,7 +154,9 @@ spawn evaluator (grade) --> FAIL? --> increment failure_streak
     ```bash
     node plugins/harness/scripts/harness-companion.mjs check-stop
     ```
-    If `"all_required_pass": true`: note this in summary and suggest the user run `/harness:release`.
+    If `"all_required_pass": true`:
+    a. Auto-generate postmortem: run `node plugins/harness/scripts/harness-companion.mjs postmortem-data` and write `.harness/postmortem.md` from the output.
+    b. Note this in progress.md and suggest the user run `/harness:release`.
 19. Validate all required artifacts exist for this round:
     ```bash
     node plugins/harness/scripts/harness-companion.mjs validate-artifacts --round N
