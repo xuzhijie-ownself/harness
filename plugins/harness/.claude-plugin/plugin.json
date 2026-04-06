@@ -33,7 +33,8 @@
     "./commands/run.md",
     "./commands/session.md",
     "./commands/reset.md",
-    "./commands/release.md"
+    "./commands/release.md",
+    "./commands/postmortem.md"
   ],
   "skills": [
     "./skills/"
