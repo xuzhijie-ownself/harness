@@ -9,8 +9,32 @@
             "command": "node plugins/harness/scripts/harness-companion.mjs progress-append --timestamp-only"
           }
         ],
-        "description": "Update .harness/progress.md with timestamp after git commits",
-        "id": "post:bash:harness-progress-update"
+        "description": "Update .harness/progress.md with timestamp after evaluation auto-commits (pass or fail)",
+        "id": "post:bash:harness-progress-update",
+        "pattern": "auto-commit.*--status"
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node plugins/harness/scripts/harness-companion.mjs log-event --type phase_changed"
+          }
+        ],
+        "description": "Log phase_changed event to events.jsonl when state-mutate --set-phase is called",
+        "id": "post:bash:harness-log-phase",
+        "pattern": "state-mutate.*--set-phase"
+      },
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node plugins/harness/scripts/harness-companion.mjs log-event --type agent_spawned"
+          }
+        ],
+        "description": "Log agent_spawned event to events.jsonl after any agent spawn",
+        "id": "post:agent:harness-log-spawn"
       }
     ]
   }

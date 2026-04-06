@@ -43,7 +43,7 @@ $SCRIPT auto-commit --feature F-XXX --title "feature title" --round N --status p
 # Validate sprint artifacts
 $SCRIPT validate-artifacts --round N
 
-# Append round summary to progress.md
+# Append round summary to progress.md (hook-automated after evaluation commits; manual call only needed for non-standard flows)
 $SCRIPT progress-append --round N --feature F-XXX --status pass --scores '{"product_depth":4}'
 
 # Check stop conditions (all required pass? failure streak?)
@@ -51,6 +51,9 @@ $SCRIPT check-stop
 
 # Clean up old sprint files
 $SCRIPT cleanup-sprints --before-round N
+
+# Verify sprint artifact round numbering
+$SCRIPT verify-round-numbering
 ```
 
 All subcommands emit JSON to stdout. Parse the JSON output to get structured results. Errors go to stderr with exit code 1 (user error) or 2 (system error).
@@ -98,7 +101,7 @@ spawn evaluator (grade) --> FAIL? --> increment failure_streak
   |                         |
   |                    complete
   v                         |
-[progress-append] --------> next round
+[progress-append (hook)] --> next round
 ```
 
 ## Loop Per Round
@@ -141,7 +144,8 @@ spawn evaluator (grade) --> FAIL? --> increment failure_streak
     node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "<title>" --round N --status pass
     ```
 16. Update `.harness/features.json` from evaluator feature_evidence
-17. Append round summary to progress:
+17. Append round summary to progress (hook-automated):
+    The `post:bash:harness-progress-update` hook in hooks.json fires automatically after auto-commit calls (step 11 and step 15), appending a timestamp to progress.md. For full round summaries with scores, the coordinator may still call progress-append explicitly:
     ```bash
     node plugins/harness/scripts/harness-companion.mjs progress-append --round N --feature F-XXX --status pass --scores '{"product_depth":4,"functionality":4,"visual_design":4,"code_quality":4}'
     ```
@@ -175,6 +179,8 @@ node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX -
 node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "<feature title>" --round N --status fail
 ```
 Never leave work uncommitted between sprints.
+
+Note: The `post:bash:harness-progress-update` hook fires automatically after these auto-commit calls, updating progress.md with a timestamp. This replaces manual `progress-append --timestamp-only` calls after evaluation commits.
 
 ## Error Recovery
 

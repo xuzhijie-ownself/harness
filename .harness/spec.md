@@ -3,134 +3,119 @@
 ## Metadata
 - Role: planner
 - Agent: planner-1
-- Inputs: user prompt, README.md, harness-companion.mjs, lib/state.mjs, lib/features.mjs, lib/git.mjs, lib/progress.mjs, lib/artifacts.mjs, release.json, plugin.json
+- Inputs: user prompt, postmortem recommendations (v2.2.2), hooks.json, harness-companion.mjs, evaluator.md, advanced.md, coordinator.md, release.json, features.json, state.json
 - Status: accepted
 
 ## Overview
 
-Harness v2.2.1 shipped the companion script layer (harness-companion.mjs) with 7 subcommands and 5 lib modules. The scripts work but have gaps: no type annotations, no runtime validation of JSON payloads, shell-string git commands vulnerable to injection, inconsistent error handling patterns, and no observability beyond progress.md. This cycle hardens the foundation, adds missing mutation commands, introduces structured metrics and event logging, and caps it with a postmortem command that synthesizes all observability data into actionable retrospectives.
-
-Target audience: harness plugin developers and AI agents consuming JSON stdout from the companion script.
+This cycle implements 5 postmortem-driven improvements identified during the v2.2.2 release retrospective. The v2.2.2 cycle exposed gaps in: hook-based automation (event logging requires manual calls; progress-append hook fires too broadly), round numbering verification (off-by-one in sprints/ directory went undetected until postmortem), codex review invocation strategy (skill invocation failed in rounds 2-3 while raw CLI succeeded in round 4), and missing round finalization logic (cost_tracking timestamps left empty when coordinator does not manually fill them). All 5 features are internal harness infrastructure with no user-facing product changes. The target audience is the harness orchestration layer and its operators.
 
 ## Domain Profile
 - Primary: software
 - Secondary: (none)
 - Criteria: product_depth, functionality, visual_design, code_quality
-- Artifact types: Code (.mjs modules), JSON schemas, CLI subcommands, Markdown commands
-- Stakeholder lens: Plugin developers, AI agent consumers, harness maintainers
+- Artifact types: Code (scripts, hooks config), role documentation (Markdown), configuration (JSON)
+- Stakeholder lens: Harness operators, coordinator agent, evaluator agent
+
+Note: "visual_design" maps to documentation clarity and configuration readability for this infrastructure cycle.
 
 ## Design direction
 
-Maintain the zero-dependency, pure-Node.js ESM style already established. All new code uses JSDoc for editor-time type safety without introducing a build step. Runtime validation uses lightweight hand-written schema checks -- no Zod, no Ajv. New subcommands follow the existing pattern: JSON to stdout, structured errors to stderr, exit codes 0/1/2. Event log uses append-only JSONL for crash safety. The postmortem command is a Markdown skill command, not a script subcommand, because it requires LLM synthesis.
+No visual or UX changes. All work targets internal harness plumbing: hooks.json entries, harness-companion.mjs subcommands, and role file documentation. Maintain the established zero-dependency, pure-Node.js ESM style. New subcommands follow the existing pattern: JSON to stdout, structured errors to stderr, exit codes 0/1/2.
 
 ## Shipped scope
 
-### F-015: Script hardening
-- JSDoc type annotations on all exports across state.mjs, features.mjs, git.mjs, progress.mjs, artifacts.mjs
-- Runtime schema validation in readState() -- verify required fields (mode, status, variant, current_round, current_sprint_phase) exist and have correct types before returning
-- Runtime schema validation in readFeatures() -- verify version field is number, features is array, each feature has id (string), required (boolean), passes (boolean)
-- Circular dependency detection in selectNextFeature() -- detect cycles in depends_on graphs and report them as errors instead of silently looping
-- Standardize error handling: autoCommit() in git.mjs throws UserError on failure instead of returning {ok: false}; updateTimestamp() in progress.mjs throws UserError instead of returning {ok: false}
-- Fix git message escaping: replace execSync shell string with spawnSync using args array to prevent injection through commit message content
+### F-020: Hook integration for auto event logging
+- Add PostToolUse hook on Agent tool that calls `log-event --type agent_spawned` with agent metadata
+- Add PostToolUse hook on Bash tool with matcher for `state-mutate --set-phase` that calls `log-event --type phase_changed`
+- Both hooks use the existing events.mjs logEvent() module to append to `.harness/events.jsonl`
+- Verification: simulate a sprint flow (agent spawn + phase transition) and confirm events.jsonl contains agent_spawned and phase_changed entries with timestamps
 
-### F-016: Feature-update subcommand
-- New `feature-update` subcommand in harness-companion.mjs
-- Flags: `--id F-XXX --set-passes true|false [--set-status done] [--set-maturity reviewed]`
-- New writeFeatures() function in features.mjs using the same atomic write pattern (write to .tmp, rename) as writeState()
-- New updateFeature() function in features.mjs that reads, validates, mutates a single feature by ID, and writes back
-- Validation: unknown feature ID throws UserError; invalid maturity value throws UserError
+### F-021: Enforce progress-append via hooks
+- Refine the existing PostToolUse Bash hook (id: `post:bash:harness-progress-update`) to fire specifically after evaluation-related commits rather than after every Bash invocation
+- Add a matcher or condition so it triggers on auto-commit with `--status pass` or `--status fail` patterns
+- Update coordinator.md to document that progress-append is hook-automated and remove any manual invocation guidance for post-evaluation progress updates
+- Verification: confirm hook definition in hooks.json has appropriate matcher; confirm coordinator.md no longer instructs manual progress-append after evaluation
 
-### F-017: Per-step metrics
-- New lib/metrics.mjs module with recordMetrics() and readMetrics()
-- Enhance cost_tracking round entries with: file_changes (from git diff --shortstat: files changed, insertions, deletions), evaluation_scores (copy of primary_scores from evaluation.json)
-- New `metrics-summary` subcommand that reads all rounds from state.json cost_tracking and outputs aggregated totals: total rounds, total duration, total file changes, score trends per criterion
-- Atomic write via existing writeState() for metric data embedded in cost_tracking
+### F-022: Fix round numbering verification
+- Add `verify-round-numbering` subcommand to harness-companion.mjs
+- Reads `.harness/sprints/` directory, parses NN prefix from filenames, cross-references against `state.json` cost_tracking round entries
+- Reports mismatches as structured JSON: `{ ok: boolean, mismatches: [{file, expected_round, actual_round}] }`
+- Register in SUBCOMMANDS map with help text
+- Verification: run against current `.harness/sprints/` directory; confirm clean pass or accurate mismatch detection
 
-### F-018: Structured event logging
-- New lib/events.mjs with logEvent(type, payload) and readEvents(filter?)
-- Append-only .harness/events.jsonl -- one JSON object per line, each with timestamp, event_type, and payload
-- Event types: agent_spawned, phase_changed, feature_selected, evaluation_completed, commit_made
-- New `log-event` subcommand: `--type <event_type> --payload <json>`
-- New `read-events` subcommand: `[--type <filter>] [--since <iso-date>]`
-- File-level append (no read-modify-write) for crash safety
+### F-023: Standardize codex CLI review approach
+- Update evaluator.md section "0. Code Review Pre-Flight": when review_mode is "codex", make `codex review --commit HEAD` the primary invocation method
+- Move `/codex:adversarial-review --wait` to fallback position (currently it is primary)
+- Update advanced.md "Codex Detection Detailed Procedure" section to match the reversed order
+- Both files must consistently document: CLI primary, skill invocation as fallback
+- Verification: read evaluator.md and advanced.md; confirm CLI is listed before skill invocation in the method ordering
 
-### F-019: Postmortem command
-- New plugins/harness/commands/postmortem.md command file
-- Reads: all evaluation artifacts (.harness/sprints/*-evaluation.json), state.json, features.json, events.jsonl
-- Generates .harness/postmortem.md containing: Timeline (from events.jsonl), Score Trends (from evaluation.json files), Failure Analysis (rounds that failed and why), Process Compliance (artifact completeness, contract coverage), Recommendations (patterns for improvement)
-- Register postmortem.md in plugin.json commands array
-- The command file instructs the agent on how to gather and synthesize -- the LLM does the synthesis, the script layer provides the data
+### F-024: Add finalize-round subcommand
+- New `finalize-round --round N` subcommand in harness-companion.mjs
+- Reads state.json `cost_tracking.rounds[N]` and fills empty string timestamps with current ISO time
+- Reads `.harness/sprints/NN-evaluation.json` to extract the `decision` field and sets `outcome` accordingly (PASS -> "pass", FAIL -> "fail")
+- Falls back to `--outcome <pass|fail>` CLI flag if evaluation.json is missing or unreadable
+- Register in SUBCOMMANDS map with help text
+- Update coordinator.md to call `finalize-round --round N` at end of each round
+- Verification: run `finalize-round --round 4` against current state.json and confirm empty timestamps in round 4 are populated and outcome is set
 
 ## User stories
 
-- As a harness maintainer, I want JSDoc types on all lib exports so my editor shows parameter types and return shapes without running TypeScript.
-- As a coordinator agent, I want readState() and readFeatures() to throw clear errors when JSON is malformed or missing fields, so I get actionable error messages instead of downstream undefined-property crashes.
-- As a coordinator agent, I want selectNextFeature() to detect circular dependencies and report them explicitly, so I do not get stuck in infinite target-selection loops.
-- As a coordinator agent, I want autoCommit() to throw UserError on git failures so the companion script exits with code 1 and the agent sees a structured error.
-- As a harness maintainer, I want git commit messages constructed via spawnSync args array so that user-provided titles cannot inject shell commands.
-- As a coordinator agent, I want a feature-update subcommand so I can mark features as passing without manually editing features.json.
-- As a harness maintainer, I want per-round file_changes and evaluation_scores in cost_tracking so I can track productivity trends across sprints.
-- As a harness maintainer, I want a metrics-summary subcommand that aggregates all rounds into a single JSON report.
-- As a coordinator agent, I want structured event logging so that every significant orchestration action is recorded with timestamps for postmortem analysis.
-- As a harness user, I want a /harness:postmortem command that reads all sprint artifacts and generates a synthesized retrospective with timeline, score trends, failure analysis, and recommendations.
+- As a harness operator, I want agent spawn and phase transition events logged automatically via hooks so I do not need to remember manual log-event calls during orchestration.
+- As a coordinator agent, I want progress-append to fire reliably and specifically after evaluation commits so progress.md is always updated without false triggers on unrelated Bash calls.
+- As a harness operator, I want a verify-round-numbering subcommand so off-by-one errors in sprint artifact naming are caught early and reported as structured data.
+- As an evaluator agent, I want a clear primary/fallback order for codex review (CLI first, skill second) so I do not waste rounds on a failing skill invocation before trying the method that works.
+- As a coordinator agent, I want a finalize-round subcommand so cost_tracking timestamps and outcomes are never left empty at the end of a round.
 
 ## Execution strategy
 - Variant: Variant A (sprinted, single generate-evaluate loop per round)
 - Mode: continuous
-- Expected sprint count: 3
-- Sprint 1: F-015 + F-016 (foundation -- hardening enables safe feature mutation)
-- Sprint 2: F-017 + F-018 (observability -- metrics and events, independent of each other, both depend on hardened lib)
-- Sprint 3: F-019 (postmortem command -- depends on F-017 metrics data and F-018 event log)
-- Default target ordering: dependency order, then priority. F-015 first (no deps), F-016 second (benefits from hardened features.mjs), F-017 and F-018 parallel (both depend on F-015), F-019 last (depends on F-017 + F-018).
-- Multi-feature sprint policy: Sprints 1 and 2 each target 2 features because the pairs are tightly coupled (hardening + mutation; metrics + events) and testing them together reduces integration risk. Grouping waiver required in contracts.
-- Simplification policy: If a feature repeatedly fails, simplify its scope within the feature boundary. Do not drop features. Specifically: F-017 may drop score-trend aggregation if duration tracking alone passes; F-019 may generate a simpler postmortem without the Recommendations section if synthesis proves unreliable.
+- Expected sprint count: 2
+- Sprint 1 targets: F-020 + F-021 + F-022 -- hooks infrastructure and verification. All three touch hooks.json or harness-companion.mjs. F-020 and F-021 both modify hooks.json; F-022 adds a verification subcommand that validates the numbering fix from v2.2.2. Grouping reduces integration risk for the shared file surface.
+- Sprint 2 targets: F-023 + F-024 -- evaluator documentation fix and finalize-round subcommand. Separate concerns from sprint 1. F-023 is a documentation-only change; F-024 adds a new subcommand and coordinator.md update. Both are independent and small enough to batch.
+- Default target ordering: within sprint 1, F-020 first (new hooks), F-021 second (refines existing hook), F-022 third (independent verification). Within sprint 2, F-023 first (lower risk doc change), F-024 second (new subcommand).
+- Multi-feature sprint policy: grouping is justified per sprint because sprint 1 features share hooks.json and harness-companion.mjs as common file surface, and sprint 2 features are independent but individually small. Grouping waiver required in both contracts.
+- Simplification policy: if any feature in a sprint group fails, split the group and retry the failing feature solo in the next round. F-022 may simplify to pass/fail only (drop detailed mismatch array) if JSON formatting proves complex. F-024 may drop automatic evaluation.json reading and require `--outcome` flag as mandatory input instead of optional fallback.
+- Methodology: agile
 
 ## High-level technical design
 
-### Runtime
-- Node.js ESM (.mjs), zero npm dependencies
-- All new modules follow the established pattern: pure functions, atomic file writes, JSON stdout
-- JSDoc annotations use @typedef and @param/@returns -- no .d.ts files, no build step
+### Scripts (harness-companion.mjs)
+- F-022: new `verify-round-numbering` subcommand. Reads `.harness/sprints/` via `fs.readdirSync`, extracts NN prefix with regex, compares against cost_tracking rounds in state.json. Outputs `{ ok, mismatches }` JSON.
+- F-024: new `finalize-round` subcommand. Reads state.json via `readState()`, finds the target round in cost_tracking.rounds by round number, patches empty timestamps with `new Date().toISOString()`, reads NN-evaluation.json for decision, writes back via `writeState()`. Follows existing atomic write pattern.
+- Both registered in SUBCOMMANDS map following the existing `name: description` pattern.
 
-### New modules
-- `plugins/harness/scripts/lib/metrics.mjs` -- recordMetrics(), readMetrics(), summarizeMetrics()
-- `plugins/harness/scripts/lib/events.mjs` -- logEvent(), readEvents()
+### Hooks (hooks.json)
+- F-020: add two new PostToolUse entries:
+  - Agent tool hook: calls `log-event --type agent_spawned` (no matcher needed -- fires on all agent spawns)
+  - Bash tool hook with matcher for `state-mutate`: calls `log-event --type phase_changed`
+- F-021: refine existing `post:bash:harness-progress-update` hook. Add a matcher pattern targeting `auto-commit` invocations so it fires only after evaluation commits, not after arbitrary Bash calls.
 
-### Modified modules
-- `plugins/harness/scripts/lib/state.mjs` -- add schema validation in readState(), add JSDoc
-- `plugins/harness/scripts/lib/features.mjs` -- add schema validation in readFeatures(), add writeFeatures(), updateFeature(), circular dep detection in selectNextFeature(), add JSDoc
-- `plugins/harness/scripts/lib/git.mjs` -- replace execSync shell string with spawnSync args array, throw UserError on failure, add JSDoc
-- `plugins/harness/scripts/lib/progress.mjs` -- throw UserError in updateTimestamp(), add JSDoc
-- `plugins/harness/scripts/lib/artifacts.mjs` -- add JSDoc
-- `plugins/harness/scripts/harness-companion.mjs` -- register feature-update, metrics-summary, log-event, read-events subcommands
+### Documentation (role Markdown files)
+- F-021: update coordinator.md to note progress-append is hook-automated after evaluation
+- F-023: update evaluator.md line 42 area (codex invocation order) and advanced.md codex procedure section -- reverse CLI/skill priority
+- F-024: update coordinator.md to include `finalize-round --round N` call in the round-end procedure
 
-### New command
-- `plugins/harness/commands/postmortem.md` -- registered in plugin.json
-
-### Data formats
-- events.jsonl: `{"timestamp":"ISO","event_type":"agent_spawned","payload":{...}}`
-- metrics in cost_tracking.rounds[]: add `file_changes: {files:N, insertions:N, deletions:N}` and `evaluation_scores: {...}` fields
-- postmortem.md: Markdown with Timeline, Score Trends, Failure Analysis, Process Compliance, Recommendations sections
-
-## Definition of done
-- All 5 lib modules have JSDoc @typedef and @param/@returns on every exported function
-- readState() and readFeatures() throw UserError with descriptive message when required fields are missing or wrong type
-- selectNextFeature() detects and reports circular dependencies
-- autoCommit() uses spawnSync with args array (no shell string); throws UserError on failure
-- updateTimestamp() throws UserError when progress.md is missing
-- feature-update subcommand reads, validates, mutates, and atomically writes features.json
-- metrics-summary subcommand outputs aggregated JSON from cost_tracking
-- log-event subcommand appends to events.jsonl; read-events subcommand reads and filters
-- postmortem.md command registered in plugin.json, generates .harness/postmortem.md with all 5 sections
-- Zero npm dependencies maintained
-- All existing subcommands continue to work (no regressions)
+### Data/storage
+- No new storage formats. events.jsonl, state.json, and features.json are existing artifacts. `.harness/sprints/` directory is read-only for F-022.
 
 ## Non-goals
-- TypeScript migration or .d.ts generation
-- npm dependency additions (Zod, Ajv, etc.)
-- UI or dashboard for metrics visualization
-- Real-time event streaming or WebSocket support
-- Changes to the 6 agent role files or domain skill suite
-- Changes to the evaluation criteria or rubric
-- Backward-incompatible changes to state.json or features.json schema (new fields are additive)
-- Test framework setup (validation is done by the evaluator agent via manual verification)
+- No changes to the evaluation scoring rubric or criteria weights
+- No new domain profiles or skill suites
+- No changes to the release process or releaser role
+- No modifications to plugin.json manifest or marketplace configuration
+- No retrospective automation beyond what the existing postmortem command provides
+- No UI, frontend, or user-facing changes
+- No npm dependency additions
+- No changes to existing lib module APIs (additive only)
+- No test framework setup (evaluator agent performs verification)
+
+## Definition of done
+- All 5 features (F-020 through F-024) pass evaluation with all primary criteria at 3 or above
+- hooks.json contains the new hook entries for agent_spawned and phase_changed event logging, plus the refined progress-append hook
+- harness-companion.mjs has both new subcommands (verify-round-numbering, finalize-round) registered and functional with JSON stdout
+- evaluator.md and advanced.md consistently document CLI-first codex review with skill as fallback
+- coordinator.md reflects hook-automated progress-append and includes finalize-round in round-end procedure
+- No regressions in existing subcommands (feature-select, feature-update, state-mutate, auto-commit, validate-artifacts, progress-append, check-stop, cleanup-sprints, metrics-summary, log-event, read-events, postmortem-data)
+- Zero npm dependencies maintained

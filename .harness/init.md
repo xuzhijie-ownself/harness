@@ -3,50 +3,51 @@
 ## Metadata
 - Role: initializer
 - Agent: initializer-1
-- Inputs: spec.md, release.json, harness-companion.mjs, lib/*.mjs
+- Inputs: spec.md, release.json, prior .harness/ artifacts
 - Status: accepted
 
-## Project context
+## Context
 
-Re-initialization (--force) for harness v2.2.1. The project is a Claude Code plugin providing a structured sprint harness for AI-assisted development. It uses pure Node.js ESM (.mjs) with zero npm dependencies. This cycle hardens the companion script layer, adds missing mutation commands, introduces structured metrics and event logging, and adds a postmortem command.
+Re-initialization (--force) for the v2.2.3 development cycle. The prior v2.2.2 cycle shipped 5 features (F-015 through F-019) covering script hardening, feature-update subcommand, per-step metrics, structured event logging, and the postmortem command. This cycle implements 5 postmortem-driven improvements identified during the v2.2.2 release retrospective.
 
-Target audience: harness plugin developers and AI agents consuming JSON stdout from the companion script.
+## Scope
 
-## What already exists
+5 features (F-020 through F-024) targeting internal harness infrastructure:
 
-The companion script layer shipped in v2.2.1:
-- `plugins/harness/scripts/harness-companion.mjs` -- main entry with 7 subcommands
-- `plugins/harness/scripts/lib/state.mjs` -- state.json read/write
-- `plugins/harness/scripts/lib/features.mjs` -- features.json read + selectNextFeature()
-- `plugins/harness/scripts/lib/git.mjs` -- autoCommit() via shell exec
-- `plugins/harness/scripts/lib/progress.mjs` -- updateTimestamp()
-- `plugins/harness/scripts/lib/artifacts.mjs` -- artifact discovery and validation
+| ID | Title | Sprint |
+|----|-------|--------|
+| F-020 | Hook integration for auto event logging | 1 |
+| F-021 | Enforce progress-append via hooks | 1 |
+| F-022 | Round numbering verification subcommand | 1 |
+| F-023 | Standardize codex CLI review approach | 2 |
+| F-024 | Add finalize-round subcommand | 2 |
 
-## Features (5 total)
+## Execution strategy
 
-| ID | Title | Priority | Dependencies | Sprint |
-|----|-------|----------|-------------|--------|
-| F-015 | Script hardening | high | none | 1 |
-| F-016 | Feature-update subcommand | high | F-015 | 1 |
-| F-017 | Per-step metrics | medium | F-015 | 2 |
-| F-018 | Structured event logging | medium | F-015 | 2 |
-| F-019 | Postmortem command | medium | F-017, F-018 | 3 |
+- Variant A (sprinted), continuous mode, 2 expected sprints
+- Sprint 1: F-020 + F-021 + F-022 (shared hooks.json / harness-companion.mjs surface)
+- Sprint 2: F-023 + F-024 (documentation fix + new subcommand)
+- Methodology: agile
+
+## Technical baseline
+
+- harness-companion.mjs: 13 subcommands operational
+- lib/: 7 modules (state, features, git, progress, artifacts, metrics, events)
+- hooks.json: existing hook entries present
+- Zero npm dependencies
+- Domain profile: software
 
 ## Dependency graph
 
 ```
-F-015 (Script hardening)
-  |
-  +-- F-016 (Feature-update subcommand)
-  +-- F-017 (Per-step metrics) --------+
-  +-- F-018 (Structured event logging) -+-- F-019 (Postmortem command)
+F-020 (Hook integration for auto event logging) -- no deps
+F-021 (Enforce progress-append via hooks) -- no deps
+F-022 (Round numbering verification subcommand) -- no deps
+F-023 (Standardize codex CLI review approach) -- no deps
+F-024 (Add finalize-round subcommand) -- no deps
 ```
 
-## Sprint plan (3 sprints)
-
-1. Sprint 1: F-015 + F-016 -- Foundation: hardening enables safe feature mutation
-2. Sprint 2: F-017 + F-018 -- Observability: metrics and events, both depend on hardened lib
-3. Sprint 3: F-019 -- Postmortem: depends on metrics data and event log
+All features are independent. Sprint grouping is by shared file surface (Sprint 1) and by scope smallness (Sprint 2), not by dependency.
 
 ## Setup requirements
 
@@ -63,16 +64,15 @@ bash .harness/init.sh
 
 Or verify manually:
 ```bash
-node --version
-node plugins/harness/scripts/harness-companion.mjs --help
-ls plugins/harness/scripts/lib/
+node plugins/harness/scripts/harness-companion.mjs help
+cat .harness/features.json | node -e "JSON.parse(require('fs').readFileSync('/dev/stdin','utf8'))"
 ```
 
-## Technical notes
+## Artifacts created
 
-- Domain profile: software (product_depth, functionality, visual_design, code_quality)
-- visual_design criterion maps to code ergonomics and API surface design for this CLI-only project
-- New modules: lib/metrics.mjs, lib/events.mjs
-- New subcommands: feature-update, metrics-summary, log-event, read-events (total 11)
-- New command file: plugins/harness/commands/postmortem.md
-- Simplification policies: F-017 may drop score-trend aggregation; F-019 may drop Recommendations section
+- `.harness/features.json` -- 5 features, F-020 through F-024, all passes: false
+- `.harness/state.json` -- round 0, mode continuous, phase idle
+- `.harness/progress.md` -- baseline with failing features documented
+- `.harness/config.json` -- standard defaults, use_codex: auto
+- `.harness/init.sh` -- smoke test script
+- `.harness/init.bat` -- Windows CMD equivalent

@@ -2,18 +2,20 @@
   "mode": "continuous",
   "status": "active",
   "variant": "variant-a-sprinted",
-  "current_round": 4,
-  "last_completed_round": 3,
+  "current_round": 1,
+  "last_completed_round": 0,
   "active_feature_ids": [
-    "F-019"
+    "F-020",
+    "F-021",
+    "F-022"
   ],
-  "expected_sprint_count": 3,
+  "expected_sprint_count": 2,
   "current_failure_streak": 0,
-  "last_feature_pass_delta": 2,
+  "last_feature_pass_delta": 0,
   "stop_reason": "",
   "context_reset_threshold": 3,
-  "rounds_since_reset": 3,
-  "current_sprint_phase": "idle",
+  "rounds_since_reset": 1,
+  "current_sprint_phase": "implementation",
   "domain_profile": "software",
   "secondary_profile": "",
   "methodology": "agile",
@@ -21,52 +23,10 @@
   "cost_tracking": {
     "rounds": [
       {
-        "round": 2,
-        "started_at": "2026-04-04T04:00:00Z",
-        "completed_at": "2026-04-04T09:30:00Z",
-        "feature_id": "F-015+F-016",
-        "outcome": "pass",
-        "phases": {
-          "contract": {
-            "started_at": "2026-04-04T04:00:00Z",
-            "completed_at": "2026-04-04T05:00:00Z"
-          },
-          "implementation": {
-            "started_at": "2026-04-04T05:00:00Z",
-            "completed_at": "2026-04-04T08:00:00Z"
-          },
-          "evaluation": {
-            "started_at": "2026-04-04T08:00:00Z",
-            "completed_at": "2026-04-04T09:30:00Z"
-          }
-        }
-      },
-      {
-        "round": 3,
-        "started_at": "2026-04-04T10:00:00Z",
-        "completed_at": "2026-04-04T19:52:21.402Z",
-        "feature_id": "F-017+F-018",
-        "outcome": "pass",
-        "phases": {
-          "contract": {
-            "started_at": "2026-04-04T09:24:44.558Z",
-            "completed_at": "2026-04-04T10:10:00Z"
-          },
-          "implementation": {
-            "started_at": "2026-04-04T10:10:00Z",
-            "completed_at": "2026-04-04T11:00:00Z"
-          },
-          "evaluation": {
-            "started_at": "2026-04-04T11:00:00Z",
-            "completed_at": "2026-04-04T19:52:21.402Z"
-          }
-        }
-      },
-      {
-        "round": 4,
-        "started_at": "2026-04-05T00:00:00Z",
+        "round": 1,
+        "started_at": "2026-04-06T10:59:18Z",
         "completed_at": "",
-        "feature_id": "F-019",
+        "feature_id": "F-020,F-021,F-022",
         "outcome": "",
         "phases": {
           "contract": {
