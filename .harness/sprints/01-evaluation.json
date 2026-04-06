@@ -1,31 +1,31 @@
 {
   "round": 1,
   "decision": "PASS",
-  "target_feature_ids": ["F-020", "F-021", "F-022"],
+  "target_feature_ids": ["F-025", "F-026", "F-027"],
   "primary_scores": {
     "product_depth": {
-      "score": 4,
-      "justification": "All three features fully implemented with complete logic, not stubs. F-020 adds two hook entries, F-021 refines existing hook, F-022 adds verification subcommand with cross-reference.",
+      "score": 5,
+      "justification": "All three subsystems fully removed with zero orphaned references across all files.",
       "prior_round_score": null,
-      "drift_check": "First round -- no prior scores."
+      "drift_check": "First round -- no prior score."
     },
     "functionality": {
-      "score": 4,
-      "justification": "All contract checks pass. Hooks have correct matchers verified via regex testing. verify-round-numbering returns correct JSON. log-event confirms events.jsonl writes.",
+      "score": 5,
+      "justification": "All remaining subcommands produce valid JSON. feature-select, check-stop, and --help verified.",
       "prior_round_score": null,
-      "drift_check": "First round -- no prior scores."
+      "drift_check": "First round -- no prior score."
     },
     "visual_design": {
       "score": 4,
-      "justification": "Maps to documentation clarity. coordinator.md clearly documents hook automation in multiple sections (step 17, Script Calls, Auto-Commit Protocol, flow diagram).",
+      "justification": "Documentation updates clear and consistent. 2-line codex replacement note is concise. Minor: NN-evaluation.md template Code Review section could be more structured.",
       "prior_round_score": null,
-      "drift_check": "First round -- no prior scores."
+      "drift_check": "First round -- no prior score."
     },
     "code_quality": {
-      "score": 4,
-      "justification": "Zero npm dependencies. Follows existing ESM patterns. verify-round-numbering uses same readState/out/UserError conventions. hooks.json entries follow established structure.",
+      "score": 5,
+      "justification": "Zero dead imports, no unreachable case blocks, clean separation of retained and removed code.",
       "prior_round_score": null,
-      "drift_check": "First round -- no prior scores."
+      "drift_check": "First round -- no prior score."
     }
   },
   "contract_checks": [
@@ -33,92 +33,75 @@
       "id": "PD-01",
       "required": true,
       "result": "pass",
-      "evidence": "All three features have full implementations, not stubs or placeholders"
+      "evidence": "grep -r returns zero matches for events.mjs, log-event, read-events, events.jsonl"
     },
     {
       "id": "FN-01",
       "required": true,
       "result": "pass",
-      "evidence": "hooks.json contains 3 PostToolUse entries with correct ids, matchers, patterns, and commands"
-    },
-    {
-      "id": "FN-02",
-      "required": true,
-      "result": "pass",
-      "evidence": "verify-round-numbering returns { ok: true, mismatches: [], rounds_found_in_files: [1], rounds_in_state: [1] }"
+      "evidence": "harness-companion.mjs --help shows 9 subcommands; feature-select and check-stop produce valid JSON"
     },
     {
       "id": "VD-01",
-      "required": false,
+      "required": true,
       "result": "pass",
-      "evidence": "coordinator.md documents hook-automated progress-append in step 17, Script Calls, and Auto-Commit Protocol"
+      "evidence": "evaluator.md has 2-line runtime-agnostic note; coordinator.md has no codex detection section"
     },
     {
       "id": "CQ-01",
       "required": true,
       "result": "pass",
-      "evidence": "No npm dependencies added. New code follows existing harness-companion.mjs patterns."
+      "evidence": "No dead imports in harness-companion.mjs; features.mjs exports only readFeatures, selectNextFeature, checkStop"
     }
   ],
   "blockers": [],
-  "non_blocking_issues": [
-    "hooks.json pattern field is informational -- Claude Code may not natively filter on it. The hook fires based on matcher (tool name). Pattern is for human/coordinator consumption."
-  ],
+  "non_blocking_issues": [],
   "feature_evidence": [
     {
-      "feature_id": "F-020",
+      "feature_id": "F-025",
       "passes": true,
-      "reason": "hooks.json contains PostToolUse hooks for agent_spawned (Agent tool) and phase_changed (Bash tool with state-mutate pattern). Both call log-event via harness-companion.mjs."
+      "reason": "lib/events.mjs deleted, all events imports/subcommands/hooks/references removed."
     },
     {
-      "feature_id": "F-021",
+      "feature_id": "F-026",
       "passes": true,
-      "reason": "post:bash:harness-progress-update hook refined with auto-commit pattern. coordinator.md documents hook automation in step 17 and Auto-Commit Protocol."
+      "reason": "Codex pre-flight removed from evaluator.md, advanced.md, patterns.md, coordinator.md, SKILL.md. Runtime-agnostic note added. use_codex removed from config schema and config.json."
     },
     {
-      "feature_id": "F-022",
+      "feature_id": "F-027",
       "passes": true,
-      "reason": "verify-round-numbering subcommand registered and functional. Returns structured JSON with ok/mismatches/rounds. Handles empty sprints directory."
+      "reason": "feature-update, verify-round-numbering, metrics-summary removed from SUBCOMMANDS. updateFeature/writeFeatures removed from features.mjs."
     }
   ],
   "test_results": {
-    "tests_written": ["manual contract check verification via node invocations"],
-    "passed": 8,
+    "tests_written": [],
+    "passed": 0,
     "failed": 0,
     "skipped": 0,
-    "coverage": "N/A -- infrastructure hooks and CLI subcommand"
+    "coverage": "N/A -- infrastructure changes verified via grep and runtime invocation"
   },
   "review_findings": {
-    "review_mode": "codex",
-    "codex_detection": {
-      "config_use_codex": "auto",
-      "codex_available": true,
-      "detection_method": "project enabledPlugins",
-      "detection_result": "codex@openai-codex enabled in project settings",
-      "fallback_reason": null
-    },
+    "review_mode": "claude",
     "blocking": [],
-    "non_blocking": [
-      "hooks.json pattern field is informational for human consumption -- Claude Code hook system filters on matcher (tool name) only"
-    ]
+    "non_blocking": []
   },
   "authenticity_gate": {
     "gate_result": "pass",
     "internal_consistency": {
       "pass": true,
-      "justification": "All new hooks follow the established hook structure (matcher, hooks array, description, id). New subcommand follows existing switch/case and SUBCOMMANDS map pattern."
+      "justification": "All removals follow consistent pattern: delete source, remove import, remove SUBCOMMANDS entry, remove case block, clean references."
     },
     "intentionality": {
       "pass": true,
-      "justification": "Hook IDs follow post:<tool>:harness-<purpose> convention. Pattern regexes are specific to their use cases. verify-round-numbering has project-specific cross-reference logic."
+      "justification": "Each removal justified by spec rationale. Codex replacement note tailored to harness. Config updated alongside schema."
     },
     "craft": {
       "pass": true,
-      "justification": "Consistent JSON structure in hooks.json. ESM import/export patterns. UserError class reuse. Proper JSON output via out() helper."
+      "justification": "Consistent file structure maintained. No formatting artifacts from removals."
     },
     "fitness_for_purpose": {
       "pass": true,
-      "justification": "Hooks will fire in the Claude Code PostToolUse system. verify-round-numbering is self-contained and immediately usable by coordinator."
+      "justification": "harness-companion.mjs immediately usable. Role files self-consistent and complete."
     }
   }
 }

@@ -156,7 +156,6 @@ Field reference:
 
 ```json
 {
-  "use_codex": "auto",
   "context_reset_threshold": 3,
   "auto_commit": true,
   "auto_retro": true,
@@ -171,7 +170,6 @@ Field reference:
 
 Field reference:
 
-- `use_codex`: Controls Codex review usage. One of `"auto"` (detect and use if available), `"on"` (always attempt, warn if unavailable), `"off"` (never use). Default: `"auto"`.
 - `context_reset_threshold`: Number of rounds before coordinator pauses for context refresh. Overrides `state.json` value if present. Default: `3`.
 - `auto_commit`: Whether the coordinator auto-commits after each sprint phase. Default: `true`.
 - `auto_retro`: Whether the coordinator generates sprint retrospectives automatically. Default: `true`.
@@ -245,13 +243,6 @@ The `primary_scores` keys below are placeholders (`<criterion_1>` through `<crit
   },
   "review_findings": {
     "review_mode": "claude",
-    "codex_detection": {
-        "config_use_codex": "auto",
-        "codex_available": false,
-        "detection_method": "extraKnownMarketplaces or enabledPlugins in .claude/settings.json",
-        "detection_result": "openai-codex not found in settings",
-        "fallback_reason": null
-    },
     "blocking": [],
     "non_blocking": []
   },
@@ -490,11 +481,7 @@ For each criterion, reference the anchor from evaluator-calibration.md and compa
 - Findings from testing
 
 ## Code Review
-- Review mode: codex | claude
-- Config use_codex: [value from config.json]
-- Codex available: [true|false — openai-codex found in extraKnownMarketplaces or enabledPlugins]
-- Detection result: [what was found]
-- Fallback reason: [if codex was expected but claude used, why]
+- Review mode: [claude or name of external tool if used]
 - Blocking findings: [list]
 - Non-blocking findings: [list]
 

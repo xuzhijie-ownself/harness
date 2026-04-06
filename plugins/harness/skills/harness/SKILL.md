@@ -84,7 +84,7 @@ The harness uses `.harness/config.json` as the single configuration source for p
 
 The initializer creates a default `config.json` during `/start`. Users can edit it manually between sessions. Config.json values take precedence over state.json defaults when both define the same field (e.g., `context_reset_threshold`).
 
-Key fields: `use_codex` (auto/on/off), `context_reset_threshold`, `auto_commit`, `auto_retro`, `retro_interval`, `max_retry_on_failure`, `evaluator_strictness` (lenient/standard/strict), `commit_prefix_pass`, `commit_prefix_fail`, `commit_tag`. See [references/patterns.md](references/patterns.md) for the full schema and field descriptions.
+Key fields: `context_reset_threshold`, `auto_commit`, `auto_retro`, `retro_interval`, `max_retry_on_failure`, `evaluator_strictness` (lenient/standard/strict), `commit_prefix_pass`, `commit_prefix_fail`, `commit_tag`. See [references/patterns.md](references/patterns.md) for the full schema and field descriptions.
 
 ## Dispatch Rules
 
@@ -179,7 +179,7 @@ If the run finishes in one sprint, the planner or coordinator should state why s
 - Grade against hard thresholds for product depth, functionality, visual design, and code quality.
 - Fail the sprint or round if any one criterion misses the bar.
 - Update acceptance only after verification evidence exists.
-- If Codex plugin is detected (`.claude/settings.json` has `"openai-codex"` in `extraKnownMarketplaces` or `"codex@openai-codex": true` in `enabledPlugins`), use the `codex` CLI for adversarial code review. Falls back to Claude-only review if the CLI is not installed or not authenticated.
+- If a code review plugin is available (codex, copilot, or other), the evaluator MAY invoke it for adversarial review. This is optional and runtime-dependent. Record whether external review was used in review_findings.review_mode.
 
 ### Runtime Verification Requirement
 

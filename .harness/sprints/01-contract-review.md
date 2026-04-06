@@ -2,25 +2,24 @@
 
 ## Metadata
 - Role: evaluator
-- Agent: evaluator-1
+- Agent: coordinator-evaluator-1
 - Inputs: 01-contract.md, spec.md, features.json
 - Status: accepted
-- Reviewed by: evaluator-1
+- Reviewed by: coordinator-evaluator-1
 - Decision: accept
-
-## Target feature IDs
-- F-020, F-021, F-022
 
 ## Review
 
-### Scope alignment
-The contract targets exactly the three features specified in the Sprint 1 plan. Deliverables match spec.md requirements. Grouping waiver is documented with valid rationale (shared hooks.json surface).
+The contract correctly identifies all edit surfaces for the three removal features. The grouping waiver is justified -- all three features modify harness-companion.mjs imports and SUBCOMMANDS map, so a single pass is efficient.
 
-### Verification completeness
-All verification checks map to concrete, testable outcomes. F-020 checks cover hook presence and event logging. F-021 checks cover matcher specificity and documentation updates. F-022 checks cover subcommand registration and JSON output format.
+### Scope check
+- F-025 deliverables cover all events.mjs touchpoints (import, subcommands, hooks, postmortem-data, role files)
+- F-026 deliverables cover evaluator.md, advanced.md, patterns.md, coordinator.md, and SKILL.md
+- F-027 deliverables correctly preserve metrics.mjs import (needed by postmortem-data until Sprint 3)
 
 ### Risk assessment
-Risks are reasonable. The empty sprints/ directory edge case for F-022 is explicitly called out.
+- The postmortem-data output shape change (removing events field) is a breaking change but acceptable given v3.0.0 major bump
+- Contract checks are well-defined and verifiable via grep
 
-### Decision
-ACCEPT -- contract is well-scoped, verification checks are concrete, and grouping waiver is justified.
+### Decision: ACCEPT
+Proceed to implementation.

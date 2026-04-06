@@ -1,6 +1,6 @@
 # Advanced Topics
 
-This file contains advanced harness guidance extracted from SKILL.md. Reference it when you need details on decay testing, simplification policy, harness review checklists, Variant B/C details, context reset guidance, or the detailed Codex detection procedure.
+This file contains advanced harness guidance extracted from SKILL.md. Reference it when you need details on decay testing, simplification policy, harness review checklists, Variant B/C details, or context reset guidance.
 
 ## Harness Decay
 
@@ -92,56 +92,3 @@ When reviewing whether the harness was actually followed, check:
 - Did the run stop because required features passed, not because another sprint was invented?
 
 If the answer to the first six questions is no, or the feature count does not go down across rounds, the harness is drifting.
-
-## Codex Detection Detailed Procedure
-
-This is the expanded 4-step Codex detection procedure. The evaluator role file contains a condensed decision tree. Use this reference for debugging or understanding the full logic.
-
-**Step 1**: Read `.harness/config.json`. Extract `use_codex` value. If file missing, default to `"auto"`.
-
-**Step 2**: Decide review mode:
-- If `"off"` -> set review_mode to `"claude"`. Skip to Step 4.
-- If `"on"` -> set review_mode to `"codex"`. Go to Step 3.
-- If `"auto"` or missing -> run the following three checks in order. If **any one passes**, set review_mode to `"codex"` and go to Step 3. All three must fail to fall back to `"claude"`.
-  1. **Project enabledPlugins**: Read `.claude/settings.json` (project-level). Check if `"codex@openai-codex": true` exists in the `enabledPlugins` object.
-  2. **Global extraKnownMarketplaces**: Read `~/.claude/settings.json` (user-level global). Check if `"openai-codex"` exists as a key in the `extraKnownMarketplaces` object.
-  3. **CLI on PATH**: Run `which codex` (or `where codex` on Windows). If the command exits 0 and returns a path, Codex CLI is available.
-
-**Step 3** (codex mode only): Run the adversarial review.
-
-**Primary method** -- invoke the Codex CLI directly:
-```
-codex review --commit HEAD
-```
-This runs the Codex CLI review against the latest commit. It is the most reliable invocation method and should be attempted first.
-
-**Fallback** -- if the CLI review fails (command not found, timeout, or error), fall back to the plugin skill:
-```
-/codex:adversarial-review --wait
-```
-This delegates the review to the Codex adversarial-review skill and blocks until it returns findings.
-
-**Last resort** -- if both the CLI and the skill invocation fail, fall back to the raw CLI with full-auto mode:
-```
-Bash({ command: "codex --approval-mode full-auto --quiet 'Review these code changes adversarially. Check quality, security, patterns, and design choices. Output findings as BLOCKING or NON-BLOCKING.'", timeout: 120000 })
-```
-
-If **all** methods fail, set review_mode to `"claude"` and record fallback_reason with the error message. The evaluator continues with Claude-only review -- codex failure is never a hard block.
-
-**Severity mapping** -- map Codex review findings to harness categories:
-
-| Codex severity | Harness category | Action |
-|----------------|-----------------|--------|
-| critical | BLOCKING | Round fails if unresolved |
-| high | BLOCKING | Round fails if unresolved |
-| medium | NON-BLOCKING | Logged; does not block the round |
-| low | NON-BLOCKING | Logged; does not block the round |
-| info | NON-BLOCKING | Logged for awareness only |
-
-**Step 4**: Record in BOTH `NN-evaluation.md` and `NN-evaluation.json`:
-- `review_mode`: codex or claude
-- `config_use_codex`: value from config.json
-- `codex_available`: whether any of the three detection checks passed
-- `detection_method`: which check triggered the detection. One of `"project enabledPlugins"`, `"global extraKnownMarketplaces"`, `"CLI on PATH"`, or `null` if none passed.
-- `detection_result`: what detection found (e.g., `"codex@openai-codex enabled in project settings"`)
-- `fallback_reason`: why codex was not used, if applicable (e.g., skill and CLI both failed, or all three detection checks failed)

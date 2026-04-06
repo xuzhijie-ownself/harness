@@ -9,28 +9,22 @@
  * JSON to stdout, human-readable errors to stderr.
  */
 
-import { selectNextFeature, checkStop, updateFeature } from './lib/features.mjs';
+import { selectNextFeature, checkStop } from './lib/features.mjs';
 import { readState, writeState, setPhase, incrementRound, appendCost } from './lib/state.mjs';
 import { autoCommit } from './lib/git.mjs';
 import { validateArtifacts, cleanupSprints } from './lib/artifacts.mjs';
 import { appendProgress, updateTimestamp } from './lib/progress.mjs';
 import { collectMetrics, summarizeMetrics, recordMetrics, readMetrics } from './lib/metrics.mjs';
-import { logEvent, readEvents } from './lib/events.mjs';
 
 const SUBCOMMANDS = {
   'feature-select':          'Pick the next eligible feature (highest priority, passes=false, deps met)',
-  'feature-update':          'Update a feature: --id <id> [--set-passes true|false] [--set-status <s>] [--set-maturity <m>]',
   'state-mutate':            'Mutate state.json: --set-phase <phase> | --increment-round | --append-cost <json>',
   'auto-commit':             'Git commit: --feature <id> --title <text> --round <n> --status <pass|fail>',
   'validate-artifacts':      'Check sprint artifact existence: --round <n>',
   'progress-append':         'Append to progress.md: --round <n> --feature <id> --status <s> [--scores <json>] | --timestamp-only',
   'check-stop':              'Check if all required features pass or failure streak exceeded',
   'cleanup-sprints':         'Remove old sprint files: --before-round <n>',
-  'metrics-summary':         'Aggregate metrics from all rounds in cost_tracking',
-  'log-event':               'Log a structured event: --type <type> [--round <n>] [--feature <id>] [--data <json>]',
-  'read-events':             'Read events from events.jsonl: [--type <filter>] [--since <iso-date>] [--round <n>]',
   'postmortem-data':         'Gather all postmortem data sources into a single JSON object for LLM synthesis',
-  'verify-round-numbering':  'Verify sprint artifact NN prefixes match state.json cost_tracking rounds',
   'finalize-round':          'Fill empty cost_tracking timestamps and set outcome: --round <n> [--outcome pass|fail]',
 };
 
@@ -79,27 +73,6 @@ async function main() {
   switch (cmd) {
     case 'feature-select': {
       const result = selectNextFeature();
-      out(result);
-      break;
-    }
-    case 'feature-update': {
-      if (!flags.id) {
-        throw new UserError('feature-update requires --id <feature-id>');
-      }
-      const updates = {};
-      if ('set-passes' in flags) {
-        const val = flags['set-passes'];
-        if (val === 'true') updates.passes = true;
-        else if (val === 'false') updates.passes = false;
-        else throw new UserError(`--set-passes must be "true" or "false", got "${val}".`);
-      }
-      if ('set-status' in flags) {
-        updates.status = flags['set-status'];
-      }
-      if ('set-maturity' in flags) {
-        updates.maturity = flags['set-maturity'];
-      }
-      const result = updateFeature(flags.id, updates);
       out(result);
       break;
     }
@@ -171,49 +144,12 @@ async function main() {
       out(result);
       break;
     }
-    case 'metrics-summary': {
-      const result = summarizeMetrics();
-      out(result);
-      break;
-    }
-    case 'log-event': {
-      if (!flags.type) {
-        throw new UserError('log-event requires --type <event_type>');
-      }
-      const eventParams = {
-        type: flags.type,
-      };
-      if (flags.round) eventParams.round = parseInt(flags.round, 10);
-      if (flags.feature) eventParams.feature_id = flags.feature;
-      if (flags.data) {
-        try {
-          eventParams.data = JSON.parse(flags.data);
-        } catch (e) {
-          throw new UserError(`--data must be valid JSON: ${e.message}`);
-        }
-      }
-      const result = logEvent(eventParams);
-      out(result);
-      break;
-    }
-    case 'read-events': {
-      const filter = {};
-      if (flags.type) filter.type = flags.type;
-      if (flags.since) filter.since = flags.since;
-      if (flags.round) filter.round = parseInt(flags.round, 10);
-      if (flags.feature) filter.feature_id = flags.feature;
-      const result = readEvents(Object.keys(filter).length > 0 ? filter : undefined);
-      out(result);
-      break;
-    }
     case 'postmortem-data': {
       const { readFileSync, readdirSync, existsSync } = await import('node:fs');
       const { join } = await import('node:path');
       const harness = join(process.cwd(), '.harness');
       const state = readState();
-      const features = (await import('./lib/features.mjs')).default || JSON.parse(readFileSync(join(harness, 'features.json'), 'utf8'));
       const metrics = summarizeMetrics();
-      const events = readEvents();
       const sprintsDir = join(harness, 'sprints');
       const evaluations = [];
       if (existsSync(sprintsDir)) {
@@ -225,65 +161,8 @@ async function main() {
         state,
         features: JSON.parse(readFileSync(join(harness, 'features.json'), 'utf8')),
         metrics,
-        events: events.events || [],
         evaluations,
         rounds_completed: state.last_completed_round || state.current_round,
-      });
-      break;
-    }
-    case 'verify-round-numbering': {
-      const { readdirSync, existsSync } = await import('node:fs');
-      const { join } = await import('node:path');
-      const sprintsDir = join(process.cwd(), '.harness', 'sprints');
-      const state = readState();
-
-      // Get rounds from state.json cost_tracking
-      const stateRounds = (state.cost_tracking?.rounds || []).map(r => r.round);
-
-      // Parse NN prefixes from sprint files
-      const roundsFromFiles = new Set();
-      const mismatches = [];
-
-      if (existsSync(sprintsDir)) {
-        const files = readdirSync(sprintsDir).filter(f => /^\d{2}-/.test(f)).sort();
-        for (const file of files) {
-          const match = file.match(/^(\d{2})-/);
-          if (match) {
-            const fileRound = parseInt(match[1], 10);
-            roundsFromFiles.add(fileRound);
-          }
-        }
-
-        // Check: every round found in files should exist in state cost_tracking
-        for (const fileRound of roundsFromFiles) {
-          if (!stateRounds.includes(fileRound)) {
-            mismatches.push({
-              file_round: fileRound,
-              issue: `Round ${fileRound} found in sprint files but not in state.json cost_tracking`,
-              type: 'file_without_state',
-            });
-          }
-        }
-
-        // Check: every completed round in state should have sprint files
-        for (const stateRound of stateRounds) {
-          const paddedRound = String(stateRound).padStart(2, '0');
-          const hasFiles = readdirSync(sprintsDir).some(f => f.startsWith(paddedRound + '-'));
-          if (!hasFiles && stateRound <= (state.last_completed_round || 0)) {
-            mismatches.push({
-              state_round: stateRound,
-              issue: `Round ${stateRound} in state.json cost_tracking but no sprint files found`,
-              type: 'state_without_files',
-            });
-          }
-        }
-      }
-
-      out({
-        ok: mismatches.length === 0,
-        mismatches,
-        rounds_found_in_files: [...roundsFromFiles].sort((a, b) => a - b),
-        rounds_in_state: stateRounds,
       });
       break;
     }

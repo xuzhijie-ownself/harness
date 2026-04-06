@@ -52,9 +52,6 @@ $SCRIPT check-stop
 # Clean up old sprint files
 $SCRIPT cleanup-sprints --before-round N
 
-# Verify sprint artifact round numbering
-$SCRIPT verify-round-numbering
-
 # Finalize round -- fill empty cost_tracking timestamps and set outcome
 $SCRIPT finalize-round --round N
 ```
@@ -93,9 +90,6 @@ spawn evaluator (grade) --> FAIL? --> increment failure_streak
 [auto-commit --status pass]  |           |--> STOP
   |                          |           |--> next round
   v                          v
-[feature-update --set-passes true]
-  |
-  v
 [finalize-round --round N]
   |
   v
@@ -226,13 +220,6 @@ Before advancing to the next round, validate artifacts:
 node plugins/harness/scripts/harness-companion.mjs validate-artifacts --round NN
 ```
 If the result shows any missing artifacts, set `stop_reason` to `"missing required sprint artifacts for round NN"` and STOP.
-
-## Codex Detection Enforcement
-
-After reading `NN-evaluation.json` for each round, verify:
-1. `review_findings.codex_detection` exists -- if missing, flag as process violation and instruct evaluator to re-run with pre-flight.
-2. If `config_use_codex` is `"on"` AND `review_mode` is `"claude"` AND `fallback_reason` is null or empty -> flag as process violation (codex was explicitly requested but wasn't used without explanation).
-3. If `config_use_codex` is `"auto"` AND `codex_available` is `true` AND `review_mode` is `"claude"` AND `fallback_reason` is null or empty -> flag as process violation (codex was detected but wasn't used without explanation).
 
 ## Calibration Enforcement
 

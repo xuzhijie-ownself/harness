@@ -1,7 +1,7 @@
 ---
 name: postmortem
 description: Generate a postmortem report for the current harness run.
-  Reads evaluation artifacts, metrics, events, and feature history to produce
+  Reads evaluation artifacts, metrics, and feature history to produce
   .harness/postmortem.md with Timeline, Score Trends, Failure Analysis,
   Process Compliance, and Recommendations sections.
 allowed_tools: ["Bash", "Read", "Write", "Glob"]
@@ -28,7 +28,7 @@ If no evaluation artifacts exist, REFUSE. Print: "Cannot generate postmortem: no
 ```bash
 node plugins/harness/scripts/harness-companion.mjs postmortem-data
 ```
-This returns `{ state, features, metrics, events, evaluations, rounds_completed }` — all data sources needed for the postmortem sections below.
+This returns `{ state, features, metrics, evaluations, rounds_completed }` -- all data sources needed for the postmortem sections below.
 
 **Manual path** (if you need more detail): Read each data source individually:
 
@@ -49,16 +49,7 @@ Read each `NN-evaluation.json` file. Extract from each:
 - `contract_checks` (which checks passed/failed)
 - `authenticity_gate.gate_result`
 
-### 2. Metrics Summary
-
-Run the metrics-summary subcommand for aggregated data:
-```bash
-node plugins/harness/scripts/harness-companion.mjs metrics-summary
-```
-
-This returns: `total_rounds`, `total_duration_ms`, `total_file_changes`, `score_trends`, and `round_details`.
-
-### 3. State and Cost Tracking
+### 2. State and Cost Tracking
 
 Read `.harness/state.json`. Extract:
 - `current_round`
@@ -68,27 +59,18 @@ Read `.harness/state.json`. Extract:
 - `domain_profile`
 - `errors` (any agent spawn failures)
 
-### 4. Features
+### 3. Features
 
 Read `.harness/features.json`. Extract:
 - Full feature list with `id`, `title`, `passes`, `status`, `maturity`, `depends_on`
 - Count of required features passing vs total required
 - Any features that were retried (targeted in multiple rounds)
 
-### 5. Events Log
+### 4. Git Timeline
 
-Run the read-events subcommand:
-```bash
-node plugins/harness/scripts/harness-companion.mjs read-events
-```
+Run `git log --oneline` to reconstruct the timeline of commits and phases.
 
-If events exist, extract:
-- Agent spawn timeline
-- Phase transition sequence
-- Feature selection history
-- Evaluation completion events
-
-### 6. Evaluation Markdown Reports (optional)
+### 5. Evaluation Markdown Reports (optional)
 
 Read any `.harness/sprints/NN-evaluation.md` files for qualitative detail on blockers and findings.
 

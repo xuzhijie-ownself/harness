@@ -8,8 +8,6 @@ Use this file only for the evaluator role.
 - builder report
 - running app
 - `.harness/features.json`
-- `.claude/settings.json` (project-level, for Codex detection -- check `enabledPlugins`)
-- `~/.claude/settings.json` (user-level global, for Codex detection -- check `extraKnownMarketplaces`)
 - `git diff HEAD~1 --name-only` (changed files)
 - evaluator calibration if it exists
 - `plugins/harness/skills/harness-sdlc/SKILL.md` (when domain_profile is "software") for runtime verification procedures
@@ -28,27 +26,6 @@ Integer scores only -- never "3-ish".
 
 ## Three Responsibilities
 
-### 0. Code Review Pre-Flight (MANDATORY -- do this BEFORE reviewing any code)
-
-Read config.json `use_codex` value, then decide review mode:
-- `"off"` -> review_mode = `"claude"`
-- `"on"` -> try `codex review --commit HEAD` (CLI); if CLI fails, try `/codex:adversarial-review --wait` (skill); if both fail, fallback to `"claude"` with fallback_reason
-- `"auto"` (default) -> run three checks in order (any-one-passes):
-  1. Project `.claude/settings.json` -- `enabledPlugins` contains `"codex@openai-codex": true`
-  2. Global `~/.claude/settings.json` -- `extraKnownMarketplaces` contains `"openai-codex"`
-  3. `which codex` on PATH -- exits 0
-  If any passes -> review_mode = `"codex"`. All three fail -> review_mode = `"claude"`.
-
-When review_mode is `"codex"`, invoke `codex review --commit HEAD` as the primary review method (CLI-first). Fall back to `/codex:adversarial-review --wait` (skill invocation) if the CLI fails. Map findings: critical/high -> BLOCKING, medium/low/info -> NON-BLOCKING.
-
-Record in both NN-evaluation.md and NN-evaluation.json: review_mode, config_use_codex, codex_available, detection_method, detection_result, fallback_reason.
-
-For the detailed 4-step procedure, severity mapping table, and fallback logic, see [references/advanced.md](../references/advanced.md) "Codex Detection Detailed Procedure".
-
-**Scope**: The code review pre-flight applies to ALL changed files regardless of file type -- this includes documentation, Markdown, role files, reference files, configuration, and any other non-code artifacts. Documentation-only changes are not exempt. The only valid condition for skipping the code review pre-flight entirely is when `git diff HEAD~1 --name-only` returns zero files (i.e., no files were changed at all).
-
-**CRITICAL**: If you skip this pre-flight or default to "claude" without documenting detection, the evaluation is INVALID.
-
 ### 1. Testing
 - Write and run tests (TDD for code, BDD for user-facing, smoke for infra)
 - Target 80% coverage for new/changed code
@@ -56,7 +33,9 @@ For the detailed 4-step procedure, severity mapping table, and fallback logic, s
 - Run all test suites and report results in the evaluation artifact
 
 ### 2. Code Review
-- Use the review_mode determined in the Pre-Flight (Step 0) above
+
+If a code review plugin is available (codex, copilot, or other), the evaluator MAY invoke it for adversarial review. This is optional and runtime-dependent. Record whether external review was used in review_findings.review_mode.
+
 - Check code quality: readability, security, patterns compliance, performance, error handling
 - Classify findings as BLOCKING or NON-BLOCKING
 

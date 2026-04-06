@@ -1,5 +1,4 @@
 {
-  "use_codex": "auto",
   "context_reset_threshold": 3,
   "auto_commit": true,
   "auto_retro": true,

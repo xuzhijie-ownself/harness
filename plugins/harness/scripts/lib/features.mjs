@@ -1,10 +1,10 @@
 /**
  * features.mjs -- feature selection with dependency resolution, stop checks,
- * schema validation, circular dependency detection, and feature mutation.
+ * schema validation, and circular dependency detection.
  * Zero npm dependencies.
  */
 
-import { readFileSync, writeFileSync, renameSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 /**
@@ -31,8 +31,6 @@ import { join } from 'node:path';
  * @property {string} [updated_by]
  * @property {Feature[]} features - Array of feature objects
  */
-
-const VALID_MATURITY = ['draft', 'functional', 'reviewed', 'polished', 'accepted'];
 
 class UserError extends Error {
   /** @param {string} msg */
@@ -234,78 +232,4 @@ export function checkStop() {
     required_passing: passing.length,
     current_failure_streak: state.current_failure_streak,
   };
-}
-
-/**
- * Atomically write the features file to .harness/features.json.
- * Writes to a .tmp file first, then renames for crash safety.
- * @param {FeaturesFile} data - The full features file object to write.
- * @returns {FeaturesFile} The written data.
- */
-export function writeFeatures(data) {
-  // Validate before writing
-  if (typeof data.version !== 'number') {
-    throw new UserError(`Cannot write features.json: "version" must be a number.`);
-  }
-  if (!Array.isArray(data.features)) {
-    throw new UserError(`Cannot write features.json: "features" must be an array.`);
-  }
-
-  const target = featuresPath();
-  const tmp = target + '.tmp';
-  writeFileSync(tmp, JSON.stringify(data, null, 2) + '\n', 'utf8');
-  renameSync(tmp, target);
-  return data;
-}
-
-/**
- * Update a single feature by ID in features.json.
- * Reads, validates, mutates the target feature, and atomically writes back.
- * @param {string} id - Feature ID to update (e.g. "F-015")
- * @param {{ passes?: boolean, status?: string, maturity?: string }} updates - Fields to update
- * @returns {{ ok: true, feature_id: string, updated_fields: string[] }}
- */
-export function updateFeature(id, updates) {
-  const data = readFeatures();
-  const feature = data.features.find((f) => f.id === id);
-
-  if (!feature) {
-    throw new UserError(`Unknown feature ID: "${id}". Available: ${data.features.map(f => f.id).join(', ')}`);
-  }
-
-  const updatedFields = [];
-
-  if ('passes' in updates) {
-    if (typeof updates.passes !== 'boolean') {
-      throw new UserError(`--set-passes must be "true" or "false", got "${updates.passes}".`);
-    }
-    feature.passes = updates.passes;
-    updatedFields.push('passes');
-  }
-
-  if ('status' in updates) {
-    if (typeof updates.status !== 'string' || updates.status.length === 0) {
-      throw new UserError(`--set-status must be a non-empty string.`);
-    }
-    feature.status = updates.status;
-    updatedFields.push('status');
-  }
-
-  if ('maturity' in updates) {
-    if (!VALID_MATURITY.includes(updates.maturity)) {
-      throw new UserError(
-        `Invalid maturity value: "${updates.maturity}". Must be one of: ${VALID_MATURITY.join(', ')}`
-      );
-    }
-    feature.maturity = updates.maturity;
-    updatedFields.push('maturity');
-  }
-
-  if (updatedFields.length === 0) {
-    throw new UserError(`No valid update fields provided. Use --set-passes, --set-status, or --set-maturity.`);
-  }
-
-  writeFeatures(data);
-
-  return { ok: true, feature_id: id, updated_fields: updatedFields };
 }
