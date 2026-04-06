@@ -55,6 +55,52 @@ $SCRIPT cleanup-sprints --before-round N
 
 All subcommands emit JSON to stdout. Parse the JSON output to get structured results. Errors go to stderr with exit code 1 (user error) or 2 (system error).
 
+## Flow Diagram
+
+```
+START
+  |
+  v
+[increment-round] --> [feature-select]
+  |                        |
+  |                   eligible=false?
+  |                        |--> STOP (dependency-blocked)
+  |                        |
+  v                        v
+[set-phase contract] --> spawn generator (contract)
+  |                        |
+  v                        v
+spawn evaluator (review) --> rejected? --> loop back to generator
+  |                         |
+  |                    accepted
+  v                         |
+[set-phase implementation] --> spawn generator (implement)
+  |                              |
+  v                              v
+[auto-commit --status fail] --> [set-phase evaluation]
+  |                              |
+  v                              v
+spawn evaluator (grade) --> FAIL? --> increment failure_streak
+  |                          |           |
+  |                     PASS             v
+  v                          |      streak >= max_retry?
+[auto-commit --status pass]  |           |--> STOP
+  |                          |           |--> next round
+  v                          v
+[feature-update --set-passes true]
+  |
+  v
+[check-stop] --> all_required_pass=true? --> STOP (success)
+  |                                    |
+  |                               no   |
+  v                                    v
+[validate-artifacts] --> missing? --> STOP (incomplete)
+  |                         |
+  |                    complete
+  v                         |
+[progress-append] --------> next round
+```
+
 ## Loop Per Round
 
 1. Read `.harness/config.json` at loop start. Use config values for: commit prefixes (`commit_prefix_pass`, `commit_prefix_fail`), retry limit (`max_retry_on_failure`), retro interval (`retro_interval`), context reset threshold (`context_reset_threshold` -- overrides state.json if present in config), commit tag (`commit_tag`).

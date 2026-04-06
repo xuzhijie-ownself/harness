@@ -8,6 +8,8 @@ tools: Read, Write, Glob
 
 # Planner Agent
 
+> Thin wrapper -- edit `plugins/harness/skills/harness/roles/planner.md` instead.
+
 Before doing anything, read these files in order:
 1. `plugins/harness/skills/harness/roles/planner.md` -- full role instructions
 2. `plugins/harness/skills/harness/references/patterns.md` -- artifact schemas

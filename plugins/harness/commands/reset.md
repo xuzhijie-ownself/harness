@@ -30,23 +30,48 @@ long sessions. Models exhibit "context anxiety" -- premature closure as context 
 ## Steps
 
 1. Run `git diff --name-only HEAD` -- list all modified files.
-2. Read `.harness/features.json` -- identify current `in_progress` feature.
+2. Identify the current feature:
+   ```bash
+   node plugins/harness/scripts/harness-companion.mjs feature-select
+   ```
+   Use the returned `feature_id` and `title` for the handoff.
 3. Read `.harness/progress.md` -- identify last completed step.
-4. Write `.harness/handoff.md` using the template from
+4. Read `.harness/state.json` `current_sprint_phase` -- record which phase was interrupted.
+5. Write `.harness/handoff.md` using the template from
    `plugins/harness/skills/harness/references/patterns.md`.
    The handoff must include:
    - Current feature ID and title
    - Last completed step (one sentence)
+   - Interrupted phase (idle/contract/implementation/evaluation)
    - Modified files (from git diff)
    - Open questions or blockers
    - Next step (single sentence -- the first thing the next session should do)
-5. Stage and commit work in progress:
-   `git commit -m "wip(F00X): session checkpoint -- <brief description>"`
-6. Update `.harness/progress.md` -- record session end and reference to handoff.
-7. Print: "Handoff written to .harness/handoff.md. Start a new session and run
-   /session to resume."
+6. Stage and commit work in progress:
+   ```bash
+   node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "session checkpoint" --round N --status fail
+   ```
+7. Update progress.md:
+   ```bash
+   node plugins/harness/scripts/harness-companion.mjs progress-append --round N --feature F-XXX --status paused --scores '{}'
+   ```
+8. Print: "Handoff written to .harness/handoff.md. Start a new session and run /session to resume."
+
+## Phase Resume (How /session Uses the Handoff)
+
+When `/session` starts and finds `.harness/handoff.md`:
+1. Read `current_sprint_phase` from `state.json`
+2. Resume at the interrupted phase:
+   - `idle` -> start fresh (handoff was written between sprints)
+   - `contract` -> re-propose or re-review the contract
+   - `implementation` -> re-run implementation (prior attempt may be partial)
+   - `evaluation` -> re-run evaluation on existing implementation
+3. Delete `handoff.md` after successful sprint completion
 
 ## Post-flight
 
-1. Update `.harness/state.json`: set `status` to `"paused"`, set `stop_reason` to `"context reset via /reset"`
-2. Verify `.harness/handoff.md` was created and contains: current feature, last step, modified files, next step
+1. Update state.json:
+   ```bash
+   node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase idle
+   ```
+   Then manually set `status` to `"paused"` and `stop_reason` to `"context reset via /reset"` in state.json.
+2. Verify `.harness/handoff.md` was created and contains: current feature, last step, interrupted phase, modified files, next step
