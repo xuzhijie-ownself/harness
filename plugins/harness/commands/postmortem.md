@@ -18,7 +18,7 @@ Run the **Command Pre-Flight Validation** from SKILL.md before proceeding.
 Verify before proceeding:
 - `.harness/state.json` exists -- if not, run `/harness:start` first.
 - `.harness/features.json` exists.
-- At least one evaluation artifact exists in `.harness/sprints/` (any `NN-evaluation.json`).
+- At least one evaluation artifact exists in `.harness/sprints/` (any `NN-eval.json`).
 
 If no evaluation artifacts exist, REFUSE. Print: "Cannot generate postmortem: no evaluation artifacts found. Run at least one sprint first."
 
@@ -36,10 +36,10 @@ This returns `{ state, features, metrics, evaluations, rounds_completed }` -- al
 
 Find all evaluation JSON files:
 ```bash
-ls .harness/sprints/*-evaluation.json 2>/dev/null
+ls .harness/sprints/*-eval.json 2>/dev/null
 ```
 
-Read each `NN-evaluation.json` file. Extract from each:
+Read each `NN-eval.json` file. Extract from each:
 - `round` number
 - `decision` (PASS or FAIL)
 - `target_feature_ids`
@@ -72,7 +72,7 @@ Run `git log --oneline` to reconstruct the timeline of commits and phases.
 
 ### 5. Evaluation Markdown Reports (optional)
 
-Read any `.harness/sprints/NN-evaluation.md` files for qualitative detail on blockers and findings.
+Read any `.harness/sprints/NN-eval.md` files for qualitative detail on blockers and findings.
 
 ## Output Structure
 

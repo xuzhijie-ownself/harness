@@ -13,22 +13,22 @@ Use this file only for the generator role.
 ## Write
 
 - product code
-- `.harness/sprints/NN-contract.md`
-- `.harness/sprints/NN-builder-report.md`
+- `.harness/sprints/NN-proposal.md`
+- `.harness/sprints/NN-report.md`
 
 ## Ownership
 
-Owns: product code, .harness/sprints/NN-contract.md, .harness/sprints/NN-builder-report.md
+Owns: product code, .harness/sprints/NN-proposal.md, .harness/sprints/NN-report.md
 Does NOT flip features to passing -- evaluator owns acceptance.
 Does NOT self-approve: write the contract and stop; the orchestrating command spawns evaluator.
 
 ## Sprint Round Sequence
 
 1. Read `.harness/features.json` -- pick highest-priority `passes: false` feature
-2. Write `.harness/sprints/NN-contract.md`
+2. Write `.harness/sprints/NN-proposal.md`
 3. Stop (wait for evaluator contract review via the orchestrating command)
 4. (Second invocation) Implement the accepted sprint
-5. Write `.harness/sprints/NN-builder-report.md`
+5. Write `.harness/sprints/NN-report.md`
 
 ## Focus
 

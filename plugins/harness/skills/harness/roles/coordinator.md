@@ -5,7 +5,6 @@ Use this file only for the coordinator role.
 ## Read
 
 - `.harness/spec.md`
-- `.harness/decomposition.md` if it exists
 - `.harness/features.json`
 - `.harness/progress.md`
 - latest evaluation artifacts
@@ -13,12 +12,10 @@ Use this file only for the coordinator role.
 ## Write
 
 - `.harness/state.json`
-- `.harness/summary.md`
-- `.harness/decomposition.md` when sprint rationale needs its own record
 
 ## Ownership
 
-Owns: .harness/state.json, .harness/summary.md, .harness/decomposition.md
+Owns: .harness/state.json
 
 ## Script Calls for Mechanical Steps
 
@@ -142,7 +139,7 @@ spawn evaluator (grade) --> FAIL? --> increment failure_streak
     ```bash
     node plugins/harness/scripts/harness-companion.mjs finalize-round --round N
     ```
-    This reads NN-evaluation.json for the decision field and populates all empty timestamps in cost_tracking.rounds[N]. Falls back to `--outcome pass|fail` flag if evaluation.json is missing.
+    This reads NN-eval.json for the decision field and populates all empty timestamps in cost_tracking.rounds[N]. Falls back to `--outcome pass|fail` flag if evaluation.json is missing.
 15. Auto-commit with final status:
     ```bash
     node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "<title>" --round N --status pass
@@ -213,7 +210,7 @@ This makes it visible whether the counter is advancing.
 ## Evaluator Enforcement
 
 The coordinator MUST NOT update `.harness/features.json` directly.
-Only evaluator-backed evidence in `NN-evaluation.json` `feature_evidence` may flip pass/fail.
+Only evaluator-backed evidence in `NN-eval.json` `feature_evidence` may flip pass/fail.
 
 Before advancing to the next round, validate artifacts:
 ```bash
@@ -227,7 +224,7 @@ Calibration file (`.harness/evaluator-calibration.md`) is required only when `ex
 
 When `expected_sprint_count > 3`: after round 1 evaluation, verify that `.harness/evaluator-calibration.md` exists. If missing, instruct the evaluator to create it before proceeding.
 
-Score drift detection applies regardless: check for score jumps >1 from the prior round on any criterion. If a jump >1 exists without a `drift_check` justification in `NN-evaluation.json`, flag it and request the evaluator to re-justify the score.
+Score drift detection applies regardless: check for score jumps >1 from the prior round on any criterion. If a jump >1 exists without a `drift_check` justification in `NN-eval.json`, flag it and request the evaluator to re-justify the score.
 
 ## Sprint Retrospective
 

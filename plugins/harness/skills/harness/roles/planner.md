@@ -11,7 +11,6 @@ Use this file only for the planner role.
 ## Write
 
 - `.harness/spec.md`
-- `.harness/decomposition.md` when sprint rationale needs its own artifact
 
 ## Ownership
 

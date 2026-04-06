@@ -40,4 +40,4 @@ rounds_since_reset: 1 / 3
 - Grouping waiver: All three features share the same edit surface (harness-companion.mjs). Removals are logically independent but benefit from a single pass to avoid merge conflicts.
 
 ## Last commit
-- 2026-04-06T16:46:17.659Z
+- 2026-04-06T16:55:23.813Z

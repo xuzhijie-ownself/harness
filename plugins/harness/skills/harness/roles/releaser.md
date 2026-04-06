@@ -7,7 +7,7 @@ Use this file only for the releaser role.
 - `.harness/features.json`
 - `.harness/state.json`
 - `.harness/progress.md`
-- `.harness/summary.md` if it exists
+
 - `release.json` (project root) if it exists (for previous version history)
 
 ## Write

@@ -15,10 +15,10 @@ import { join } from 'node:path';
  * @property {string} [description]
  * @property {boolean} required - Whether this feature must pass for release
  * @property {string} [priority] - "high" | "medium" | "low"
- * @property {string} [status] - "not_started" | "in_progress" | "done"
+ * @property {string} [status] - "pending" | "done"
  * @property {boolean} passes - Whether the feature currently passes evaluation
  * @property {string[]} [depends_on] - Feature IDs that must pass before this one
- * @property {string} [maturity] - "draft" | "functional" | "reviewed" | "polished" | "accepted"
+ * @property {string} [maturity] - "draft" | "reviewed" | "accepted"
  * @property {string} [source_requirement]
  * @property {string[]} [steps] - Verification steps
  * @property {string[]} [evidence]

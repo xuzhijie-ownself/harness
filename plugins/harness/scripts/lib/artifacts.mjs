@@ -37,8 +37,8 @@ function pad(n) {
 
 /**
  * Validate that all expected sprint artifacts exist for a given round.
- * Expected artifacts: NN-contract.md, NN-contract-review.md, NN-builder-report.md,
- * NN-evaluation.md, NN-evaluation.json.
+ * Expected artifacts: NN-proposal.md, NN-review.md, NN-report.md,
+ * NN-eval.md, NN-eval.json.
  * @param {number} round - The round number to validate
  * @returns {ValidateResult}
  */
@@ -46,11 +46,11 @@ export function validateArtifacts(round) {
   const dir = sprintsDir();
   const prefix = pad(round);
   const expected = [
-    `${prefix}-contract.md`,
-    `${prefix}-contract-review.md`,
-    `${prefix}-builder-report.md`,
-    `${prefix}-evaluation.md`,
-    `${prefix}-evaluation.json`,
+    `${prefix}-proposal.md`,
+    `${prefix}-review.md`,
+    `${prefix}-report.md`,
+    `${prefix}-eval.md`,
+    `${prefix}-eval.json`,
   ];
 
   const missing = [];

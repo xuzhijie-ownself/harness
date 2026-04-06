@@ -39,7 +39,7 @@ import { join } from 'node:path';
 
 /**
  * @typedef {Object} StateShape
- * @property {string} mode - "continuous" | "supervised-step"
+ * @property {string} mode - "continuous" | "supervised"
  * @property {string} status - "active" | "paused" | "complete"
  * @property {string} variant - e.g. "variant-a-sprinted"
  * @property {number} current_round

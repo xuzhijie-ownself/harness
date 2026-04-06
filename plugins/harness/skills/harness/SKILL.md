@@ -222,7 +222,7 @@ The releaser agent manages version bumps, changelog generation, and git tags.
 ### Releaser Role
 
 - Owns: `release.json` (project root), `CHANGELOG.md` (project root)
-- Reads: `features.json`, `state.json`, `summary.md`, `progress.md`
+- Reads: `features.json`, `state.json`, `progress.md`
 - Does NOT modify product code or feature status
 
 ### release.json (project root)
@@ -268,9 +268,7 @@ Features have a `maturity` field alongside the binary `passes` flag. Maturity ad
 | Level | Meaning | Scoring Trigger |
 |-------|---------|----------------|
 | `draft` | Initial implementation, known gaps | Any criterion below 3 |
-| `functional` | Core behavior works | All criteria >= 3 (also sets passes = true) |
-| `reviewed` | Passed evaluation with acceptable scores | All criteria >= 3, evaluator accepted |
-| `polished` | Production-ready quality | All criteria >= 4 |
+| `reviewed` | Passed evaluation with acceptable scores | All criteria >= 3 (also sets passes = true) |
 | `accepted` | Stakeholder sign-off | Set manually by user/stakeholder, not by evaluator |
 
 The evaluator sets maturity automatically based on scores after grading. The `accepted` level is never set by the evaluator — it requires explicit stakeholder sign-off, which is particularly relevant for domain profiles where stakeholder approval is a core evaluation criterion.
@@ -363,8 +361,8 @@ Checklist items measure whether the sprint actually satisfied the contract.
 
 Every evaluation round should emit all of these:
 
-- `.harness/sprints/NN-evaluation.md`
-- `.harness/sprints/NN-evaluation.json`
+- `.harness/sprints/NN-eval.md`
+- `.harness/sprints/NN-eval.json`
 
 The Markdown artifact is for human review.
 The JSON artifact is for machine-readable continuity across long runs.
@@ -509,12 +507,12 @@ In Variant A, run this loop:
 1. Initializer writes or updates `.harness/features.json` and `.harness/progress.md`.
 2. Coordinator initializes or updates `.harness/state.json` in continuous mode.
 3. Planner writes or updates `.harness/spec.md` if the spec is incomplete.
-4. Generator selects the highest-priority failing required feature ID and writes `.harness/sprints/NN-contract.md`.
+4. Generator selects the highest-priority failing required feature ID and writes `.harness/sprints/NN-proposal.md`.
 5. If the generator wants multiple target feature IDs, the contract should include a grouping waiver tied to the execution strategy.
-6. Evaluator writes `.harness/sprints/NN-contract-review.md`.
+6. Evaluator writes `.harness/sprints/NN-review.md`.
 7. Generator revises the contract until accepted.
-8. Generator implements the sprint and writes `.harness/sprints/NN-builder-report.md`.
-9. Evaluator runs tests, reviews code, and grades — writes `.harness/sprints/NN-evaluation.md` and `.harness/sprints/NN-evaluation.json`.
+8. Generator implements the sprint and writes `.harness/sprints/NN-report.md`.
+9. Evaluator runs tests, reviews code, and grades — writes `.harness/sprints/NN-eval.md` and `.harness/sprints/NN-eval.json`.
 10. Evaluator-backed evidence updates `.harness/features.json`.
 11. Coordinator either advances to the next failing required feature, pauses on a blocker, or stops if completion conditions are met.
 
@@ -526,14 +524,14 @@ Start with:
 
 - `.harness/features.json`
 - `.harness/progress.md`
-- `.harness/init.md` + `.harness/init.sh` + `.harness/init.bat`
+- `.harness/init.sh` + `.harness/init.bat`
 - `.harness/state.json` in continuous mode
 - `.harness/spec.md`
-- `.harness/sprints/NN-contract.md`
-- `.harness/sprints/NN-contract-review.md`
-- `.harness/sprints/NN-builder-report.md`
-- `.harness/sprints/NN-evaluation.md`
-- `.harness/sprints/NN-evaluation.json`
+- `.harness/sprints/NN-proposal.md`
+- `.harness/sprints/NN-review.md`
+- `.harness/sprints/NN-report.md`
+- `.harness/sprints/NN-eval.md`
+- `.harness/sprints/NN-eval.json`
 
 Release artifacts (project root -- persist across .harness/ resets):
 
@@ -543,9 +541,7 @@ Release artifacts (project root -- persist across .harness/ resets):
 Optional supporting artifacts:
 
 - `.harness/handoff.md` for reset-based runs only
-- `.harness/summary.md` for final wrap-up
 - `.harness/evaluator-calibration.md` when subjective scoring needs tighter anchors
-- `.harness/decomposition.md` when sprint planning needs an auditable rationale outside the main spec
 - `.harness/cost-log.md` for tracking per-sprint cost and duration
 
 Use the shared schemas in [references/patterns.md](references/patterns.md).
@@ -595,7 +591,7 @@ When required: after the first evaluation round, create `evaluator-calibration.m
 For each criterion every round, the evaluator must:
 - Compare against the prior round's score for the same criterion
 - If a score changes by more than 1 from the prior round, justify WHY in the evaluation artifact
-- Record the comparison in `NN-evaluation.md` under a "Score Justification" section
+- Record the comparison in `NN-eval.md` under a "Score Justification" section
 - The coordinator flags unjustified score jumps >1
 
 ## Sprint Retrospective
@@ -635,7 +631,7 @@ Track `rounds_since_reset` in `state.json`. After `context_reset_threshold` roun
 
 ### Evaluator Enforcement
 
-The coordinator MUST NOT update `features.json` directly. Only evaluator evidence in `NN-evaluation.json` `feature_evidence` may flip pass/fail status. Before advancing to the next round, the coordinator verifies that `NN-contract.md`, `NN-evaluation.md`, and `NN-evaluation.json` all exist.
+The coordinator MUST NOT update `features.json` directly. Only evaluator evidence in `NN-eval.json` `feature_evidence` may flip pass/fail status. Before advancing to the next round, the coordinator verifies that `NN-proposal.md`, `NN-eval.md`, and `NN-eval.json` all exist.
 
 ### Cost Tracking
 

@@ -23,24 +23,22 @@ For role-specific guidance, prefer:
 
 ```text
 project-root/
-  release.json                   # PERSISTENT — survives .harness/ cleanup
-  CHANGELOG.md                   # PERSISTENT — open-source convention
-  .harness/                      # TRANSIENT — per-run state
+  release.json                   # PERSISTENT -- survives .harness/ cleanup
+  CHANGELOG.md                   # PERSISTENT -- open-source convention
+  .harness/                      # TRANSIENT -- per-run state
     features.json
     progress.md
     state.json
-    init.md
     spec.md
-    decomposition.md             # optional when sprint rationale needs its own artifact
-    summary.md
+    config.json
     handoff.md                   # reset-based compatibility runs only
     evaluator-calibration.md     # optional
     sprints/
-      01-contract.md
-      01-contract-review.md
-      01-builder-report.md
-      01-evaluation.md
-      01-evaluation.json
+      01-proposal.md
+      01-review.md
+      01-report.md
+      01-eval.md
+      01-eval.json
 ```
 
 ## Shared Metadata
@@ -78,7 +76,7 @@ For review artifacts, also include:
       "description": "Users can create new tasks and edit existing ones inline",
       "required": true,
       "priority": "high",
-      "status": "not_started",
+      "status": "pending",
       "passes": false,
       "depends_on": [],
       "maturity": "draft",
@@ -100,7 +98,8 @@ For review artifacts, also include:
 Feature field reference:
 
 - `depends_on`: Array of feature IDs that must have `passes: true` before this feature is targeted. Empty or absent means no dependencies. The coordinator skips dependency-blocked features during target selection.
-- `maturity`: Feature maturity level. One of `"draft"` (initial implementation, known gaps), `"functional"` (core behavior works), `"reviewed"` (passed evaluation with 3+ on all criteria), `"polished"` (production-ready, 4+ on all criteria), `"accepted"` (stakeholder sign-off, set manually). Default: `"draft"`. The `passes` field remains binary — `functional` or above means passes. `maturity` adds granularity for tracking overall project readiness.
+- `status`: One of `"pending"` (not yet done) or `"done"` (completed). Default: `"pending"`.
+- `maturity`: Feature maturity level. One of `"draft"` (initial implementation, known gaps), `"reviewed"` (passed evaluation with 3+ on all criteria, also sets passes=true), `"accepted"` (stakeholder sign-off, set manually). Default: `"draft"`.
 - `source_requirement`: Optional string linking the feature to an original business requirement, user story, or specification reference. Used primarily in architecture, tender, and business_analysis domain profiles for requirements traceability.
 
 ### `state.json`
@@ -143,6 +142,7 @@ Feature field reference:
 
 Field reference:
 
+- `mode`: One of `"continuous"` or `"supervised"`. Controls whether the coordinator advances rounds automatically.
 - `context_reset_threshold`: Number of rounds before coordinator pauses for context refresh. Default: 3.
 - `rounds_since_reset`: Counter incremented each round; triggers context refresh handoff at `context_reset_threshold`.
 - `current_sprint_phase`: One of `idle`, `contract`, `implementation`, `evaluation`. Used for sprint resume.
@@ -182,7 +182,7 @@ Field reference:
 
 State.json holds runtime state (round, phase, errors). Config.json holds persistent preferences. The initializer creates a default config.json during `/start`. Users can edit it manually between sessions. Config.json values take precedence over state.json defaults when both define the same field.
 
-### `NN-evaluation.json`
+### `NN-eval.json`
 
 The `primary_scores` keys below are placeholders (`<criterion_1>` through `<criterion_4>`). Replace them with the 4 criteria from the active domain profile. For example, the `software` profile uses `product_depth`, `functionality`, `visual_design`, `code_quality`. See the installed domain skill suite's index skill for the criteria mapping per profile.
 
@@ -330,7 +330,7 @@ The `primary_scores` keys below are placeholders (`<criterion_1>` through `<crit
 
 ## Execution strategy
 - Variant: Variant A | Variant B | Variant C
-- Mode: continuous | supervised-step
+- Mode: continuous | supervised
 - Expected sprint count or one-sprint rationale
 - Default target ordering
 - Multi-feature sprint policy
@@ -345,32 +345,10 @@ The `primary_scores` keys below are placeholders (`<criterion_1>` through `<crit
 - Explicitly deferred work
 ```
 
-### `decomposition.md`
+### `NN-proposal.md`
 
 ```md
-# Decomposition Decision
-
-## Metadata
-- Role: coordinator
-- Agent: coordinator-1
-- Inputs: spec.md, features.json
-- Status: accepted
-
-## Planned order
-- F-001
-- F-002
-
-## Grouping policy
-- One failing feature per sprint by default
-
-## Exceptions
-- If multiple features are grouped, explain why
-```
-
-### `NN-contract.md`
-
-```md
-# Sprint Contract
+# Sprint Proposal
 
 ## Metadata
 - Role: generator
@@ -412,7 +390,7 @@ Check IDs map to the domain profile's criteria:
 - Dependencies or likely failure modes
 ```
 
-### `NN-builder-report.md`
+### `NN-report.md`
 
 ```md
 # Builder Report
@@ -420,7 +398,7 @@ Check IDs map to the domain profile's criteria:
 ## Metadata
 - Role: generator
 - Agent: generator-1
-- Inputs: accepted contract, spec, features.json
+- Inputs: accepted proposal, spec, features.json
 - Status: completed
 
 ## Target feature IDs
@@ -446,7 +424,7 @@ Check IDs map to the domain profile's criteria:
 - Which features may now pass, with evidence
 ```
 
-### `NN-evaluation.md`
+### `NN-eval.md`
 
 ```md
 # Evaluation Report
@@ -454,7 +432,7 @@ Check IDs map to the domain profile's criteria:
 ## Metadata
 - Role: evaluator
 - Agent: evaluator-1
-- Inputs: accepted contract, builder report, running app, features.json
+- Inputs: accepted proposal, builder report, running app, features.json
 - Status: pass
 - Reviewed by: evaluator-1
 - Decision: pass
@@ -534,7 +512,7 @@ For each criterion, reference the anchor from evaluator-calibration.md and compa
 ```bash
 #!/usr/bin/env bash
 # Start the dev server and run a smoke test.
-# Generated by the initializer agent — edit to match your project.
+# Generated by the initializer agent -- edit to match your project.
 set -e
 
 # TODO: replace with actual start command for your project
@@ -542,11 +520,11 @@ npm run dev &
 DEV_PID=$!
 sleep 3
 
-# Smoke test — verify the server responds
+# Smoke test -- verify the server responds
 if curl -sf http://localhost:3000 > /dev/null 2>&1; then
-  echo "OK — dev server running (PID $DEV_PID)"
+  echo "OK -- dev server running (PID $DEV_PID)"
 else
-  echo "FAIL — dev server did not respond on http://localhost:3000"
+  echo "FAIL -- dev server did not respond on http://localhost:3000"
   kill $DEV_PID 2>/dev/null
   exit 1
 fi
@@ -557,18 +535,18 @@ fi
 ```bat
 @echo off
 REM Start the dev server and run a smoke test.
-REM Generated by the initializer agent — edit to match your project.
+REM Generated by the initializer agent -- edit to match your project.
 
 REM TODO: replace with actual start command for your project
 start /B npm run dev
 timeout /t 3 /nobreak >nul
 
-REM Smoke test — verify the server responds
+REM Smoke test -- verify the server responds
 curl -sf http://localhost:3000 >nul 2>&1
 if %ERRORLEVEL% EQU 0 (
-  echo OK — dev server running
+  echo OK -- dev server running
 ) else (
-  echo FAIL — dev server did not respond on http://localhost:3000
+  echo FAIL -- dev server did not respond on http://localhost:3000
   exit /b 1
 )
 ```
@@ -586,9 +564,9 @@ if %ERRORLEVEL% EQU 0 (
 
 | Round | Phase | Duration | Cost | Notes |
 |-------|-------|----------|------|-------|
-| 1 | planner | — | — | |
-| 1 | generator | — | — | |
-| 1 | evaluator | — | — | |
+| 1 | planner | -- | -- | |
+| 1 | generator | -- | -- | |
+| 1 | evaluator | -- | -- | |
 ```
 
 ### `release.json` (project root)
@@ -659,7 +637,7 @@ if %ERRORLEVEL% EQU 0 (
 - [concrete description of what a 5 looks like for this project]
 ```
 
-Repeat the criterion section for each of the domain profile's 4 primary criteria. Anchors are project-specific — the framework provides the structure, the project provides the examples.
+Repeat the criterion section for each of the domain profile's 4 primary criteria. Anchors are project-specific -- the framework provides the structure, the project provides the examples.
 
 ### Domain Profile section in `spec.md`
 
@@ -674,7 +652,7 @@ Add this section to spec.md after the Overview or Execution Strategy:
 - Stakeholder lens: End users, developers
 ```
 
-Note: criteria names in NN-contract.md and NN-evaluation.md/json come from the domain profile declared here. If no profile is specified, default to `software`.
+Note: criteria names in NN-proposal.md and NN-eval.md/json come from the domain profile declared here. If no profile is specified, default to `software`.
 
 ## Quantified Rubric
 
@@ -701,11 +679,11 @@ Use this when reviewing whether a run truly followed the harness:
 1. Was an initializer used?
 2. Does a machine-readable feature list exist?
 3. Were separate planner/generator/evaluator agents explicitly dispatched?
-4. Was there a contract review artifact before implementation started?
+4. Was there a proposal review artifact before implementation started?
 5. Did the spec explain the execution strategy and sprinting rationale?
 6. Did each sprint target one failing required feature unless a grouping waiver existed?
 7. Did the number of failing required features go down?
-8. Did each accepted round include `NN-evaluation.md` and `NN-evaluation.json`?
+8. Did each accepted round include `NN-eval.md` and `NN-eval.json`?
 9. In continuous mode, did the coordinator either advance, pause, or stop explicitly?
 
 If the answer to the first six questions is no, or the failing-feature count does not move, the harness is drifting.

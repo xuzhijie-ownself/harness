@@ -153,7 +153,7 @@ async function main() {
       const sprintsDir = join(harness, 'sprints');
       const evaluations = [];
       if (existsSync(sprintsDir)) {
-        for (const f of readdirSync(sprintsDir).filter(f => f.endsWith('-evaluation.json')).sort()) {
+        for (const f of readdirSync(sprintsDir).filter(f => f.endsWith('-eval.json')).sort()) {
           try { evaluations.push(JSON.parse(readFileSync(join(sprintsDir, f), 'utf8'))); } catch { /* skip malformed */ }
         }
       }
@@ -191,20 +191,20 @@ async function main() {
         }
       }
 
-      // Determine outcome: try reading NN-evaluation.json, fall back to --outcome flag
+      // Determine outcome: try reading NN-eval.json, fall back to --outcome flag
       let outcome = flags.outcome || '';
       if (!outcome) {
         try {
           const { readFileSync } = await import('node:fs');
           const { join } = await import('node:path');
           const paddedRound = String(roundNum).padStart(2, '0');
-          const evalPath = join(process.cwd(), '.harness', 'sprints', `${paddedRound}-evaluation.json`);
+          const evalPath = join(process.cwd(), '.harness', 'sprints', `${paddedRound}-eval.json`);
           const evalData = JSON.parse(readFileSync(evalPath, 'utf8'));
           if (evalData.decision) {
             outcome = evalData.decision.toLowerCase();
           }
         } catch {
-          // evaluation.json missing or unreadable -- outcome stays empty unless --outcome provided
+          // eval.json missing or unreadable -- outcome stays empty unless --outcome provided
         }
       }
 

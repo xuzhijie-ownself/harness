@@ -74,9 +74,9 @@ node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase cont
 ```
 
 6. Spawn the `generator` agent: "Propose a sprint contract for [feature-id]."
-   -> `.harness/sprints/NN-contract.md`
-7. Spawn the `evaluator` agent: "Review the contract at .harness/sprints/NN-contract.md."
-   -> `.harness/sprints/NN-contract-review.md`
+   -> `.harness/sprints/NN-proposal.md`
+7. Spawn the `evaluator` agent: "Review the contract at .harness/sprints/NN-proposal.md."
+   -> `.harness/sprints/NN-review.md`
 8. Show the contract review to the user.
    - Rejected -> return to step 6 with evaluator feedback.
    - Accepted -> ask user to confirm before proceeding to implementation.
@@ -88,8 +88,8 @@ Transition to implementation phase:
 node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase implementation
 ```
 
-9. Spawn the `generator` agent: "Implement the accepted contract at .harness/sprints/NN-contract.md."
-   -> code changes + `.harness/sprints/NN-builder-report.md`
+9. Spawn the `generator` agent: "Implement the accepted contract at .harness/sprints/NN-proposal.md."
+   -> code changes + `.harness/sprints/NN-report.md`
 
 ## Evaluation Phase
 
@@ -99,9 +99,9 @@ node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase eval
 ```
 
 10. Spawn the `evaluator` agent:
-    "Grade the implementation. Contract: NN-contract.md. Builder report: NN-builder-report.md."
-    -> `.harness/sprints/NN-evaluation.md`
-    -> `.harness/sprints/NN-evaluation.json`
+    "Grade the implementation. Contract: NN-proposal.md. Builder report: NN-report.md."
+    -> `.harness/sprints/NN-eval.md`
+    -> `.harness/sprints/NN-eval.json`
 11. Update `.harness/features.json` based on evaluator `feature_evidence`.
 12. Append round summary to progress.md:
     ```bash
