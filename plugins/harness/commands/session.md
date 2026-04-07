@@ -59,7 +59,7 @@ Transition phases using: `node plugins/harness/scripts/harness-companion.mjs sta
 1. Read `.harness/progress.md`.
 2. Run `git log --oneline -10` to recover context from recent commits.
 3. Check for `.harness/handoff.md` -- if present, read it and resume from `next_step`.
-4. Run `bash .harness/init.sh` -- STOP and report if baseline fails.
+4. Run `bash .harness/init.sh` -- STOP and report if baseline fails. If it fails because it checks for files that no longer exist (stale smoke test), regenerate init.sh for the current project state and retry.
 5. Select the next target feature:
    ```bash
    node plugins/harness/scripts/harness-companion.mjs feature-select

@@ -92,6 +92,10 @@ Before creating a new version, check `release.json` for the most recent release 
 
 This prevents burning multiple version numbers in a single working session.
 
+### Release Cadence
+
+Default: **one release per `/harness:start` → `/harness:release` cycle.** Do not release between individual sprints. Multiple sprints within a cycle should ship as a single version bump. The coordinator suggests release only when all required features pass — it does not auto-release.
+
 ## Changelog Format
 
 Each release entry in `CHANGELOG.md` should include:

@@ -28,7 +28,7 @@ If no evaluation artifacts exist, REFUSE. Print: "Cannot generate postmortem: no
 ```bash
 node plugins/harness/scripts/harness-companion.mjs postmortem-data
 ```
-This returns `{ state, features, metrics, evaluations, rounds_completed }` -- all data sources needed for the postmortem sections below.
+This returns `{ state, features, metrics, git_timeline, evaluations, rounds_completed }` -- all data sources needed for the postmortem sections below.
 
 **Manual path** (if you need more detail): Read each data source individually:
 
@@ -78,6 +78,8 @@ Read any `.harness/sprints/NN-eval.md` files for qualitative detail on blockers 
 
 Write `.harness/postmortem.md` with the following structure. Synthesize the gathered data into each section -- do not simply dump raw JSON.
 
+**ENFORCEMENT**: Every section MUST have a table or explicit statement, even when the result is "none found" or "all passed on first attempt." Do not reduce a section to a one-liner -- always include the full table structure with data rows.
+
 ```markdown
 # Postmortem Report
 
@@ -104,7 +106,7 @@ Table showing how each primary criterion score changed across rounds.
 |-------|---------------|---------------|---------------|---------------|
 | 1 | <score> | <score> | <score> | <score> |
 
-Note any significant score drops or improvements with brief explanation from evaluation artifacts.
+Note any significant score drops or improvements with brief explanation from evaluation artifacts. If `finalize-round` reported any `drift_warning` in cost_tracking, highlight it here.
 
 ## Failure Analysis
 
@@ -124,6 +126,20 @@ Assess whether the harness process was followed correctly:
 - Were contract checks defined and evaluated?
 - Was the authenticity gate applied? (check gate_result in evaluation JSONs)
 - Were any agent spawn errors logged?
+
+## Integrity Audit
+
+Run the stale reference grep check and report results:
+```bash
+grep -rn "review_mode\|codex_detection\|events\.jsonl\|events\.mjs\|metrics\.mjs\|summary\.md\|decomposition\.md\|init\.md\|NN-contract\b\|NN-evaluation\|builder-report\|contract-review\|not_started\|in_progress\b\|functional\b\|polished\b" plugins/ --include="*.md" --include="*.mjs"
+```
+
+Report:
+- Number of stale references found (target: 0)
+- If any found: list file, line, and what needs fixing
+- Verify: all sprint artifacts use new naming (proposal/review/report/eval)
+- Verify: features.json uses only pending/done status and draft/reviewed/accepted maturity
+- Verify: plugin.json agents[] and commands[] arrays match actual files on disk
 
 ## Recommendations
 
