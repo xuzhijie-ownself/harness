@@ -94,13 +94,14 @@ if exist "%SUITE_DIR%" (
 set "HOOKS_SRC=%PLUGIN_DIR%\plugins\harness\hooks\hooks.json"
 set "HOOKS_DST=%CLAUDE_DIR%\hooks.json"
 
-if exist "%HOOKS_DST%" (
-    node -e "const fs=require('fs');const src=JSON.parse(fs.readFileSync('%HOOKS_SRC:\=\\%','utf8'));const dst=JSON.parse(fs.readFileSync('%HOOKS_DST:\=\\%','utf8'));const existing=new Set((dst.hooks||[]).map(h=>h.command));const merged={hooks:[...(dst.hooks||[]),...src.hooks.filter(h=>!existing.has(h.command))]};fs.writeFileSync('%HOOKS_DST:\=\\%',JSON.stringify(merged,null,2));"
-    echo   [OK] Hooks       -^> merged into existing .claude\hooks.json
-) else (
-    copy /Y "%HOOKS_SRC%" "%HOOKS_DST%" > nul
-    echo   [OK] Hooks       -^> .claude\hooks.json
-)
+if not exist "%HOOKS_DST%" goto :hooks_copy
+node -e "const fs=require('fs');const src=JSON.parse(fs.readFileSync('%HOOKS_SRC:\=\\%','utf8'));const dst=JSON.parse(fs.readFileSync('%HOOKS_DST:\=\\%','utf8'));const existing=new Set((dst.hooks||[]).map(h=>h.command));const merged={hooks:[...(dst.hooks||[]),...src.hooks.filter(h=>!existing.has(h.command))]};fs.writeFileSync('%HOOKS_DST:\=\\%',JSON.stringify(merged,null,2));"
+echo   [OK] Hooks       -^> merged into existing .claude\hooks.json
+goto :hooks_done
+:hooks_copy
+copy /Y "%HOOKS_SRC%" "%HOOKS_DST%" > nul
+echo   [OK] Hooks       -^> .claude\hooks.json
+:hooks_done
 
 :: Copilot CLI support
 set "COPILOT_DIR=%PROJECT_ROOT%\.github"
