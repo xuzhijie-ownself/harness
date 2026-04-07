@@ -6,7 +6,7 @@ orchestration, and **domain skill suites** provide profile-specific knowledge.
 
 **6 agents:** initializer, planner, generator, evaluator, coordinator, releaser.
 **Tri-runtime:** Works with Claude Code, OpenAI Codex CLI, and GitHub Copilot CLI.
-**Two plugins:** `harness` (core) + `harness-sdlc-suite` (software delivery domain skills).
+**Three plugins:** `harness` (core) + `harness-sdlc-suite` (software delivery) + `harness-sales-suite` (sales/revenue).
 
 **Methodology:** PDCA (Plan-Do-Check-Act) + two innovations:
 1. **Evaluator-never-edits-code** -- tool-access-level role purity
@@ -34,7 +34,7 @@ Uninstall: `claude plugin uninstall harness`
 
 ### Codex CLI / Copilot CLI (Local Install)
 
-Clone once, then run the install script **from your project root** — it generates runtime manifests with correct paths:
+Clone once, then run the install script **from your project root** -- it generates runtime manifests with correct paths:
 
 ```bash
 cd your-project
@@ -47,8 +47,8 @@ bash plugins/harness/install.sh
 plugins\harness\install.bat
 ```
 
-- **Codex** auto-detects `.codex-plugin/plugin.json` — skills loaded via dual skill paths
-- **Copilot** auto-reads `.github/copilot-instructions.md` — skills referenced as markdown file paths
+- **Codex** auto-detects `.codex-plugin/plugin.json` -- skills loaded via dual skill paths
+- **Copilot** auto-reads `.github/copilot-instructions.md` -- skills referenced as markdown file paths
 
 Update: `cd plugins/harness && git pull && cd ../.. && bash plugins/harness/install.sh` (run install from project root, not from inside the clone)
 Uninstall: `bash plugins/harness/install.sh --uninstall`
@@ -100,10 +100,11 @@ The gate is **dual-side**: generators apply a pre-implementation checklist (prev
 
 ## Architecture
 
-The harness uses a two-plugin architecture:
+The harness uses a multi-plugin architecture:
 
 - **`plugins/harness/`** -- Domain-blind core. Contains all orchestration machinery (agents, commands, hooks, core skill) but zero references to specific domain skills.
 - **`plugins/harness-sdlc-suite/`** -- Software delivery domain skill suite. Contains 5 domain skills and an index skill that serves as the domain registry.
+- **`plugins/harness-sales-suite/`** -- Sales domain skill suite. Contains 5 domain skills and an index skill for revenue execution workflows.
 
 ```
 plugins/
@@ -129,6 +130,16 @@ plugins/
       harness-ba/SKILL.md              # Business Analysis domain
       harness-sa/SKILL.md              # Solution Architecture domain
       harness-ops/SKILL.md             # Deployment & Ops domain
+
+  harness-sales-suite/                  # Plugin 3: Sales Suite (skills-only)
+    .claude-plugin/plugin.json          # Skills-only manifest (no agents/commands)
+    skills/
+      harness-sales-suite/SKILL.md     # Index skill (domain registry + routing)
+      harness-sales/SKILL.md           # Core Sales / Revenue Execution domain
+      harness-se/SKILL.md              # Sales Engineering / Pre-sales domain
+      harness-tm/SKILL.md              # Tender Management / Procurement domain
+      harness-sen/SKILL.md             # Sales Enablement domain
+      harness-so/SKILL.md              # Sales Operations / RevOps domain
 ```
 
 The core harness can be used **standalone** with a `custom` profile defined in `spec.md`. No domain skill suite is required -- the profile system, authenticity gate, and all orchestration work without any suite installed.
@@ -146,8 +157,10 @@ Both Claude Code and Codex share:
 | Artifact schemas + templates | `plugins/harness/skills/harness/references/patterns.md` |
 | Advanced variants + decay guidance | `plugins/harness/skills/harness/references/advanced.md` |
 | Harness spec (eval, stop conditions) | `plugins/harness/skills/harness/SKILL.md` |
-| Domain registry + profile routing | `plugins/harness-sdlc-suite/skills/harness-sdlc-suite/SKILL.md` |
-| Domain skill definitions | `plugins/harness-sdlc-suite/skills/harness-*/SKILL.md` |
+| SDLC domain registry + routing | `plugins/harness-sdlc-suite/skills/harness-sdlc-suite/SKILL.md` |
+| SDLC domain skill definitions | `plugins/harness-sdlc-suite/skills/harness-*/SKILL.md` |
+| Sales domain registry + routing | `plugins/harness-sales-suite/skills/harness-sales-suite/SKILL.md` |
+| Sales domain skill definitions | `plugins/harness-sales-suite/skills/harness-*/SKILL.md` |
 | Artifact layout | `.harness/` in project root |
 
 ---
@@ -176,7 +189,9 @@ Both Claude Code and Codex share:
 
 ## Domain Profiles
 
-The harness supports multiple domains through a profile system. Each profile defines 4 primary evaluation criteria, artifact taxonomy, and stakeholder lens. Domain profiles are provided by **domain skill suites** -- the SDLC suite provides the following:
+The harness supports multiple domains through a profile system. Each profile defines 4 primary evaluation criteria, artifact taxonomy, and stakeholder lens. Domain profiles are provided by **domain skill suites**.
+
+### SDLC Suite Profiles
 
 | Profile | Criteria | Stakeholder Lens |
 |---------|----------|-----------------|
@@ -185,6 +200,21 @@ The harness supports multiple domains through a profile system. Each profile def
 | `business_analysis` | completeness, traceability, stakeholder_alignment, feasibility | Business owners, PMs |
 | `solution_architecture` | design_coherence, technical_depth, integration_clarity, implementability | Solution architects, dev leads |
 | `ops` | operational_readiness, automation_coverage, reliability_design, security_posture | SREs, platform engineers |
+
+### Sales Suite Profiles
+
+| Profile | Criteria | Stakeholder Lens |
+|---------|----------|-----------------|
+| `sales` | qualification_depth, pipeline_coverage, deal_documentation, close_readiness | Account Executive, Sales Manager |
+| `sales_engineering` | demo_completeness, technical_validation, solution_documentation, integration_clarity | Sales Engineer, Pre-sales Architect |
+| `tender_management` | compliance_coverage, response_completeness, win_theme_clarity, submission_readiness | Proposal Manager, Bid Manager |
+| `sales_enablement` | content_coverage, audience_relevance, adoption_measurability, maintenance_sustainability | Enablement Lead, Product Marketing |
+| `sales_operations` | data_completeness, process_documentation, reporting_accuracy, scalability_design | Sales Ops, RevOps Manager |
+
+### Custom Profile
+
+| Profile | Criteria | Stakeholder Lens |
+|---------|----------|-----------------|
 | `custom` | User-defined (4 criteria in spec) | User-defined |
 
 The `custom` profile is built into the core harness and requires no domain skill suite. Projects can declare a primary + optional secondary profile for cross-domain work.
@@ -204,6 +234,24 @@ The SDLC suite delegates domain-specific knowledge to companion skills:
 | `harness-ops` | Deployment & Ops | `ops` | Ops methodology (GitOps/Platform Engineering/SRE/DevOps/IaC), deployment readiness, runbook verification, evaluation criteria anchors |
 
 Domain skills are loaded automatically when the matching domain profile is selected during `/harness:start`. The index skill at `plugins/harness-sdlc-suite/skills/harness-sdlc-suite/SKILL.md` provides the routing table.
+
+---
+
+## Domain Skills (Sales Suite)
+
+The sales suite provides domain-specific evaluation criteria and methodology guidance for revenue execution workflows:
+
+| Skill | Domain | Profile | What it provides |
+|-------|--------|---------|-----------------|
+| `harness-sales` | Core Sales | `sales` | MEDDPICC/Challenger/SPIN/Sandler/BANT methodology, qualification verification, deal documentation, pipeline hygiene |
+| `harness-se` | Sales Engineering | `sales_engineering` | Demo-led/POC-driven/solution design methodology, technical validation, integration specification |
+| `harness-tm` | Tender Management | `tender_management` | APMP/Shipley capture management, color team reviews, compliance matrix validation, RFP response evaluation |
+| `harness-sen` | Sales Enablement | `sales_enablement` | Content-first/coaching-first/certification methodology, adoption measurement, content coverage audit |
+| `harness-so` | Sales Operations | `sales_operations` | RevOps/data-driven/process-first methodology, forecast modeling, territory planning, compensation design |
+
+Each skill follows the 6-core-section pattern: methodology selection, development methodology with generator first-action table, verification strategy, deliverable verification, evaluation criteria (4 criteria with 0-5 anchors), and sprint contract checklists with anti-patterns. Security considerations (pricing confidentiality, customer PII, competitive intel protection, compensation data) are embedded in checklists and anti-patterns rather than enforced by a separate security phase.
+
+The index skill at `plugins/harness-sales-suite/skills/harness-sales-suite/SKILL.md` provides the routing table and end-to-end sales pipeline diagram.
 
 ---
 
@@ -243,4 +291,3 @@ Each phase is a separate harness run (`/start` -> `/run` -> `/release`). Each ru
 **Variant A (default)**: Full-Stack Sprinted -- coordinator loop with continuous compaction.
 
 Variants B (reset-based) and C (simplified) are documented in `references/advanced.md` for specialized use cases.
-
