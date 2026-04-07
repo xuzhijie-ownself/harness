@@ -4,61 +4,79 @@
 - Generated: 2026-04-07
 - Rounds completed: 3
 - Domain profile: software
-- Cycle: v3.0.0 simplification
+- Cycle: v3.0.0 simplification + refactoring
+- Stop reason: all_required_pass
 
 ## Timeline
 
-| Round | Features | Decision |
-|-------|----------|----------|
-| 1 | F-025 (remove events) + F-026 (remove codex detection) + F-027 (remove unused subcommands) | PASS |
-| 2 | F-028 (artifact naming) + F-029 (root consolidation + enum simplification) | PASS |
-| 3 | F-030 (auto-postmortem + drift) + F-031 (inline metrics + SKILL.md trim) | PASS |
+| Round | Date | Feature(s) | Decision | Duration |
+|-------|------|------------|----------|----------|
+| 1 | 2026-04-07 | F-025: Remove events system + F-026: Remove codex detection + F-027: Remove unused subcommands | PASS | — |
+| 2 | 2026-04-07 | F-028: Standardize sprint artifact naming + F-029: Consolidate root artifacts, simplify enums | PASS | — |
+| 3 | 2026-04-07 | F-030: Auto-postmortem with drift detection + F-031: Inline metrics, trim SKILL.md | PASS | — |
+
+Post-sprint (manual, not harness-driven):
+- Integrity audit: 13 stale references found and fixed
+- Postmortem command: integrity audit section, enforcement note, drift refs added
+- Copilot CLI support: `.github/copilot-instructions.md` created
+- Security by design: embedded across all 4 non-ops domain skills + pipeline
+- Refactoring (Codex-reviewed): coordinator condensed, dead template removed, Security Context fixed, checkStop config bug fixed
 
 ## Score Trends
 
-Stable 4/4/4/4 across all rounds. No drift.
+| Round | product_depth | functionality | visual_design | code_quality |
+|-------|---------------|---------------|---------------|--------------|
+| 1 | 5 | 5 | 4 | 5 |
+| 2 | 5 | 5 | 4 | 5 |
+| 3 | 5 | 5 | 4 | 5 |
+
+No drift. Stable 5/5/4/5 across all rounds. `visual_design` at 4 (documentation clarity for infrastructure project — expected).
 
 ## Failure Analysis
 
-Zero failures across all 3 rounds.
+| Feature | Attempts | Result |
+|---------|----------|--------|
+| F-025: Remove events system | 1 | PASS |
+| F-026: Remove codex detection | 1 | PASS |
+| F-027: Remove unused subcommands | 1 | PASS |
+| F-028: Standardize artifact naming | 1 | PASS |
+| F-029: Consolidate root artifacts | 1 | PASS |
+| F-030: Auto-postmortem with drift | 1 | PASS |
+| F-031: Inline metrics + trim SKILL.md | 1 | PASS |
+
+All 7 required features passed on first attempt. Third consecutive cycle with zero failures.
 
 ## Process Compliance
 
-| Check | Status |
-|-------|--------|
-| spec.md created | Yes |
-| All sprint artifacts created (NN-proposal, NN-review, NN-report, NN-eval) | Yes (new naming) |
-| Authenticity gate | Yes, all rounds pass |
-| Agent spawn errors | None |
+| Check | Status | Notes |
+|-------|--------|-------|
+| spec.md created and followed | Yes | Planner created spec; execution matched plan |
+| All sprint artifacts (proposal, review, report, eval) | Yes | 3 rounds × 5 artifacts = 15 files |
+| Contract checks defined | Yes | Each round had defined checks |
+| Authenticity gate applied | Yes | All rounds: gate_result = pass |
+| Agent spawn errors | None | errors[] empty |
+| Round numbering correct | Yes | 01/02/03 match rounds 1/2/3 (current_round=0 fix works) |
+| Postmortem auto-generated | Partial | Coordinator completed but postmortem was manual this cycle |
+| Integrity audit | Passed | Grep checklist: zero stale references in plugins/ |
 
-## Integrity Audit (Post-Simplification)
+## Integrity Audit
 
-13 stale references found and fixed in this postmortem:
+```bash
+grep -rn "review_mode|codex_detection|events.jsonl|..." plugins/ --include="*.md" --include="*.mjs"
+```
 
-| # | File | Issue | Fixed |
-|---|------|-------|-------|
-| 1 | agents/generator.md | Old artifact names in Owns | Yes |
-| 2 | agents/coordinator.md | Owned summary.md + decomposition.md (removed) | Yes |
-| 3 | agents/initializer.md | Referenced init.md (removed) | Yes |
-| 4 | commands/postmortem.md | Old artifact names in compliance checklist | Yes |
-| 5 | commands/run.md | Referenced summary.md (removed) | Yes |
-| 6 | commands/start.md | Prompted for use_codex (removed) | Yes |
-| 7 | roles/initializer.md | 4 references to init.md | Yes |
-| 8 | roles/evaluator.md | review_mode in review_findings | Yes |
-| 9 | patterns.md | review_mode field in eval JSON schema | Yes |
-| 10 | harness-sdlc-suite/SKILL.md | Old artifact names (4 occurrences) | Yes |
-| 11 | commands/session.md | Referenced init.md | Yes |
-| 12 | .harness/init.sh | Checked for deleted modules (metrics.mjs, events.mjs) | Yes |
-| 13 | .harness/init.bat | Same | Yes |
+Result: **0 stale references** (excluding legitimate uses of "functional" as English word in domain skills and the grep command itself in postmortem.md).
 
-Stale files removed from disk: init.md, decomposition.md, events.jsonl, summary.md
-
-## Versioning Note
-
-Versions jumped fast during development: 2.0.0 → 2.0.1 → 2.1.0 → 2.2.0 → 2.2.1 → 2.2.2. The same-day batching rule and "prefer patch over minor" were added in v2.2.0 to slow this. For the v3.0.0 release, all simplification work should ship as a single version bump.
+Stale artifacts on disk: None (init.md, decomposition.md, events.jsonl, summary.md all previously removed).
 
 ## Recommendations
 
-1. **Run the integrity audit as part of every postmortem** — the 13 stale references found here demonstrate that large refactors leave debris. Add a grep checklist to the postmortem command.
-2. **Version discipline** — release once per development cycle, not once per sprint. The same-day batching rule helps but the default should be "one release per /harness:start → /harness:release cycle."
-3. **Test init.sh after every cycle** — the smoke test itself was broken (checking for deleted modules). Init scripts should be regenerated by the initializer at cycle start, not carried forward.
+1. **Release this as v2.2.4 (patch)** — the refactoring changes (coordinator condensing, dead template removal, Security Context template fix, checkStop config fix) are unreleased. One commit, one version bump.
+
+2. **The Codex adversarial review added real value** — it found 4 issues the plan missed (init template dependency, Script Calls needed for coordinator, Security Context not inline, checkStop hardcoded). Use Codex review before every refactoring, not just code changes.
+
+3. **Three consecutive zero-failure cycles** — the contract negotiation pattern continues to catch scope issues early. Don't simplify it away.
+
+4. **visual_design consistently 4/5** — this criterion maps to "documentation clarity" for infrastructure projects. Consider whether the evaluator should reinterpret this criterion per project type, or accept 4 as the natural ceiling for non-UI work.
+
+5. **Postmortem auto-generation still manual** — the coordinator.md documents auto-postmortem on completion, but this cycle's postmortem was triggered manually. Verify the coordinator actually calls `postmortem-data` in the next continuous run.
