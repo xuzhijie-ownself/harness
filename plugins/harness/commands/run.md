@@ -19,6 +19,8 @@ Verify before spawning coordinator:
 
 If execution mode is `supervised`, redirect the user to `/session` instead.
 
+If spec.md declares `supervised` but state.json has been manually changed to `continuous`, WARN the user: "Spec declares supervised mode. Running in continuous mode will skip interactive contract reviews (steps 7-8 in session.md). Confirm with user before proceeding."
+
 ## Steps
 
 1. Read `.harness/spec.md` -- confirm execution mode is `continuous`.

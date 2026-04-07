@@ -1,16 +1,22 @@
 {
-  "mode": "continuous",
+  "mode": "supervised",
   "status": "complete",
   "variant": "variant-a-sprinted",
-  "current_round": 8,
-  "last_completed_round": 8,
-  "active_feature_ids": [],
-  "expected_sprint_count": 4,
+  "current_round": 1,
+  "last_completed_round": 0,
+  "active_feature_ids": [
+    "F-045",
+    "F-046",
+    "F-047",
+    "F-048",
+    "F-049"
+  ],
+  "expected_sprint_count": 1,
   "current_failure_streak": 0,
-  "last_feature_pass_delta": 1,
+  "last_feature_pass_delta": 0,
   "stop_reason": "All required features pass.",
   "context_reset_threshold": 3,
-  "rounds_since_reset": 5,
+  "rounds_since_reset": 1,
   "current_sprint_phase": "idle",
   "domain_profile": "software",
   "secondary_profile": "",
@@ -18,14 +24,27 @@
   "errors": [],
   "cost_tracking": {
     "rounds": [
-      { "round": 1, "started_at": "2026-04-07T00:00:00Z", "completed_at": "2026-04-07T17:40:28.607Z", "feature_id": "F-001", "outcome": "pass", "phases": { "contract": { "started_at": "2026-04-07T17:40:28.607Z", "completed_at": "2026-04-07T17:40:28.607Z" }, "implementation": { "started_at": "2026-04-07T17:40:28.607Z", "completed_at": "2026-04-07T17:40:28.607Z" }, "evaluation": { "started_at": "2026-04-07T17:40:28.607Z", "completed_at": "2026-04-07T17:40:28.607Z" } } },
-      { "round": 2, "started_at": "2026-04-07T17:41:00Z", "completed_at": "2026-04-07T17:44:14.097Z", "feature_id": "F-002", "outcome": "pass", "phases": { "contract": { "started_at": "2026-04-07T17:44:14.097Z", "completed_at": "2026-04-07T17:44:14.097Z" }, "implementation": { "started_at": "2026-04-07T17:44:14.097Z", "completed_at": "2026-04-07T17:44:14.097Z" }, "evaluation": { "started_at": "2026-04-07T17:44:14.097Z", "completed_at": "2026-04-07T17:44:14.097Z" } } },
-      { "round": 3, "started_at": "2026-04-07T17:45:00Z", "completed_at": "2026-04-07T17:47:57.123Z", "feature_id": "F-003", "outcome": "pass", "phases": { "contract": { "started_at": "2026-04-07T17:47:57.123Z", "completed_at": "2026-04-07T17:47:57.123Z" }, "implementation": { "started_at": "2026-04-07T17:47:57.123Z", "completed_at": "2026-04-07T17:47:57.123Z" }, "evaluation": { "started_at": "2026-04-07T17:47:57.123Z", "completed_at": "2026-04-07T17:47:57.123Z" } } },
-      { "round": 4, "started_at": "2026-04-07T17:49:00Z", "completed_at": "2026-04-07T17:51:23.979Z", "feature_id": "F-004", "outcome": "pass", "phases": { "contract": { "started_at": "2026-04-07T17:51:23.979Z", "completed_at": "2026-04-07T17:51:23.979Z" }, "implementation": { "started_at": "2026-04-07T17:51:23.979Z", "completed_at": "2026-04-07T17:51:23.979Z" }, "evaluation": { "started_at": "2026-04-07T17:51:23.979Z", "completed_at": "2026-04-07T17:51:23.979Z" } } },
-      { "round": 5, "started_at": "2026-04-07T17:52:00Z", "completed_at": "2026-04-07T17:54:21.309Z", "feature_id": "F-005", "outcome": "pass", "phases": { "contract": { "started_at": "2026-04-07T17:54:21.309Z", "completed_at": "2026-04-07T17:54:21.309Z" }, "implementation": { "started_at": "2026-04-07T17:54:21.309Z", "completed_at": "2026-04-07T17:54:21.309Z" }, "evaluation": { "started_at": "2026-04-07T17:54:21.309Z", "completed_at": "2026-04-07T17:54:21.309Z" } } },
-      { "round": 6, "started_at": "2026-04-07T17:55:00Z", "completed_at": "2026-04-07T17:56:58.367Z", "feature_id": "F-006", "outcome": "pass", "phases": { "contract": { "started_at": "2026-04-07T17:56:58.367Z", "completed_at": "2026-04-07T17:56:58.367Z" }, "implementation": { "started_at": "2026-04-07T17:56:58.367Z", "completed_at": "2026-04-07T17:56:58.367Z" }, "evaluation": { "started_at": "2026-04-07T17:56:58.367Z", "completed_at": "2026-04-07T17:56:58.367Z" } } },
-      { "round": 7, "started_at": "2026-04-07T17:58:00Z", "completed_at": "2026-04-07T17:58:22.986Z", "feature_id": "F-007", "outcome": "pass", "phases": { "contract": { "started_at": "2026-04-07T17:58:22.986Z", "completed_at": "2026-04-07T17:58:22.986Z" }, "implementation": { "started_at": "2026-04-07T17:58:22.986Z", "completed_at": "2026-04-07T17:58:22.986Z" }, "evaluation": { "started_at": "2026-04-07T17:58:22.986Z", "completed_at": "2026-04-07T17:58:22.986Z" } } },
-      { "round": 8, "started_at": "2026-04-07T18:00:00Z", "completed_at": "2026-04-07T18:00:50.907Z", "feature_id": "F-008", "outcome": "pass", "phases": { "contract": { "started_at": "2026-04-07T18:00:50.907Z", "completed_at": "2026-04-07T18:00:50.907Z" }, "implementation": { "started_at": "2026-04-07T18:00:50.907Z", "completed_at": "2026-04-07T18:00:50.907Z" }, "evaluation": { "started_at": "2026-04-07T18:00:50.907Z", "completed_at": "2026-04-07T18:00:50.907Z" } } }
+      {
+        "round": 1,
+        "started_at": "2026-04-07T18:11:13Z",
+        "completed_at": "2026-04-07T18:18:37.593Z",
+        "feature_id": "F-045,F-046,F-047,F-048,F-049",
+        "outcome": "pass",
+        "phases": {
+          "contract": {
+            "started_at": "2026-04-07T18:18:37.593Z",
+            "completed_at": "2026-04-07T18:18:37.593Z"
+          },
+          "implementation": {
+            "started_at": "2026-04-07T18:18:37.593Z",
+            "completed_at": "2026-04-07T18:18:37.593Z"
+          },
+          "evaluation": {
+            "started_at": "2026-04-07T18:18:37.593Z",
+            "completed_at": "2026-04-07T18:18:37.593Z"
+          }
+        }
+      }
     ]
   }
 }

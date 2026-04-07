@@ -89,7 +89,9 @@ spawn evaluator (grade) --> FAIL? --> increment failure_streak
    node plugins/harness/scripts/harness-companion.mjs state-mutate --increment-round
    ```
 3. Append a new entry to `state.json` `cost_tracking.rounds[]`: `{ "round": N, "started_at": "<ISO timestamp>", "completed_at": "", "feature_id": "<target feature>", "outcome": "", "phases": { "contract": { "started_at": "", "completed_at": "" }, "implementation": { "started_at": "", "completed_at": "" }, "evaluation": { "started_at": "", "completed_at": "" } } }`
-4. Select the next target feature:
+4. **Read sprint grouping from spec.md**: Before selecting features, read `.harness/spec.md` execution strategy. If the spec groups features into sprints (e.g., "Sprint 1: F-001 + F-002 + F-003"), target the grouped set as a batch in one round. Do NOT split grouped features into individual rounds unless the group fails and must be decomposed.
+
+   If no grouping is specified, or if the current group is complete, select the next eligible feature:
    ```bash
    node plugins/harness/scripts/harness-companion.mjs feature-select
    ```
@@ -189,6 +191,9 @@ At the START of each round, append to `.harness/progress.md`:
 `rounds_since_reset: N / context_reset_threshold`
 This makes it visible whether the counter is advancing.
 
+### Handoff Cleanup
+After a successful round following a context reset (when `.harness/handoff.md` was read at session/round start), delete `.harness/handoff.md`. Do not leave stale handoff files on disk. This mirrors the session.md handoff cleanup behavior.
+
 ## Evaluator Enforcement
 
 The coordinator MUST NOT update `.harness/features.json` directly.
@@ -198,7 +203,7 @@ Before advancing to the next round, validate artifacts:
 ```bash
 node plugins/harness/scripts/harness-companion.mjs validate-artifacts --round NN
 ```
-If the result shows any missing artifacts, set `stop_reason` to `"missing required sprint artifacts for round NN"` and STOP.
+**BLOCKING**: If validate-artifacts reports ANY missing artifacts, set `stop_reason` to `"missing required sprint artifacts for round NN"` and STOP immediately. Do NOT continue to the next round. Do NOT skip this check. This is a hard gate, not advisory. The sales suite postmortem showed that skipping this check caused 55% of artifacts to go missing across 8 rounds.
 
 ## Calibration & Retrospective
 

@@ -3,222 +3,135 @@
 ## Metadata
 - Role: planner
 - Agent: planner-1
-- Inputs: user prompt, features.json, plugins/harness-sdlc-suite (structural reference)
+- Inputs: user prompt (postmortem discrepancies), coordinator.md, features.mjs, session.md, run.md, features.json, state.json
 - Status: accepted
 
 ## Overview
 
-Build **harness-sales-suite**, a new plugin for the harness framework that provides domain-specific evaluation criteria, methodology selection, verification strategies, and sprint contract checklists for sales-oriented workflows. It follows the same structural pattern as `harness-sdlc-suite` (index skill + N domain skills) but targets revenue execution, technical pre-sales, procurement, enablement, and sales operations domains.
+Five targeted fixes to harness core files, addressing discrepancies discovered during the sales suite postmortem (v2.2.9). The previous run completed all 8 features but exposed behavioral gaps: the coordinator skipped artifact validation on later rounds, check-stop did not auto-complete state, handoff cleanup was missing from the coordinator flow, mode switching had no warning, and sprint grouping from the spec was ignored. Each fix is small in scope -- four are documentation/prompt changes to existing markdown files, one is a script change to features.mjs.
 
-The plugin serves sales professionals, pre-sales engineers, proposal managers, enablement teams, and revenue operations analysts who use the harness framework to plan, execute, and evaluate sales-related deliverables.
+## Design direction
 
-## Design Direction
+Not applicable -- these are internal harness framework fixes, not user-facing UI changes.
 
-- Mirror the proven index-skill-plus-domain-skills architecture of `harness-sdlc-suite`
-- Each domain skill follows the 6-core-section pattern: methodology selection, generator first-action table, verification strategy, deliverable verification, evaluation criteria (4 criteria with 0-5 anchors), sprint contract checklists + anti-patterns
-- Optional extended sections (7-10) added where they provide genuine value: reference materials, notation guide, repository structure, anti-patterns
-- Consistent voice: authoritative, practitioner-oriented, no filler
-- Every methodology table, criteria anchor, and checklist must be grounded in real sales frameworks (MEDDPICC, APMP/Shipley, Challenger, etc.) -- no generic placeholders
+## Shipped scope
+
+- **F-045**: Hard gate on artifact validation in coordinator.md -- add blocking enforcement language so validate-artifacts failures immediately stop the run rather than being treated as advisory
+- **F-046**: Auto-set status to complete in features.mjs checkStop() -- when all_required_pass is true, write state.json with status "complete" and stop_reason
+- **F-047**: Handoff.md auto-cleanup in coordinator.md -- add explicit step to delete handoff.md after a successful round following a context reset
+- **F-048**: Mode mismatch warning in run.md -- add pre-flight check that warns when spec.md declares supervised but state.json has continuous (or vice versa)
+- **F-049**: Sprint grouping respect in coordinator.md -- add instruction to read spec.md execution strategy and target grouped feature sets per round instead of individual features
+
+## User stories
+
+- As a harness operator, I want artifact validation to hard-stop the coordinator so that missing sprint artifacts are never silently skipped.
+- As a harness operator, I want check-stop to auto-complete state.json so that downstream tools and post-flight checks see the correct status without manual intervention.
+- As a harness operator, I want handoff.md cleaned up after a successful resume so that stale handoff files do not confuse subsequent sessions.
+- As a harness operator, I want a warning when the execution mode in state.json diverges from spec.md so that I do not accidentally skip interactive reviews.
+- As a harness operator, I want the coordinator to respect sprint grouping from the spec so that multi-feature sprints execute as planned rather than being split into individual rounds.
+
+## Execution strategy
+- Variant: Variant A
+- Mode: supervised
+- Expected sprint count: 1 (all 5 fixes in one sprint -- each is a small, isolated change to a separate file with no cross-dependencies)
+- Default target ordering: F-045, F-046, F-047, F-048, F-049
+- Multi-feature sprint policy: All 5 features grouped into a single sprint. Grouping waiver: these are independent fixes to 3 separate files (coordinator.md, features.mjs, run.md) with zero overlap. Implementing them together reduces round overhead without hiding risk.
+- Simplification policy: No simplification needed -- each fix is already minimal scope.
+- Methodology: agile
+
+### Sprint plan
+
+**Sprint 1: All fixes (F-045, F-046, F-047, F-048, F-049)**
+- F-045: coordinator.md hard-gate language for validate-artifacts
+- F-046: features.mjs checkStop() auto-complete state
+- F-047: coordinator.md handoff cleanup after context reset
+- F-048: run.md mode mismatch warning
+- F-049: coordinator.md sprint grouping instruction
+- Rationale: Five independent fixes to three files. No dependencies between them. Single sprint avoids 4 unnecessary round-trips.
+
+## High-level technical design
+
+### Files to modify
+
+| Feature | File | Change type |
+|---------|------|-------------|
+| F-045 | `plugins/harness/skills/harness/roles/coordinator.md` | Strengthen validate-artifacts step with hard-gate language |
+| F-046 | `plugins/harness/scripts/lib/features.mjs` | Add writeState call in checkStop() when allPass is true |
+| F-047 | `plugins/harness/skills/harness/roles/coordinator.md` | Add handoff.md deletion step after successful resume |
+| F-048 | `plugins/harness/commands/run.md` | Add mode mismatch warning to preconditions |
+| F-049 | `plugins/harness/skills/harness/roles/coordinator.md` | Add sprint grouping instruction to loop section |
+
+### F-045: Hard gate on artifact validation
+
+Target: coordinator.md step 19 and Evaluator Enforcement section.
+
+Current text at step 19 says: "If any are missing, set stop_reason ... and STOP." The coordinator ignored this during rounds 4-8 of the sales suite run. Fix by adding EXPLICIT blocking language that cannot be glossed over:
+
+Add before the existing step 19 text: "BLOCKING GATE: This step is mandatory, not advisory. If validate-artifacts reports ANY missing artifacts, the coordinator MUST set stop_reason and STOP immediately. Do NOT continue to the next round. Do NOT skip this step for any reason. A round without complete artifacts is an incomplete round."
+
+Also add to the Evaluator Enforcement section: "Artifact validation is a hard gate. The coordinator MUST NOT advance to the next round if validate-artifacts shows missing artifacts."
+
+### F-046: Auto-set status to complete in checkStop
+
+Target: features.mjs checkStop() function (line 212-240).
+
+Current behavior: Returns `{ all_required_pass: true, should_stop: true }` but does not modify state.json. The coordinator is supposed to read this and act, but it failed to do so.
+
+Fix: When `allPass` is true, checkStop() should also write state.json with `status: "complete"` and `stop_reason: "All required features pass."`. This requires:
+1. Import writeFileSync from node:fs (already imported as readFileSync)
+2. When allPass is true, mutate the state object: set `state.status = "complete"` and `state.stop_reason = "All required features pass."`
+3. Write the mutated state back to .harness/state.json
+4. This makes the completion path self-contained -- even if the coordinator fails to act on the return value, state.json reflects reality
+
+### F-047: Handoff cleanup in coordinator
+
+Target: coordinator.md, add new sub-section or step.
+
+session.md already has handoff cleanup ("If handoff.md was read at session start AND session completed successfully -> delete handoff.md") but the coordinator in continuous mode does not follow session.md.
+
+Fix: Add to coordinator.md after the Context Freshness section: "After completing a successful round (PASS evaluation) following a context reset where handoff.md was read at session start, delete .harness/handoff.md. Do not delete it if the round failed -- the handoff remains valid for the next retry."
+
+### F-048: Mode mismatch warning in run.md
+
+Target: run.md Preconditions section.
+
+Fix: Add a new precondition check between the existing checks: "Read spec.md execution strategy mode. Compare with state.json mode field. If they differ (e.g., spec says supervised but state.json says continuous), print WARNING: 'Mode mismatch: spec.md declares [X] but state.json has [Y]. In continuous mode, interactive reviews from supervised mode will be skipped.' Continue execution but ensure the user sees this warning before the coordinator starts."
+
+### F-049: Sprint grouping from spec
+
+Target: coordinator.md Loop Per Round section, after step 4 (feature-select).
+
+The sales suite spec declared 4 sprints with grouped features (e.g., Sprint 1: F-001, F-002, F-003) but the coordinator ran 8 rounds with 1 feature each, ignoring the grouping.
+
+Fix: Add after step 4: "Before defaulting to single-feature targeting, read spec.md execution strategy for sprint grouping. If the spec groups multiple features into a single sprint (e.g., 'Sprint 1: F-001, F-002, F-003'), set active_feature_ids to ALL features in that group that still have passes: false. Only fall back to single-feature targeting when: (a) the spec does not define grouping, or (b) all grouped features in the current sprint already pass. When targeting multiple features, the generator proposal must include a grouping waiver explaining why co-implementation is safe."
+
+## Non-goals
+
+- Rewriting the coordinator loop structure or flow diagram
+- Adding new subcommands to harness-companion.mjs
+- Changing the evaluation rubric, scoring, or calibration
+- Modifying features.json schema
+- Adding automated tests for these fixes
+- Changing session.md (it already has the correct handoff cleanup -- the gap is in coordinator.md)
 
 ## Domain Profile
 - Primary: software
 - Secondary: (none)
 - Criteria: product_depth, functionality, visual_design, code_quality
-- Artifact types: SKILL.md files, plugin.json, markdown documentation
-- Stakeholder lens: Harness users (sales professionals using the framework), plugin developers
-
-Note: The project itself is software development (building a plugin). The plugin's contents define sales domain profiles, but the harness evaluates the build using the software profile.
-
-## Shipped Scope
-
-### F-001: Plugin scaffold + index skill (harness-sales-suite)
-Create `plugins/harness-sales-suite/.claude-plugin/plugin.json` and `plugins/harness-sales-suite/skills/harness-sales-suite/SKILL.md`. The index skill provides:
-- Domain profile table (5 profiles with criteria, artifact types, stakeholder lens)
-- Domain skill routing table (profile -> skill name -> relative path)
-- End-to-end sales pipeline diagram (discovery -> qualification -> validation -> proposal -> negotiation -> close -> onboard)
-- Phase routing table (deal types mapped to phases and security levels)
-- Cross-domain composability rules
-- Domain skills summary table
-
-### F-002: Core sales domain skill (harness-sales)
-Create `plugins/harness-sales-suite/skills/harness-sales/SKILL.md` with all 6 core sections:
-- Methodology: MEDDPICC, Challenger, SPIN, Sandler, BANT with selection guidance
-- Generator first-action table for sales deliverables
-- Verification: qualification scorecard validation, pipeline hygiene, deal documentation
-- Deliverable verification: opportunity plans, proposals, close plans
-- Evaluation criteria: qualification_depth, pipeline_coverage, deal_documentation, close_readiness (0-5 anchors)
-- Sprint contract checklists + anti-patterns
-
-### F-003: Tender management domain skill (harness-tm)
-Create `plugins/harness-sales-suite/skills/harness-tm/SKILL.md` with all 6 core sections:
-- Methodology: APMP/Shipley capture management, color team reviews
-- Generator first-action table for tender deliverables
-- Verification: compliance matrix validation, response completeness, win theme consistency
-- Deliverable verification: RFP responses, compliance matrices, executive summaries
-- Evaluation criteria: compliance_coverage, response_completeness, win_theme_clarity, submission_readiness (0-5 anchors)
-- Sprint contract checklists + anti-patterns
-
-### F-004: Sales engineering domain skill (harness-se)
-Create `plugins/harness-sales-suite/skills/harness-se/SKILL.md` with all 6 core sections:
-- Methodology: Demo-led, POC-driven, solution design
-- Generator first-action table for SE deliverables
-- Verification: demo script validation, POC acceptance criteria, technical fit assessment
-- Deliverable verification: demo scripts, POC plans, solution architectures, integration guides
-- Evaluation criteria: demo_completeness, technical_validation, solution_documentation, integration_clarity (0-5 anchors)
-- Sprint contract checklists + anti-patterns
-
-### F-005: Sales enablement domain skill (harness-sen)
-Create `plugins/harness-sales-suite/skills/harness-sen/SKILL.md` with all 6 core sections:
-- Methodology: Content-first, coaching-first, certification-based
-- Generator first-action table for enablement deliverables
-- Verification: content coverage audit, audience alignment, adoption metrics
-- Deliverable verification: playbooks, battle cards, training curricula, certification programs
-- Evaluation criteria: content_coverage, audience_relevance, adoption_measurability, maintenance_sustainability (0-5 anchors)
-- Sprint contract checklists + anti-patterns
-
-### F-006: Sales operations domain skill (harness-so)
-Create `plugins/harness-sales-suite/skills/harness-so/SKILL.md` with all 6 core sections:
-- Methodology: RevOps, data-driven, process-first
-- Generator first-action table for sales ops deliverables
-- Verification: data model validation, process documentation completeness, reporting accuracy
-- Deliverable verification: forecast models, pipeline reports, process maps, territory plans
-- Evaluation criteria: data_completeness, process_documentation, reporting_accuracy, scalability_design (0-5 anchors)
-- Sprint contract checklists + anti-patterns
-
-### F-007: Integration testing + cross-skill consistency
-- All 5 domain skills follow identical section structure
-- Index skill routing table correctly resolves all 5 domain skills
-- Criteria names in domain skills match index profile table exactly
-- Methodology tables have consistent column structure across all skills
-- Anti-pattern lists are domain-specific (not copy-pasted generics)
-- No broken relative paths in routing table
-
-### F-008: Security review + README
-- plugin.json contains no secrets or sensitive defaults
-- SKILL.md files contain no hardcoded customer data, pricing, or competitive intel
-- Sales-specific security guidance: data classification for deal data, customer PII handling notes, competitive intel protection
-- README.md for the plugin (if requested by user -- otherwise skip)
-
-## User Stories
-
-- As a sales professional using harness, I want domain-specific evaluation criteria so my deal documentation is graded on qualification depth and close readiness, not code quality.
-- As a proposal manager, I want APMP/Shipley methodology guidance built into my sprint contracts so I follow industry-standard capture management processes.
-- As a sales engineer, I want POC-driven verification checklists so my demo scripts and solution architectures are evaluated against technical validation standards.
-- As an enablement lead, I want content coverage and adoption measurability criteria so my playbooks and training materials are evaluated for real-world effectiveness.
-- As a RevOps analyst, I want data completeness and reporting accuracy criteria so my forecast models and pipeline reports meet operational rigor standards.
-- As a harness plugin developer, I want the sales suite to follow the exact same structural pattern as the SDLC suite so I can maintain both consistently.
-
-## Execution Strategy
-- Variant: Variant A (sprinted)
-- Mode: supervised
-- Expected sprint count: 4
-- Default target ordering: F-001 -> F-002 -> F-003 -> F-004 -> F-005 -> F-006 -> F-007 -> F-008
-- Multi-feature sprint policy: Sprints 1 and 2 each target 2-3 features that share structural dependencies. Grouping waiver required in each proposal explaining why co-implementation reduces risk (e.g., index skill must exist before domain skills can be verified against its routing table).
-- Simplification policy: If a domain skill blocks for 2+ rounds, reduce optional extended sections (7-10) to stubs and ship core sections (1-6) only. Do not remove evaluation criteria anchors or contract checklists -- those are the primary value.
-- Methodology: agile
-
-### Sprint Plan
-
-**Sprint 1: Foundation + user priorities (F-001, F-002, F-003)**
-- plugin.json + index skill scaffold
-- Core sales skill (harness-sales) -- user's primary domain
-- Tender management skill (harness-tm) -- user's secondary priority
-- Rationale: Index must exist first; sales + tender are user's stated priorities
-
-**Sprint 2: Technical validation + enablement (F-004, F-005)**
-- Sales engineering skill (harness-se)
-- Sales enablement skill (harness-sen)
-- Rationale: Both are internally focused skills with lighter cross-dependencies
-
-**Sprint 3: Operations + integration (F-006, F-007)**
-- Sales operations skill (harness-so)
-- Cross-skill consistency validation across all 5 domain skills + index
-- Rationale: Operations is the last domain skill; integration testing validates the complete suite
-
-**Sprint 4: Security + polish (F-008)**
-- Security review of all files
-- README update if user requests
-- Final consistency pass
-- Rationale: Security review requires all content to exist first
-
-## High-Level Technical Design
-
-### Plugin Structure
-```
-plugins/harness-sales-suite/
-  .claude-plugin/
-    plugin.json                          # Plugin metadata (name, version, skills path)
-  skills/
-    harness-sales-suite/
-      SKILL.md                           # Index skill: routing, pipeline, profiles
-    harness-sales/
-      SKILL.md                           # Core sales domain skill
-    harness-se/
-      SKILL.md                           # Sales engineering domain skill
-    harness-tm/
-      SKILL.md                           # Tender management domain skill
-    harness-sen/
-      SKILL.md                           # Sales enablement domain skill
-    harness-so/
-      SKILL.md                           # Sales operations domain skill
-```
-
-### File Conventions
-- Each SKILL.md uses YAML frontmatter (name, description) matching the SDLC pattern
-- Index skill SKILL.md: ~200-300 lines (tables + pipeline diagram + routing)
-- Domain skill SKILL.md: ~400-600 lines each (6 core sections + optional extensions)
-- plugin.json: standard harness plugin format with `"skills": ["./skills/"]`
-
-### Domain Profile Registry (defined in index skill)
-
-| Profile | Criteria | Artifact Types | Stakeholder Lens |
-|---------|----------|---------------|-----------------|
-| `sales` | qualification_depth, pipeline_coverage, deal_documentation, close_readiness | Opportunity plans, proposals, close plans | AE, Sales Manager |
-| `sales_engineering` | demo_completeness, technical_validation, solution_documentation, integration_clarity | Demo scripts, POC plans, solution architectures | Sales Engineer, Pre-sales |
-| `tender_management` | compliance_coverage, response_completeness, win_theme_clarity, submission_readiness | RFP responses, compliance matrices, executive summaries | Proposal Manager, Bid Manager |
-| `sales_enablement` | content_coverage, audience_relevance, adoption_measurability, maintenance_sustainability | Playbooks, battle cards, training curricula | Enablement, Product Marketing |
-| `sales_operations` | data_completeness, process_documentation, reporting_accuracy, scalability_design | Forecast models, pipeline reports, process maps | Sales Ops, RevOps |
-
-### Sales Pipeline (defined in index skill)
-
-```
-Lead / Opportunity
-    |
-    +- Phase 1: Discovery & Qualification    (harness-sales)
-    +- Phase 2: Technical Validation         (harness-se)
-    +- Phase 3: Formal Procurement           (harness-tm)
-    +- Phase 4: Enablement & Readiness       (harness-sen)
-    +- Phase 5: Revenue Operations           (harness-so)
-    +- Phase 6: Negotiation & Close          (harness-sales)
-    |
-    v
-Closed Deal / Onboarding
-```
-
-## Non-Goals
-
-- Runtime code: This plugin contains only SKILL.md files and plugin.json. No executable code, no scripts, no tests of the plugin itself (the harness framework loads SKILL.md as documentation).
-- CRM integration: No Salesforce, HubSpot, or Dynamics connectors. The plugin provides evaluation criteria and methodology guidance, not tool integration.
-- Customer-specific content: No real customer names, deal data, pricing, or competitive intelligence in any file.
-- Automated sales workflows: The plugin guides human evaluation of sales deliverables; it does not automate sales processes.
-- Modifying harness core: No changes to the core harness plugin, scripts, or existing SDLC suite.
-- Training data or ML models: No predictive analytics, lead scoring models, or AI-generated sales content.
-
-## Definition of Done
-
-All of the following must be true:
-1. `plugins/harness-sales-suite/.claude-plugin/plugin.json` exists and follows harness plugin format
-2. Index skill (`harness-sales-suite/SKILL.md`) contains domain profile table, routing table, pipeline diagram, and phase routing
-3. All 5 domain skills exist with complete 6-core-section structure
-4. Every evaluation criterion has 0-5 anchor descriptions (not placeholders)
-5. Every methodology table has selection guidance grounded in named real-world frameworks
-6. Cross-skill consistency: criteria names in domain skills match index profile table exactly
-7. No broken relative paths in routing table
-8. No hardcoded customer data, pricing, or competitive intel in any file
-9. All features F-001 through F-008 pass evaluation with scores >= 3 on all criteria
+- Artifact types: Markdown documentation, JavaScript modules
+- Stakeholder lens: Harness operators (developers using the harness framework)
 
 ## Security Context
-- data_sensitivity: confidential (plugin content discusses handling of pricing, customer data, competitive intel)
-- external_exposure: none (internal plugin, not a public-facing service)
-- auth_model: none (static documentation files, no authentication)
+- data_sensitivity: none
+- external_exposure: none
+- auth_model: none
 - compliance: none
+
+## Definition of done
+
+All 5 features pass evaluation:
+1. **F-045**: coordinator.md contains explicit hard-gate language for validate-artifacts using mandatory words (MUST, BLOCKING, Do NOT continue) that cannot be misread as advisory
+2. **F-046**: features.mjs checkStop() writes state.json with `status: "complete"` and `stop_reason` when all required features pass -- verified by reading the function source
+3. **F-047**: coordinator.md contains an explicit instruction to delete .harness/handoff.md after a successful round following a context reset
+4. **F-048**: run.md Preconditions section contains a mode mismatch warning that fires when spec.md mode differs from state.json mode
+5. **F-049**: coordinator.md Loop Per Round section contains an instruction to read spec.md sprint grouping and target grouped features together, with fallback to single-feature targeting

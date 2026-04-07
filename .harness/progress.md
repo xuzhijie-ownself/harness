@@ -25,4 +25,4 @@
 - All required features pass. Run `/harness:release` when ready to cut a version.
 
 ## Last commit
-- 2026-04-07T18:03:05.238Z
+- 2026-04-07T18:18:46.889Z

@@ -4,7 +4,7 @@
  * Zero npm dependencies.
  */
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, renameSync } from 'node:fs';
 import { join } from 'node:path';
 
 /**
@@ -224,6 +224,16 @@ export function checkStop() {
     if (typeof config.max_retry_on_failure === 'number') maxRetry = config.max_retry_on_failure;
   } catch { /* config missing or invalid — use default */ }
   const streakExceeded = state.current_failure_streak >= maxRetry;
+
+  // Auto-set status to complete when all required features pass
+  if (allPass && state.status !== 'complete') {
+    state.status = 'complete';
+    state.stop_reason = 'All required features pass.';
+    const statePath = join(harnessDir(), 'state.json');
+    const tmpPath = statePath + '.tmp';
+    writeFileSync(tmpPath, JSON.stringify(state, null, 2));
+    renameSync(tmpPath, statePath);
+  }
 
   return {
     should_stop: allPass || streakExceeded,
