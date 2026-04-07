@@ -8,18 +8,18 @@
       "category": "quality",
       "required": true,
       "priority": "medium",
-      "status": "pending",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-043", "F-044"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md",
       "steps": [
         "Codex adversarial review has been run",
         "All BLOCKING/HIGH findings fixed or documented as acceptable",
         "No regressions introduced by fixes"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": ["Codex found 4 issues (2 HIGH, 2 MEDIUM), all fixed in commit ee510da"],
+      "notes": "4 findings: stale SDLC path, git add -A scoped, update flow, YAML quoting"
     },
     {
       "id": "F-043",
