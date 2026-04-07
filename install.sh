@@ -129,10 +129,19 @@ else
   echo "  [OK] Hooks       -> .claude/hooks.json"
 fi
 
+# ── Copilot CLI support ─────────────────────────────────────────────
+COPILOT_DIR="$PROJECT_ROOT/.github"
+COPILOT_SRC="$PLUGIN_DIR/.github/copilot-instructions.md"
+if [ -f "$COPILOT_SRC" ]; then
+  mkdir -p "$COPILOT_DIR"
+  cp "$COPILOT_SRC" "$COPILOT_DIR/copilot-instructions.md"
+  echo "  [OK] Copilot     -> .github/copilot-instructions.md"
+fi
+
 echo ""
 echo "[OK] Installed. Available immediately -- no restart needed."
 echo ""
-echo "  /harness:start      scaffold harness for a new project"
-echo "  /harness:session    run one supervised sprint round"
-echo "  /harness:run        continuous mode (unattended)"
-echo "  /harness:reset      checkpoint + handoff when context fills"
+echo "  Runtimes supported:"
+echo "    Claude Code  /harness:start, /harness:session, /harness:run"
+echo "    Codex CLI    auto-detected via .codex-plugin/plugin.json"
+echo "    Copilot CLI  auto-detected via .github/copilot-instructions.md"

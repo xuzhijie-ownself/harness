@@ -65,6 +65,18 @@ git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness-repo
 codex  # start codex in the project directory
 ```
 
+### Option 4: GitHub Copilot CLI
+
+Copilot CLI auto-reads `.github/copilot-instructions.md` from the repo root:
+
+```bash
+# Clone the repo into your project
+git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness-repo
+
+# Copilot reads .github/copilot-instructions.md automatically
+# Skills and roles are referenced as markdown file paths
+```
+
 ### Uninstall
 
 ```bash

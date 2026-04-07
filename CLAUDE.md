@@ -82,11 +82,16 @@ These features were intentionally removed. Do not re-add or reference them:
 - Feature maturity values: `functional`, `polished` (replaced by 3-level system)
 - `lib/metrics.mjs` (logic inlined into `postmortem-data` subcommand)
 
-## Plugin Manifests
+## Tri-Runtime Support
 
-Both runtimes share the same source:
-- `.claude-plugin/marketplace.json` — Claude Code marketplace (2 plugin entries)
-- `plugins/harness/.claude-plugin/plugin.json` — Core plugin (agents + commands + skills)
-- `.codex-plugin/plugin.json` — Codex CLI (skills paths only, no agents/commands)
+Three CLI runtimes share the same source files (skills, roles, references, scripts):
 
-When adding commands: update `plugin.json` commands array. When adding agents: update `plugin.json` agents array. Both manifests must stay in sync with actual files on disk.
+| Runtime | Discovery file | What it loads |
+|---------|---------------|--------------|
+| Claude Code | `.claude-plugin/marketplace.json` → `plugin.json` | agents, commands, skills, hooks |
+| Codex CLI | `.codex-plugin/plugin.json` | skills only |
+| Copilot CLI | `.github/copilot-instructions.md` | reads markdown for context |
+
+All three read the same SKILL.md, roles/*.md, and references/*.md. Scripts work via bash on all runtimes.
+
+When adding commands: update `plugin.json` commands array. When adding agents: update `plugin.json` agents array. Manifests must stay in sync with actual files on disk. Releaser handles version sync across Claude/Codex manifests.
