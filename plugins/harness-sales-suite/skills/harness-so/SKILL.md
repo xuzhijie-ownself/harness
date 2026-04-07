@@ -178,14 +178,14 @@ These are the minimum required checks for every sales operations sprint. Check I
 
 | Check ID | Criterion | Required | Verification Method |
 |----------|-----------|----------|-------------------|
-| DC-01 | data_completeness | required | Verify all required metrics defined with documented data sources; automated data collection for primary metrics; data dictionary maintained |
-| DC-02 | data_completeness | advisory | Verify data quality monitoring in place; historical data preserved; data lineage documented from source to report |
+| DT-01 | data_completeness | required | Verify all required metrics defined with documented data sources; automated data collection for primary metrics; data dictionary maintained |
+| DT-02 | data_completeness | advisory | Verify data quality monitoring in place; historical data preserved; data lineage documented from source to report |
 | PD-01 | process_documentation | required | Verify all critical processes mapped with inputs, outputs, owners, and SLAs; runbooks exist for recurring operations |
 | PD-02 | process_documentation | advisory | Verify processes documented in standardized format; automation opportunities identified; process metrics tracked |
 | RA-01 | reporting_accuracy | required | Verify all reports validated against source data; calculation logic documented and auditable; known limitations disclosed |
 | RA-02 | reporting_accuracy | advisory | Verify reconciliation process exists; historical accuracy tracked; report SLAs defined |
-| SD-01 | scalability_design | required | Verify processes designed for 2x current volume; automation implemented for high-volume tasks; capacity limits documented |
-| SD-02 | scalability_design | advisory | Verify scalability tested through load modeling; bottlenecks identified; capacity planning integrated into reviews |
+| SL-01 | scalability_design | required | Verify processes designed for 2x current volume; automation implemented for high-volume tasks; capacity limits documented |
+| SL-02 | scalability_design | advisory | Verify scalability tested through load modeling; bottlenecks identified; capacity planning integrated into reviews |
 
 ### For Pipeline / Forecast Deliverables
 

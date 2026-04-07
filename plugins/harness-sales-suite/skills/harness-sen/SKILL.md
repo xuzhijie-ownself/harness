@@ -178,8 +178,8 @@ These are the minimum required checks for every sales enablement sprint. Check I
 
 | Check ID | Criterion | Required | Verification Method |
 |----------|-----------|----------|-------------------|
-| CC-01 | content_coverage | required | Verify all target personas have content mapped to buyer journey stages; competitive content current for top 3 competitors; methodology alignment present |
-| CC-02 | content_coverage | advisory | Verify content is modular and reusable across programs; content tagged with persona and journey stage metadata |
+| CT-01 | content_coverage | required | Verify all target personas have content mapped to buyer journey stages; competitive content current for top 3 competitors; methodology alignment present |
+| CT-02 | content_coverage | advisory | Verify content is modular and reusable across programs; content tagged with persona and journey stage metadata |
 | AR-01 | audience_relevance | required | Verify content tailored to each persona's role, challenges, and decision criteria; language appropriate for audience; examples resonate with persona context |
 | AR-02 | audience_relevance | advisory | Verify field reps have validated content relevance; persona-specific scenarios and objection handling included |
 | AM-01 | adoption_measurability | required | Verify adoption metrics defined (usage, completion, certification pass rates); baseline established; targets set with timeline |
