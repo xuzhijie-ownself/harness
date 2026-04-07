@@ -22,83 +22,35 @@ The core harness can be used **standalone** with a `custom` profile -- no domain
 
 ## Install
 
-### Option 1: Claude Code Marketplace (Recommended)
+### Claude Code (Marketplace)
 
 ```bash
-# Installs both core harness and SDLC suite
 claude plugin install harness@harness
-```
-
-Then reload:
-```bash
 /reload-plugins
 ```
 
-### Option 2: Git Clone + Local Install
+Update: `claude plugin update harness`
+Uninstall: `claude plugin uninstall harness`
+
+### Codex CLI / Copilot CLI (Local Install)
+
+Clone once, then the install script copies skills, agents, commands, hooks, and scripts into `.claude/`:
 
 ```bash
-# Clone into your project
 git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness
 
-# Install (Mac / Linux / Git Bash)
+# Mac / Linux / Git Bash
 bash plugins/harness/install.sh
 
-# Install (Windows CMD)
+# Windows CMD
 plugins\harness\install.bat
 ```
 
-The install script copies:
-- Core skill from `plugins/harness/skills/harness/`
-- Domain skills from `plugins/harness-sdlc-suite/skills/` (6 skills)
-- Agents, commands, and hooks from the core plugin
+- **Codex** auto-detects `.codex-plugin/plugin.json` — skills loaded via dual skill paths
+- **Copilot** auto-reads `.github/copilot-instructions.md` — skills referenced as markdown file paths
 
-### Option 3: Codex CLI
-
-If using [OpenAI Codex CLI](https://github.com/openai/codex), the plugin auto-loads from the `.codex-plugin/plugin.json` manifest:
-
-```bash
-# Clone the repo into your project
-git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness
-
-# Codex detects .codex-plugin/plugin.json automatically
-# Skills from both plugins are loaded via dual skill paths
-codex  # start codex in the project directory
-```
-
-### Option 4: GitHub Copilot CLI
-
-Copilot CLI auto-reads `.github/copilot-instructions.md` from the repo root:
-
-```bash
-# Clone the repo into your project
-git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness
-
-# Copilot reads .github/copilot-instructions.md automatically
-# Skills and roles are referenced as markdown file paths
-```
-
-### Uninstall
-
-```bash
-# Claude Code marketplace
-claude plugin uninstall harness
-
-# Local install (removes core + all domain skills)
-bash plugins/harness/install.sh --uninstall
-```
-
-### Update
-
-```bash
-# Marketplace (Claude Code)
-claude plugin update harness
-
-# Local install (all runtimes — pull latest then re-run install)
-cd plugins/harness && git pull && bash install.sh
-
-# Windows
-cd plugins\harness && git pull && install.bat
-```
+Update: `cd plugins/harness && git pull && bash install.sh` (or `install.bat` on Windows)
+Uninstall: `bash plugins/harness/install.sh --uninstall`
 
 ---
 
