@@ -1,0 +1,10 @@
+{
+  "name": "harness-sales-suite",
+  "version": "1.0.0",
+  "description": "Sales domain skill suite for the harness framework. Provides methodology selection, evaluation criteria, verification strategies, and sprint contract checklists for sales-oriented workflows across 5 profiles: core sales, sales engineering, tender management, sales enablement, and sales operations.",
+  "author": { "name": "xuzhijie-ownself" },
+  "homepage": "https://github.com/xuzhijie-ownself/harness",
+  "license": "MIT",
+  "keywords": ["harness", "sales", "revenue", "pre-sales", "tender", "enablement", "domain-skills"],
+  "skills": ["./skills/"]
+}
