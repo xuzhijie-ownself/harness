@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "evaluator-round-2",
+  "updated_by": "evaluator-round-3",
   "features": [
     {
       "id": "F-001",
@@ -46,7 +46,7 @@
         "Security: pricing confidentiality, customer PII embedded in checklists"
       ],
       "evidence": [
-        "Round 2: All 6 steps verified. 6 core sections present. 4 criteria with 0-5 anchors. 5 methodologies. 8 anti-patterns including security (pricing leak, competitor intel misuse). Security in checklists."
+        "Round 2: All 6 steps verified. 6 core sections. 4 criteria with 0-5 anchors. 5 methodologies. 8 anti-patterns. Security in checklists."
       ],
       "notes": ""
     },
@@ -56,10 +56,10 @@
       "category": "functional",
       "required": true,
       "priority": "high",
-      "status": "pending",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-001"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md Sprint 1",
       "steps": [
         "plugins/harness-sales-suite/skills/harness-tm/SKILL.md exists",
@@ -69,7 +69,9 @@
         "Anti-patterns: non-compliant response, generic win themes, missed deadline",
         "Security: pricing confidentiality, competitive intel protection"
       ],
-      "evidence": [],
+      "evidence": [
+        "Round 3: All 6 steps verified. APMP/Shipley + color team reviews. 4 criteria with 0-5 anchors. 8 anti-patterns. Security in checklists."
+      ],
       "notes": ""
     },
     {
