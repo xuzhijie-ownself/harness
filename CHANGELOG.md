@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.6] - 2026-04-07
+
+### Fixes
+- install.sh/bat: renamed `init` → `start` command in uninstall list
+- install.sh/bat: added `postmortem` to command list
+- install.sh/bat: added scripts directory copy (harness-companion.mjs + lib/)
+- install.bat: added copilot-instructions.md copy (was missing, install.sh already had it)
+
 ## [2.2.5] - 2026-04-07
 
 ### Fixes

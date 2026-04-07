@@ -1,6 +1,15 @@
 {
-  "current_version": "2.2.5",
+  "current_version": "2.2.6",
   "releases": [
+    {
+      "version": "2.2.6",
+      "date": "2026-04-07",
+      "features_shipped": [],
+      "features_deferred": [],
+      "changelog": "Fixed install.sh and install.bat: renamed init→start command, added postmortem to command list, added scripts directory copy (harness-companion.mjs + lib/), added copilot-instructions.md copy to install.bat.",
+      "sprint_count": 0,
+      "previous_version": "2.2.5"
+    },
     {
       "version": "2.2.5",
       "date": "2026-04-07",
@@ -128,5 +137,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "2.2.6"
+  "next_version": "2.2.7"
 }
