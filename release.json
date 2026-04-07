@@ -1,6 +1,15 @@
 {
-  "current_version": "2.2.2",
+  "current_version": "2.2.3",
   "releases": [
+    {
+      "version": "2.2.3",
+      "date": "2026-04-07",
+      "features_shipped": ["F-025", "F-026", "F-027", "F-028", "F-029", "F-030", "F-031"],
+      "features_deferred": ["F-032"],
+      "changelog": "Simplification release. Removed events system, codex detection, unused subcommands (feature-update, verify-round-numbering, metrics-summary). Standardized sprint artifacts (proposal/review/report/eval). Consolidated root artifacts (removed init.md, summary.md, decomposition.md). Simplified enums (status: pending/done, maturity: draft/reviewed/accepted). Added auto-postmortem with drift detection, inlined metrics, trimmed SKILL.md. Added integrity audit to postmortem command. Added release cadence guidance. Fixed 13 stale references from simplification.",
+      "sprint_count": 3,
+      "previous_version": "2.2.2"
+    },
     {
       "version": "2.2.2",
       "date": "2026-04-06",
@@ -101,5 +110,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "2.2.3"
+  "next_version": "2.2.4"
 }

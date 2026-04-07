@@ -1,5 +1,35 @@
 # Changelog
 
+## [2.2.3] - 2026-04-07
+
+### Simplification
+- **F-025**: Remove events system (events.mjs, log-event, read-events, event hooks)
+- **F-026**: Remove codex detection from evaluator (Section 0, advanced.md procedure, review_mode)
+- **F-027**: Remove unused subcommands (feature-update, verify-round-numbering, metrics-summary)
+
+### Standardization
+- **F-028**: Sprint artifact naming — contract→proposal, contract-review→review, builder-report→report, evaluation→eval
+- **F-029**: Root artifact consolidation (removed init.md, summary.md, decomposition.md), simplified enums (status: pending/done, maturity: draft/reviewed/accepted)
+
+### Enhancements
+- **F-030**: Auto-postmortem with drift detection on completion
+- **F-031**: Inline metrics into postmortem-data, SKILL.md trimmed to ~200 lines, 1 hook (was 3)
+
+### Fixes
+- 13 stale references cleaned (integrity audit)
+- Postmortem command: added Integrity Audit section with grep checklist, enforcement note, drift refs
+- Releaser: added Release Cadence guidance (one release per cycle)
+- Session: added init.sh staleness recovery
+- CLAUDE.md created for future sessions
+
+### Stats
+- Sprint count: 3
+- Required features: 7/7 passing (F-032 optional, skipped)
+- Subcommands: 15 → 9
+- Lib modules: 8 → 6
+- Hooks: 3 → 1
+- SKILL.md: 646 → ~200 lines
+
 ## [2.2.2] - 2026-04-06
 
 ### Features Shipped
