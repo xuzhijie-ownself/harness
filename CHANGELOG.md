@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.2.4] - 2026-04-07
+
+### Refactoring (Codex-Reviewed)
+- Condensed coordinator.md: Script Calls → compact table, Calibration/Retro → SKILL.md references
+- Removed dead cost-log.md template from patterns.md
+- Fixed Security Context missing inline in spec.md template (Codex finding)
+- Fixed checkStop() hardcoded maxRetry=3 → reads config.json max_retry_on_failure (Codex finding)
+
+### Security by Design
+- Embedded security in criteria anchors, checklists, anti-patterns across harness-sdlc, harness-ea, harness-ba, harness-sa
+- Added Security Context to planner.md and spec.md template
+- Added security level to Phase Routing table + security column in Phase Handoff Protocol
+
+### Tri-Runtime
+- Added GitHub Copilot CLI support (.github/copilot-instructions.md)
+- Updated README, install.sh, CLAUDE.md for tri-runtime
+
+### Documentation
+- CLAUDE.md: design principles, naming conventions, enum table
+- Postmortem command: integrity audit section, enforcement note, drift references
+
 ## [2.2.3] - 2026-04-07
 
 ### Simplification

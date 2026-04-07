@@ -1,6 +1,15 @@
 {
-  "current_version": "2.2.3",
+  "current_version": "2.2.4",
   "releases": [
+    {
+      "version": "2.2.4",
+      "date": "2026-04-07",
+      "features_shipped": [],
+      "features_deferred": [],
+      "changelog": "Refactoring + fixes: condensed coordinator.md (removed duplicated Calibration/Retro sections, Script Calls to compact table), removed dead cost-log.md template, added Security Context inline to spec.md template (Codex finding), fixed checkStop() to read config.json max_retry_on_failure instead of hardcoded 3 (Codex finding). Added Copilot CLI support (.github/copilot-instructions.md). Embedded security by design across all domain skills. Design principles + naming conventions added to CLAUDE.md.",
+      "sprint_count": 0,
+      "previous_version": "2.2.3"
+    },
     {
       "version": "2.2.3",
       "date": "2026-04-07",
@@ -110,5 +119,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "2.2.4"
+  "next_version": "2.2.5"
 }
