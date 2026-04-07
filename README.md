@@ -90,11 +90,14 @@ bash plugins/harness/install.sh --uninstall
 ### Update
 
 ```bash
-# Marketplace
+# Marketplace (Claude Code)
 claude plugin update harness
 
-# Local
+# Local install (all runtimes — pull latest then re-run install)
 cd plugins/harness && git pull && bash install.sh
+
+# Windows
+cd plugins\harness && git pull && install.bat
 ```
 
 ---
@@ -287,9 +290,3 @@ Each phase is a separate harness run (`/start` -> `/run` -> `/release`). Each ru
 
 Variants B (reset-based) and C (simplified) are documented in `references/advanced.md` for specialized use cases.
 
----
-
-## Re-install after updates
-
-Re-run the install script. It merges hooks without duplicating and overwrites
-commands, agents, and skills with the latest version from both plugins.
