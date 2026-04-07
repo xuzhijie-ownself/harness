@@ -3,67 +3,50 @@
   "updated_by": "evaluator-1",
   "features": [
     {
-      "id": "F-037",
-      "title": "Interactive spec review in /harness:start",
-      "category": "functional",
+      "id": "F-040",
+      "title": "Add abandon guidance to review loops",
+      "category": "fix",
       "required": true,
       "priority": "high",
       "status": "done",
       "passes": true,
       "depends_on": [],
       "maturity": "reviewed",
-      "source_requirement": "spec.md",
+      "source_requirement": "postmortem finding",
       "steps": [
-        "start.md has a review loop between planner output and initializer spawn",
-        "Review loop shows spec content (overview, shipped scope, execution strategy, security context)",
-        "Review loop presents approve/modify/start-over options",
-        "Modify re-invokes planner with user feedback",
-        "Only after approval does initializer spawn",
-        "Step numbering is consistent after insertion"
+        "start.md Spec Review section has abandon/resume note",
+        "session.md Contract Review section has abandon/resume note",
+        "No step renumbering needed (notes, not new steps)"
       ],
-      "evidence": [],
-      "notes": ""
+      "evidence": [
+        "FN-01 pass: start.md line 38 has abandon note",
+        "FN-02 pass: session.md line 81 has abandon note"
+      ],
+      "notes": "Passed evaluation round 1. All contract checks for F-040 pass."
     },
     {
-      "id": "F-038",
-      "title": "Interactive contract review in /harness:session",
-      "category": "functional",
+      "id": "F-041",
+      "title": "Release v2.2.8",
+      "category": "release",
       "required": true,
       "priority": "high",
-      "status": "done",
-      "passes": true,
-      "depends_on": [],
-      "maturity": "reviewed",
-      "source_requirement": "spec.md",
+      "status": "pending",
+      "passes": false,
+      "depends_on": ["F-040"],
+      "maturity": "draft",
+      "source_requirement": "postmortem recommendation",
       "steps": [
-        "session.md has a review loop between generator proposal and evaluator review",
-        "Review loop shows proposal content (goal, deliverables, contract checks)",
-        "Review loop presents approve/modify/re-propose options",
-        "Modify re-invokes generator with user feedback",
-        "Only after approval does evaluator review proceed",
-        "Sprint Resume table step numbers updated",
-        "Existing evaluator contract review step preserved"
+        "release.json updated with v2.2.8 entry",
+        "CHANGELOG.md has v2.2.8 section",
+        "All manifests synced to v2.2.8",
+        "Git tag v2.2.8 created"
       ],
-      "evidence": [],
-      "notes": ""
-    },
-    {
-      "id": "F-039",
-      "title": "Document interactive review points in CLAUDE.md",
-      "category": "docs",
-      "required": true,
-      "priority": "low",
-      "status": "done",
-      "passes": true,
-      "depends_on": ["F-037", "F-038"],
-      "maturity": "reviewed",
-      "source_requirement": "spec.md",
-      "steps": [
-        "CLAUDE.md has Interactive Review Points section",
-        "Section documents both review loops with rationale"
+      "evidence": [
+        "FN-03 pass: release.json has v2.2.8 entry",
+        "FN-04 pass: all manifests at v2.2.8",
+        "FN-05 FAIL: git tag v2.2.8 does not exist"
       ],
-      "evidence": [],
-      "notes": ""
+      "notes": "Failed evaluation round 1. Missing git tag v2.2.8 (FN-05)."
     }
   ]
 }

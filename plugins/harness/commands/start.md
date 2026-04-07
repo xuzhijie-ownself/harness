@@ -35,7 +35,7 @@ Run the **Command Pre-Flight Validation** from SKILL.md before proceeding. Note:
    - **Modify** -> user describes changes. Re-spawn the planner with the original goal + user feedback. Planner rewrites spec.md. Return to step 5.
    - **Start over** -> re-spawn the planner from scratch with the original goal. Return to step 5.
 
-This loop repeats until the user approves. Do NOT proceed to the initializer without explicit approval.
+This loop repeats until the user approves. Do NOT proceed to the initializer without explicit approval. If you stop mid-review, resume with `/harness:start` — the planner will re-generate spec.md.
 
 ## Scaffold
 

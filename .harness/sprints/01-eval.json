@@ -1,31 +1,31 @@
 {
   "round": 1,
-  "decision": "PASS",
-  "target_feature_ids": ["F-037", "F-038", "F-039"],
+  "decision": "FAIL",
+  "target_feature_ids": ["F-040", "F-041"],
   "primary_scores": {
     "product_depth": {
       "score": 4,
-      "justification": "Both review loops implement approve/modify/restart with re-spawn and blocking semantics. Strong for scope; no iteration limit or timeout behavior specified.",
+      "justification": "Abandon notes contextually appropriate with correct phase/step references. Release entry comprehensive. Minor gap: no git tag means release incomplete.",
       "prior_round_score": null,
-      "drift_check": "First round, no prior score."
+      "drift_check": "First round -- no prior score."
     },
     "functionality": {
-      "score": 5,
-      "justification": "All 15 feature steps across F-037 (6), F-038 (7), F-039 (2) fully addressed. No gaps, no missing semantics.",
+      "score": 4,
+      "justification": "Both text insertions present and correct. All 4 manifests synced. release.json and CHANGELOG updated. Missing git tag is the only functional gap.",
       "prior_round_score": null,
-      "drift_check": "First round, no prior score."
+      "drift_check": "First round -- no prior score."
     },
     "visual_design": {
       "score": 4,
-      "justification": "Clean section headers, consistent bold-option formatting, correct step numbering. CLAUDE.md section is concise. Minor structural variance in CLAUDE.md list style.",
+      "justification": "Command file clarity and formatting consistency maintained. Em-dash style, backtick-wrapped commands, consistent prose voice. CHANGELOG follows established pattern.",
       "prior_round_score": null,
-      "drift_check": "First round, no prior score."
+      "drift_check": "First round -- no prior score."
     },
     "code_quality": {
       "score": 4,
-      "justification": "Surgical changes to 3 markdown files only. No scripts/schemas/roles touched. Step references internally consistent. Sprint Resume table correct. No cross-reference validation for future step changes.",
+      "justification": "Markdown-only changes are concise, accurate, and non-disruptive. Release metadata correct with proper feature listing and version lineage.",
       "prior_round_score": null,
-      "drift_check": "First round, no prior score."
+      "drift_check": "First round -- no prior score."
     }
   },
   "contract_checks": [
@@ -33,58 +33,60 @@
       "id": "FN-01",
       "required": true,
       "result": "pass",
-      "evidence": "start.md lines 30-38: review loop shows spec content (Overview, Shipped Scope, Execution Strategy, Security Context) and presents approve/modify/start-over options."
+      "evidence": "start.md line 38 contains abandon/resume guidance after approval enforcement sentence."
     },
     {
       "id": "FN-02",
       "required": true,
       "result": "pass",
-      "evidence": "session.md lines 73-81: review loop shows proposal content (Goal, Deliverables, Verification, Contract Checks) and presents approve/modify/re-propose options."
+      "evidence": "session.md line 81 contains abandon/resume guidance after approval enforcement sentence."
     },
     {
       "id": "FN-03",
       "required": true,
       "result": "pass",
-      "evidence": "Both loops contain 'This loop repeats until the user approves. Do NOT proceed/send without explicit approval.'"
+      "evidence": "release.json has v2.2.8 entry with date 2026-04-07, features_shipped F-033 through F-040, previous_version 2.2.7."
     },
     {
       "id": "FN-04",
       "required": true,
       "result": "pass",
-      "evidence": "Sprint Resume table: idle=1, contract=6, implementation=11, evaluation=12. All match new step numbering."
+      "evidence": "All manifests at v2.2.8: marketplace.json (both plugins), core plugin.json, sdlc-suite plugin.json, codex plugin.json."
     },
     {
       "id": "FN-05",
       "required": true,
-      "result": "pass",
-      "evidence": "CLAUDE.md lines 85-93: Interactive Review Points section documents spec review (/start 5-6) and contract review (/session 7-8) with plan mode contamination rationale."
-    },
-    {
-      "id": "CQ-01",
-      "required": true,
-      "result": "pass",
-      "evidence": "git diff HEAD~1 --name-only shows only start.md, session.md, CLAUDE.md, and harness state artifacts. No scripts, schemas, role files, or agent definitions changed."
+      "result": "fail",
+      "evidence": "git tag -l v2.2.8 returns empty. No git tag exists."
     }
   ],
-  "blockers": [],
+  "blockers": [
+    {
+      "id": "BLK-01",
+      "description": "Git tag v2.2.8 does not exist. Run `git tag v2.2.8` after committing all changes.",
+      "contract_check": "FN-05"
+    }
+  ],
   "non_blocking_issues": [
-    "Neither review loop specifies behavior if user abandons mid-loop (Sprint Resume handles this implicitly but not explicitly stated)."
+    {
+      "id": "NB-01",
+      "description": "Builder report missing Authenticity self-check and Commands run sections per template."
+    },
+    {
+      "id": "NB-02",
+      "description": "start.md wording differs from spec.md wording -- accepted as improvement in contract review."
+    }
   ],
   "feature_evidence": [
     {
-      "feature_id": "F-037",
+      "feature_id": "F-040",
       "passes": true,
-      "reason": "All 6 steps verified. Review loop between planner and initializer with spec content display, 3 options, re-spawn on modify, blocking semantics, consistent step numbering."
+      "reason": "Both abandon notes present and correctly placed. FN-01 and FN-02 pass. All pre-defined steps satisfied."
     },
     {
-      "feature_id": "F-038",
-      "passes": true,
-      "reason": "All 7 steps verified. Review loop between generator and evaluator with proposal content display, 3 options, re-spawn on modify, blocking semantics, updated Sprint Resume table, preserved evaluator review."
-    },
-    {
-      "feature_id": "F-039",
-      "passes": true,
-      "reason": "Both steps verified. CLAUDE.md has Interactive Review Points section documenting both loops with step references and rationale."
+      "feature_id": "F-041",
+      "passes": false,
+      "reason": "4 of 5 contract checks pass but FN-05 (git tag) fails. Release not fully cut without the tag."
     }
   ],
   "test_results": {
@@ -92,31 +94,34 @@
     "passed": 0,
     "failed": 0,
     "skipped": 0,
-    "coverage": "N/A (markdown-only changes)"
+    "coverage": "N/A -- markdown-only changes"
   },
   "review_findings": {
-    "blocking": [],
+    "blocking": [
+      "BLK-01: Git tag v2.2.8 does not exist."
+    ],
     "non_blocking": [
-      "Neither review loop specifies behavior on mid-loop abandonment. Sprint Resume at 'contract' phase handles this implicitly."
+      "NB-01: Builder report missing Authenticity self-check and Commands run sections.",
+      "NB-02: start.md wording differs from spec -- accepted as improvement."
     ]
   },
   "authenticity_gate": {
     "gate_result": "pass",
     "internal_consistency": {
       "pass": true,
-      "justification": "Both review loops use identical structure: show artifact, 3 options, loop until approve, blocking language. CLAUDE.md step references match command files."
+      "justification": "All artifacts share consistent conventions -- em-dash style, backtick formatting, prose voice matches surrounding text."
     },
     "intentionality": {
       "pass": true,
-      "justification": "Changes target the specific plan mode contamination problem. Builder report documents project-specific choices (removing redundant step, choosing spec sections to display)."
+      "justification": "Project-specific decisions evident: start.md wording deliberately improved over spec, session.md step 6 reference matches Sprint Resume table."
     },
     "craft": {
       "pass": true,
-      "justification": "Consistent markdown formatting, clean section headers, correct step numbering with no gaps or duplicates. Sprint Resume table correctly updated."
+      "justification": "Consistent structure, correct grammar, seamless integration with existing command files. Release artifacts follow established 15+ release pattern."
     },
     "fitness_for_purpose": {
       "pass": true,
-      "justification": "An agent following start.md or session.md can execute review loops without ambiguity. Each option has clear next-step instructions."
+      "justification": "Abandon notes immediately useful -- explain preserved state and resume method. No additional explanation needed."
     }
   }
 }

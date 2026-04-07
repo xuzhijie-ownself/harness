@@ -78,7 +78,7 @@ node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase cont
    - **Modify** -> user describes changes. Re-spawn the generator with the original feature + user feedback. Generator rewrites NN-proposal.md. Return to step 7.
    - **Re-propose** -> re-spawn the generator from scratch for the same feature. Return to step 7.
 
-This loop repeats until the user approves. Do NOT send to the evaluator without explicit user approval.
+This loop repeats until the user approves. Do NOT send to the evaluator without explicit user approval. If you stop mid-review, the phase stays at `contract`. Resume with `/harness:session` to continue from step 6.
 
 9. Spawn the `evaluator` agent: "Review the contract at .harness/sprints/NN-proposal.md."
    -> `.harness/sprints/NN-review.md`

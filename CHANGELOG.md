@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.2.8] - 2026-04-07
+
+### Features
+- **F-037**: Interactive spec review in `/harness:start` (approve/modify/start over)
+- **F-038**: Interactive contract review in `/harness:session` (approve/modify/re-propose)
+- **F-039**: Interactive Review Points documentation in CLAUDE.md
+
+### Fixes
+- **F-033-F-036**: Install scripts generate manifests with correct relative paths for Codex/Copilot
+- **F-040**: Abandon guidance added to both review loops
+- YAML frontmatter descriptions quoted for strict parser compatibility
+- Install scripts rewritten for Codex/Copilot only (no more .claude/ copying)
+
 ## [2.2.7] - 2026-04-07
 
 ### Fixes

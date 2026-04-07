@@ -1,6 +1,15 @@
 {
-  "current_version": "2.2.7",
+  "current_version": "2.2.8",
   "releases": [
+    {
+      "version": "2.2.8",
+      "date": "2026-04-07",
+      "features_shipped": ["F-033", "F-034", "F-035", "F-036", "F-037", "F-038", "F-039", "F-040"],
+      "features_deferred": [],
+      "changelog": "Interactive review loops in /start (spec review) and /session (contract review). Install scripts generate manifests with correct relative paths for Codex/Copilot. YAML frontmatter quoting for strict parsers. Abandon guidance for review loops. CLAUDE.md interactive review documentation.",
+      "sprint_count": 2,
+      "previous_version": "2.2.7"
+    },
     {
       "version": "2.2.7",
       "date": "2026-04-07",
@@ -146,5 +155,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "2.2.8"
+  "next_version": "2.2.9"
 }
