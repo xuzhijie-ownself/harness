@@ -1,6 +1,15 @@
 {
-  "current_version": "2.2.4",
+  "current_version": "2.2.5",
   "releases": [
+    {
+      "version": "2.2.5",
+      "date": "2026-04-07",
+      "features_shipped": [],
+      "features_deferred": [],
+      "changelog": "Fixed harness-sdlc-suite plugin.json version stuck at 2.0.0. Releaser manifest sync now uses glob discovery (find plugins/ -name plugin.json) instead of hardcoded paths — domain-blind, auto-discovers any installed plugin suite.",
+      "sprint_count": 0,
+      "previous_version": "2.2.4"
+    },
     {
       "version": "2.2.4",
       "date": "2026-04-07",
@@ -119,5 +128,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "2.2.5"
+  "next_version": "2.2.6"
 }

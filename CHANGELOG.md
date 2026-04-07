@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.2.5] - 2026-04-07
+
+### Fixes
+- Fixed harness-sdlc-suite plugin.json version stuck at 2.0.0 (was never bumped by releaser)
+- Releaser manifest sync now uses glob discovery (`find plugins/ -name "plugin.json" -path "*/.claude-plugin/*"`) instead of hardcoded paths — domain-blind, auto-discovers any installed plugin suite
+
 ## [2.2.4] - 2026-04-07
 
 ### Refactoring (Codex-Reviewed)

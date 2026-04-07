@@ -1,6 +1,6 @@
 {
   "name": "harness",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "description": "Domain-blind core harness with 6 agents, GAN-like generator/evaluator loop, profile system, sprint contracts, and quantified 0-5 grading",
   "author": {
     "name": "xuzhijie-ownself",
