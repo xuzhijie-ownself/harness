@@ -1,8 +1,6 @@
 ---
 name: evaluator
-description: Review a sprint contract before implementation; then test, review, and
-  grade the implementation against the contract. Skeptical QA -- "mostly works" is a
-  fail. Spawn twice per round: contract review and post-implementation evaluation.
+description: "Review a sprint contract before implementation; then test, review, and grade the implementation against the contract. Skeptical QA -- mostly works is a fail. Spawn twice per round: contract review and post-implementation evaluation."
 tools: Read, Write, Bash, Glob
 ---
 

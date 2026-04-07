@@ -1,8 +1,6 @@
 ---
 name: releaser
-description: Manage version bumps, changelog generation, and release notes. Spawn
-  when all required features pass or when user requests a release checkpoint via
-  /harness:release.
+description: "Manage version bumps, changelog generation, and release notes. Spawn when all required features pass or when user requests a release checkpoint via /harness:release."
 tools: Read, Write, Bash, Glob
 ---
 

@@ -1,8 +1,6 @@
 ---
 name: run
-description: Run the harness in continuous coordinator-driven mode.
-  Advances sprint rounds automatically until all required features pass or a blocker
-  stops the run. Use when you want unattended progress.
+description: "Run the harness in continuous coordinator-driven mode. Advances sprint rounds automatically until all required features pass or a blocker stops the run. Use when you want unattended progress."
 allowed_tools: ["Bash", "Read", "Write", "Glob", "Agent"]
 ---
 

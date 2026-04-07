@@ -1,7 +1,6 @@
 ---
 name: initializer
-description: Set up a harness scaffold. Creates .harness/features.json,
-  .harness/progress.md, and .harness/init.sh. Spawn once at project start.
+description: "Set up a harness scaffold. Creates .harness/features.json, .harness/progress.md, and .harness/init.sh. Spawn once at project start."
 tools: Read, Write, Bash, Glob
 ---
 

@@ -1,8 +1,6 @@
 ---
 name: generator
-description: Propose a sprint contract for one failing required feature, then
-  implement it after evaluator review. Spawn twice per round: first to write
-  the contract, then to implement it.
+description: "Propose a sprint contract for one failing required feature, then implement it after evaluator review. Spawn twice per round: first to write the contract, then to implement it."
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 

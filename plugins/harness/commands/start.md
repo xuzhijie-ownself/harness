@@ -1,7 +1,6 @@
 ---
 name: start
-description: Initialize a harness scaffold for a new project.
-  Spawns planner and initializer agents. Run once per project.
+description: "Initialize a harness scaffold for a new project. Spawns planner and initializer agents. Run once per project."
 allowed_tools: ["Bash", "Read", "Write", "Glob", "Agent"]
 ---
 

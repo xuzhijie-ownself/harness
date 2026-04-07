@@ -1,9 +1,6 @@
 ---
 name: session
-description: Run one supervised sprint round for a harness project.
-  Selects the next failing required feature, negotiates a sprint contract with
-  evaluator review, implements it, and evaluates it. Waits for user
-  confirmation between contract review and implementation.
+description: "Run one supervised sprint round for a harness project. Selects the next failing required feature, negotiates a sprint contract with evaluator review, implements it, and evaluates it. Waits for user confirmation between contract review and implementation."
 allowed_tools: ["Bash", "Read", "Write", "Glob", "Agent"]
 ---
 

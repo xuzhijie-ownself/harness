@@ -1,8 +1,6 @@
 ---
 name: reset
-description: Write a structured handoff file and checkpoint the current session.
-  Use when context is filling or work needs to pause. The next /session resumes
-  from the handoff automatically. Implements Variant B (Reset-Based Compatibility).
+description: "Write a structured handoff file and checkpoint the current session. Use when context is filling or work needs to pause. The next /session resumes from the handoff automatically. Implements Variant B (Reset-Based Compatibility)."
 allowed_tools: ["Bash", "Read", "Write", "Glob"]
 ---
 

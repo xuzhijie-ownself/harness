@@ -1,8 +1,6 @@
 ---
 name: planner
-description: Expand an underspecified project goal into a product spec with a finite
-  required feature set and an explicit execution strategy. Spawn when the user's
-  prompt is too short to define a full app.
+description: "Expand an underspecified project goal into a product spec with a finite required feature set and an explicit execution strategy. Spawn when the user prompt is too short to define a full app."
 tools: Read, Write, Glob
 ---
 

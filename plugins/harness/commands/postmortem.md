@@ -1,9 +1,6 @@
 ---
 name: postmortem
-description: Generate a postmortem report for the current harness run.
-  Reads evaluation artifacts, metrics, and feature history to produce
-  .harness/postmortem.md with Timeline, Score Trends, Failure Analysis,
-  Process Compliance, and Recommendations sections.
+description: "Generate a postmortem report for the current harness run. Reads evaluation artifacts, metrics, and feature history to produce .harness/postmortem.md with Timeline, Score Trends, Failure Analysis, Process Compliance, and Recommendations sections."
 allowed_tools: ["Bash", "Read", "Write", "Glob"]
 ---
 

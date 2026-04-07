@@ -1,8 +1,6 @@
 ---
 name: coordinator
-description: Advance sprint rounds automatically in continuous mode. Selects the next
-  failing feature, dispatches generator and evaluator, updates state.json, and
-  pauses when pause rules fire. Spawn only when execution mode is continuous.
+description: "Advance sprint rounds automatically in continuous mode. Selects the next failing feature, dispatches generator and evaluator, updates state.json, and pauses when pause rules fire. Spawn only when execution mode is continuous."
 tools: Read, Write, Bash, Glob, Agent
 ---
 
