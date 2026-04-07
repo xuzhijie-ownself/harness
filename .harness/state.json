@@ -11,12 +11,34 @@
   "stop_reason": "",
   "context_reset_threshold": 3,
   "rounds_since_reset": 1,
-  "current_sprint_phase": "implementation",
+  "current_sprint_phase": "idle",
   "domain_profile": "software",
   "secondary_profile": "",
   "methodology": "agile",
   "errors": [],
   "cost_tracking": {
-    "rounds": []
+    "rounds": [
+      {
+        "round": 1,
+        "started_at": "2026-04-07T18:00:00Z",
+        "completed_at": "2026-04-07T10:47:27.035Z",
+        "feature_id": "F-033,F-034,F-035,F-036",
+        "outcome": "pass",
+        "phases": {
+          "contract": {
+            "started_at": "2026-04-07T10:47:27.035Z",
+            "completed_at": "2026-04-07T10:47:27.035Z"
+          },
+          "implementation": {
+            "started_at": "2026-04-07T10:47:27.035Z",
+            "completed_at": "2026-04-07T10:47:27.035Z"
+          },
+          "evaluation": {
+            "started_at": "2026-04-07T10:47:27.035Z",
+            "completed_at": "2026-04-07T10:47:27.035Z"
+          }
+        }
+      }
+    ]
   }
 }

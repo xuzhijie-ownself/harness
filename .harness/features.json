@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "initializer",
+  "updated_by": "evaluator-1",
   "features": [
     {
       "id": "F-033",
@@ -8,10 +8,10 @@
       "category": "fix",
       "required": true,
       "priority": "high",
-      "status": "pending",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md",
       "steps": [
         "install.sh calculates relative path from project root to cloned repo",
@@ -28,10 +28,10 @@
       "category": "fix",
       "required": true,
       "priority": "high",
-      "status": "pending",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-033"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md",
       "steps": [
         "install.bat calculates relative path from project root to cloned repo",
@@ -47,10 +47,10 @@
       "category": "fix",
       "required": true,
       "priority": "high",
-      "status": "pending",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-033", "F-034"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md",
       "steps": [
         "install.sh generates .github/copilot-instructions.md with corrected file references",
@@ -66,10 +66,10 @@
       "category": "docs",
       "required": true,
       "priority": "low",
-      "status": "pending",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md",
       "steps": [
         "CLAUDE.md contains a rule that YAML frontmatter descriptions must be quoted",
