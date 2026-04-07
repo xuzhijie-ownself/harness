@@ -25,13 +25,25 @@ node plugins/harness/scripts/harness-companion.mjs postmortem-data
 grep -rn "review_mode\|codex_detection\|events\.jsonl\|events\.mjs\|metrics\.mjs\|summary\.md\|decomposition\.md\|init\.md\|NN-contract\b\|NN-evaluation\|builder-report\|contract-review\|not_started\|in_progress\b\|functional\b\|polished\b" plugins/ --include="*.md" --include="*.mjs"
 ```
 
-## Architecture Rules
+## Design Principles
 
-- **Core is domain-blind**: `plugins/harness/` has zero references to specific domain skills (no harness-sdlc, harness-ea, etc.)
-- **Role files are source of truth**: `plugins/harness/skills/harness/roles/*.md` — agent files in `agents/` are thin YAML wrappers that delegate to role files
-- **GAN separation**: Generator cannot self-approve. Evaluator cannot edit product code. Tool access enforced via agent frontmatter `tools:` field
-- **Zero npm dependencies** in scripts: Only Node.js built-ins (fs, path, child_process). No package.json needed
-- **Atomic writes**: All JSON mutations use writeFileSync to .tmp then renameSync
+These principles govern ALL changes to the harness. Apply them without being asked.
+
+1. **Single source of truth**: Every piece of knowledge exists in exactly one place. Role files are the source of truth for agent behavior. Domain skills own domain criteria. No content duplication across files — use references/pointers instead.
+
+2. **Core is domain-blind**: `plugins/harness/` has zero references to specific domain skills (no harness-sdlc, harness-ea, etc.). Domain knowledge belongs in `plugins/harness-sdlc-suite/`.
+
+3. **Security by design**: Security is not a separate activity — it's embedded at every decision point. Each domain skill weaves security into existing criteria, checklists, and anti-patterns. The planner captures security context in spec.md for all project types.
+
+4. **Simplification methodology**: Remove one component at a time and measure whether output quality drops. Prefer fewer files, fewer subcommands, fewer enums. Three similar lines > a premature abstraction. If a feature is never used in practice, remove it.
+
+5. **GAN separation**: Generator cannot self-approve. Evaluator cannot edit product code. Tool access enforced via agent frontmatter `tools:` field.
+
+6. **Zero npm dependencies** in scripts: Only Node.js built-ins (fs, path, child_process). No package.json needed.
+
+7. **Atomic writes**: All JSON mutations use writeFileSync to .tmp then renameSync.
+
+8. **One release per cycle**: Version bumps happen at `/harness:release`, not between sprints. Prefer patch over minor.
 
 ## Sprint Artifact Naming Convention
 
@@ -46,14 +58,27 @@ grep -rn "review_mode\|codex_detection\|events\.jsonl\|events\.mjs\|metrics\.mjs
 
 NN is zero-padded round number (01, 02, etc.).
 
-## JSON Field Conventions
+## Naming Conventions
 
-- All fields use `snake_case`
-- Feature `status`: `"pending"` or `"done"` (only 2 values)
-- Feature `maturity`: `"draft"`, `"reviewed"`, `"accepted"` (only 3 values)
-- State `mode`: `"continuous"` or `"supervised"` (only 2 values)
-- State `current_round`: starts at `0`; coordinator's first `--increment-round` brings it to 1
-- Feature `passes`: boolean, only flipped by evaluator evidence in NN-eval.json
+**All names use `snake_case`** — fields, enums, criteria, file names (except SKILL.md, CLAUDE.md, CHANGELOG.md which follow their platform conventions).
+
+**Enum design rule**: Minimal values. If 2 values suffice, don't use 3. If a value is never checked in code or role files, remove it.
+
+| Field | Values | Notes |
+|-------|--------|-------|
+| feature `status` | `pending`, `done` | 2 values only |
+| feature `maturity` | `draft`, `reviewed`, `accepted` | 3 values only |
+| state `mode` | `continuous`, `supervised` | 2 values only |
+| state `status` | `active`, `paused`, `complete` | 3 values only |
+| state `current_sprint_phase` | `idle`, `contract`, `implementation`, `evaluation` | 4 values only |
+| security `data_sensitivity` | `none`, `internal`, `confidential`, `regulated` | 4 values, spec.md |
+| security `external_exposure` | `none`, `internal`, `public` | 3 values, spec.md |
+| security `auth_model` | `none`, `single_user`, `multi_user`, `multi_tenant` | 4 values, spec.md |
+| sprint artifact prefix | `NN-proposal`, `NN-review`, `NN-report`, `NN-eval` | zero-padded round |
+| feature `passes` | boolean | only flipped by evaluator evidence |
+| state `current_round` | starts at `0` | coordinator increments to 1 |
+
+When adding new enums: use `snake_case`, keep values to the minimum needed, document in this table.
 
 ## Scripts Architecture
 
