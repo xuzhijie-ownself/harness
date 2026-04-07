@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_by": "initializer",
+  "updated_by": "evaluator-round-1",
   "features": [
     {
       "id": "F-001",
@@ -8,10 +8,10 @@
       "category": "functional",
       "required": true,
       "priority": "high",
-      "status": "pending",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": [],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "spec.md Sprint 1",
       "steps": [
         "plugins/harness-sales-suite/.claude-plugin/plugin.json exists with correct structure",
@@ -21,7 +21,9 @@
         "Index skill has criteria key mapping table",
         "Index skill has domain verification methods table"
       ],
-      "evidence": [],
+      "evidence": [
+        "Round 1: All 6 steps verified. plugin.json valid JSON. SKILL.md has 5-profile routing, 7-phase pipeline, criteria mapping, verification methods."
+      ],
       "notes": ""
     },
     {
