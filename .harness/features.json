@@ -30,10 +30,10 @@
       "category": "release",
       "required": true,
       "priority": "high",
-      "status": "pending",
-      "passes": false,
+      "status": "done",
+      "passes": true,
       "depends_on": ["F-040"],
-      "maturity": "draft",
+      "maturity": "reviewed",
       "source_requirement": "postmortem recommendation",
       "steps": [
         "release.json updated with v2.2.8 entry",
