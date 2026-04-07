@@ -176,6 +176,21 @@ The 4 primary criteria for the `sales` domain profile. The evaluator MUST use th
 
 Pre-built checklists for common sales deliverable types. The generator includes the relevant checklist(s) in each sprint contract. The evaluator uses them as acceptance criteria.
 
+### Standard Contract Checks
+
+These are the minimum required checks for every sales sprint. Check IDs map to the 4 sales evaluation criteria.
+
+| Check ID | Criterion | Required | Verification Method |
+|----------|-----------|----------|-------------------|
+| QD-01 | qualification_depth | required | Verify all MEDDPICC fields populated with evidence-based data (not assumptions or "TBD"); confirm economic buyer and champion identified and validated |
+| QD-02 | qualification_depth | advisory | Verify multi-threading -- at least 2 stakeholders engaged at different levels of the buying committee |
+| PC-01 | pipeline_coverage | required | Verify deal stage matches actual buyer behavior (not seller wishful thinking); close date based on mutual commitment; amount reflects qualified scope |
+| PC-02 | pipeline_coverage | advisory | Verify pipeline-to-quota ratio calculated and gap analysis present if coverage < 3x |
+| DD-01 | deal_documentation | required | Verify opportunity plan exists, was updated within last 2 weeks, and contains stakeholder map, pain documentation, and next steps |
+| DD-02 | deal_documentation | advisory | Verify competitive battle card present with top 3 competitors and differentiation strategy |
+| CR-01 | close_readiness | required | Verify mutual action plan exists with milestones, owners (both sides), and dates; procurement process documented |
+| CR-02 | close_readiness | advisory | Verify implementation plan discussed with buyer's technical team and go-live date agreed |
+
 ### For Discovery / Qualification Deliverables
 
 - [ ] All MEDDPICC fields populated with evidence-based data (not assumptions)
@@ -232,3 +247,22 @@ These trigger automatic score penalties when detected by the evaluator:
 | **No Mutual Action Plan** -- entering negotiation without a jointly agreed path to close | close_readiness | Drop to max 1 | Deal in negotiation/close stage with no mutual action plan document; timeline is seller-imposed |
 | **Pricing Leak** -- sharing confidential pricing externally or storing it in unsecured locations | deal_documentation | Drop to max 1 | Pricing in unprotected documents, shared drives without access controls, or email threads with external recipients beyond buyer |
 | **Competitor Intel Misuse** -- using NDA-protected competitive information in proposals or conversations | deal_documentation | Drop to max 0 | References to competitor internal data, pricing, or roadmap obtained through protected channels |
+
+### Security Considerations
+
+Domain-specific security guidance for sales deliverables. Applies when `data_sensitivity` in spec.md is anything other than `none`.
+
+**Data Sensitivity:**
+- Customer financial data (deal amounts, pricing, budgets) must be classified as confidential and stored only in access-controlled systems (CRM, deal rooms)
+- Customer PII (contact names, emails, phone numbers) must not appear in plain-text deal notes, shared documents, or email threads outside the account team
+- Competitive intelligence must be sourced from public channels only; NDA-protected information must never be used in deal artifacts
+
+**Access Control:**
+- Deal artifacts containing pricing must be restricted to the account team and authorized approvers
+- Stakeholder maps and org charts from customer organizations must not be shared outside the selling team
+- Pipeline reports with customer-specific data must be restricted to management and operations roles with need-to-know
+
+**Confidentiality:**
+- Proposals and pricing worksheets must carry a confidentiality classification header
+- Customer-specific pain points and business challenges must not be referenced in marketing materials or other customer engagements without explicit consent
+- Win/loss analysis must anonymize customer details before use in team training

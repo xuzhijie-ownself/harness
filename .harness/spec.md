@@ -3,135 +3,142 @@
 ## Metadata
 - Role: planner
 - Agent: planner-1
-- Inputs: user prompt (postmortem discrepancies), coordinator.md, features.mjs, session.md, run.md, features.json, state.json
+- Inputs: user prompt (sales suite quality audit), harness-sales-suite plugin.json, harness-sales-suite/SKILL.md (index), harness-sales/SKILL.md (structure check), features.json (prior cycle F-045..F-049 complete)
 - Status: accepted
 
 ## Overview
 
-Five targeted fixes to harness core files, addressing discrepancies discovered during the sales suite postmortem (v2.2.9). The previous run completed all 8 features but exposed behavioral gaps: the coordinator skipped artifact validation on later rounds, check-stop did not auto-complete state, handoff cleanup was missing from the coordinator flow, mode switching had no warning, and sprint grouping from the spec was ignored. Each fix is small in scope -- four are documentation/prompt changes to existing markdown files, one is a script change to features.mjs.
+Quality audit and remediation of the harness-sales-suite plugin (v2.2.9). The prior build cycle produced all 6 SKILL.md files (1 index + 5 domain skills) but the process was broken -- 55% of sprint artifacts were missing, meaning the domain skills were never properly evaluated against their own criteria anchors. Five harness core fixes (F-045 through F-049) have since landed: hard gate on artifact validation, auto-complete state, handoff cleanup, mode mismatch warning, and sprint grouping respect. This cycle re-runs the sales suite through a proper quality gate with those fixes active.
+
+The work is audit-first: read each domain skill, verify structural completeness against a 6-section checklist, verify criteria anchor quality, verify methodology tables, verify anti-patterns and security guidance, then fix any gaps found. The final sprint runs a Codex adversarial review on the entire suite and remediates blocking/high findings.
 
 ## Design direction
 
-Not applicable -- these are internal harness framework fixes, not user-facing UI changes.
+Not applicable -- these are domain skill markdown files, not user-facing UI. Quality direction: each SKILL.md should be a self-contained reference that a harness evaluator can use without reading the index skill. Sections should be consistent across all 5 domain skills in structure and depth.
 
 ## Shipped scope
 
-- **F-045**: Hard gate on artifact validation in coordinator.md -- add blocking enforcement language so validate-artifacts failures immediately stop the run rather than being treated as advisory
-- **F-046**: Auto-set status to complete in features.mjs checkStop() -- when all_required_pass is true, write state.json with status "complete" and stop_reason
-- **F-047**: Handoff.md auto-cleanup in coordinator.md -- add explicit step to delete handoff.md after a successful round following a context reset
-- **F-048**: Mode mismatch warning in run.md -- add pre-flight check that warns when spec.md declares supervised but state.json has continuous (or vice versa)
-- **F-049**: Sprint grouping respect in coordinator.md -- add instruction to read spec.md execution strategy and target grouped feature sets per round instead of individual features
+- **F-050**: Audit and fix harness-sales/SKILL.md -- verify 6 core sections (methodology table, criteria anchors 1-5 for all 4 criteria, verification methods, contract check templates, anti-patterns, security guidance), fix any gaps
+- **F-051**: Audit and fix harness-tm/SKILL.md -- same 6-section checklist applied to tender management
+- **F-052**: Audit and fix harness-se/SKILL.md -- same 6-section checklist applied to sales engineering
+- **F-053**: Audit and fix harness-sen/SKILL.md -- same 6-section checklist applied to sales enablement
+- **F-054**: Audit and fix harness-so/SKILL.md -- same 6-section checklist applied to sales operations
+- **F-055**: Integration audit -- index skill routing table matches all 5 domain skills, criteria key mapping is consistent between index and each domain skill, verification methods in index match domain skill detail, no orphaned or missing cross-references
+- **F-056**: Codex adversarial review on the entire harness-sales-suite directory -- run review, triage findings into BLOCKING/HIGH/LOW, fix all BLOCKING and HIGH findings
 
 ## User stories
 
-- As a harness operator, I want artifact validation to hard-stop the coordinator so that missing sprint artifacts are never silently skipped.
-- As a harness operator, I want check-stop to auto-complete state.json so that downstream tools and post-flight checks see the correct status without manual intervention.
-- As a harness operator, I want handoff.md cleaned up after a successful resume so that stale handoff files do not confuse subsequent sessions.
-- As a harness operator, I want a warning when the execution mode in state.json diverges from spec.md so that I do not accidentally skip interactive reviews.
-- As a harness operator, I want the coordinator to respect sprint grouping from the spec so that multi-feature sprints execute as planned rather than being split into individual rounds.
+- As a harness evaluator, I want each sales domain skill to have complete criteria anchors (scores 1-5 for all 4 criteria) so that I can score sprint deliverables without guessing what each score level means.
+- As a harness operator, I want consistent section structure across all 5 domain skills so that switching between profiles does not require learning a new layout.
+- As a harness operator, I want anti-patterns documented in each domain skill so that generators avoid common mistakes without trial and error.
+- As a harness operator, I want the index skill routing table to be provably consistent with the domain skills it references so that profile switching does not break.
+- As a harness operator, I want the suite to survive adversarial review so that downstream users can trust the quality of the domain guidance.
 
 ## Execution strategy
 - Variant: Variant A
-- Mode: supervised
-- Expected sprint count: 1 (all 5 fixes in one sprint -- each is a small, isolated change to a separate file with no cross-dependencies)
-- Default target ordering: F-045, F-046, F-047, F-048, F-049
-- Multi-feature sprint policy: All 5 features grouped into a single sprint. Grouping waiver: these are independent fixes to 3 separate files (coordinator.md, features.mjs, run.md) with zero overlap. Implementing them together reduces round overhead without hiding risk.
-- Simplification policy: No simplification needed -- each fix is already minimal scope.
+- Mode: continuous
+- Expected sprint count: 3
+- Default target ordering: F-050, F-051, F-052, F-053, F-054, F-055, F-056
+- Multi-feature sprint policy: Features are grouped into sprints as defined below. Grouping waiver rationale is provided per sprint. The generator must still include a grouping waiver in each proposal.
+- Simplification policy: If a domain skill audit reveals no gaps, the feature still passes -- the audit itself (with documented evidence of completeness) is the deliverable. Do not invent gaps to fill.
 - Methodology: agile
 
 ### Sprint plan
 
-**Sprint 1: All fixes (F-045, F-046, F-047, F-048, F-049)**
-- F-045: coordinator.md hard-gate language for validate-artifacts
-- F-046: features.mjs checkStop() auto-complete state
-- F-047: coordinator.md handoff cleanup after context reset
-- F-048: run.md mode mismatch warning
-- F-049: coordinator.md sprint grouping instruction
-- Rationale: Five independent fixes to three files. No dependencies between them. Single sprint avoids 4 unnecessary round-trips.
+**Sprint 1: Core domain skill audits (F-050, F-051, F-052)**
+- F-050: Audit harness-sales/SKILL.md against 6-section checklist, fix gaps
+- F-051: Audit harness-tm/SKILL.md against 6-section checklist, fix gaps
+- F-052: Audit harness-se/SKILL.md against 6-section checklist, fix gaps
+- Rationale: Three independent file audits using the same checklist. No cross-dependencies. Grouping avoids 2 unnecessary round-trips while keeping scope reviewable (3 files, same audit pattern).
+
+**Sprint 2: Remaining skills + integration (F-053, F-054, F-055)**
+- F-053: Audit harness-sen/SKILL.md against 6-section checklist, fix gaps
+- F-054: Audit harness-so/SKILL.md against 6-section checklist, fix gaps
+- F-055: Integration audit -- cross-reference consistency between index skill and all 5 domain skills
+- Rationale: F-053 and F-054 follow the same audit pattern as Sprint 1. F-055 depends on all 5 domain skills being audited first (F-050..F-054). Grouping F-055 here avoids an extra sprint while ensuring all domain skills are finalized before the integration check runs.
+
+**Sprint 3: Adversarial review (F-056)**
+- F-056: Codex adversarial review on entire suite, fix BLOCKING/HIGH findings
+- Rationale: Must run after all domain skills and integration are finalized. Single feature sprint -- adversarial review touches the full suite and cannot be parallelized with content changes.
+
+### 6-Section Audit Checklist (used by F-050 through F-054)
+
+Each domain SKILL.md must contain:
+
+1. **Methodology table**: At least 3 methodologies with columns for when-to-use and harness mapping. Methodologies must be domain-appropriate (not generic).
+2. **Criteria anchors**: All 4 domain criteria must have explicit score anchors for levels 1 through 5. Each anchor must be concrete and domain-specific (not "good" / "very good" / "excellent"). Anchors must reference artifact types from the domain profile.
+3. **Verification methods**: Domain-specific verification procedures that map to the contract check template. Must specify what to check and how (not just "review the document").
+4. **Contract check templates**: At least 4 contract checks (one per criterion) with check IDs matching the criterion prefix pattern. Each check must specify required/advisory and verification method.
+5. **Anti-patterns**: At least 5 domain-specific anti-patterns with detection guidance and remediation. Must reference real failure modes, not generic warnings.
+6. **Security guidance**: Domain-specific security considerations covering data sensitivity, access control, and confidentiality relevant to the domain's artifact types. Must not be generic boilerplate.
 
 ## High-level technical design
 
-### Files to modify
+### Files under audit
 
-| Feature | File | Change type |
-|---------|------|-------------|
-| F-045 | `plugins/harness/skills/harness/roles/coordinator.md` | Strengthen validate-artifacts step with hard-gate language |
-| F-046 | `plugins/harness/scripts/lib/features.mjs` | Add writeState call in checkStop() when allPass is true |
-| F-047 | `plugins/harness/skills/harness/roles/coordinator.md` | Add handoff.md deletion step after successful resume |
-| F-048 | `plugins/harness/commands/run.md` | Add mode mismatch warning to preconditions |
-| F-049 | `plugins/harness/skills/harness/roles/coordinator.md` | Add sprint grouping instruction to loop section |
+| Feature | File | Action |
+|---------|------|--------|
+| F-050 | `plugins/harness-sales-suite/skills/harness-sales/SKILL.md` | Audit + fix |
+| F-051 | `plugins/harness-sales-suite/skills/harness-tm/SKILL.md` | Audit + fix |
+| F-052 | `plugins/harness-sales-suite/skills/harness-se/SKILL.md` | Audit + fix |
+| F-053 | `plugins/harness-sales-suite/skills/harness-sen/SKILL.md` | Audit + fix |
+| F-054 | `plugins/harness-sales-suite/skills/harness-so/SKILL.md` | Audit + fix |
+| F-055 | `plugins/harness-sales-suite/skills/harness-sales-suite/SKILL.md` + all 5 above | Cross-reference audit + fix |
+| F-056 | `plugins/harness-sales-suite/` (entire directory) | Adversarial review + fix |
 
-### F-045: Hard gate on artifact validation
+### Audit approach
 
-Target: coordinator.md step 19 and Evaluator Enforcement section.
+For each domain skill (F-050 through F-054):
+1. Read the full SKILL.md
+2. Check each of the 6 sections against the checklist
+3. Document findings as present/missing/incomplete for each section
+4. Fix any gaps in-place -- add missing sections, expand incomplete anchors, fill missing anti-patterns
+5. Re-verify the file after fixes
 
-Current text at step 19 says: "If any are missing, set stop_reason ... and STOP." The coordinator ignored this during rounds 4-8 of the sales suite run. Fix by adding EXPLICIT blocking language that cannot be glossed over:
+For integration (F-055):
+1. Extract criteria keys from each domain skill
+2. Compare against index skill criteria key mapping table
+3. Extract verification methods from each domain skill
+4. Compare against index skill verification methods table
+5. Verify routing table paths resolve to actual files
+6. Fix any inconsistencies in the index skill or domain skills as needed
 
-Add before the existing step 19 text: "BLOCKING GATE: This step is mandatory, not advisory. If validate-artifacts reports ANY missing artifacts, the coordinator MUST set stop_reason and STOP immediately. Do NOT continue to the next round. Do NOT skip this step for any reason. A round without complete artifacts is an incomplete round."
-
-Also add to the Evaluator Enforcement section: "Artifact validation is a hard gate. The coordinator MUST NOT advance to the next round if validate-artifacts shows missing artifacts."
-
-### F-046: Auto-set status to complete in checkStop
-
-Target: features.mjs checkStop() function (line 212-240).
-
-Current behavior: Returns `{ all_required_pass: true, should_stop: true }` but does not modify state.json. The coordinator is supposed to read this and act, but it failed to do so.
-
-Fix: When `allPass` is true, checkStop() should also write state.json with `status: "complete"` and `stop_reason: "All required features pass."`. This requires:
-1. Import writeFileSync from node:fs (already imported as readFileSync)
-2. When allPass is true, mutate the state object: set `state.status = "complete"` and `state.stop_reason = "All required features pass."`
-3. Write the mutated state back to .harness/state.json
-4. This makes the completion path self-contained -- even if the coordinator fails to act on the return value, state.json reflects reality
-
-### F-047: Handoff cleanup in coordinator
-
-Target: coordinator.md, add new sub-section or step.
-
-session.md already has handoff cleanup ("If handoff.md was read at session start AND session completed successfully -> delete handoff.md") but the coordinator in continuous mode does not follow session.md.
-
-Fix: Add to coordinator.md after the Context Freshness section: "After completing a successful round (PASS evaluation) following a context reset where handoff.md was read at session start, delete .harness/handoff.md. Do not delete it if the round failed -- the handoff remains valid for the next retry."
-
-### F-048: Mode mismatch warning in run.md
-
-Target: run.md Preconditions section.
-
-Fix: Add a new precondition check between the existing checks: "Read spec.md execution strategy mode. Compare with state.json mode field. If they differ (e.g., spec says supervised but state.json says continuous), print WARNING: 'Mode mismatch: spec.md declares [X] but state.json has [Y]. In continuous mode, interactive reviews from supervised mode will be skipped.' Continue execution but ensure the user sees this warning before the coordinator starts."
-
-### F-049: Sprint grouping from spec
-
-Target: coordinator.md Loop Per Round section, after step 4 (feature-select).
-
-The sales suite spec declared 4 sprints with grouped features (e.g., Sprint 1: F-001, F-002, F-003) but the coordinator ran 8 rounds with 1 feature each, ignoring the grouping.
-
-Fix: Add after step 4: "Before defaulting to single-feature targeting, read spec.md execution strategy for sprint grouping. If the spec groups multiple features into a single sprint (e.g., 'Sprint 1: F-001, F-002, F-003'), set active_feature_ids to ALL features in that group that still have passes: false. Only fall back to single-feature targeting when: (a) the spec does not define grouping, or (b) all grouped features in the current sprint already pass. When targeting multiple features, the generator proposal must include a grouping waiver explaining why co-implementation is safe."
+For adversarial review (F-056):
+1. Run Codex review on the entire plugins/harness-sales-suite directory
+2. Triage findings: BLOCKING (factual errors, missing required content, broken references), HIGH (inconsistencies, weak anchors, generic content), LOW (style, formatting, minor wording)
+3. Fix all BLOCKING and HIGH findings
+4. Document LOW findings as non-blocking issues in evaluation
 
 ## Non-goals
 
-- Rewriting the coordinator loop structure or flow diagram
-- Adding new subcommands to harness-companion.mjs
-- Changing the evaluation rubric, scoring, or calibration
-- Modifying features.json schema
-- Adding automated tests for these fixes
-- Changing session.md (it already has the correct handoff cleanup -- the gap is in coordinator.md)
+- Adding new domain profiles or new domain skills
+- Changing the harness core (coordinator, evaluator, generator roles)
+- Modifying plugin.json structure or plugin metadata
+- Adding automated tests for SKILL.md content
+- Changing the sales pipeline phases or deal type routing in the index skill
+- Rewriting domain skills from scratch -- this is an audit and fix cycle, not a rebuild
 
 ## Domain Profile
 - Primary: software
 - Secondary: (none)
 - Criteria: product_depth, functionality, visual_design, code_quality
-- Artifact types: Markdown documentation, JavaScript modules
-- Stakeholder lens: Harness operators (developers using the harness framework)
+- Artifact types: Markdown domain skill files, plugin configuration
+- Stakeholder lens: Harness operators, harness evaluators, domain skill consumers
 
 ## Security Context
-- data_sensitivity: none
+- data_sensitivity: confidential
 - external_exposure: none
 - auth_model: none
 - compliance: none
 
 ## Definition of done
 
-All 5 features pass evaluation:
-1. **F-045**: coordinator.md contains explicit hard-gate language for validate-artifacts using mandatory words (MUST, BLOCKING, Do NOT continue) that cannot be misread as advisory
-2. **F-046**: features.mjs checkStop() writes state.json with `status: "complete"` and `stop_reason` when all required features pass -- verified by reading the function source
-3. **F-047**: coordinator.md contains an explicit instruction to delete .harness/handoff.md after a successful round following a context reset
-4. **F-048**: run.md Preconditions section contains a mode mismatch warning that fires when spec.md mode differs from state.json mode
-5. **F-049**: coordinator.md Loop Per Round section contains an instruction to read spec.md sprint grouping and target grouped features together, with fallback to single-feature targeting
+All 7 features pass evaluation:
+
+1. **F-050**: harness-sales/SKILL.md passes all 6 checklist sections -- methodology table with 3+ sales methodologies, criteria anchors 1-5 for all 4 sales criteria, verification methods, contract check templates, 5+ anti-patterns, security guidance
+2. **F-051**: harness-tm/SKILL.md passes all 6 checklist sections with tender-management-specific content
+3. **F-052**: harness-se/SKILL.md passes all 6 checklist sections with sales-engineering-specific content
+4. **F-053**: harness-sen/SKILL.md passes all 6 checklist sections with sales-enablement-specific content
+5. **F-054**: harness-so/SKILL.md passes all 6 checklist sections with sales-operations-specific content
+6. **F-055**: Index skill routing table, criteria key mapping, and verification methods are provably consistent with all 5 domain skills -- zero orphaned references, zero mismatches
+7. **F-056**: Codex adversarial review completed, all BLOCKING and HIGH findings fixed, LOW findings documented

@@ -2,50 +2,59 @@
 
 ## Metadata
 - Role: generator
+- Agent: generator-1
+- Inputs: .harness/spec.md, .harness/features.json, harness-sales/SKILL.md, harness-tm/SKILL.md, harness-se/SKILL.md
 - Status: in_review
 
 ## Target feature IDs
-- F-045, F-046, F-047, F-048, F-049
+- F-050
+- F-051
+- F-052
 
 ## Grouping waiver
-All 5 are postmortem discrepancy fixes. 3 modify coordinator.md, 1 modifies features.mjs, 1 modifies run.md. No overlap between script and doc changes.
+Three independent file audits using the same 6-section checklist. No cross-dependencies. Grouping avoids 2 unnecessary round-trips while keeping scope reviewable (3 files, same audit pattern). This follows the sprint plan defined in spec.md.
 
 ## Goal
-Fix the 5 process violations found in the sales suite postmortem so the harness enforces its own rules.
+Audit harness-sales/SKILL.md, harness-tm/SKILL.md, and harness-se/SKILL.md against the 6-section checklist. Fix any structural gaps found. Ensure all 3 files meet the quality standard for downstream evaluation use.
 
 ## Deliverables
+For each of the 3 SKILL.md files:
+- Verified 6-section structure
+- Fixed contract check templates to include check IDs with criterion prefix patterns
+- Added dedicated Security Considerations subsection if missing
+- Ensured all criteria anchors are concrete and domain-specific
 
-### F-045: coordinator.md — hard gate on artifact validation
-Add after step 19 (validate-artifacts):
-> **BLOCKING**: If validate-artifacts reports ANY missing artifacts, set `stop_reason` to "missing required sprint artifacts for round NN" and STOP immediately. Do NOT continue to the next round. This is not advisory — it is a hard gate.
+## Findings from pre-audit
 
-### F-046: features.mjs — auto-set status to complete
-In `checkStop()`, when `allPass` is true:
-```javascript
-if (allPass) {
-  const state = readState();
-  state.status = 'complete';
-  state.stop_reason = 'All required features pass.';
-  writeState(state);
-}
-```
+### Gap 1: Missing Check IDs in Contract Check Templates (all 3 files)
+The spec requires "at least 4 contract checks (one per criterion) with check IDs matching the criterion prefix pattern." Currently, all 3 files use plain bullet checklists grouped by deliverable type, but they lack structured check IDs (e.g., QD-01 for qualification_depth, PC-01 for pipeline_coverage). Fix: Add a "Standard Contract Checks" subsection to Section 6 with criterion-mapped check IDs.
 
-### F-047: coordinator.md — handoff cleanup after resume
-Add to Context Freshness section:
-> After a successful round following a context reset (when handoff.md was read), delete `.harness/handoff.md`. Do not leave stale handoff files on disk.
+### Gap 2: Security Guidance Not a Distinct Section (all 3 files)
+The spec requires "domain-specific security considerations covering data sensitivity, access control, and confidentiality." Currently, security items are embedded within individual checklists but there is no consolidated Security Considerations subsection. Fix: Add a "Security Considerations" subsection to Section 6 after Anti-Patterns with domain-specific guidance.
 
-### F-048: run.md — mode mismatch warning
-Add to Preconditions section:
-> If spec.md declares `supervised` but state.json has `continuous`, WARN: "Spec declares supervised mode. Running in continuous mode will skip interactive contract reviews. Confirm with user before proceeding."
+### No other gaps found
+- Methodology tables: 5+ methodologies per file (checklist requires 3+). Pass.
+- Criteria anchors: All 4 criteria have 0-5 with concrete, domain-specific descriptions. Pass.
+- Verification methods: Domain-specific with what-to-check and how. Pass.
+- Anti-patterns: 6-8 per file with detection signals and penalties. Pass.
 
-### F-049: coordinator.md — respect sprint grouping
-Add to Loop Per Round, before step 4 (feature selection):
-> Before selecting features, read `.harness/spec.md` execution strategy. If the spec groups features into sprints (e.g., "Sprint 1: F-001 + F-002 + F-003"), target the grouped set as a batch in one round. Do NOT split grouped features into individual rounds unless the group fails and must be decomposed.
+## Verification
+- After fixing, re-read each file and verify all 6 sections present
+- Verify check IDs follow criterion prefix pattern
+- Verify Security Considerations subsection is domain-specific (not generic boilerplate)
+- Verify no existing content was accidentally removed
+
+## Acceptance criteria
+- Product depth: All 6 sections present and complete in each file; audit methodology applied consistently
+- Functionality: Check IDs resolve to the correct criteria; security guidance covers the domain's specific concerns
+- Visual design: Consistent structure across all 3 files; tables properly formatted
+- Code quality: No broken markdown; no orphaned references; no duplicate content
 
 ## Contract checks
-- FN-01 (required): coordinator.md has BLOCKING language for validate-artifacts
-- FN-02 (required): features.mjs checkStop() calls writeState when all pass
-- FN-03 (required): coordinator.md has handoff deletion after resume
-- FN-04 (required): run.md has mode mismatch warning
-- FN-05 (required): coordinator.md has sprint grouping instruction
-- CQ-01 (required): check-stop subcommand still works after script change
+- `PD-01`: (required) Each SKILL.md has all 6 sections with no placeholders or TBDs
+- `FN-01`: (required) Contract check templates include at least 4 criterion-mapped check IDs per file
+- `VD-01`: (required) Section structure is consistent across all 3 files
+- `CQ-01`: (required) No broken markdown formatting, orphaned cross-references, or duplicate sections
+
+## Risks
+- Minimal: these are markdown file edits with well-defined structural requirements. Risk of over-editing existing content that is already good. Mitigation: only add missing sections, do not rewrite existing content.

@@ -2,60 +2,38 @@
 
 ## Metadata
 - Role: evaluator
-- Reviewed by: evaluator-1
-- Inputs: 01-proposal.md, spec.md, features.json, state.json, coordinator.md, features.mjs, run.md
+- Agent: evaluator-1
+- Inputs: 01-proposal.md, .harness/spec.md, .harness/features.json
 - Status: accepted
+- Reviewed by: evaluator-1
 - Decision: accept
 
 ## Target feature IDs
-- F-045, F-046, F-047, F-048, F-049
+- F-050
+- F-051
+- F-052
 
-## Decision: ACCEPT
+## Review
 
-## Grouping waiver assessment
-Five independent fixes to three separate files (coordinator.md, features.mjs, run.md). No cross-dependencies between changes. Three of the five features modify coordinator.md but at different, non-overlapping sections (step 19, Context Freshness, Loop Per Round step 4). Grouping is justified and reduces round overhead without hiding risk.
+### Grouping waiver
+Accepted. The grouping follows the spec.md sprint plan verbatim. Three files, same checklist, no cross-dependencies.
 
-## Per-feature feasibility
+### Scope assessment
+The proposal correctly identifies 2 gaps across all 3 files:
+1. Missing check IDs with criterion prefix patterns in contract check templates
+2. Missing dedicated Security Considerations subsection
 
-### F-045: Hard gate on artifact validation
-- Target: coordinator.md step 19 (line 141-144) and Evaluator Enforcement section (lines 194-201)
-- Current text already says "If any are missing, set stop_reason ... and STOP" but was ignored in practice. Adding explicit BLOCKING/MUST/Do NOT language is a reasonable reinforcement.
-- Insertion points verified and exist in the file.
-- Verdict: feasible, no concerns.
+The proposal correctly notes that the other 4 checklist items pass. This matches my own reading of the 3 files.
 
-### F-046: Auto-set status to complete
-- Target: features.mjs checkStop() (lines 212-240)
-- Current behavior returns allPass flag but does not write state.json. The file imports readFileSync but not writeFileSync -- builder must add the import.
-- The proposal's code snippet references a writeState() that does not exist; the spec's technical design correctly identifies that writeFileSync must be imported and state written inline. Builder should implement the write directly rather than assume a writeState helper exists.
-- CQ-01 contract check ensures the subcommand still works after the change.
-- Verdict: feasible with the noted implementation detail.
+### Risk assessment
+Low risk. Adding sections to existing well-structured files. The proposal explicitly states it will not rewrite existing content.
 
-### F-047: Handoff cleanup after resume
-- Target: coordinator.md Context Freshness section (lines 179-190)
-- No current instruction to delete handoff.md after successful resume. session.md has this but coordinator.md does not.
-- Insertion point is clear and the change is additive.
-- Verdict: feasible, no concerns.
+### Contract checks
+All 4 checks are well-defined and verifiable:
+- PD-01: Presence check for 6 sections -- binary pass/fail
+- FN-01: Count check for criterion-mapped check IDs -- binary pass/fail
+- VD-01: Cross-file structure consistency -- verifiable by diff
+- CQ-01: Markdown lint check -- verifiable by parsing
 
-### F-048: Mode mismatch warning
-- Target: run.md Preconditions section (lines 15-21)
-- Currently redirects supervised mode to /session but does not check for spec vs state divergence.
-- The proposal adds a warning for the mismatch case, which is a new precondition check.
-- Verdict: feasible, no concerns.
-
-### F-049: Coordinator respects sprint grouping
-- Target: coordinator.md Loop Per Round step 4 (lines 93-96)
-- Currently selects a single feature by priority. The proposal adds a pre-step to read spec.md execution strategy for sprint grouping.
-- Insertion point is valid and the change is additive.
-- Verdict: feasible, no concerns.
-
-## Contract checks review
-All 6 checks are required and verifiable:
-- FN-01 through FN-05: each maps to a specific textual or code change that can be verified by reading the modified file.
-- CQ-01: ensures checkStop() still works after the script change -- critical for preventing regressions.
-
-## Risks acknowledged
-- F-046 requires a code change to a JavaScript module. The contract check CQ-01 mitigates regression risk by requiring the subcommand to still function.
-- F-045, F-047, F-049 all modify coordinator.md at different sections. Merge conflicts are unlikely given they target distinct areas, but the builder should apply all three changes in a single pass.
-
-## Conclusion
-The proposal is well-scoped, all insertion points exist in the target files, and the contract checks are sufficient. No changes requested.
+### Decision
+**ACCEPT** -- proceed to implementation.

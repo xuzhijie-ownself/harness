@@ -172,6 +172,21 @@ The 4 primary criteria for the `sales_engineering` domain profile. The evaluator
 
 Pre-built checklists for common sales engineering deliverable types. The generator includes the relevant checklist(s) in each sprint contract. The evaluator uses them as acceptance criteria.
 
+### Standard Contract Checks
+
+These are the minimum required checks for every sales engineering sprint. Check IDs map to the 4 sales engineering evaluation criteria.
+
+| Check ID | Criterion | Required | Verification Method |
+|----------|-----------|----------|-------------------|
+| DC-01 | demo_completeness | required | Verify all buyer use cases mapped to demo steps; transitions scripted; timing fits allocated slot; demo environment tested |
+| DC-02 | demo_completeness | advisory | Verify fallback scenarios documented for top 3 failure modes; common questions anticipated with prepared answers |
+| TV-01 | technical_validation | required | Verify POC success criteria defined, measurable, and agreed with buyer; results documented against each criterion with evidence |
+| TV-02 | technical_validation | advisory | Verify performance tested under buyer's expected load; security requirements validated |
+| SD-01 | solution_documentation | required | Verify architecture diagram includes all integration points with data flows; NFRs documented; deployment model specified |
+| SD-02 | solution_documentation | advisory | Verify solution design includes decision rationale and risk assessment for key architectural choices |
+| IC-01 | integration_clarity | required | Verify all integration points documented with protocol, authentication, data format, and error handling approach |
+| IC-02 | integration_clarity | advisory | Verify sample API payloads provided for key integrations; round-trip data flow validated or validation plan defined |
+
 ### For Demo Deliverables
 
 - [ ] All buyer-stated use cases mapped to demo steps
@@ -229,3 +244,22 @@ These trigger automatic score penalties when detected by the evaluator:
 | **Undocumented Architecture** -- solution design exists only in SE's verbal description; no written architecture or integration specifications | solution_documentation | Drop to max 1 | No solution design document; integration requirements verbal only; implementation team has no written reference |
 | **Integration Handwave** -- claiming integration is "easy" or "standard" without specifying protocol, authentication, data format, and error handling | integration_clarity | Drop to max 2 | Integration points listed without technical details; "we support REST APIs" without specifying endpoints or contracts |
 | **Customer Data Leak** -- using customer environment data, architecture details, or technical requirements in other customer engagements without authorization | solution_documentation | Drop to max 0 | Customer-specific data found in generic templates; architecture details from one customer referenced in another's POC |
+
+### Security Considerations
+
+Domain-specific security guidance for sales engineering deliverables. Applies when `data_sensitivity` in spec.md is anything other than `none`.
+
+**Data Sensitivity:**
+- Customer environment data (architecture diagrams, network topologies, security configurations) obtained during technical discovery or POC must be classified as confidential
+- POC data sets containing customer production data must be handled per the customer's data classification policy; synthetic data preferred over production data
+- Performance test results revealing customer infrastructure capacity must not be shared outside the authorized engagement team
+
+**Access Control:**
+- Solution design documents containing customer-specific integration details must be restricted to the SE team and authorized project stakeholders
+- POC environments with access to customer systems must use dedicated credentials with minimum necessary privileges; credentials must not be stored in code or shared documents
+- Demo environments must be isolated from customer production systems; no persistent access retained after engagement concludes
+
+**Confidentiality:**
+- Customer architecture details and integration requirements must not be referenced in other customer engagements or marketing materials
+- Competitive bake-off results, scoring, and evaluation criteria shared by the buyer must be treated as confidential per the engagement terms
+- Technical discovery notes containing customer pain points, system limitations, or security vulnerabilities must be restricted to the account team

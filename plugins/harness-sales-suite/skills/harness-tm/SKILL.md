@@ -186,6 +186,21 @@ The 4 primary criteria for the `tender_management` domain profile. The evaluator
 
 Pre-built checklists for common tender management deliverable types. The generator includes the relevant checklist(s) in each sprint contract. The evaluator uses them as acceptance criteria.
 
+### Standard Contract Checks
+
+These are the minimum required checks for every tender management sprint. Check IDs map to the 4 tender management evaluation criteria.
+
+| Check ID | Criterion | Required | Verification Method |
+|----------|-----------|----------|-------------------|
+| CC-01 | compliance_coverage | required | Verify compliance matrix maps every RFP requirement to a response section with compliance status; no unmapped requirements |
+| CC-02 | compliance_coverage | advisory | Verify every exception or partial compliance entry has documented rationale and mitigation approach |
+| RC-01 | response_completeness | required | Verify all mapped sections contain substantive content (no "TBD", "See attached", or boilerplate-only); page/format limits met |
+| RC-02 | response_completeness | advisory | Verify content has been through at least one review cycle (pink or red team) with findings tracked |
+| WC-01 | win_theme_clarity | required | Verify at least 3 differentiated win themes defined and threaded through major response sections with proof points |
+| WC-02 | win_theme_clarity | advisory | Verify win themes mapped to buyer's stated evaluation criteria; competitive positioning present without naming competitors |
+| SR-01 | submission_readiness | required | Verify all volumes formatted to RFP specifications; submission method tested; timeline allows buffer before deadline |
+| SR-02 | submission_readiness | advisory | Verify backup submission method identified; post-submission follow-up plan defined |
+
 ### For RFP Response Deliverables
 
 - [ ] Compliance matrix maps every RFP requirement to a response section
@@ -243,3 +258,22 @@ These trigger automatic score penalties when detected by the evaluator:
 | **Skipped Color Team** -- submitting without independent review; authors self-reviewing their own sections | response_completeness | Drop to max 2 | No color team reports on file; review team is same as writing team; no finding tracker |
 | **Pricing Leak** -- sharing confidential pricing externally or storing in unsecured locations; pricing inconsistent across volumes | submission_readiness | Drop to max 1 | Pricing in unprotected documents; technical volume references different quantities than pricing volume |
 | **Competitive Intel Misuse** -- using NDA-protected competitive information in response; citing protected sources | win_theme_clarity | Drop to max 0 | References to competitor internal data obtained through protected channels; attribution to restricted sources |
+
+### Security Considerations
+
+Domain-specific security guidance for tender management deliverables. Applies when `data_sensitivity` in spec.md is anything other than `none`.
+
+**Data Sensitivity:**
+- RFP response content containing proprietary solution designs, pricing, and technical approaches must be classified as confidential
+- Customer requirements documents (RFPs, amendments, Q&A responses) must be stored in access-controlled repositories per any NDA or procurement confidentiality requirements
+- Past performance data referencing specific contract values, customer names, or program details must follow contractual disclosure limitations
+
+**Access Control:**
+- Proposal content must be restricted to the authorized proposal team; distribution lists reviewed before each color team review
+- Pricing volumes must be accessible only to pricing lead, capture manager, and authorized approvers
+- Competitive intelligence files must be restricted to capture team with documented source attribution for every data point
+
+**Confidentiality:**
+- All proposal volumes must carry appropriate classification markings (company confidential, procurement sensitive, or as specified by the RFP)
+- Customer-provided evaluation criteria, scoring methodology, and debrief information must not be shared with other pursuit teams or customers
+- Subcontractor proprietary data included in the response must be handled per teaming agreement confidentiality provisions
