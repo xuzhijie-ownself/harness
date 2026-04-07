@@ -51,6 +51,11 @@ echo   Plugin : %PLUGIN_DIR%
 echo   Project: %PROJECT_ROOT%
 echo.
 
+:: Clean up renamed/removed files from previous versions
+del /Q "%CLAUDE_DIR%\commands\init.md" 2>nul
+del /Q "%CLAUDE_DIR%\scripts\lib\events.mjs" 2>nul
+del /Q "%CLAUDE_DIR%\scripts\lib\metrics.mjs" 2>nul
+
 :: Create target directories for core skill
 if not exist "%CLAUDE_DIR%\commands" mkdir "%CLAUDE_DIR%\commands"
 if not exist "%CLAUDE_DIR%\agents" mkdir "%CLAUDE_DIR%\agents"

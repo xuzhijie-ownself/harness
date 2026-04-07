@@ -54,6 +54,11 @@ echo "  Plugin : $PLUGIN_DIR"
 echo "  Project: $PROJECT_ROOT"
 echo ""
 
+# Clean up renamed/removed files from previous versions
+rm -f "$CLAUDE_DIR/commands/init.md" 2>/dev/null || true
+rm -f "$CLAUDE_DIR/scripts/lib/events.mjs" 2>/dev/null || true
+rm -f "$CLAUDE_DIR/scripts/lib/metrics.mjs" 2>/dev/null || true
+
 # Create target directories for core skill
 mkdir -p "$CLAUDE_DIR/commands" \
          "$CLAUDE_DIR/agents" \
