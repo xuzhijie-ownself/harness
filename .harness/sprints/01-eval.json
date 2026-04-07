@@ -1,50 +1,122 @@
 {
   "round": 1,
   "decision": "PASS",
-  "target_feature_ids": ["F-033", "F-034", "F-035", "F-036"],
+  "target_feature_ids": ["F-037", "F-038", "F-039"],
   "primary_scores": {
-    "product_depth": { "score": 4, "justification": "Dynamic REL_PATH with python3/node; version from source manifest; fallback defaults" },
-    "functionality": { "score": 4, "justification": "All features produce correct output; JSON valid; paths resolve; uninstall works" },
-    "visual_design": { "score": 4, "justification": "Clear install output shows REL_PATH; consistent bash/batch messaging" },
-    "code_quality": { "score": 4, "justification": "POSIX-portable sed; node for Windows; fallbacks; no new deps" }
+    "product_depth": {
+      "score": 4,
+      "justification": "Both review loops implement approve/modify/restart with re-spawn and blocking semantics. Strong for scope; no iteration limit or timeout behavior specified.",
+      "prior_round_score": null,
+      "drift_check": "First round, no prior score."
+    },
+    "functionality": {
+      "score": 5,
+      "justification": "All 15 feature steps across F-037 (6), F-038 (7), F-039 (2) fully addressed. No gaps, no missing semantics.",
+      "prior_round_score": null,
+      "drift_check": "First round, no prior score."
+    },
+    "visual_design": {
+      "score": 4,
+      "justification": "Clean section headers, consistent bold-option formatting, correct step numbering. CLAUDE.md section is concise. Minor structural variance in CLAUDE.md list style.",
+      "prior_round_score": null,
+      "drift_check": "First round, no prior score."
+    },
+    "code_quality": {
+      "score": 4,
+      "justification": "Surgical changes to 3 markdown files only. No scripts/schemas/roles touched. Step references internally consistent. Sprint Resume table correct. No cross-reference validation for future step changes.",
+      "prior_round_score": null,
+      "drift_check": "First round, no prior score."
+    }
   },
   "contract_checks": [
-    { "id": "FN-01", "required": true, "result": "pass", "evidence": "REL_PATH computed via python3 os.path.relpath" },
-    { "id": "FN-02", "required": true, "result": "pass", "evidence": "Generated JSON parses cleanly" },
-    { "id": "FN-03", "required": true, "result": "pass", "evidence": "Skills paths resolve to actual directories on disk" },
-    { "id": "FN-04", "required": true, "result": "pass", "evidence": "install.bat uses node path.relative" },
-    { "id": "FN-05", "required": true, "result": "pass", "evidence": "Code review confirms valid JSON generation" },
-    { "id": "FN-06", "required": true, "result": "pass", "evidence": "sed rewrites copilot-instructions paths correctly" },
-    { "id": "FN-07", "required": true, "result": "pass", "evidence": "YAML frontmatter rule at CLAUDE.md line 83" },
-    { "id": "FN-08", "required": true, "result": "pass", "evidence": "Only python3 and node used (existing deps)" }
+    {
+      "id": "FN-01",
+      "required": true,
+      "result": "pass",
+      "evidence": "start.md lines 30-38: review loop shows spec content (Overview, Shipped Scope, Execution Strategy, Security Context) and presents approve/modify/start-over options."
+    },
+    {
+      "id": "FN-02",
+      "required": true,
+      "result": "pass",
+      "evidence": "session.md lines 73-81: review loop shows proposal content (Goal, Deliverables, Verification, Contract Checks) and presents approve/modify/re-propose options."
+    },
+    {
+      "id": "FN-03",
+      "required": true,
+      "result": "pass",
+      "evidence": "Both loops contain 'This loop repeats until the user approves. Do NOT proceed/send without explicit approval.'"
+    },
+    {
+      "id": "FN-04",
+      "required": true,
+      "result": "pass",
+      "evidence": "Sprint Resume table: idle=1, contract=6, implementation=11, evaluation=12. All match new step numbering."
+    },
+    {
+      "id": "FN-05",
+      "required": true,
+      "result": "pass",
+      "evidence": "CLAUDE.md lines 85-93: Interactive Review Points section documents spec review (/start 5-6) and contract review (/session 7-8) with plan mode contamination rationale."
+    },
+    {
+      "id": "CQ-01",
+      "required": true,
+      "result": "pass",
+      "evidence": "git diff HEAD~1 --name-only shows only start.md, session.md, CLAUDE.md, and harness state artifacts. No scripts, schemas, role files, or agent definitions changed."
+    }
   ],
   "blockers": [],
   "non_blocking_issues": [
-    "install.sh generates minimal JSON (name, version, skills only)",
-    "install.bat for/f + node -e single-quote fragility (known Windows limitation)"
+    "Neither review loop specifies behavior if user abandons mid-loop (Sprint Resume handles this implicitly but not explicitly stated)."
   ],
   "feature_evidence": [
-    { "feature_id": "F-033", "passes": true, "reason": "All 4 steps verified" },
-    { "feature_id": "F-034", "passes": true, "reason": "All 3 steps verified (code review)" },
-    { "feature_id": "F-035", "passes": true, "reason": "All 3 steps verified" },
-    { "feature_id": "F-036", "passes": true, "reason": "All 2 steps verified" }
+    {
+      "feature_id": "F-037",
+      "passes": true,
+      "reason": "All 6 steps verified. Review loop between planner and initializer with spec content display, 3 options, re-spawn on modify, blocking semantics, consistent step numbering."
+    },
+    {
+      "feature_id": "F-038",
+      "passes": true,
+      "reason": "All 7 steps verified. Review loop between generator and evaluator with proposal content display, 3 options, re-spawn on modify, blocking semantics, updated Sprint Resume table, preserved evaluator review."
+    },
+    {
+      "feature_id": "F-039",
+      "passes": true,
+      "reason": "Both steps verified. CLAUDE.md has Interactive Review Points section documenting both loops with step references and rationale."
+    }
   ],
   "test_results": {
     "tests_written": [],
-    "passed": 5,
+    "passed": 0,
     "failed": 0,
     "skipped": 0,
-    "coverage": "N/A"
+    "coverage": "N/A (markdown-only changes)"
   },
   "review_findings": {
     "blocking": [],
-    "non_blocking": ["Minimal JSON generation", "Windows batch quoting fragility"]
+    "non_blocking": [
+      "Neither review loop specifies behavior on mid-loop abandonment. Sprint Resume at 'contract' phase handles this implicitly."
+    ]
   },
   "authenticity_gate": {
     "gate_result": "pass",
-    "internal_consistency": { "pass": true, "justification": "Both scripts use identical pattern" },
-    "intentionality": { "pass": true, "justification": "REL_PATH is project-specific" },
-    "craft": { "pass": true, "justification": "POSIX-portable, consistent messaging" },
-    "fitness_for_purpose": { "pass": true, "justification": "Paths resolve correctly from any clone location" }
+    "internal_consistency": {
+      "pass": true,
+      "justification": "Both review loops use identical structure: show artifact, 3 options, loop until approve, blocking language. CLAUDE.md step references match command files."
+    },
+    "intentionality": {
+      "pass": true,
+      "justification": "Changes target the specific plan mode contamination problem. Builder report documents project-specific choices (removing redundant step, choosing spec sections to display)."
+    },
+    "craft": {
+      "pass": true,
+      "justification": "Consistent markdown formatting, clean section headers, correct step numbering with no gaps or duplicates. Sprint Resume table correctly updated."
+    },
+    "fitness_for_purpose": {
+      "pass": true,
+      "justification": "An agent following start.md or session.md can execute review loops without ambiguity. Each option has clear next-step instructions."
+    }
   }
 }

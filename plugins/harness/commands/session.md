@@ -1,6 +1,6 @@
 ---
 name: session
-description: "Run one supervised sprint round for a harness project. Selects the next failing required feature, negotiates a sprint contract with evaluator review, implements it, and evaluates it. Waits for user confirmation between contract review and implementation."
+description: "Run one supervised sprint round for a harness project. Selects the next failing required feature, negotiates a sprint contract with user and evaluator review, implements it, and evaluates it."
 allowed_tools: ["Bash", "Read", "Write", "Glob", "Agent"]
 ---
 
@@ -24,7 +24,6 @@ node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase <pha
 
 # Auto-commit after evaluation
 node plugins/harness/scripts/harness-companion.mjs auto-commit --feature F-XXX --title "feature title" --round N --status pass
-# --status is pass or fail
 
 # Validate sprint artifacts exist
 node plugins/harness/scripts/harness-companion.mjs validate-artifacts --round N
@@ -36,8 +35,6 @@ node plugins/harness/scripts/harness-companion.mjs progress-append --round N --f
 node plugins/harness/scripts/harness-companion.mjs check-stop
 ```
 
-All subcommands emit JSON to stdout. Parse the output to get structured results. Errors go to stderr with exit code 1 (user error) or 2 (system error).
-
 ## Sprint Resume
 
 Before starting fresh, check `.harness/state.json` `current_sprint_phase`:
@@ -45,9 +42,9 @@ Before starting fresh, check `.harness/state.json` `current_sprint_phase`:
 | Phase | Resume action |
 |-------|---------------|
 | `idle` | Start a new sprint from step 1 |
-| `contract` | Resume at Contract Phase (step 6) -- contract was being negotiated |
-| `implementation` | Resume at Implementation Phase (step 9) -- contract was accepted, implementation in progress |
-| `evaluation` | Resume at Evaluation Phase (step 10) -- implementation complete, evaluation in progress |
+| `contract` | Resume at Contract Phase (step 6) |
+| `implementation` | Resume at Implementation Phase (step 11) |
+| `evaluation` | Resume at Evaluation Phase (step 12) |
 
 Transition phases using: `node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase <phase>`
 
@@ -56,7 +53,7 @@ Transition phases using: `node plugins/harness/scripts/harness-companion.mjs sta
 1. Read `.harness/progress.md`.
 2. Run `git log --oneline -10` to recover context from recent commits.
 3. Check for `.harness/handoff.md` -- if present, read it and resume from `next_step`.
-4. Run `bash .harness/init.sh` -- STOP and report if baseline fails. If it fails because it checks for files that no longer exist (stale smoke test), regenerate init.sh for the current project state and retry.
+4. Run `bash .harness/init.sh` -- STOP and report if baseline fails. If it fails because it checks for files that no longer exist (stale smoke test), regenerate init.sh and retry.
 5. Select the next target feature:
    ```bash
    node plugins/harness/scripts/harness-companion.mjs feature-select
@@ -72,11 +69,22 @@ node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase cont
 
 6. Spawn the `generator` agent: "Propose a sprint contract for [feature-id]."
    -> `.harness/sprints/NN-proposal.md`
-7. Spawn the `evaluator` agent: "Review the contract at .harness/sprints/NN-proposal.md."
+
+### Contract Review (Interactive)
+
+7. Show the proposal to the user. At minimum display: Goal, Deliverables, Verification, Contract Checks.
+8. Ask the user:
+   - **Approve contract** -> proceed to step 9
+   - **Modify** -> user describes changes. Re-spawn the generator with the original feature + user feedback. Generator rewrites NN-proposal.md. Return to step 7.
+   - **Re-propose** -> re-spawn the generator from scratch for the same feature. Return to step 7.
+
+This loop repeats until the user approves. Do NOT send to the evaluator without explicit user approval.
+
+9. Spawn the `evaluator` agent: "Review the contract at .harness/sprints/NN-proposal.md."
    -> `.harness/sprints/NN-review.md`
-8. Show the contract review to the user.
-   - Rejected -> return to step 6 with evaluator feedback.
-   - Accepted -> ask user to confirm before proceeding to implementation.
+10. Show the evaluator's review to the user.
+    - Rejected -> return to step 6 with evaluator feedback.
+    - Accepted -> proceed to implementation.
 
 ## Implementation Phase
 
@@ -85,8 +93,8 @@ Transition to implementation phase:
 node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase implementation
 ```
 
-9. Spawn the `generator` agent: "Implement the accepted contract at .harness/sprints/NN-proposal.md."
-   -> code changes + `.harness/sprints/NN-report.md`
+11. Spawn the `generator` agent: "Implement the accepted contract at .harness/sprints/NN-proposal.md."
+    -> code changes + `.harness/sprints/NN-report.md`
 
 ## Evaluation Phase
 
@@ -95,16 +103,16 @@ Transition to evaluation phase:
 node plugins/harness/scripts/harness-companion.mjs state-mutate --set-phase evaluation
 ```
 
-10. Spawn the `evaluator` agent:
+12. Spawn the `evaluator` agent:
     "Grade the implementation. Contract: NN-proposal.md. Builder report: NN-report.md."
     -> `.harness/sprints/NN-eval.md`
     -> `.harness/sprints/NN-eval.json`
-11. Update `.harness/features.json` based on evaluator `feature_evidence`.
-12. Append round summary to progress.md:
+13. Update `.harness/features.json` based on evaluator `feature_evidence`.
+14. Append round summary to progress.md:
     ```bash
     node plugins/harness/scripts/harness-companion.mjs progress-append --round N --feature F-XXX --status pass --scores '{"product_depth":4,"functionality":4,"visual_design":4,"code_quality":4}'
     ```
-13. Show result to user:
+15. Show result to user:
     - **PASS** -> score breakdown + recommended next action.
     - **FAIL** -> specific blockers from evaluation + suggest re-running /session.
 
@@ -121,7 +129,7 @@ node plugins/harness/scripts/harness-companion.mjs check-stop
 ```
 If the result shows `"all_required_pass": true`: print "All required features pass. Run `/harness:release` when you are ready to cut a version."
 
-Do NOT auto-spawn the releaser -- the user decides when to release. Multiple sessions may land before the user wants a version bump.
+Do NOT auto-spawn the releaser -- the user decides when to release.
 
 ## Auto-Commit
 

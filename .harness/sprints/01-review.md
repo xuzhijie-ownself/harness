@@ -3,81 +3,66 @@
 ## Metadata
 - Role: evaluator
 - Agent: evaluator-1
-- Inputs: .harness/sprints/01-proposal.md, .harness/features.json, .harness/spec.md, install.sh, install.bat, CLAUDE.md
+- Inputs: 01-proposal.md, features.json, spec.md, start.md, session.md, CLAUDE.md
 - Status: accepted
 - Reviewed by: evaluator-1
 - Decision: accept
 
 ## Target feature IDs
-- F-033
-- F-034
-- F-035
-- F-036
+- F-037, F-038, F-039
 
-## Grouping waiver assessment
+## Grouping Waiver Assessment
 
-The grouping waiver is justified. All four features share three edit surfaces (install.sh, install.bat, CLAUDE.md). F-033 and F-034 are the identical path-correction logic in two languages. F-035 extends the same REL_PATH computation to a second output file. F-036 is a single rule addition. The spec explicitly groups all four in Sprint 1 with a one-sprint expected count. Splitting would create unnecessary evaluation overhead with no risk reduction benefit.
+**Accept.** All three features modify three files total (start.md, session.md, CLAUDE.md). F-037 and F-038 are the same interaction pattern applied to two command files. F-039 documents the other two and has `depends_on: ["F-037", "F-038"]`. Splitting into separate sprints would force redundant context loading for no risk reduction.
 
-**Verdict**: Waiver accepted.
+## Proposal Alignment with features.json
 
-## Proposal quality
+Each feature's `steps[]` in features.json is covered by the proposal:
 
-### Completeness
-The proposal covers all four features with concrete deliverables, per-feature verification steps, acceptance criteria mapped to the four domain criteria, and 10 contract checks (8 required, 2 advisory). Risks are identified with mitigations. This is thorough.
+**F-037** (6 steps defined):
+- "start.md has a review loop between planner output and initializer spawn" -- covered by proposal's start.md deliverable (insert between step 4 and step 5)
+- "Review loop shows spec content" -- covered (proposal specifies overview, shipped scope, execution strategy, security context)
+- "Review loop presents approve/modify/start-over options" -- covered (three options explicitly listed)
+- "Modify re-invokes planner with user feedback" -- covered
+- "Only after approval does initializer spawn" -- covered (approve proceeds to step 7 which is initializer)
+- "Step numbering is consistent after insertion" -- covered (proposal renumbers steps 5-8)
 
-### Verification clarity
-Each feature has numbered verification steps that are executable from the command line. The checks are specific: validate JSON parseability, confirm path resolution to actual directories, check for the YAML rule text and rationale. These are testable without ambiguity.
+**F-038** (7 steps defined):
+- "session.md has a review loop between generator proposal and evaluator review" -- covered (insert between step 6 and step 7)
+- "Review loop shows proposal content" -- covered (goal, deliverables, verification, contract checks)
+- "Review loop presents approve/modify/re-propose options" -- covered
+- "Modify re-invokes generator with user feedback" -- covered
+- "Only after approval does evaluator review proceed" -- covered
+- "Sprint Resume table step numbers updated" -- covered (explicitly listed in contract checks FN-04)
+- "Existing evaluator contract review step preserved" -- covered (evaluator review becomes step 9)
 
-### Contract checks
-- PD-01, PD-02: Cover the core path-correctness and dynamic computation requirements
-- FN-01 through FN-05: Cover all four features' functional output
-- VD-01: Advisory, appropriate for output messaging
-- CQ-01, CQ-02: Cover dependency discipline and source-file immutability
+**F-039** (2 steps defined):
+- "CLAUDE.md has Interactive Review Points section" -- covered (proposal says add section, ~10 lines)
+- "Section documents both review loops with rationale" -- covered (two review points, options, rationale)
 
-The check set is complete. Every feature has at least one required contract check. No feature can silently pass without verification.
+## Contract Checks Review
 
-### Acceptance criteria alignment
-The criteria map to the domain profile (product_depth, functionality, visual_design, code_quality) and each has concrete, measurable sub-points. The visual_design criterion is appropriately reinterpreted as "script readability and output clarity" for this infrastructure work, consistent with spec.md.
+| Check | Required | Verifiable | Assessment |
+|-------|----------|------------|------------|
+| FN-01 | yes | yes | Clear: read start.md, confirm review loop shows spec content and 3 options |
+| FN-02 | yes | yes | Clear: read session.md, confirm review loop shows proposal content and 3 options |
+| FN-03 | yes | yes | Clear: both loops must specify repeat-until-approve semantics |
+| FN-04 | yes | yes | Clear: read Sprint Resume table, check step numbers match new flow |
+| FN-05 | yes | yes | Clear: read CLAUDE.md, check section exists with both loops documented |
+| CQ-01 | yes | yes | Clear: verify no changes to scripts/, schemas, role files, or agent definitions |
 
-## Implementation review (code already exists)
+All six checks are required, verifiable by file inspection, and have unambiguous pass/fail criteria.
 
-Since the implementation files were provided, I reviewed them against the proposal.
+## Risks Assessment
 
-### install.sh observations
-- REL_PATH computed via `python3 -c "import os; print(os.path.relpath(...))"` with fallback to `plugins/harness` -- matches proposal
-- VERSION read from source plugin.json via node with fallback to `0.0.0` -- matches proposal
-- plugin.json generated via heredoc with `$REL_PATH` interpolation -- matches proposal
-- copilot-instructions.md generated via sed with two replacement patterns -- matches proposal
-- REL_PATH printed during install -- matches VD-01
-- Uninstall path unchanged -- matches proposal
+The two risks identified (step renumbering errors and Sprint Resume table drift) are real but manageable for markdown-only changes. The proposal explicitly calls out both as risks and includes verification steps (V3, V4) to catch them.
 
-### install.bat observations
-- REL_PATH computed via `node -e "require('path').relative(...)"` with backslash-to-forward-slash conversion -- matches proposal
-- Fallback to `plugins/harness` if empty -- matches proposal
-- plugin.json generated via node one-liner writing JSON -- matches proposal
-- copilot-instructions.md generated via node one-liner with regex replacement -- matches proposal
-- Forward slashes used in JSON output -- matches proposal
-- REL_PATH printed during install -- matches VD-01
+One additional risk not mentioned: the proposal removes step 7 from start.md ("Show the Execution strategy from spec.md for user confirmation") and folds it into the review loop. The builder must ensure no downstream references depend on that step existing as a separate numbered item.
 
-### CLAUDE.md observations
-- YAML frontmatter rule added after the Naming Conventions table -- matches proposal placement
-- Specifies `description` fields must be quoted strings -- matches F-036 requirement
-- Explains rationale (strict parser compatibility, "nested mappings" parse error) -- matches proposal
+## Scope Boundary Check
 
-## Issues identified
+The proposal explicitly lists non-changes: no scripts, no schemas, no role files, no agent definitions. CQ-01 enforces this boundary. The deliverables are confined to three markdown files. This is appropriately scoped.
 
-### Non-blocking
+## Decision: ACCEPT
 
-1. **install.sh heredoc strips fields**: The proposal says "Preserve all other fields from the source plugin.json (name, version, description, interface, etc.)" but the implementation generates a minimal JSON with only `name`, `version`, and `skills`. Fields like `description` and `interface` from the source are dropped. This diverges from the proposal's stated approach but is acceptable because: (a) the contract checks only require valid JSON with correct skills paths, (b) the proposal itself lists "use sed on the source file OR generate JSON inline" as alternatives, and (c) the inline approach is simpler and avoids sed-on-JSON fragility. The generated file serves its purpose (Codex skill discovery). However, if Codex CLI ever reads other fields, this will need revisiting.
-
-2. **install.bat quoting in node -e**: The `for /f` line on line 19 uses single quotes inside the node expression which are also the batch `for /f` delimiters. This works when node is present but could be fragile. This is an existing Windows batch limitation, not a blocking concern.
-
-3. **Double-replacement risk in sed**: The sed command on line 63 of install.sh replaces `plugins/harness/` globally. If REL_PATH itself contains `plugins/harness/` (which it does in the standard case: `plugins/harness`), a second run could produce triple-prefixed paths. However, each run regenerates from the source file, not the output, so idempotency is maintained. Not blocking.
-
-## Decision
-
-**ACCEPT**
-
-The proposal is well-structured with clear deliverables, testable contract checks, and appropriate risk identification. The implementation aligns with the proposal on all required contract checks. The non-blocking issues noted above are minor and do not affect the core path-correction functionality. The grouping waiver is justified by shared edit surfaces and low individual complexity.
-
-The sprint is ready for implementation evaluation.
+The proposal is well-structured, covers all feature steps from features.json, has verifiable contract checks, and is appropriately scoped. No changes requested.

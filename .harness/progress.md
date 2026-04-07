@@ -5,16 +5,15 @@
 - Status: active
 
 ## Current target
-- Sprint 1: F-033 + F-034 + F-035 + F-036
+- Sprint 1: F-037 + F-038 + F-039
 
 ## Baseline
-- install.sh exists but copies .codex-plugin/plugin.json verbatim (wrong paths when cloned as subdirectory)
-- install.bat same issue
-- .github/copilot-instructions.md references plugins/harness/... paths (wrong from project root)
-- CLAUDE.md lacks YAML frontmatter quoting rule
+- start.md: no user review step between planner and initializer
+- session.md: contract shown after evaluator review, no modify option before
+- CLAUDE.md: no documentation of interactive review points
 
 ## Next step
-- Coordinator to increment round to 1 and begin sprint
+- Coordinator to increment round and begin sprint
 
 ## Last commit
-- 2026-04-07T10:48:10.738Z
+- 2026-04-07T11:40:34.671Z

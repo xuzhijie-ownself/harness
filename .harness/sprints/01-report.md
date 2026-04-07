@@ -3,34 +3,41 @@
 ## Metadata
 - Role: generator
 - Agent: generator-1
-- Inputs: 01-proposal.md, install.sh, install.bat, CLAUDE.md
+- Inputs: 01-proposal.md, start.md, session.md, CLAUDE.md
 - Status: completed
 
 ## Target feature IDs
-- F-033, F-034, F-035, F-036
+- F-037, F-038, F-039
 
 ## Implemented
 
-- **install.sh**: Rewrote to compute REL_PATH via `python3 os.path.relpath`, generate `.codex-plugin/plugin.json` with corrected skills paths via heredoc, generate `.github/copilot-instructions.md` via sed path rewrite. Uses `pwd` as project root.
-- **install.bat**: Same logic using `node path.relative()` for REL_PATH, `node` one-liners for JSON generation and copilot-instructions replacement. Uses `%CD%` as project root.
-- **CLAUDE.md**: Added YAML frontmatter quoting rule after the naming conventions enum table.
+### start.md (F-037)
+- Added "Spec Review (Interactive)" section between steps 4 and 7
+- New steps 5-6: show spec, approve/modify/start-over loop
+- Removed old step 7 (show execution strategy) — redundant
+- Renumbered: planner=4, review=5-6, initializer=7, init.sh=8, print=9
 
-## Commands run
-- `bash install.sh` — verified output paths are correct
-- Verified `.codex-plugin/plugin.json` is valid JSON with corrected skills paths
-- Verified `.github/copilot-instructions.md` has rewritten file references
+### session.md (F-038)
+- Added "Contract Review (Interactive)" section between steps 6 and 9
+- New steps 7-8: show proposal, approve/modify/re-propose loop
+- Evaluator review moved to step 9-10 (was 7-8)
+- Implementation moved to step 11 (was 9)
+- Evaluation moved to step 12-15 (was 10-13)
+- Sprint Resume table updated: contract=6, implementation=11, evaluation=12
+
+### CLAUDE.md (F-039)
+- Added "Interactive Review Points" section before "Scripts Architecture"
+- Documents both loops with rationale (plan mode contamination avoidance)
+- 9 lines total
 
 ## Self-check
-- REL_PATH computation works for arbitrary clone locations
-- Fallback to `plugins/harness` if python3 not available
-- Version read from source manifest, not hardcoded
-- Uninstall path still works (removes generated files)
+- Step numbering verified: no gaps, no duplicates
+- Sprint Resume table matches new step numbers
+- No changes to scripts, schemas, role files, or agent definitions
+- Existing evaluator contract review preserved (step 9-10)
 
 ## Authenticity self-check
-- **Internal consistency**: Both scripts use the same pattern (compute REL_PATH → generate files)
-- **Intentionality**: REL_PATH is project-specific, not a hardcoded default
-- **Craft**: install.sh uses POSIX-portable sed + python3; install.bat uses node (already a dependency)
-- **Fitness for purpose**: Users can clone to any location and paths resolve correctly
-
-## Suggested feature updates
-- F-033, F-034, F-035, F-036 should all pass — implementation matches proposal
+- **Internal consistency**: Both review loops use identical pattern (show → ask → loop)
+- **Intentionality**: Specific to harness's plan mode contamination problem
+- **Craft**: Clean markdown formatting, consistent step numbering
+- **Fitness for purpose**: Users can now shape plans without leaving harness flow

@@ -3,9 +3,9 @@
   "updated_by": "evaluator-1",
   "features": [
     {
-      "id": "F-033",
-      "title": "Fix install.sh to generate .codex-plugin/plugin.json with correct paths",
-      "category": "fix",
+      "id": "F-037",
+      "title": "Interactive spec review in /harness:start",
+      "category": "functional",
       "required": true,
       "priority": "high",
       "status": "done",
@@ -14,66 +14,53 @@
       "maturity": "reviewed",
       "source_requirement": "spec.md",
       "steps": [
-        "install.sh calculates relative path from project root to cloned repo",
-        "install.sh generates .codex-plugin/plugin.json with corrected skills paths",
-        "Generated paths resolve to actual skills directories on disk",
-        "Generated plugin.json is valid JSON"
+        "start.md has a review loop between planner output and initializer spawn",
+        "Review loop shows spec content (overview, shipped scope, execution strategy, security context)",
+        "Review loop presents approve/modify/start-over options",
+        "Modify re-invokes planner with user feedback",
+        "Only after approval does initializer spawn",
+        "Step numbering is consistent after insertion"
       ],
       "evidence": [],
       "notes": ""
     },
     {
-      "id": "F-034",
-      "title": "Fix install.bat to generate .codex-plugin/plugin.json with correct paths",
-      "category": "fix",
+      "id": "F-038",
+      "title": "Interactive contract review in /harness:session",
+      "category": "functional",
       "required": true,
       "priority": "high",
       "status": "done",
       "passes": true,
-      "depends_on": ["F-033"],
+      "depends_on": [],
       "maturity": "reviewed",
       "source_requirement": "spec.md",
       "steps": [
-        "install.bat calculates relative path from project root to cloned repo",
-        "install.bat generates .codex-plugin/plugin.json with corrected skills paths",
-        "Generated paths resolve to actual skills directories on disk"
+        "session.md has a review loop between generator proposal and evaluator review",
+        "Review loop shows proposal content (goal, deliverables, contract checks)",
+        "Review loop presents approve/modify/re-propose options",
+        "Modify re-invokes generator with user feedback",
+        "Only after approval does evaluator review proceed",
+        "Sprint Resume table step numbers updated",
+        "Existing evaluator contract review step preserved"
       ],
       "evidence": [],
       "notes": ""
     },
     {
-      "id": "F-035",
-      "title": "Fix install scripts to generate copilot-instructions.md with correct paths",
-      "category": "fix",
-      "required": true,
-      "priority": "high",
-      "status": "done",
-      "passes": true,
-      "depends_on": ["F-033", "F-034"],
-      "maturity": "reviewed",
-      "source_requirement": "spec.md",
-      "steps": [
-        "install.sh generates .github/copilot-instructions.md with corrected file references",
-        "install.bat generates .github/copilot-instructions.md with corrected file references",
-        "All file references in generated copilot-instructions.md resolve to actual files on disk"
-      ],
-      "evidence": [],
-      "notes": ""
-    },
-    {
-      "id": "F-036",
-      "title": "Add YAML frontmatter quoting rule to CLAUDE.md",
+      "id": "F-039",
+      "title": "Document interactive review points in CLAUDE.md",
       "category": "docs",
       "required": true,
       "priority": "low",
       "status": "done",
       "passes": true,
-      "depends_on": [],
+      "depends_on": ["F-037", "F-038"],
       "maturity": "reviewed",
       "source_requirement": "spec.md",
       "steps": [
-        "CLAUDE.md contains a rule that YAML frontmatter descriptions must be quoted",
-        "Rule explains why (strict parser compatibility)"
+        "CLAUDE.md has Interactive Review Points section",
+        "Section documents both review loops with rationale"
       ],
       "evidence": [],
       "notes": ""

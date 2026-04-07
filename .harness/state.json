@@ -4,7 +4,11 @@
   "variant": "variant-a-sprinted",
   "current_round": 1,
   "last_completed_round": 0,
-  "active_feature_ids": [],
+  "active_feature_ids": [
+    "F-037",
+    "F-038",
+    "F-039"
+  ],
   "expected_sprint_count": 1,
   "current_failure_streak": 0,
   "last_feature_pass_delta": 0,
@@ -20,22 +24,22 @@
     "rounds": [
       {
         "round": 1,
-        "started_at": "2026-04-07T18:00:00Z",
-        "completed_at": "2026-04-07T10:47:27.035Z",
-        "feature_id": "F-033,F-034,F-035,F-036",
+        "started_at": "2026-04-07T10:57:08Z",
+        "completed_at": "2026-04-07T11:40:34.569Z",
+        "feature_id": "F-037,F-038,F-039",
         "outcome": "pass",
         "phases": {
           "contract": {
-            "started_at": "2026-04-07T10:47:27.035Z",
-            "completed_at": "2026-04-07T10:47:27.035Z"
+            "started_at": "2026-04-07T11:40:34.569Z",
+            "completed_at": "2026-04-07T11:40:34.569Z"
           },
           "implementation": {
-            "started_at": "2026-04-07T10:47:27.035Z",
-            "completed_at": "2026-04-07T10:47:27.035Z"
+            "started_at": "2026-04-07T11:40:34.569Z",
+            "completed_at": "2026-04-07T11:40:34.569Z"
           },
           "evaluation": {
-            "started_at": "2026-04-07T10:47:27.035Z",
-            "completed_at": "2026-04-07T10:47:27.035Z"
+            "started_at": "2026-04-07T11:40:34.569Z",
+            "completed_at": "2026-04-07T11:40:34.569Z"
           }
         }
       }

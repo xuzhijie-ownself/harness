@@ -82,6 +82,16 @@ When adding new enums: use `snake_case`, keep values to the minimum needed, docu
 
 **YAML frontmatter rule**: All `description` fields in agent and command `.md` files MUST be quoted strings (e.g., `description: "text here"`). Unquoted multi-line descriptions cause "nested mappings" parse errors on strict YAML parsers (Copilot CLI, some Windows runtimes).
 
+## Interactive Review Points
+
+The harness has two user interaction loops where the user reviews and can modify artifacts before downstream agents consume them:
+
+1. **Spec Review** (`/harness:start` step 5-6): After the planner writes spec.md, the user sees it and can approve, modify, or start over. The initializer only runs after explicit approval.
+
+2. **Contract Review** (`/harness:session` step 7-8): After the generator writes NN-proposal.md, the user sees it and can approve, modify, or re-propose. The evaluator only reviews after explicit approval.
+
+Both loops are conversational — no external `/plan` command needed. This avoids plan mode contamination where agents write to `.claude/plans/` instead of `.harness/sprints/`.
+
 ## Scripts Architecture
 
 ```

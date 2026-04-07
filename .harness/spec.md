@@ -3,106 +3,101 @@
 ## Metadata
 - Role: planner
 - Agent: planner-1
-- Inputs: user prompt, install.sh, install.bat, .codex-plugin/plugin.json, .github/copilot-instructions.md, .claude-plugin/marketplace.json, CLAUDE.md, README.md, release.json
+- Inputs: user prompt, CLAUDE.md, plugins/harness/commands/start.md, plugins/harness/commands/session.md, plugins/harness/skills/harness/roles/planner.md, plugins/harness/skills/harness/roles/generator.md, plugins/harness/skills/harness/references/patterns.md
 - Status: accepted
 
 ## Overview
 
-Harness v2.2.8 is a targeted fix release for the install path problem that affects Codex CLI and Copilot CLI users. When a user clones the harness repo into a project via the documented command (`git clone ... plugins/harness`), the repo lands at `project_root/plugins/harness/`. Inside that repo, skills live under `plugins/harness/skills/` and `plugins/harness-sdlc-suite/skills/`. The install scripts (`install.sh` and `install.bat`) currently do a raw file copy of `.codex-plugin/plugin.json` and `.github/copilot-instructions.md` to the project root -- but the paths inside those files are relative to the repo root, not the project root. This means Codex CLI cannot find skills and Copilot CLI gets broken file references.
+Harness v2.3.0 adds interactive review loops to the two main entry-point commands (`/harness:start` and `/harness:session`) so the user can shape plan and contract content before downstream agents consume it. Today the flow is fully automated: planner writes spec.md and the initializer immediately scaffolds from it; generator writes a proposal and the evaluator immediately reviews it. Users who want to iterate on plan content resort to external `/plan` commands from other plugins, which activate "plan mode" and contaminate harness agent spawns (agents write to `.claude/plans/` instead of `.harness/sprints/`).
 
-The fix: instead of copying static files, the install scripts must generate the output files with path-corrected content. Additionally, this release adds a YAML quoting rule to CLAUDE.md for strict parser compatibility.
-
-This is a non-breaking patch release. No behavioral changes to the harness core, no schema changes, no new subcommands.
+The fix: embed review-modify-approve loops directly in the harness commands. The user sees the artifact, can request changes, and only after explicit approval does the flow advance. This keeps all interaction inside the harness context with no plan-mode side effects.
 
 ## Domain Profile
 - Primary: software
 - Secondary: (none)
 - Criteria: product_depth, functionality, visual_design, code_quality
-- Artifact types: Shell scripts, batch scripts, JSON config, Markdown
-- Stakeholder lens: Codex CLI users, Copilot CLI users, harness maintainers
+- Artifact types: Markdown command files, CLAUDE.md documentation
+- Stakeholder lens: Harness users (developers running /start and /session), harness maintainers
 
-Note: "visual_design" maps to script readability and output clarity for this infrastructure cycle.
+Note: "visual_design" maps to command file clarity, formatting consistency, and user-facing message quality for this infrastructure cycle.
 
 ## Design direction
 
-Surgical. Each install script gains path-calculation logic and generates output files with corrected paths instead of blindly copying them. The source files inside the repo remain unchanged (they still work correctly when the repo IS the project root, as with Claude Code marketplace install). The install scripts become the translation layer.
+Minimal insertion. Each command file gains a review loop between the artifact-write step and the next-agent-spawn step. No new files, no new scripts, no new subcommands. The loop is expressed as numbered steps in the command markdown -- the orchestrating agent (Claude Code) follows them conversationally. CLAUDE.md gets a new section documenting the interaction points.
 
 ## Shipped scope
 
-### Sprint 1 -- Install path fixes and YAML rule
+### Sprint 1 -- Interactive review loops and documentation
 
-**F-033: Fix install.sh to generate .codex-plugin/plugin.json with correct paths**
-- Calculate the relative path from PROJECT_ROOT to PLUGIN_DIR (the cloned repo root)
-- Instead of `cp`, generate `plugin.json` at `$PROJECT_ROOT/.codex-plugin/plugin.json` with skills paths rewritten
-- Source `plugin.json` has `"./plugins/harness/skills/"` and `"./plugins/harness-sdlc-suite/skills/"`
-- Generated output must prepend the relative path: if repo is at `plugins/harness/`, skills become `"./plugins/harness/plugins/harness/skills/"` and `"./plugins/harness/plugins/harness-sdlc-suite/skills/"`
-- Use POSIX-portable path math (no `realpath --relative-to` which is GNU-only)
-- Preserve all other fields from the source plugin.json (name, version, description, interface, etc.)
-- Verify the generated file is valid JSON
+**F-037: Interactive spec review in /harness:start**
+- Add a review loop between planner output (step 4) and initializer spawn (step 5) in `plugins/harness/commands/start.md`
+- After planner writes spec.md, show its content to the user (at minimum: overview, shipped scope, execution strategy, security context)
+- Present three options: "Approve spec / Modify / Start over"
+  - Approve: proceed to initializer spawn (current step 5)
+  - Modify: user describes changes, planner rewrites spec.md, show again
+  - Start over: planner re-generates from scratch using original user goal, show again
+- The loop repeats until the user approves
+- Only after approval: spawn initializer
+- Remove or adjust step 7 ("Show the Execution strategy from spec.md for user confirmation") since it is now redundant -- the user already approved the full spec
 
-**F-034: Fix install.bat to generate .codex-plugin/plugin.json with correct paths (Windows)**
-- Same logic as F-033 but in Windows batch
-- Calculate relative path from PROJECT_ROOT to PLUGIN_DIR using batch string operations
-- Generate plugin.json with rewritten skills paths
-- Use forward slashes in JSON output (JSON standard, works on Windows too)
+**F-038: Interactive contract review in /harness:session**
+- Add a review loop between generator proposal (step 6) and evaluator contract review (step 7) in `plugins/harness/commands/session.md`
+- After generator writes NN-proposal.md, show its content to the user (at minimum: goal, deliverables, verification, contract checks)
+- Present three options: "Approve contract / Modify / Re-propose"
+  - Approve: proceed to evaluator contract review (current step 7)
+  - Modify: user describes changes, generator rewrites NN-proposal.md, show again
+  - Re-propose: generator writes a fresh proposal for the same feature, show again
+- The loop repeats until the user approves
+- Only after approval: spawn evaluator for contract review
+- The existing evaluator review step (step 7) remains -- the evaluator still does its independent review after the user approves. The user shapes scope; the evaluator validates technical soundness.
 
-**F-035: Fix install.sh/bat to generate .github/copilot-instructions.md with correct file references**
-- Source `copilot-instructions.md` references paths like `plugins/harness/skills/harness/SKILL.md`
-- These paths assume repo root = project root
-- Install scripts must rewrite these paths by prepending the relative path from project root to repo root
-- For install.sh: use `sed` to replace `plugins/harness/` with `${REL_PATH}/plugins/harness/` and `plugins/harness-sdlc-suite/` with `${REL_PATH}/plugins/harness-sdlc-suite/`
-- For install.bat: use equivalent string replacement
-- Also rewrite the `node plugins/harness/scripts/` command reference
-
-**F-036: Add YAML frontmatter quoting rule to CLAUDE.md**
-- Add a rule to the "Naming Conventions" or "Design Principles" section of CLAUDE.md
-- Rule: all YAML `description` values MUST be quoted strings (single or double) for strict parser compatibility
-- This prevents breakage when descriptions contain colons, brackets, or other YAML-special characters
+**F-039: Update CLAUDE.md with interactive planning documentation**
+- Add an "Interactive Review Points" section to CLAUDE.md
+- Document both review loops: where they occur in the flow, what options the user has, and the rationale (avoiding plan-mode contamination)
+- Keep it concise -- 10-15 lines maximum
 
 ## User stories
 
-- As a Codex CLI user, I want `bash plugins/harness/install.sh` to produce a working `.codex-plugin/plugin.json` so that Codex discovers harness skills without manual path editing.
-- As a Copilot CLI user, I want `.github/copilot-instructions.md` to reference correct file paths so that Copilot can read the harness documentation.
-- As a Windows user, I want `install.bat` to produce the same correct output as `install.sh`.
-- As a harness maintainer, I want YAML descriptions to always be quoted so that strict parsers do not choke on special characters.
+- As a harness user, I want to review and modify spec.md before the initializer scaffolds from it, so I can shape the plan without leaving the harness flow.
+- As a harness user, I want to review and modify a sprint proposal before the evaluator reviews it, so I can adjust scope before it becomes a binding contract.
+- As a harness user, I want to iterate on plans without activating "plan mode" from external plugins, so my harness agents write to the correct directories.
+- As a new harness user, I want CLAUDE.md to document the review points so I know they exist.
 
 ## Execution strategy
 - Variant: Variant A (sprinted, single generate-evaluate loop per round)
 - Mode: continuous
-- Expected sprint count: 1 (all four features share the same edit surfaces -- install.sh, install.bat, CLAUDE.md -- and are logically coupled)
-- Default target ordering: F-033 -> F-034 -> F-035 -> F-036 (path fix logic builds on itself; YAML rule is independent but trivial)
-- Multi-feature sprint policy: All four features are grouped in one sprint because F-033 and F-034 are the same logic in two languages, F-035 extends the same path calculation, and F-036 is a one-line documentation addition. Grouping waiver justified by shared edit surface and low individual complexity.
-- Simplification policy: If the sprint fails evaluation, fix in a second round rather than splitting features. Do not add a second sprint unless the evaluator identifies a fundamental design flaw.
+- Expected sprint count: 1 (all three features edit the same small surface area -- two command markdown files and CLAUDE.md -- and are logically coupled; F-039 documents what F-037 and F-038 create)
+- Default target ordering: F-037 -> F-038 -> F-039 (start.md first because it is the entry point; session.md second because it follows the same pattern; CLAUDE.md last because it documents the other two)
+- Multi-feature sprint policy: All three features grouped in one sprint. F-037 and F-038 are the same interaction pattern applied to two command files. F-039 documents the changes from F-037 and F-038. Grouping waiver justified by shared pattern, small edit surface, and documentation dependency.
+- Simplification policy: If the sprint fails evaluation, fix in a second round rather than splitting features. These are markdown-only changes with no code logic to debug.
 - Methodology: agile
 
 ## High-level technical design
 
-- **Path calculation (bash)**: Compute `REL_PATH` as the relative path from `$PROJECT_ROOT` to `$PLUGIN_DIR`. Use a POSIX-compatible approach: strip the common prefix and count `..` segments, or since install.sh already computes both absolute paths, derive the relative path by removing the PROJECT_ROOT prefix from PLUGIN_DIR. Since the documented install is always `plugins/harness/`, this will typically be `plugins/harness` -- but the script should not hardcode this.
-- **Path calculation (batch)**: Same logic using `%PLUGIN_DIR%` and `%PROJECT_ROOT%`. Use batch substring operations to strip the common prefix.
-- **JSON generation (bash)**: Read the source `plugin.json`, use `sed` to rewrite skills paths, write to destination. Alternatively, generate the JSON inline since the structure is known. Prefer reading from source so that future field additions propagate automatically.
-- **JSON generation (batch)**: Same approach using `findstr` / string replacement or inline generation.
-- **Copilot instructions rewrite**: Use `sed` (bash) or inline generation (batch) to replace path prefixes in the markdown file.
-- **CLAUDE.md update**: Add a bullet under an appropriate existing section.
+- **start.md changes**: Insert new steps between current step 4 (planner spawn) and step 5 (initializer spawn). The new steps form a loop: show spec.md content, present options, handle user choice. Renumber subsequent steps. Remove or fold step 7 (execution strategy confirmation) since it is subsumed by the new review.
+- **session.md changes**: Insert new steps between current step 6 (generator proposal) and step 7 (evaluator contract review). Same loop pattern: show proposal content, present options, handle user choice. Renumber subsequent steps.
+- **CLAUDE.md changes**: Add a new section after "Sprint Artifact Naming Convention" (or similar logical position) titled "Interactive Review Points". Document both loops with a brief rationale.
+- **No script changes**: The review loops are conversational -- the orchestrating agent reads the markdown instructions and interacts with the user. No new subcommands or script logic needed.
+- **No schema changes**: state.json, features.json, config.json are unchanged. No new sprint phases.
 
 ## Non-goals
 
-- Changing the Claude Code marketplace install flow (it does not use install.sh/bat)
-- Modifying the source `.codex-plugin/plugin.json` or `.github/copilot-instructions.md` inside the repo
-- Adding new skills, commands, or agents
-- Changing the harness core sprint loop
-- Supporting install locations other than subdirectories of project root (e.g., sibling directories or absolute paths outside the project tree)
-- Restructuring the repo's internal `plugins/` directory layout
+- Adding review loops to `/harness:run` (continuous mode runs without user interaction by design)
+- Adding review loops to the evaluator's contract review output (the evaluator review is a quality gate, not a user-facing proposal)
+- Creating new UI or tooling for the review interaction (it is conversational via the agent)
+- Changing the planner or generator role files (the roles already support being re-invoked; the command files orchestrate the loop)
+- Adding new harness-companion.mjs subcommands
+- Modifying state.json schema or sprint phase enum
 
 ## Definition of done
 
-1. Running `bash plugins/harness/install.sh` from project root produces a `.codex-plugin/plugin.json` whose skills paths resolve to actual directories on disk
-2. The generated `plugin.json` contains paths like `./plugins/harness/plugins/harness/skills/` (not `./plugins/harness/skills/`)
-3. Running `plugins\harness\install.bat` on Windows produces the same correct paths
-4. The generated `.github/copilot-instructions.md` references files at their correct project-root-relative locations
-5. All generated paths work regardless of the clone directory name (not hardcoded to `plugins/harness`)
-6. CLAUDE.md contains a YAML quoting rule for description fields
-7. The uninstall flag (`--uninstall`) still works correctly
-8. Source files inside the repo are unchanged (install scripts only modify output at project root)
+1. `plugins/harness/commands/start.md` contains a spec review loop between planner output and initializer spawn with approve/modify/start-over options
+2. `plugins/harness/commands/session.md` contains a contract review loop between generator proposal and evaluator review with approve/modify/re-propose options
+3. Both review loops clearly specify what content to show the user and what each option does
+4. Step numbering in both command files is consistent and correct after insertions
+5. CLAUDE.md contains an "Interactive Review Points" section documenting both loops
+6. No changes to scripts, schemas, role files, or agent definitions
+7. All existing steps in both command files are preserved (renumbered as needed) -- no behavioral regression
 
 ## Security Context
 - data_sensitivity: none
@@ -112,7 +107,6 @@ Surgical. Each install script gains path-calculation logic and generates output 
 
 ## Risks
 
-- **POSIX portability of path calculation**: macOS `realpath` differs from GNU `realpath`. Mitigation: use pure bash string manipulation instead of external commands.
-- **Batch string manipulation fragility**: Windows batch has limited string processing. Mitigation: since the documented clone target is always a subdirectory of project root, the relative path is simply the PLUGIN_DIR with PROJECT_ROOT prefix stripped.
-- **JSON generation without jq**: The install scripts must not introduce dependencies. Mitigation: use sed on the source file or generate JSON inline with echo statements.
-- **Future plugin.json field additions**: If install.sh generates JSON inline, new fields added to the source file will not propagate. Mitigation: prefer sed-based rewrite of the source file over inline generation.
+- **Step renumbering errors**: Inserting steps into existing numbered sequences risks off-by-one errors or broken cross-references. Mitigation: carefully audit all step references within each command file after renumbering.
+- **Sprint Resume table in session.md**: The resume table maps phases to step numbers. Inserting steps before the implementation phase changes the step numbers. Mitigation: update the resume table to reference the new step numbers.
+- **Ambiguous modify semantics**: "Modify" could mean the user edits the file directly or describes changes verbally. Mitigation: the command file should specify that the user describes changes and the planner/generator rewrites -- the user does not edit harness artifacts directly.

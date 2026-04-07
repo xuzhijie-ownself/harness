@@ -25,12 +25,24 @@ Run the **Command Pre-Flight Validation** from SKILL.md before proceeding. Note:
 3. Ask: "What domain? (software/enterprise_architecture/business_analysis/solution_architecture/ops/custom, default: software)" -- pass this to the planner for the Domain Profile section in spec.md.
 4. Spawn the `planner` agent:
    - Input: user goal + domain choice + any existing README context
-   - Output: `.harness/spec.md` (must include Execution strategy and Domain Profile sections)
-5. Spawn the `initializer` agent:
-   - Input: `.harness/spec.md`
+   - Output: `.harness/spec.md` (must include Execution strategy, Domain Profile, and Security Context sections)
+
+## Spec Review (Interactive)
+
+5. Show spec.md content to the user. At minimum display: Overview, Shipped Scope, Execution Strategy, Security Context.
+6. Ask the user:
+   - **Approve** -> proceed to step 7
+   - **Modify** -> user describes changes. Re-spawn the planner with the original goal + user feedback. Planner rewrites spec.md. Return to step 5.
+   - **Start over** -> re-spawn the planner from scratch with the original goal. Return to step 5.
+
+This loop repeats until the user approves. Do NOT proceed to the initializer without explicit approval.
+
+## Scaffold
+
+7. Spawn the `initializer` agent:
+   - Input: `.harness/spec.md` (approved by user)
    - Output: `.harness/features.json`, `.harness/progress.md`, `.harness/config.json`, `.harness/init.sh`, `.harness/init.bat`
-6. Run `bash .harness/init.sh` -- confirm baseline passes. STOP if it fails.
-7. Show the Execution strategy from `.harness/spec.md` for user confirmation.
-8. Print result based on declared execution mode:
+8. Run `bash .harness/init.sh` -- confirm baseline passes. STOP if it fails. If it fails because it checks for files that no longer exist (stale smoke test), regenerate init.sh and retry.
+9. Print result based on declared execution mode:
    - **supervised**: "Harness ready. Run /session to begin the first sprint."
    - **continuous**: "Harness ready. Run /run to start the coordinator loop."
