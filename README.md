@@ -5,7 +5,7 @@ development. Two-plugin architecture: a **domain-blind core** handles all
 orchestration, and **domain skill suites** provide profile-specific knowledge.
 
 **6 agents:** initializer, planner, generator, evaluator, coordinator, releaser.
-**Dual-runtime:** Works with both Claude Code and OpenAI Codex CLI.
+**Tri-runtime:** Works with Claude Code, OpenAI Codex CLI, and GitHub Copilot CLI.
 **Two plugins:** `harness` (core) + `harness-sdlc-suite` (software delivery domain skills).
 
 **Methodology:** PDCA (Plan-Do-Check-Act) + two innovations:
@@ -64,6 +64,7 @@ Uninstall: `bash plugins/harness/install.sh --uninstall`
 | `/harness:run` | Continuous coordinator-driven loop (unattended) |
 | `/harness:reset` | Checkpoint + handoff when context fills (Variant B) |
 | `/harness:release` | Version bump, changelog, and git tag |
+| `/harness:postmortem` | Generate postmortem report with integrity audit |
 
 ---
 

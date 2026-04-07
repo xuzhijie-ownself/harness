@@ -3,54 +3,78 @@
 ## Metadata
 - Role: evaluator
 - Agent: evaluator-1
-- Inputs: .harness/sprints/01-proposal.md, .harness/spec.md, .harness/features.json, plugins/harness/commands/start.md, plugins/harness/commands/session.md
-- Status: accepted
+- Inputs: 01-proposal.md, README.md, CLAUDE.md, features.json, spec.md, harness-companion.mjs --help
+- Status: in_review
 - Reviewed by: evaluator-1
-- Decision: accept
+- Decision: changes_requested
 
 ## Target feature IDs
-- F-040, F-041
+- F-043, F-044
 
-## Grouping Waiver Assessment
+## Grouping waiver
+Accepted. F-043 touches .md docs, F-044 touches .mjs scripts. No file overlap. Grouping is appropriate for audit-fix work.
 
-Accepted. F-041 (release) explicitly depends on F-040 (abandon guidance) per features.json. Both are trivially small -- F-040 is two single-line insertions and F-041 is a standard release cut. Grouping reduces overhead without hiding risk.
+## Verdict: CHANGES REQUESTED
 
-## Scope Verification
+The proposal contains one factual error in the claimed drift for F-043 and is otherwise sound. The error must be corrected before implementation proceeds.
 
-### F-040: Abandon guidance
+## F-043: README + CLAUDE.md alignment
 
-Verified insertion points against the actual files:
+### Claim 1 -- Commands table missing postmortem: CONFIRMED
+README.md lines 60-66 list 5 command rows (start, session, run, reset, release). There are 6 command files on disk (start.md, session.md, run.md, reset.md, release.md, postmortem.md). The postmortem row is genuinely missing. Fix is valid.
 
-- **start.md line 38**: The proposal targets the line "This loop repeats until the user approves. Do NOT proceed to the initializer without explicit approval." -- confirmed present. The proposed note ("If you stop mid-review, resume with `/harness:start` -- the planner will re-generate spec.md.") would follow this line.
+### Claim 2 -- README says "Dual-runtime" instead of "Tri-runtime": CONFIRMED
+README.md line 8 reads: `**Dual-runtime:** Works with both Claude Code and OpenAI Codex CLI.`
+CLAUDE.md line 122 reads: `## Tri-Runtime Support` and lists three runtimes (Claude Code, Codex CLI, Copilot CLI).
+The README line is stale. Fix is valid. Note: the text must also change from "Works with both Claude Code and OpenAI Codex CLI" to name all three runtimes.
 
-- **session.md line 81**: The proposal targets the line "This loop repeats until the user approves. Do NOT send to the evaluator without explicit user approval." -- confirmed present. The proposed note ("If you stop mid-review, the phase stays at `contract`. Resume with `/harness:session` to continue from step 6.") would follow this line.
+### Claim 3 -- Roles table missing releaser: REJECTED
+README.md line 79 already contains: `| releaser | /harness:release, coordinator | plugins/harness/skills/harness/roles/releaser.md |`
+The releaser row is present. The proposal incorrectly claims it is missing. This "fix" would be a no-op at best or could introduce a duplicate row.
 
-Step 6 reference in the session.md note is correct: the Sprint Resume table at session.md line 45 maps `contract` phase to "Resume at Contract Phase (step 6)".
+### Claim 4 -- CLAUDE.md needs no fixes: CONFIRMED
+CLAUDE.md already references tri-runtime (line 122), lists 9 subcommands (line 99), has current naming conventions table, current design principles, and current removed-features list. No drift found.
 
-### F-041: Release v2.2.8
+### Net for F-043
+Two genuine fixes needed (postmortem command row, dual-to-tri-runtime). One false claim (releaser row) that must be removed from the deliverables.
 
-Standard release checklist. Contract checks FN-03 through FN-05 cover the critical artifacts.
+## F-044: Script cleanup
 
-## Contract Checks Review
+### Claim -- Verification-only, no changes needed: PLAUSIBLE
+The proposal asserts all imports are used, no unused exports, 9 subcommands confirmed, no stale comments. The evaluator ran `node harness-companion.mjs --help` and confirmed 9 subcommands. The verification-only framing is acceptable, but the generator must still demonstrate the audit was performed (e.g., import listing, grep results) in the builder report. Accepting a verification-only pass with no evidence beyond prose would violate the evaluator role's "do not pass on prose confidence alone" rule.
 
-| Check | Required | Verifiable | Assessment |
-|-------|----------|------------|------------|
-| FN-01 | yes | yes | Grep start.md for the abandon note after the approval enforcement line. Clear pass/fail. |
-| FN-02 | yes | yes | Grep session.md for the abandon note after the approval enforcement line. Clear pass/fail. |
-| FN-03 | yes | yes | Read release.json for v2.2.8 entry. Clear pass/fail. |
-| FN-04 | yes | yes | Read all 4 manifests and check version field. Clear pass/fail. |
-| FN-05 | yes | yes | Run `git tag -l v2.2.8`. Clear pass/fail. |
+## Contract check review
 
-All checks are required, objectively verifiable, and have unambiguous pass/fail criteria.
+| Check | Assessment |
+|-------|-----------|
+| FN-01 (postmortem row) | Valid required check. Currently failing. |
+| FN-02 (tri-runtime) | Valid required check. Currently failing. |
+| FN-03 (releaser in roles table) | Invalid. The releaser row already exists at README.md line 79. Remove this check or rewrite it as a verification-only check that confirms the row is present. |
+| FN-04 (9 subcommands) | Valid required check. Currently passing (verified). |
+| FN-05 (zero stale references) | Valid required check. Must be demonstrated with grep output. |
 
-## Observations
+## Verification criteria review
 
-1. **Wording discrepancy between spec and proposal for start.md**: The spec says "If you stop mid-review, the phase stays at idle. Resume with /harness:start to continue." The proposal says "If you stop mid-review, resume with `/harness:start` -- the planner will re-generate spec.md." The proposal wording is more informative (tells the user what will happen on resume) and the spec wording is slightly misleading (/start does not use sprint phases). The proposal wording is an improvement -- this is acceptable.
+- V1 (6 command rows): Valid. Currently 5 rows, should become 6.
+- V2 (tri-runtime): Valid. Currently says "Dual-runtime".
+- V3 (6 roles rows including releaser): Invalid as a deliverable. Already 6 rows. Rewrite as "README roles table still has 6 rows including releaser" (verification, not a fix).
+- V4 (9 subcommands): Valid. Already passing.
+- V5 (zero stale references): Valid. Must be demonstrated.
 
-2. **No acceptance criteria section in proposal**: The proposal template calls for acceptance criteria mapped to domain profile criteria (product_depth, functionality, visual_design, code_quality). The proposal omits this section. This is non-blocking for a trivial patch but noted for completeness.
+## Required changes before acceptance
 
-3. **No risks section content**: The proposal template includes a Risks section. The proposal omits it. Non-blocking given the trivial scope.
+1. Remove the claim that the releaser row is missing from the roles table. Either delete FN-03 and V3, or rewrite them as verification-only checks (confirming existing state, not claiming a fix).
+2. Ensure the "Dual-runtime" fix also updates the descriptive text on the same line (currently says "Works with both Claude Code and OpenAI Codex CLI" which names only two runtimes).
+3. For F-044 verification-only pass: the builder report must include concrete evidence (import audit output, grep results for stale references), not just prose assertions.
 
-## Decision
+## Acceptance criteria alignment
 
-**ACCEPT**. The proposal is well-scoped, the insertion points are verified against the actual files, the contract checks are concrete and verifiable, and the grouping waiver is justified. The two non-blocking omissions (acceptance criteria section, risks section) do not affect the ability to evaluate the implementation.
+The domain profile is `software` with criteria mapped for maintenance:
+- product_depth (thoroughness of cleanup): Proposal scope is appropriate for a maintenance cycle.
+- functionality (correctness of fixes): Two of three claimed F-043 fixes are genuine. One is wrong.
+- visual_design (documentation clarity): Fixes improve doc accuracy. Acceptable scope.
+- code_quality (script hygiene): Verification-only approach is acceptable if evidence is provided.
+
+## Risks acknowledged
+- Low risk overall. This is a small, deterministic sprint.
+- The false releaser claim is a minor error, not a structural problem. Correcting the proposal and proceeding is the right path.

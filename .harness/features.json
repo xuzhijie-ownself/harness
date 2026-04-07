@@ -3,50 +3,66 @@
   "updated_by": "evaluator-1",
   "features": [
     {
-      "id": "F-040",
-      "title": "Add abandon guidance to review loops",
-      "category": "fix",
+      "id": "F-042",
+      "title": "Codex adversarial review + fix findings",
+      "category": "quality",
+      "required": true,
+      "priority": "medium",
+      "status": "pending",
+      "passes": false,
+      "depends_on": ["F-043", "F-044"],
+      "maturity": "draft",
+      "source_requirement": "spec.md",
+      "steps": [
+        "Codex adversarial review has been run",
+        "All BLOCKING/HIGH findings fixed or documented as acceptable",
+        "No regressions introduced by fixes"
+      ],
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "F-043",
+      "title": "README + CLAUDE.md alignment",
+      "category": "docs",
       "required": true,
       "priority": "high",
       "status": "done",
       "passes": true,
       "depends_on": [],
       "maturity": "reviewed",
-      "source_requirement": "postmortem finding",
+      "source_requirement": "spec.md",
       "steps": [
-        "start.md Spec Review section has abandon/resume note",
-        "session.md Contract Review section has abandon/resume note",
-        "No step renumbering needed (notes, not new steps)"
+        "README commands table matches actual command files on disk",
+        "README install section matches current install.sh/bat behavior",
+        "README architecture tree matches actual file structure",
+        "CLAUDE.md design principles are current",
+        "CLAUDE.md naming conventions table matches actual enums",
+        "CLAUDE.md scripts architecture matches actual subcommands"
       ],
-      "evidence": [
-        "FN-01 pass: start.md line 38 has abandon note",
-        "FN-02 pass: session.md line 81 has abandon note"
-      ],
-      "notes": "Passed evaluation round 1. All contract checks for F-040 pass."
+      "evidence": [],
+      "notes": ""
     },
     {
-      "id": "F-041",
-      "title": "Release v2.2.8",
-      "category": "release",
+      "id": "F-044",
+      "title": "Script cleanup",
+      "category": "quality",
       "required": true,
       "priority": "high",
       "status": "done",
       "passes": true,
-      "depends_on": ["F-040"],
+      "depends_on": [],
       "maturity": "reviewed",
-      "source_requirement": "postmortem recommendation",
+      "source_requirement": "spec.md",
       "steps": [
-        "release.json updated with v2.2.8 entry",
-        "CHANGELOG.md has v2.2.8 section",
-        "All manifests synced to v2.2.8",
-        "Git tag v2.2.8 created"
+        "No unused imports in any .mjs file",
+        "No unreachable code branches",
+        "No stale comments referencing removed features",
+        "All 9 subcommands respond without error",
+        "harness-companion.mjs --help lists exactly 9 subcommands"
       ],
-      "evidence": [
-        "FN-03 pass: release.json has v2.2.8 entry",
-        "FN-04 pass: all manifests at v2.2.8",
-        "FN-05 FAIL: git tag v2.2.8 does not exist"
-      ],
-      "notes": "Failed evaluation round 1. Missing git tag v2.2.8 (FN-05)."
+      "evidence": [],
+      "notes": ""
     }
   ]
 }
