@@ -55,10 +55,11 @@ Before creating a release, verify:
 ## Manifest Synchronization
 
 After updating release.json and creating git tag:
-1. Read `.claude-plugin/marketplace.json` -- update `plugins[0].version` to new version
+1. Read `.claude-plugin/marketplace.json` -- update ALL `plugins[].version` entries to new version
 2. Read `plugins/harness/.claude-plugin/plugin.json` -- update `version` to new version
-3. Read `.codex-plugin/plugin.json` -- update `version` to new version
-4. Commit manifest changes: `git add -A && git commit --amend --no-edit` (amend the release commit)
+3. Read `plugins/harness-sdlc-suite/.claude-plugin/plugin.json` -- update `version` to new version
+4. Read `.codex-plugin/plugin.json` -- update `version` to new version
+5. Commit manifest changes: `git add -A && git commit --amend --no-edit` (amend the release commit)
 
 ## README Sync
 
