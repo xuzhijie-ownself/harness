@@ -1,5 +1,5 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal
 
 :: Install Harness into Claude Code's auto-load directories.
 :: Run once from anywhere: install.bat
@@ -41,7 +41,7 @@ if "%~1"=="--uninstall" (
     echo   [OK] Removed SDLC suite skills
 
     echo.
-    echo [OK] Uninstalled. Hooks.json left intact (may contain other hooks).
+    echo [OK] Uninstalled. Hooks.json left intact ^(may contain other hooks^).
     goto :eof
 )
 
@@ -83,6 +83,10 @@ if exist "%SUITE_DIR%" (
         if exist "%SUITE_DIR%\%%s" (
             if not exist "%CLAUDE_DIR%\skills\%%s" mkdir "%CLAUDE_DIR%\skills\%%s"
             copy /Y "%SUITE_DIR%\%%s\*.md" "%CLAUDE_DIR%\skills\%%s\" > nul 2>nul
+            for /D %%d in ("%SUITE_DIR%\%%s\*") do (
+                if not exist "%CLAUDE_DIR%\skills\%%s\%%~nxd" mkdir "%CLAUDE_DIR%\skills\%%s\%%~nxd"
+                copy /Y "%%d\*.md" "%CLAUDE_DIR%\skills\%%s\%%~nxd\" > nul 2>nul
+            )
         )
     )
     echo   [OK] SDLC suite  -^> .claude\skills\ (6 domain skills^)

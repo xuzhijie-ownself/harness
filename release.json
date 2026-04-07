@@ -1,6 +1,15 @@
 {
-  "current_version": "2.2.6",
+  "current_version": "2.2.7",
   "releases": [
+    {
+      "version": "2.2.7",
+      "date": "2026-04-07",
+      "features_shipped": [],
+      "features_deferred": [],
+      "changelog": "Fixed install.bat CMD parse error: unescaped parentheses in echo inside if-block caused batch parser failure on all Windows runs. Removed unused enabledelayedexpansion. Added subdirectory copying for domain skills (parity with install.sh).",
+      "sprint_count": 0,
+      "previous_version": "2.2.6"
+    },
     {
       "version": "2.2.6",
       "date": "2026-04-07",
@@ -137,5 +146,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "2.2.7"
+  "next_version": "2.2.8"
 }

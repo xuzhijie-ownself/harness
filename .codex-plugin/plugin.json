@@ -1,6 +1,6 @@
 {
   "name": "harness",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "description": "Multi-agent sprint orchestration harness with two-plugin architecture: domain-blind core and pluggable domain skill suites.",
   "author": {
     "name": "xuzhijie-ownself",

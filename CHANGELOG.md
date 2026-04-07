@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.7] - 2026-04-07
+
+### Fixes
+- install.bat: escaped `(may contain other hooks)` parentheses in uninstall echo — unescaped `)` caused batch parser to prematurely close the `if` block, producing "`. was unexpected at this time.`" on every Windows run
+- install.bat: removed unused `setlocal enabledelayedexpansion` (latent bug for `!` in node one-liner)
+- install.bat: added subdirectory copying for domain skills (roles/, references/) — parity with install.sh
+
 ## [2.2.6] - 2026-04-07
 
 ### Fixes
