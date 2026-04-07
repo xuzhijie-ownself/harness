@@ -1,6 +1,15 @@
 {
-  "current_version": "2.2.8",
+  "current_version": "2.2.9",
   "releases": [
+    {
+      "version": "2.2.9",
+      "date": "2026-04-07",
+      "features_shipped": ["F-042", "F-043", "F-044"],
+      "features_deferred": [],
+      "changelog": "Codex adversarial review: fixed stale SDLC skill path in evaluator.md, scoped auto-commit to harness-owned paths only (no more git add -A), corrected README update flow, quoted all YAML frontmatter descriptions across 7 skill files. README alignment: added postmortem command, tri-runtime text. Scripts verified clean.",
+      "sprint_count": 2,
+      "previous_version": "2.2.8"
+    },
     {
       "version": "2.2.8",
       "date": "2026-04-07",
@@ -155,5 +164,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "2.2.9"
+  "next_version": "2.2.10"
 }

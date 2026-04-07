@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.2.9] - 2026-04-07
+
+### Codex Adversarial Review Fixes (F-042)
+- Fixed stale SDLC skill path in evaluator.md (`plugins/harness/skills/harness-sdlc/` → `plugins/harness-sdlc-suite/skills/harness-sdlc/`)
+- Scoped auto-commit to harness-owned paths only (`git add -A` → explicit path list) — prevents staging unrelated user files
+- Corrected README update flow: user must cd back to project root before running install.sh
+- Quoted all YAML frontmatter descriptions across core SKILL.md + 6 SDLC suite skills
+
+### Documentation Alignment (F-043)
+- README: added `/harness:postmortem` to commands table
+- README: changed "Dual-runtime" to "Tri-runtime" (Claude Code + Codex + Copilot)
+
+### Script Verification (F-044)
+- All 9 subcommands verified, no dead code, no unused imports
+
 ## [2.2.8] - 2026-04-07
 
 ### Features
