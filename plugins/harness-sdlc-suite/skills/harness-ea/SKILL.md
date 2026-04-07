@@ -1,6 +1,6 @@
 ---
 name: harness-ea
-description: Enterprise Architecture domain skill for the harness plugin. Provides architecture methodology selection (TOGAF 10, Zachman, FEAF, ArchiMate 3.2, SAFe, Lean EA), development methodology (ADR-First, Capability-First, Viewpoint-Driven, Gap Analysis, Reference Architecture), verification strategy, deliverable verification, evaluation criteria, and industry-specific reference architectures. Activated when domain_profile is "enterprise_architecture".
+description: "Enterprise Architecture domain skill for the harness plugin. Provides architecture methodology selection (TOGAF 10, Zachman, FEAF, ArchiMate 3.2, SAFe, Lean EA), development methodology (ADR-First, Capability-First, Viewpoint-Driven, Gap Analysis, Reference Architecture), verification strategy, deliverable verification, evaluation criteria, and industry-specific reference architectures. Activated when domain_profile is "enterprise_architecture"."
 ---
 
 # Enterprise Architecture Domain Skill

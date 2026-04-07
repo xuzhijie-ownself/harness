@@ -1,6 +1,6 @@
 ---
 name: harness-ba
-description: Business Analysis domain skill for the harness plugin. Provides BA methodology selection (Waterfall BA, Agile BA, Lean BA, Design Thinking BA, Six Sigma BA), development methodology (Requirements-First, User-Story-First, Process-First, Data-First, Stakeholder-First), verification strategy, deliverable verification, evaluation criteria (completeness, traceability, stakeholder_alignment, feasibility), and sprint contract checklist templates. Activated when domain_profile is "business_analysis".
+description: "Business Analysis domain skill for the harness plugin. Provides BA methodology selection (Waterfall BA, Agile BA, Lean BA, Design Thinking BA, Six Sigma BA), development methodology (Requirements-First, User-Story-First, Process-First, Data-First, Stakeholder-First), verification strategy, deliverable verification, evaluation criteria (completeness, traceability, stakeholder_alignment, feasibility), and sprint contract checklist templates. Activated when domain_profile is "business_analysis"."
 ---
 
 # Business Analysis Domain Skill

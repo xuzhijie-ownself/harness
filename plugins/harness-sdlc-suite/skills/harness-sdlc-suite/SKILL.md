@@ -1,6 +1,6 @@
 ---
 name: harness-sdlc-suite
-description: Software delivery lifecycle domain skill suite for the harness framework. Index skill that provides domain profile routing, delivery pipeline phases, and references to all SDLC domain skills. Activated when any SDLC suite domain profile is selected (software, architecture, business_analysis, solution_architecture, ops).
+description: "Software delivery lifecycle domain skill suite for the harness framework. Index skill that provides domain profile routing, delivery pipeline phases, and references to all SDLC domain skills. Activated when any SDLC suite domain profile is selected (software, architecture, business_analysis, solution_architecture, ops)."
 ---
 
 # Harness SDLC Suite

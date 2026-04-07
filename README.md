@@ -50,7 +50,7 @@ plugins\harness\install.bat
 - **Codex** auto-detects `.codex-plugin/plugin.json` — skills loaded via dual skill paths
 - **Copilot** auto-reads `.github/copilot-instructions.md` — skills referenced as markdown file paths
 
-Update: `cd plugins/harness && git pull && bash install.sh` (or `install.bat` on Windows)
+Update: `cd plugins/harness && git pull && cd ../.. && bash plugins/harness/install.sh` (run install from project root, not from inside the clone)
 Uninstall: `bash plugins/harness/install.sh --uninstall`
 
 ---

@@ -63,8 +63,11 @@ export function autoCommit({ featureId, title, round, status }) {
   const tag = config.commit_tag || '[harness]';
   const message = `${prefix}(${featureId}): ${title} -- sprint ${round} ${tag}`;
 
-  // Stage all changes using args array (no shell interpretation)
-  const addResult = spawnSync('git', ['add', '-A'], {
+  // Stage harness-owned paths only (not the entire working tree)
+  // This prevents accidentally committing unrelated user work or secrets
+  const harnessFiles = ['.harness/', 'plugins/', 'CLAUDE.md', 'README.md', 'CHANGELOG.md',
+    'release.json', '.claude-plugin/', '.codex-plugin/', '.github/', 'install.sh', 'install.bat'];
+  const addResult = spawnSync('git', ['add', '--', ...harnessFiles], {
     cwd: process.cwd(),
     stdio: 'pipe',
     encoding: 'utf8',

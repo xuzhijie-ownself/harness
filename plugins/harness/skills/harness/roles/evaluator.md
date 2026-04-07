@@ -10,7 +10,7 @@ Use this file only for the evaluator role.
 - `.harness/features.json`
 - `git diff HEAD~1 --name-only` (changed files)
 - evaluator calibration if it exists
-- `plugins/harness/skills/harness-sdlc/SKILL.md` (when domain_profile is "software") for runtime verification procedures
+- `plugins/harness-sdlc-suite/skills/harness-sdlc/SKILL.md` (when domain_profile is "software") for runtime verification procedures
 
 ## Write
 

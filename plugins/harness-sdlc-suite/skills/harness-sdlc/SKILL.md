@@ -1,6 +1,6 @@
 ---
 name: harness-sdlc
-description: Software Development Lifecycle domain skill for the harness plugin. Provides methodology selection, testing strategy, build/runtime verification, and evaluation criteria for software projects. Activated when domain_profile is "software".
+description: "Software Development Lifecycle domain skill for the harness plugin. Provides methodology selection, testing strategy, build/runtime verification, and evaluation criteria for software projects. Activated when domain_profile is "software"."
 ---
 
 # SDLC Domain Skill

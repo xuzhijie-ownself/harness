@@ -1,6 +1,6 @@
 ---
 name: harness-sa
-description: Solution Architecture domain skill for the harness plugin. Provides SA methodology selection (C4 Model, Arc42, 4+1 View, Domain-Driven Design, Microservices Patterns), development methodology (API-First, Component-First, Data-First, Event-First, Contract-First), verification strategy, deliverable verification, evaluation criteria (design_coherence, technical_depth, integration_clarity, implementability), and sprint contract checklist templates. Activated when domain_profile is "solution_architecture".
+description: "Solution Architecture domain skill for the harness plugin. Provides SA methodology selection (C4 Model, Arc42, 4+1 View, Domain-Driven Design, Microservices Patterns), development methodology (API-First, Component-First, Data-First, Event-First, Contract-First), verification strategy, deliverable verification, evaluation criteria (design_coherence, technical_depth, integration_clarity, implementability), and sprint contract checklist templates. Activated when domain_profile is "solution_architecture"."
 ---
 
 # Solution Architecture Domain Skill
