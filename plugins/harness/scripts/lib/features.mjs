@@ -217,7 +217,12 @@ export function checkStop() {
   const passing = required.filter((f) => f.passes);
   const allPass = passing.length === required.length;
 
-  const maxRetry = 3;
+  let maxRetry = 3;
+  try {
+    const configPath = join(process.cwd(), '.harness', 'config.json');
+    const config = JSON.parse(readFileSync(configPath, 'utf8'));
+    if (typeof config.max_retry_on_failure === 'number') maxRetry = config.max_retry_on_failure;
+  } catch { /* config missing or invalid — use default */ }
   const streakExceeded = state.current_failure_streak >= maxRetry;
 
   return {

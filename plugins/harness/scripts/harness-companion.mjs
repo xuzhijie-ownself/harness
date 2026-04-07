@@ -55,10 +55,7 @@ function out(obj) {
 
 class UserError extends Error { constructor(msg) { super(msg); this.name = 'UserError'; } }
 
-/**
- * Inline metrics summary -- aggregates data from state.json cost_tracking.
- * Inline metrics summary from state.json cost_tracking.
- */
+/** Aggregate metrics from state.json cost_tracking (used by postmortem-data only). */
 function summarizeMetricsInline(state) {
   const rounds = state.cost_tracking?.rounds || [];
   let total_duration_ms = 0;

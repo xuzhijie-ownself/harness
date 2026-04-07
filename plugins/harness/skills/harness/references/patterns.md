@@ -342,6 +342,12 @@ The `primary_scores` keys below are placeholders (`<criterion_1>` through `<crit
 
 ## Non-goals
 - Explicitly deferred work
+
+## Security Context
+- data_sensitivity: none
+- external_exposure: none
+- auth_model: none
+- compliance: none
 ```
 
 ### `NN-proposal.md`
@@ -548,24 +554,6 @@ if %ERRORLEVEL% EQU 0 (
   echo FAIL -- dev server did not respond on http://localhost:3000
   exit /b 1
 )
-```
-
-### `cost-log.md`
-
-```md
-# Cost Log
-
-## Metadata
-- Role: coordinator
-- Agent: coordinator-1
-- Inputs: state.json
-- Status: active
-
-| Round | Phase | Duration | Cost | Notes |
-|-------|-------|----------|------|-------|
-| 1 | planner | -- | -- | |
-| 1 | generator | -- | -- | |
-| 1 | evaluator | -- | -- | |
 ```
 
 ### `release.json` (project root)

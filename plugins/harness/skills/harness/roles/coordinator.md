@@ -19,41 +19,21 @@ Owns: .harness/state.json
 
 ## Script Calls for Mechanical Steps
 
-All mechanical state management uses `harness-companion.mjs` subcommands. Run from the project root:
+Use `node plugins/harness/scripts/harness-companion.mjs <subcommand>` for all state management. JSON to stdout, errors to stderr (exit 1 = user error, 2 = system error).
 
-```bash
-SCRIPT="node plugins/harness/scripts/harness-companion.mjs"
+| Subcommand | Required Flags | Phase Enum |
+|------------|---------------|------------|
+| `feature-select` | (none) | — |
+| `state-mutate` | `--increment-round` OR `--set-phase <idle\|contract\|implementation\|evaluation>` OR `--append-cost <json>` | idle, contract, implementation, evaluation |
+| `auto-commit` | `--feature <id> --title <text> --round <n> --status <pass\|fail>` | — |
+| `validate-artifacts` | `--round <n>` | — |
+| `progress-append` | `--round <n> --feature <id> --status <s>` OR `--timestamp-only` | — |
+| `check-stop` | (none) | — |
+| `cleanup-sprints` | `--before-round <n>` | — |
+| `finalize-round` | `--round <n>` (reads NN-eval.json for outcome; `--outcome pass\|fail` as fallback) | — |
+| `postmortem-data` | (none) | — |
 
-# Select next eligible feature
-$SCRIPT feature-select
-
-# Increment round counter
-$SCRIPT state-mutate --increment-round
-
-# Set sprint phase
-$SCRIPT state-mutate --set-phase <phase>
-# <phase>: idle | contract | implementation | evaluation
-
-# Auto-commit after evaluation
-$SCRIPT auto-commit --feature F-XXX --title "feature title" --round N --status pass
-
-# Validate sprint artifacts
-$SCRIPT validate-artifacts --round N
-
-# Append round summary to progress.md (hook-automated after evaluation commits; manual call only needed for non-standard flows)
-$SCRIPT progress-append --round N --feature F-XXX --status pass --scores '{"product_depth":4}'
-
-# Check stop conditions (all required pass? failure streak?)
-$SCRIPT check-stop
-
-# Clean up old sprint files
-$SCRIPT cleanup-sprints --before-round N
-
-# Finalize round -- fill empty cost_tracking timestamps and set outcome
-$SCRIPT finalize-round --round N
-```
-
-All subcommands emit JSON to stdout. Parse the JSON output to get structured results. Errors go to stderr with exit code 1 (user error) or 2 (system error).
+Note: `progress-append` is hook-automated after auto-commit. Manual call only needed for non-standard flows.
 
 ## Flow Diagram
 
@@ -220,21 +200,9 @@ node plugins/harness/scripts/harness-companion.mjs validate-artifacts --round NN
 ```
 If the result shows any missing artifacts, set `stop_reason` to `"missing required sprint artifacts for round NN"` and STOP.
 
-## Calibration Enforcement
+## Calibration & Retrospective
 
-Calibration file (`.harness/evaluator-calibration.md`) is required only when `expected_sprint_count > 3` in state.json. For runs with 3 or fewer sprints, calibration is optional -- the evaluator still scores with anchors conceptually but does not need to persist them to a separate file.
-
-When `expected_sprint_count > 3`: after round 1 evaluation, verify that `.harness/evaluator-calibration.md` exists. If missing, instruct the evaluator to create it before proceeding.
-
-Score drift detection applies regardless: check for score jumps >1 from the prior round on any criterion. If a jump >1 exists without a `drift_check` justification in `NN-eval.json`, flag it and request the evaluator to re-justify the score.
-
-## Sprint Retrospective
-
-After every `retro_interval` rounds (read from config.json, default 3) or after any FAIL evaluation:
-1. Append a `## Retrospective -- Rounds X-Y` section to `.harness/progress.md` (do not create separate retro-RX-RY.md files).
-2. Include: what worked, what didn't, adjustments for next rounds, patterns detected.
-
-Before starting each new round, read the latest retrospective section in progress.md (if any) and incorporate its adjustments into generator/evaluator dispatch instructions.
+See SKILL.md for calibration file requirements and score drift detection rules. See SKILL.md for sprint retrospective format and retro_interval guidance.
 
 ## Pause Rules
 
