@@ -1,162 +1,59 @@
 #!/usr/bin/env bash
-# Install Harness into Claude Code's auto-load directories.
-# Run once from anywhere: bash install.sh
+# Install Harness for Codex CLI and Copilot CLI.
+# Claude Code users: use marketplace instead (claude plugin install harness@harness)
 #
-# Options:
-#   --uninstall   Remove all harness files from .claude/
+# Usage:
+#   bash plugins/harness/install.sh              # install
+#   bash plugins/harness/install.sh --uninstall  # remove
+#
+# What this does:
+#   Copies runtime manifests from the cloned repo to the project root
+#   so Codex CLI and Copilot CLI can auto-detect them.
 
 set -e
 
 PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$PLUGIN_DIR/../.." && pwd)"
-CLAUDE_DIR="$PROJECT_ROOT/.claude"
-
-# Domain skill names from harness-sdlc-suite
-SUITE_SKILLS=(harness-sdlc-suite harness-sdlc harness-ea harness-ba harness-sa harness-ops)
 
 # ── Uninstall ────────────────────────────────────────────────────────
 if [ "${1:-}" = "--uninstall" ]; then
-  echo "Harness -- Uninstall"
+  echo "Harness -- Uninstall (Codex/Copilot)"
   echo "  Project: $PROJECT_ROOT"
   echo ""
 
-  # Commands
-  for cmd in start run session reset release postmortem; do
-    rm -f "$CLAUDE_DIR/commands/${cmd}.md" 2>/dev/null || true
-  done
-  echo "  [OK] Removed commands"
+  rm -rf "$PROJECT_ROOT/.codex-plugin" 2>/dev/null || true
+  echo "  [OK] Removed .codex-plugin/"
 
-  # Agents
-  for agent in coordinator evaluator generator initializer planner releaser; do
-    rm -f "$CLAUDE_DIR/agents/${agent}.md" 2>/dev/null || true
-  done
-  echo "  [OK] Removed agents"
+  rm -f "$PROJECT_ROOT/.github/copilot-instructions.md" 2>/dev/null || true
+  echo "  [OK] Removed .github/copilot-instructions.md"
 
-  # Core skill directory
-  rm -rf "$CLAUDE_DIR/skills/harness"
-  echo "  [OK] Removed skills/harness/"
-
-  # Domain skill directories from harness-sdlc-suite
-  for skill in "${SUITE_SKILLS[@]}"; do
-    rm -rf "$CLAUDE_DIR/skills/$skill"
-  done
-  echo "  [OK] Removed SDLC suite skills (${SUITE_SKILLS[*]})"
-
-  # Note: hooks.json is NOT removed -- it may contain non-harness hooks.
   echo ""
-  echo "[OK] Uninstalled. Hooks.json left intact (may contain other hooks)."
+  echo "[OK] Uninstalled. The plugins/harness/ directory is unchanged."
+  echo "     To fully remove: rm -rf plugins/harness"
   exit 0
 fi
 
 # ── Install ──────────────────────────────────────────────────────────
-echo "Harness -- Local Install"
-echo "  Plugin : $PLUGIN_DIR"
+echo "Harness -- Install for Codex CLI / Copilot CLI"
+echo "  Source : $PLUGIN_DIR"
 echo "  Project: $PROJECT_ROOT"
 echo ""
 
-# Clean up renamed/removed files from previous versions
-rm -f "$CLAUDE_DIR/commands/init.md" 2>/dev/null || true
-rm -f "$CLAUDE_DIR/scripts/lib/events.mjs" 2>/dev/null || true
-rm -f "$CLAUDE_DIR/scripts/lib/metrics.mjs" 2>/dev/null || true
+# Codex CLI manifest
+mkdir -p "$PROJECT_ROOT/.codex-plugin"
+cp "$PLUGIN_DIR/.codex-plugin/plugin.json" "$PROJECT_ROOT/.codex-plugin/plugin.json"
+echo "  [OK] Codex    -> .codex-plugin/plugin.json"
 
-# Create target directories for core skill
-mkdir -p "$CLAUDE_DIR/commands" \
-         "$CLAUDE_DIR/agents" \
-         "$CLAUDE_DIR/skills/harness" \
-         "$CLAUDE_DIR/skills/harness/roles" \
-         "$CLAUDE_DIR/skills/harness/references"
-
-# Commands -- simple filenames (init.md, run.md, etc.)
-for f in "$PLUGIN_DIR/plugins/harness/commands/"*.md; do
-  [ -f "$f" ] || continue
-  cp "$f" "$CLAUDE_DIR/commands/"
-done
-echo "  [OK] Commands    -> .claude/commands/"
-
-# Agents
-cp "$PLUGIN_DIR/plugins/harness/agents/"*.md "$CLAUDE_DIR/agents/"
-echo "  [OK] Agents      -> .claude/agents/"
-
-# Core skill -- SKILL.md
-cp "$PLUGIN_DIR/plugins/harness/skills/harness/SKILL.md" \
-   "$CLAUDE_DIR/skills/harness/SKILL.md"
-
-# Roles
-cp "$PLUGIN_DIR/plugins/harness/skills/harness/roles/"*.md \
-   "$CLAUDE_DIR/skills/harness/roles/"
-
-# References
-cp "$PLUGIN_DIR/plugins/harness/skills/harness/references/"*.md \
-   "$CLAUDE_DIR/skills/harness/references/"
-echo "  [OK] Core skill  -> .claude/skills/harness/ (+ roles/ + references/)"
-
-# Domain skills from harness-sdlc-suite
-SUITE_DIR="$PLUGIN_DIR/plugins/harness-sdlc-suite/skills"
-if [ -d "$SUITE_DIR" ]; then
-  for skill in "${SUITE_SKILLS[@]}"; do
-    skill_src="$SUITE_DIR/$skill"
-    if [ -d "$skill_src" ]; then
-      mkdir -p "$CLAUDE_DIR/skills/$skill"
-      cp "$skill_src/"*.md "$CLAUDE_DIR/skills/$skill/" 2>/dev/null || true
-      # Copy subdirectories if they exist (e.g., roles/, references/)
-      for subdir in "$skill_src"/*/; do
-        if [ -d "$subdir" ]; then
-          subname="$(basename "$subdir")"
-          mkdir -p "$CLAUDE_DIR/skills/$skill/$subname"
-          cp "$subdir"*.md "$CLAUDE_DIR/skills/$skill/$subname/" 2>/dev/null || true
-        fi
-      done
-    fi
-  done
-  echo "  [OK] SDLC suite  -> .claude/skills/ (${SUITE_SKILLS[*]})"
-else
-  echo "  [--] SDLC suite not found at $SUITE_DIR (skipped)"
-fi
-
-# Hooks -- merge if .claude/hooks.json already exists, otherwise copy
-HOOKS_SRC="$PLUGIN_DIR/plugins/harness/hooks/hooks.json"
-HOOKS_DST="$CLAUDE_DIR/hooks.json"
-
-if [ -f "$HOOKS_DST" ]; then
-  node -e "
-    const fs = require('fs'), path = require('path');
-    const srcPath = path.resolve(process.argv[1]);
-    const dstPath = path.resolve(process.argv[2]);
-    const src = JSON.parse(fs.readFileSync(srcPath, 'utf8'));
-    const dst = JSON.parse(fs.readFileSync(dstPath, 'utf8'));
-    const existing = new Set((dst.hooks || []).map(h => h.command));
-    const merged = { hooks: [...(dst.hooks || []), ...src.hooks.filter(h => !existing.has(h.command))] };
-    fs.writeFileSync(dstPath, JSON.stringify(merged, null, 2));
-  " "$HOOKS_SRC" "$HOOKS_DST"
-  echo "  [OK] Hooks       -> merged into existing .claude/hooks.json"
-else
-  cp "$HOOKS_SRC" "$HOOKS_DST"
-  echo "  [OK] Hooks       -> .claude/hooks.json"
-fi
-
-# ── Copilot CLI support ─────────────────────────────────────────────
-COPILOT_DIR="$PROJECT_ROOT/.github"
-COPILOT_SRC="$PLUGIN_DIR/.github/copilot-instructions.md"
-if [ -f "$COPILOT_SRC" ]; then
-  mkdir -p "$COPILOT_DIR"
-  cp "$COPILOT_SRC" "$COPILOT_DIR/copilot-instructions.md"
-  echo "  [OK] Copilot     -> .github/copilot-instructions.md"
-fi
-
-# ── Scripts (harness-companion.mjs + lib/) ──────────────────────────
-SCRIPTS_SRC="$PLUGIN_DIR/plugins/harness/scripts"
-SCRIPTS_DST="$CLAUDE_DIR/scripts"
-if [ -f "$SCRIPTS_SRC/harness-companion.mjs" ]; then
-  mkdir -p "$SCRIPTS_DST/lib"
-  cp "$SCRIPTS_SRC/harness-companion.mjs" "$SCRIPTS_DST/"
-  cp "$SCRIPTS_SRC/lib/"*.mjs "$SCRIPTS_DST/lib/"
-  echo "  [OK] Scripts     -> .claude/scripts/ (harness-companion.mjs + lib/)"
-fi
+# Copilot CLI instructions
+mkdir -p "$PROJECT_ROOT/.github"
+cp "$PLUGIN_DIR/.github/copilot-instructions.md" "$PROJECT_ROOT/.github/copilot-instructions.md"
+echo "  [OK] Copilot  -> .github/copilot-instructions.md"
 
 echo ""
-echo "[OK] Installed. Available immediately -- no restart needed."
+echo "[OK] Installed."
 echo ""
-echo "  Runtimes supported:"
-echo "    Claude Code  /harness:start, /harness:session, /harness:run"
-echo "    Codex CLI    auto-detected via .codex-plugin/plugin.json"
-echo "    Copilot CLI  auto-detected via .github/copilot-instructions.md"
+echo "  Codex CLI:   codex   (auto-detects .codex-plugin/plugin.json)"
+echo "  Copilot CLI: copilot (auto-reads .github/copilot-instructions.md)"
+echo ""
+echo "  Claude Code users: use marketplace instead"
+echo "    claude plugin install harness@harness"

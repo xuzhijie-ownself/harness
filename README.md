@@ -34,7 +34,7 @@ Uninstall: `claude plugin uninstall harness`
 
 ### Codex CLI / Copilot CLI (Local Install)
 
-Clone once, then the install script copies skills, agents, commands, hooks, and scripts into `.claude/`:
+Clone once, then the install script copies runtime manifests to the project root:
 
 ```bash
 git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness
