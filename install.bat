@@ -19,7 +19,7 @@ if "%~1"=="--uninstall" (
     echo.
 
     :: Commands
-    for %%c in (init run session reset release) do (
+    for %%c in (start run session reset release postmortem) do (
         del /Q "%CLAUDE_DIR%\commands\%%c.md" 2>nul
     )
     echo   [OK] Removed commands
@@ -102,12 +102,31 @@ if exist "%HOOKS_DST%" (
     echo   [OK] Hooks       -^> .claude\hooks.json
 )
 
+:: Copilot CLI support
+set "COPILOT_DIR=%PROJECT_ROOT%\.github"
+set "COPILOT_SRC=%PLUGIN_DIR%\.github\copilot-instructions.md"
+if exist "%COPILOT_SRC%" (
+    if not exist "%COPILOT_DIR%" mkdir "%COPILOT_DIR%"
+    copy /Y "%COPILOT_SRC%" "%COPILOT_DIR%\copilot-instructions.md" > nul
+    echo   [OK] Copilot     -^> .github\copilot-instructions.md
+)
+
+:: Scripts (harness-companion.mjs + lib/)
+set "SCRIPTS_SRC=%PLUGIN_DIR%\plugins\harness\scripts"
+set "SCRIPTS_DST=%CLAUDE_DIR%\scripts"
+if exist "%SCRIPTS_SRC%\harness-companion.mjs" (
+    if not exist "%SCRIPTS_DST%\lib" mkdir "%SCRIPTS_DST%\lib"
+    copy /Y "%SCRIPTS_SRC%\harness-companion.mjs" "%SCRIPTS_DST%\" > nul
+    copy /Y "%SCRIPTS_SRC%\lib\*.mjs" "%SCRIPTS_DST%\lib\" > nul
+    echo   [OK] Scripts     -^> .claude\scripts\ (harness-companion.mjs + lib/^)
+)
+
 echo.
 echo [OK] Installed. Available immediately -- no restart needed.
 echo.
-echo   /harness:start      scaffold harness for a new project
-echo   /harness:session    run one supervised sprint round
-echo   /harness:run        continuous mode (unattended)
-echo   /harness:reset      checkpoint + handoff when context fills
+echo   Runtimes supported:
+echo     Claude Code  /harness:start, /harness:session, /harness:run
+echo     Codex CLI    auto-detected via .codex-plugin/plugin.json
+echo     Copilot CLI  auto-detected via .github/copilot-instructions.md
 echo.
 endlocal

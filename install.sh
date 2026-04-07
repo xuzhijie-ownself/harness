@@ -21,7 +21,7 @@ if [ "${1:-}" = "--uninstall" ]; then
   echo ""
 
   # Commands
-  for cmd in init run session reset release; do
+  for cmd in start run session reset release postmortem; do
     rm -f "$CLAUDE_DIR/commands/${cmd}.md" 2>/dev/null || true
   done
   echo "  [OK] Removed commands"
@@ -136,6 +136,16 @@ if [ -f "$COPILOT_SRC" ]; then
   mkdir -p "$COPILOT_DIR"
   cp "$COPILOT_SRC" "$COPILOT_DIR/copilot-instructions.md"
   echo "  [OK] Copilot     -> .github/copilot-instructions.md"
+fi
+
+# ── Scripts (harness-companion.mjs + lib/) ──────────────────────────
+SCRIPTS_SRC="$PLUGIN_DIR/plugins/harness/scripts"
+SCRIPTS_DST="$CLAUDE_DIR/scripts"
+if [ -f "$SCRIPTS_SRC/harness-companion.mjs" ]; then
+  mkdir -p "$SCRIPTS_DST/lib"
+  cp "$SCRIPTS_SRC/harness-companion.mjs" "$SCRIPTS_DST/"
+  cp "$SCRIPTS_SRC/lib/"*.mjs "$SCRIPTS_DST/lib/"
+  echo "  [OK] Scripts     -> .claude/scripts/ (harness-companion.mjs + lib/)"
 fi
 
 echo ""

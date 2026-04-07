@@ -38,13 +38,13 @@ Then reload:
 
 ```bash
 # Clone into your project
-git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness-repo
+git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness
 
 # Install (Mac / Linux / Git Bash)
-bash plugins/harness-repo/install.sh
+bash plugins/harness/install.sh
 
 # Install (Windows CMD)
-plugins\harness-repo\install.bat
+plugins\harness\install.bat
 ```
 
 The install script copies:
@@ -58,7 +58,7 @@ If using [OpenAI Codex CLI](https://github.com/openai/codex), the plugin auto-lo
 
 ```bash
 # Clone the repo into your project
-git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness-repo
+git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness
 
 # Codex detects .codex-plugin/plugin.json automatically
 # Skills from both plugins are loaded via dual skill paths
@@ -71,7 +71,7 @@ Copilot CLI auto-reads `.github/copilot-instructions.md` from the repo root:
 
 ```bash
 # Clone the repo into your project
-git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness-repo
+git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness
 
 # Copilot reads .github/copilot-instructions.md automatically
 # Skills and roles are referenced as markdown file paths
@@ -84,7 +84,7 @@ git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness-repo
 claude plugin uninstall harness
 
 # Local install (removes core + all domain skills)
-bash plugins/harness-repo/install.sh --uninstall
+bash plugins/harness/install.sh --uninstall
 ```
 
 ### Update
@@ -94,7 +94,7 @@ bash plugins/harness-repo/install.sh --uninstall
 claude plugin update harness
 
 # Local
-cd plugins/harness-repo && git pull && bash install.sh
+cd plugins/harness && git pull && bash install.sh
 ```
 
 ---
