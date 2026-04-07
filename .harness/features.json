@@ -1,182 +1,46 @@
 {
   "version": 1,
-  "updated_by": "evaluator-round-3",
+  "updated_by": "evaluator-round-4",
   "features": [
     {
-      "id": "F-001",
-      "title": "Index skill + plugin.json scaffold",
-      "category": "functional",
-      "required": true,
-      "priority": "high",
-      "status": "done",
-      "passes": true,
-      "depends_on": [],
-      "maturity": "reviewed",
-      "source_requirement": "spec.md Sprint 1",
-      "steps": [
-        "plugins/harness-sales-suite/.claude-plugin/plugin.json exists with correct structure",
-        "plugins/harness-sales-suite/skills/harness-sales-suite/SKILL.md exists as index skill",
-        "Index skill has domain profile routing table for all 5 profiles",
-        "Index skill has pipeline phases and phase routing by deal type",
-        "Index skill has criteria key mapping table",
-        "Index skill has domain verification methods table"
-      ],
-      "evidence": [
-        "Round 1: All 6 steps verified. plugin.json valid JSON. SKILL.md has 5-profile routing, 7-phase pipeline, criteria mapping, verification methods."
-      ],
-      "notes": ""
+      "id": "F-001", "title": "Index skill + plugin.json scaffold", "category": "functional", "required": true, "priority": "high", "status": "done", "passes": true, "depends_on": [], "maturity": "reviewed", "source_requirement": "spec.md Sprint 1",
+      "steps": ["plugins/harness-sales-suite/.claude-plugin/plugin.json exists with correct structure", "plugins/harness-sales-suite/skills/harness-sales-suite/SKILL.md exists as index skill", "Index skill has domain profile routing table for all 5 profiles", "Index skill has pipeline phases and phase routing by deal type", "Index skill has criteria key mapping table", "Index skill has domain verification methods table"],
+      "evidence": ["Round 1: All 6 steps verified."], "notes": ""
     },
     {
-      "id": "F-002",
-      "title": "Core sales domain skill (harness-sales)",
-      "category": "functional",
-      "required": true,
-      "priority": "high",
-      "status": "done",
-      "passes": true,
-      "depends_on": ["F-001"],
-      "maturity": "reviewed",
-      "source_requirement": "spec.md Sprint 1",
-      "steps": [
-        "plugins/harness-sales-suite/skills/harness-sales/SKILL.md exists",
-        "Has 6 core sections (methodology, development methodology, verification, deliverable verification, evaluation criteria, checklists)",
-        "Evaluation criteria: qualification_depth, pipeline_coverage, deal_documentation, close_readiness with 0-5 anchors",
-        "Methodologies: MEDDPICC, Challenger, SPIN, Sandler, BANT with selection table",
-        "Anti-patterns: happy ears, single-threading, premature discounting, ghosted pipeline",
-        "Security: pricing confidentiality, customer PII embedded in checklists"
-      ],
-      "evidence": [
-        "Round 2: All 6 steps verified. 6 core sections. 4 criteria with 0-5 anchors. 5 methodologies. 8 anti-patterns. Security in checklists."
-      ],
-      "notes": ""
+      "id": "F-002", "title": "Core sales domain skill (harness-sales)", "category": "functional", "required": true, "priority": "high", "status": "done", "passes": true, "depends_on": ["F-001"], "maturity": "reviewed", "source_requirement": "spec.md Sprint 1",
+      "steps": ["plugins/harness-sales-suite/skills/harness-sales/SKILL.md exists", "Has 6 core sections", "Evaluation criteria with 0-5 anchors", "Methodologies: MEDDPICC, Challenger, SPIN, Sandler, BANT", "Anti-patterns present", "Security in checklists"],
+      "evidence": ["Round 2: All steps verified."], "notes": ""
     },
     {
-      "id": "F-003",
-      "title": "Tender management domain skill (harness-tm)",
-      "category": "functional",
-      "required": true,
-      "priority": "high",
-      "status": "done",
-      "passes": true,
-      "depends_on": ["F-001"],
-      "maturity": "reviewed",
-      "source_requirement": "spec.md Sprint 1",
-      "steps": [
-        "plugins/harness-sales-suite/skills/harness-tm/SKILL.md exists",
-        "Has 6 core sections",
-        "Evaluation criteria: compliance_coverage, response_completeness, win_theme_clarity, submission_readiness with 0-5 anchors",
-        "Methodologies: APMP/Shipley, capture management, color team reviews",
-        "Anti-patterns: non-compliant response, generic win themes, missed deadline",
-        "Security: pricing confidentiality, competitive intel protection"
-      ],
-      "evidence": [
-        "Round 3: All 6 steps verified. APMP/Shipley + color team reviews. 4 criteria with 0-5 anchors. 8 anti-patterns. Security in checklists."
-      ],
-      "notes": ""
+      "id": "F-003", "title": "Tender management domain skill (harness-tm)", "category": "functional", "required": true, "priority": "high", "status": "done", "passes": true, "depends_on": ["F-001"], "maturity": "reviewed", "source_requirement": "spec.md Sprint 1",
+      "steps": ["plugins/harness-sales-suite/skills/harness-tm/SKILL.md exists", "Has 6 core sections", "Evaluation criteria with 0-5 anchors", "Methodologies: APMP/Shipley, capture management, color team reviews", "Anti-patterns present", "Security in checklists"],
+      "evidence": ["Round 3: All steps verified."], "notes": ""
     },
     {
-      "id": "F-004",
-      "title": "Sales engineering domain skill (harness-se)",
-      "category": "functional",
-      "required": true,
-      "priority": "medium",
-      "status": "pending",
-      "passes": false,
-      "depends_on": ["F-001"],
-      "maturity": "draft",
-      "source_requirement": "spec.md Sprint 2",
-      "steps": [
-        "plugins/harness-sales-suite/skills/harness-se/SKILL.md exists",
-        "Has 6 core sections",
-        "Evaluation criteria: demo_completeness, technical_validation, solution_documentation, integration_clarity with 0-5 anchors",
-        "Methodologies: demo-led, POC-driven, solution design",
-        "Security: customer environment data protection"
-      ],
-      "evidence": [],
-      "notes": ""
+      "id": "F-004", "title": "Sales engineering domain skill (harness-se)", "category": "functional", "required": true, "priority": "medium", "status": "done", "passes": true, "depends_on": ["F-001"], "maturity": "reviewed", "source_requirement": "spec.md Sprint 2",
+      "steps": ["plugins/harness-sales-suite/skills/harness-se/SKILL.md exists", "Has 6 core sections", "Evaluation criteria: demo_completeness, technical_validation, solution_documentation, integration_clarity with 0-5 anchors", "Methodologies: demo-led, POC-driven, solution design", "Security: customer environment data protection"],
+      "evidence": ["Round 4: All 5 steps verified. 6 sections, 4 criteria with anchors, 6 anti-patterns including customer data leak."], "notes": ""
     },
     {
-      "id": "F-005",
-      "title": "Sales enablement domain skill (harness-sen)",
-      "category": "functional",
-      "required": true,
-      "priority": "medium",
-      "status": "pending",
-      "passes": false,
-      "depends_on": ["F-001"],
-      "maturity": "draft",
-      "source_requirement": "spec.md Sprint 2",
-      "steps": [
-        "plugins/harness-sales-suite/skills/harness-sen/SKILL.md exists",
-        "Has 6 core sections",
-        "Evaluation criteria: content_coverage, audience_relevance, adoption_measurability, maintenance_sustainability with 0-5 anchors",
-        "Methodologies: content-first, coaching-first, certification-based",
-        "Security: competitive intel in battle cards"
-      ],
-      "evidence": [],
-      "notes": ""
+      "id": "F-005", "title": "Sales enablement domain skill (harness-sen)", "category": "functional", "required": true, "priority": "medium", "status": "pending", "passes": false, "depends_on": ["F-001"], "maturity": "draft", "source_requirement": "spec.md Sprint 2",
+      "steps": ["plugins/harness-sales-suite/skills/harness-sen/SKILL.md exists", "Has 6 core sections", "Evaluation criteria: content_coverage, audience_relevance, adoption_measurability, maintenance_sustainability with 0-5 anchors", "Methodologies: content-first, coaching-first, certification-based", "Security: competitive intel in battle cards"],
+      "evidence": [], "notes": ""
     },
     {
-      "id": "F-006",
-      "title": "Sales operations domain skill (harness-so)",
-      "category": "functional",
-      "required": true,
-      "priority": "medium",
-      "status": "pending",
-      "passes": false,
-      "depends_on": ["F-001"],
-      "maturity": "draft",
-      "source_requirement": "spec.md Sprint 3",
-      "steps": [
-        "plugins/harness-sales-suite/skills/harness-so/SKILL.md exists",
-        "Has 6 core sections",
-        "Evaluation criteria: data_completeness, process_documentation, reporting_accuracy, scalability_design with 0-5 anchors",
-        "Methodologies: RevOps, data-driven, process-first",
-        "Security: commission/comp plan confidentiality"
-      ],
-      "evidence": [],
-      "notes": ""
+      "id": "F-006", "title": "Sales operations domain skill (harness-so)", "category": "functional", "required": true, "priority": "medium", "status": "pending", "passes": false, "depends_on": ["F-001"], "maturity": "draft", "source_requirement": "spec.md Sprint 3",
+      "steps": ["plugins/harness-sales-suite/skills/harness-so/SKILL.md exists", "Has 6 core sections", "Evaluation criteria: data_completeness, process_documentation, reporting_accuracy, scalability_design with 0-5 anchors", "Methodologies: RevOps, data-driven, process-first", "Security: commission/comp plan confidentiality"],
+      "evidence": [], "notes": ""
     },
     {
-      "id": "F-007",
-      "title": "Integration testing across all 5 profiles",
-      "category": "verification",
-      "required": true,
-      "priority": "low",
-      "status": "pending",
-      "passes": false,
-      "depends_on": ["F-002", "F-003", "F-004", "F-005", "F-006"],
-      "maturity": "draft",
-      "source_requirement": "spec.md Sprint 3",
-      "steps": [
-        "All 5 skill files parse without YAML errors",
-        "Index skill routing table has entries for all 5 profiles",
-        "Criteria key mapping matches each skill's Section 5 headings",
-        "Verification methods table covers all 5 profiles",
-        "Plugin.json skills path resolves to actual files"
-      ],
-      "evidence": [],
-      "notes": ""
+      "id": "F-007", "title": "Integration testing across all 5 profiles", "category": "verification", "required": true, "priority": "low", "status": "pending", "passes": false, "depends_on": ["F-002", "F-003", "F-004", "F-005", "F-006"], "maturity": "draft", "source_requirement": "spec.md Sprint 3",
+      "steps": ["All 5 skill files parse without YAML errors", "Index skill routing table has entries for all 5 profiles", "Criteria key mapping matches each skill's Section 5 headings", "Verification methods table covers all 5 profiles", "Plugin.json skills path resolves to actual files"],
+      "evidence": [], "notes": ""
     },
     {
-      "id": "F-008",
-      "title": "Security review + README update",
-      "category": "quality",
-      "required": true,
-      "priority": "low",
-      "status": "pending",
-      "passes": false,
-      "depends_on": ["F-007"],
-      "maturity": "draft",
-      "source_requirement": "spec.md Sprint 4",
-      "steps": [
-        "Each profile has security considerations in checklists and anti-patterns",
-        "README updated with sales suite section",
-        "CLAUDE.md updated if needed",
-        "Integrity grep passes (zero stale references)"
-      ],
-      "evidence": [],
-      "notes": ""
+      "id": "F-008", "title": "Security review + README update", "category": "quality", "required": true, "priority": "low", "status": "pending", "passes": false, "depends_on": ["F-007"], "maturity": "draft", "source_requirement": "spec.md Sprint 4",
+      "steps": ["Each profile has security considerations in checklists and anti-patterns", "README updated with sales suite section", "CLAUDE.md updated if needed", "Integrity grep passes (zero stale references)"],
+      "evidence": [], "notes": ""
     }
   ]
 }

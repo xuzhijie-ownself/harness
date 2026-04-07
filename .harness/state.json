@@ -5,7 +5,7 @@
   "current_round": 4,
   "last_completed_round": 3,
   "active_feature_ids": [
-    "F-003"
+    "F-004"
   ],
   "expected_sprint_count": 4,
   "current_failure_streak": 0,
@@ -13,7 +13,7 @@
   "stop_reason": "",
   "context_reset_threshold": 3,
   "rounds_since_reset": 1,
-  "current_sprint_phase": "implementation",
+  "current_sprint_phase": "evaluation",
   "domain_profile": "software",
   "secondary_profile": "",
   "methodology": "agile",
@@ -80,6 +80,27 @@
           "evaluation": {
             "started_at": "2026-04-07T17:47:57.123Z",
             "completed_at": "2026-04-07T17:47:57.123Z"
+          }
+        }
+      },
+      {
+        "round": 4,
+        "started_at": "2026-04-07T17:49:00Z",
+        "completed_at": "2026-04-07T17:51:23.979Z",
+        "feature_id": "F-004",
+        "outcome": "pass",
+        "phases": {
+          "contract": {
+            "started_at": "2026-04-07T17:51:23.979Z",
+            "completed_at": "2026-04-07T17:51:23.979Z"
+          },
+          "implementation": {
+            "started_at": "2026-04-07T17:51:23.979Z",
+            "completed_at": "2026-04-07T17:51:23.979Z"
+          },
+          "evaluation": {
+            "started_at": "2026-04-07T17:51:23.979Z",
+            "completed_at": "2026-04-07T17:51:23.979Z"
           }
         }
       }
