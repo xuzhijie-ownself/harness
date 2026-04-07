@@ -172,6 +172,21 @@ The 4 primary criteria for the `sales_enablement` domain profile. The evaluator 
 
 Pre-built checklists for common sales enablement deliverable types. The generator includes the relevant checklist(s) in each sprint contract. The evaluator uses them as acceptance criteria.
 
+### Standard Contract Checks
+
+These are the minimum required checks for every sales enablement sprint. Check IDs map to the 4 sales enablement evaluation criteria.
+
+| Check ID | Criterion | Required | Verification Method |
+|----------|-----------|----------|-------------------|
+| CC-01 | content_coverage | required | Verify all target personas have content mapped to buyer journey stages; competitive content current for top 3 competitors; methodology alignment present |
+| CC-02 | content_coverage | advisory | Verify content is modular and reusable across programs; content tagged with persona and journey stage metadata |
+| AR-01 | audience_relevance | required | Verify content tailored to each persona's role, challenges, and decision criteria; language appropriate for audience; examples resonate with persona context |
+| AR-02 | audience_relevance | advisory | Verify field reps have validated content relevance; persona-specific scenarios and objection handling included |
+| AM-01 | adoption_measurability | required | Verify adoption metrics defined (usage, completion, certification pass rates); baseline established; targets set with timeline |
+| AM-02 | adoption_measurability | advisory | Verify adoption metrics linked to business outcomes; regular reporting cadence defined |
+| MS-01 | maintenance_sustainability | required | Verify every content piece has assigned owner; review cadence defined (quarterly minimum); stale content flagged |
+| MS-02 | maintenance_sustainability | advisory | Verify content freshness monitoring process; retirement criteria documented; update triggers defined |
+
 ### For Playbook / Battle Card Deliverables
 
 - [ ] All target personas identified and addressed with persona-specific content
@@ -225,3 +240,22 @@ These trigger automatic score penalties when detected by the evaluator:
 | **One-Size-Fits-All** -- identical content for all personas regardless of role, seniority, or buyer journey stage | audience_relevance | Drop to max 2 | No persona segmentation; same talk tracks for economic buyer and technical evaluator; no journey stage mapping |
 | **Certification Theater** -- certification program that measures attendance, not proficiency; passing requires only completion, not demonstrated skill | content_coverage | Drop to max 2 | Assessment is multiple choice only; 100% pass rate; no practical exercises; no skill demonstration component |
 | **Competitive Intel Leak** -- sharing classified competitive intelligence in broadly distributed content without proper access controls | content_coverage | Drop to max 0 | Competitor internal data in public-facing content; NDA-protected information in general distribution; no access controls on sensitive battle cards |
+
+### Security Considerations
+
+Domain-specific security guidance for sales enablement deliverables. Applies when `data_sensitivity` in spec.md is anything other than `none`.
+
+**Data Sensitivity:**
+- Competitive battle cards containing market intelligence, competitor pricing estimates, or competitive strategy must be classified as confidential and restricted to internal sales teams
+- Customer case studies and success stories used as proof points must have explicit customer consent for external use; internal-only versions may contain additional detail
+- Training content that references specific customer deals, revenue figures, or organizational challenges must anonymize customer identity unless written permission is obtained
+
+**Access Control:**
+- Battle cards with competitive intelligence must be distributed through access-controlled channels (not email attachments or public shared drives)
+- Certification assessment questions and scoring rubrics must be restricted to enablement administrators and evaluators; not shared with participants before assessment
+- Pricing guidance embedded in playbooks must be restricted to authorized sales roles; marketing and partner-facing versions must exclude pricing details
+
+**Confidentiality:**
+- Internal enablement strategy documents (program roadmaps, adoption metrics, gap analyses) must not be shared with customers or partners
+- Competitive positioning frameworks must carry a confidential classification; field reps must be trained on what can and cannot be shared with customers
+- Adoption and performance data tied to individual sales reps must be restricted to management and enablement program owners

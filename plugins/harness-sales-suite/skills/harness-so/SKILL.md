@@ -172,6 +172,21 @@ The 4 primary criteria for the `sales_operations` domain profile. The evaluator 
 
 Pre-built checklists for common sales operations deliverable types. The generator includes the relevant checklist(s) in each sprint contract. The evaluator uses them as acceptance criteria.
 
+### Standard Contract Checks
+
+These are the minimum required checks for every sales operations sprint. Check IDs map to the 4 sales operations evaluation criteria.
+
+| Check ID | Criterion | Required | Verification Method |
+|----------|-----------|----------|-------------------|
+| DC-01 | data_completeness | required | Verify all required metrics defined with documented data sources; automated data collection for primary metrics; data dictionary maintained |
+| DC-02 | data_completeness | advisory | Verify data quality monitoring in place; historical data preserved; data lineage documented from source to report |
+| PD-01 | process_documentation | required | Verify all critical processes mapped with inputs, outputs, owners, and SLAs; runbooks exist for recurring operations |
+| PD-02 | process_documentation | advisory | Verify processes documented in standardized format; automation opportunities identified; process metrics tracked |
+| RA-01 | reporting_accuracy | required | Verify all reports validated against source data; calculation logic documented and auditable; known limitations disclosed |
+| RA-02 | reporting_accuracy | advisory | Verify reconciliation process exists; historical accuracy tracked; report SLAs defined |
+| SD-01 | scalability_design | required | Verify processes designed for 2x current volume; automation implemented for high-volume tasks; capacity limits documented |
+| SD-02 | scalability_design | advisory | Verify scalability tested through load modeling; bottlenecks identified; capacity planning integrated into reviews |
+
 ### For Pipeline / Forecast Deliverables
 
 - [ ] All pipeline stages defined with clear entry/exit criteria
@@ -230,3 +245,22 @@ These trigger automatic score penalties when detected by the evaluator:
 | **Manual Scale** -- planning to hire more people instead of automating repetitive processes; no capacity planning | scalability_design | Drop to max 2 | Headcount requests for operational tasks that could be automated; same process steps done manually at 100 and 1000 accounts |
 | **Comp Plan Leak** -- sharing individual compensation details, OTE, or attainment data beyond authorized audience | data_completeness | Drop to max 0 | Compensation data in shared drives without access controls; individual quotas visible in pipeline reports; comp plan details in broadly distributed emails |
 | **Forecast Manipulation** -- adjusting forecast data to match desired narrative instead of reflecting deal reality; sandbagging or inflating | reporting_accuracy | Drop to max 0 | Forecast consistently wrong in same direction; deal amounts change dramatically at quarter-end; no audit trail for forecast changes |
+
+### Security Considerations
+
+Domain-specific security guidance for sales operations deliverables. Applies when `data_sensitivity` in spec.md is anything other than `none`.
+
+**Data Sensitivity:**
+- Compensation plans, individual OTE, quota assignments, and attainment data must be classified as confidential and restricted to HR, finance, and the direct management chain
+- Forecast models containing deal-level data (amounts, close dates, customer names) must be classified as confidential; aggregated forecasts may be shared more broadly
+- Territory plan data containing account assignments, market sizing, and revenue potential by territory must be restricted to sales leadership and operations
+
+**Access Control:**
+- Pipeline dashboards must implement role-based access: reps see their own pipeline, managers see their team, leadership sees all; no cross-team visibility without authorization
+- Compensation modeling tools and data must be restricted to compensation analysts, HR, and finance; individual plan details must not be accessible through operational reporting
+- Process automation credentials (API keys, integration tokens, system accounts) must be managed through a secrets vault; no credentials stored in code, documents, or shared configuration files
+
+**Confidentiality:**
+- Individual sales performance data (attainment, pipeline, activity metrics) must not be shared outside the management chain without the rep's knowledge
+- Financial projections and cost models (including compensation cost projections) must carry a confidential classification and not be included in broadly distributed reports
+- Vendor and tool evaluation data (pricing, contracts, capabilities) used in operations tool selection must be classified per vendor NDA terms
