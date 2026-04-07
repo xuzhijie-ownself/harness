@@ -34,9 +34,10 @@ Uninstall: `claude plugin uninstall harness`
 
 ### Codex CLI / Copilot CLI (Local Install)
 
-Clone once, then the install script copies runtime manifests to the project root:
+Clone once, then run the install script **from your project root** — it generates runtime manifests with correct paths:
 
 ```bash
+cd your-project
 git clone https://github.com/xuzhijie-ownself/harness.git plugins/harness
 
 # Mac / Linux / Git Bash

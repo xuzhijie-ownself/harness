@@ -3,17 +3,22 @@
 # Claude Code users: use marketplace instead (claude plugin install harness@harness)
 #
 # Usage:
+#   cd your-project
 #   bash plugins/harness/install.sh              # install
 #   bash plugins/harness/install.sh --uninstall  # remove
 #
-# What this does:
-#   Copies runtime manifests from the cloned repo to the project root
-#   so Codex CLI and Copilot CLI can auto-detect them.
+# The script uses your current working directory as the project root.
 
 set -e
 
 PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$PLUGIN_DIR/../.." && pwd)"
+PROJECT_ROOT="$(pwd)"
+
+# Calculate relative path from project root to this repo clone
+REL_PATH="$(python3 -c "import os; print(os.path.relpath('$PLUGIN_DIR', '$PROJECT_ROOT'))" 2>/dev/null || echo "plugins/harness")"
+
+# Read version from source manifest
+VERSION="$(node -e "console.log(JSON.parse(require('fs').readFileSync('$PLUGIN_DIR/.codex-plugin/plugin.json','utf8')).version)" 2>/dev/null || echo "0.0.0")"
 
 # ── Uninstall ────────────────────────────────────────────────────────
 if [ "${1:-}" = "--uninstall" ]; then
@@ -28,8 +33,7 @@ if [ "${1:-}" = "--uninstall" ]; then
   echo "  [OK] Removed .github/copilot-instructions.md"
 
   echo ""
-  echo "[OK] Uninstalled. The plugins/harness/ directory is unchanged."
-  echo "     To fully remove: rm -rf plugins/harness"
+  echo "[OK] Uninstalled."
   exit 0
 fi
 
@@ -37,16 +41,27 @@ fi
 echo "Harness -- Install for Codex CLI / Copilot CLI"
 echo "  Source : $PLUGIN_DIR"
 echo "  Project: $PROJECT_ROOT"
+echo "  RelPath: $REL_PATH"
 echo ""
 
-# Codex CLI manifest
+# Generate .codex-plugin/plugin.json with corrected skills paths
 mkdir -p "$PROJECT_ROOT/.codex-plugin"
-cp "$PLUGIN_DIR/.codex-plugin/plugin.json" "$PROJECT_ROOT/.codex-plugin/plugin.json"
+cat > "$PROJECT_ROOT/.codex-plugin/plugin.json" << EOF
+{
+  "name": "harness",
+  "version": "$VERSION",
+  "skills": [
+    "./$REL_PATH/plugins/harness/skills/",
+    "./$REL_PATH/plugins/harness-sdlc-suite/skills/"
+  ]
+}
+EOF
 echo "  [OK] Codex    -> .codex-plugin/plugin.json"
 
-# Copilot CLI instructions
+# Generate .github/copilot-instructions.md with corrected file references
 mkdir -p "$PROJECT_ROOT/.github"
-cp "$PLUGIN_DIR/.github/copilot-instructions.md" "$PROJECT_ROOT/.github/copilot-instructions.md"
+sed "s|plugins/harness/|$REL_PATH/plugins/harness/|g; s|plugins/harness-sdlc-suite/|$REL_PATH/plugins/harness-sdlc-suite/|g" \
+  "$PLUGIN_DIR/.github/copilot-instructions.md" > "$PROJECT_ROOT/.github/copilot-instructions.md"
 echo "  [OK] Copilot  -> .github/copilot-instructions.md"
 
 echo ""

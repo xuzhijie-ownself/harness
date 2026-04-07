@@ -80,6 +80,8 @@ NN is zero-padded round number (01, 02, etc.).
 
 When adding new enums: use `snake_case`, keep values to the minimum needed, document in this table.
 
+**YAML frontmatter rule**: All `description` fields in agent and command `.md` files MUST be quoted strings (e.g., `description: "text here"`). Unquoted multi-line descriptions cause "nested mappings" parse errors on strict YAML parsers (Copilot CLI, some Windows runtimes).
+
 ## Scripts Architecture
 
 ```

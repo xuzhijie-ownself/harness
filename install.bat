@@ -5,12 +5,23 @@ setlocal
 :: Claude Code users: use marketplace instead (claude plugin install harness@harness)
 ::
 :: Usage:
+::   cd your-project
 ::   plugins\harness\install.bat              install
 ::   plugins\harness\install.bat --uninstall  remove
+::
+:: The script uses your current working directory as the project root.
 
 set "PLUGIN_DIR=%~dp0"
 set "PLUGIN_DIR=%PLUGIN_DIR:~0,-1%"
-for %%i in ("%PLUGIN_DIR%\..\..") do set "PROJECT_ROOT=%%~fi"
+set "PROJECT_ROOT=%CD%"
+
+:: Calculate relative path from project root to this repo clone (uses node)
+for /f "tokens=*" %%r in ('node -e "console.log(require('path').relative('%PROJECT_ROOT%','%PLUGIN_DIR%').replace(/\\/g,'/'))"') do set "REL_PATH=%%r"
+if "%REL_PATH%"=="" set "REL_PATH=plugins/harness"
+
+:: Read version from source manifest
+for /f "tokens=*" %%v in ('node -e "console.log(JSON.parse(require('fs').readFileSync('%PLUGIN_DIR:\=/%/.codex-plugin/plugin.json','utf8')).version)"') do set "VERSION=%%v"
+if "%VERSION%"=="" set "VERSION=0.0.0"
 
 :: ── Uninstall ──────────────────────────────────────────────────────
 if "%~1"=="--uninstall" (
@@ -25,8 +36,7 @@ if "%~1"=="--uninstall" (
     echo   [OK] Removed .github\copilot-instructions.md
 
     echo.
-    echo [OK] Uninstalled. The plugins\harness\ directory is unchanged.
-    echo     To fully remove: rmdir /S /Q plugins\harness
+    echo [OK] Uninstalled.
     goto :eof
 )
 
@@ -34,16 +44,17 @@ if "%~1"=="--uninstall" (
 echo Harness -- Install for Codex CLI / Copilot CLI
 echo   Source : %PLUGIN_DIR%
 echo   Project: %PROJECT_ROOT%
+echo   RelPath: %REL_PATH%
 echo.
 
-:: Codex CLI manifest
+:: Generate .codex-plugin/plugin.json with corrected skills paths
 if not exist "%PROJECT_ROOT%\.codex-plugin" mkdir "%PROJECT_ROOT%\.codex-plugin"
-copy /Y "%PLUGIN_DIR%\.codex-plugin\plugin.json" "%PROJECT_ROOT%\.codex-plugin\plugin.json" > nul
+node -e "const fs=require('fs');const j={name:'harness',version:'%VERSION%',skills:['./%REL_PATH%/plugins/harness/skills/','./%REL_PATH%/plugins/harness-sdlc-suite/skills/']};fs.writeFileSync('%PROJECT_ROOT:\=/%/.codex-plugin/plugin.json',JSON.stringify(j,null,2));"
 echo   [OK] Codex    -^> .codex-plugin\plugin.json
 
-:: Copilot CLI instructions
+:: Generate .github/copilot-instructions.md with corrected file references
 if not exist "%PROJECT_ROOT%\.github" mkdir "%PROJECT_ROOT%\.github"
-copy /Y "%PLUGIN_DIR%\.github\copilot-instructions.md" "%PROJECT_ROOT%\.github\copilot-instructions.md" > nul
+node -e "const fs=require('fs');const src=fs.readFileSync('%PLUGIN_DIR:\=/%/.github/copilot-instructions.md','utf8');const out=src.replace(/plugins\/harness\//g,'%REL_PATH%/plugins/harness/').replace(/plugins\/harness-sdlc-suite\//g,'%REL_PATH%/plugins/harness-sdlc-suite/');fs.writeFileSync('%PROJECT_ROOT:\=/%/.github/copilot-instructions.md',out);"
 echo   [OK] Copilot  -^> .github\copilot-instructions.md
 
 echo.
