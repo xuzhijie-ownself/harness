@@ -150,7 +150,7 @@ The 4 primary criteria for the `business_analysis` domain profile. The evaluator
 | 0 | Absent — no requirements or BA deliverables produced |
 | 1 | Severely incomplete — some requirements listed but no structure, missing major sections |
 | 2 | Below acceptable — requirements exist but significant gaps in coverage, missing stakeholder needs or non-functional requirements |
-| 3 | Acceptable — all mandatory BRD sections present, functional and non-functional requirements documented, no critical gaps |
+| 3 | Acceptable — all mandatory BRD sections present, functional and non-functional requirements documented, security and privacy requirements captured, no critical gaps |
 | 4 | Strong — comprehensive requirements with edge cases addressed, complete use cases, thorough data requirements |
 | 5 | Excellent — exhaustive coverage including business rules, exception flows, data quality rules, and measurable acceptance criteria for every requirement |
 
@@ -371,6 +371,7 @@ The evaluator should flag these common BA anti-patterns when grading:
 | **Ambiguity Tolerance** | Requirements use vague language ("should", "may", "appropriate", "etc.") | completeness: -2 | Cannot verify without measurable criteria |
 | **Traceability Theater** | Traceability matrix exists but links are incorrect or incomplete | traceability: -1 | Require matrix validation |
 | **Analysis Paralysis** | Attempting exhaustive analysis of every edge case before any validation | feasibility: -1 | Flag as delivery risk |
+| **Security Requirements Omission** | BRD has zero security or privacy requirements despite handling user data | completeness: -2 | Drop completeness to max 2 |
 
 ---
 
@@ -418,6 +419,12 @@ Organize interview questions into these categories. Select 2-4 questions per cat
 - What budget, timeline, or resource constraints should we be aware of?
 - Are there existing systems or contracts that cannot be changed?
 - What organizational or political factors could affect this initiative?
+
+**Security & Privacy Questions** (identify protection needs):
+- What data is sensitive or personally identifiable?
+- What regulations or compliance requirements apply (GDPR, HIPAA, PCI-DSS)?
+- Who should NOT have access to this data or functionality?
+- What happens if data is breached or unauthorized access occurs?
 
 **Success Criteria Questions** (define measurable acceptance):
 - How will you know the requirements have been implemented correctly?

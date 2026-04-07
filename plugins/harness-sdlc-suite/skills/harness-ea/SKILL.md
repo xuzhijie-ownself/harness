@@ -157,7 +157,7 @@ The 4 primary criteria for the `enterprise_architecture` domain profile. The eva
 | 0 | Absent -- no framework used |
 | 1 | Severely incomplete -- framework mentioned but not followed |
 | 2 | Below acceptable -- partial framework usage, inconsistent notation |
-| 3 | Acceptable -- correct ArchiMate/TOGAF notation and phases |
+| 3 | Acceptable -- correct ArchiMate/TOGAF notation and phases, security zones and trust boundaries documented |
 | 4 | Strong -- full compliance with selected framework |
 | 5 | Excellent -- tailored framework with documented rationale for deviations |
 
@@ -204,6 +204,7 @@ Pre-built checklists for 5 TOGAF phases. The generator includes the relevant che
 - [ ] Organization mapping to capabilities
 - [ ] Business service catalog drafted
 - [ ] Gap analysis against target capabilities
+- [ ] Data classification for key entities (public/internal/confidential/regulated)
 
 ### For Information Systems Architecture (TOGAF Phase C)
 
@@ -219,6 +220,8 @@ Pre-built checklists for 5 TOGAF phases. The generator includes the relevant che
 - [ ] Platform blueprint with selected products/services
 - [ ] Infrastructure requirements mapped to applications
 - [ ] Security architecture requirements documented
+- [ ] Security zoning diagram with trust boundaries
+- [ ] Identity provider and authentication pattern selected
 - [ ] Cloud vs on-premises decision rationale
 
 ### For Migration Planning (TOGAF Phase E-F)
@@ -377,6 +380,7 @@ The evaluator should flag these common EA anti-patterns when grading:
 | **Decision Amnesia** | Architecture exists but no record of WHY decisions were made | all criteria: -1 | Require ADRs for significant choices |
 | **Layer Leaking** | Business elements directly referencing technology without application mediation | standards_compliance: -1 | Flag ArchiMate violation |
 | **Orphan Capabilities** | Capabilities in the model with no supporting applications or technology | coherence: -1 | Flag completeness gap |
+| **Security Afterthought** | Security addressed only in Phase E-F (migration) instead of Phase D (design) | feasibility: -2 | Drop feasibility to max 2 |
 
 ---
 

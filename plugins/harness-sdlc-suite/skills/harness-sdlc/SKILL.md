@@ -85,6 +85,7 @@ Default for all software projects. The evaluator verifies each level is addresse
 | Integration (API) | All endpoints | API request/response, DB queries, service interactions | Every sprint with API changes |
 | E2E | Critical user flows | Full browser or client flows (Playwright/Cypress) | Every 3 sprints or on UI features |
 | Smoke | Server health | Server starts, health endpoint responds, no crash | Every sprint |
+| Security | SAST + dependency audit + secret scan | No known vulnerabilities, no hardcoded secrets | Every sprint (if spec.md data_sensitivity != none) |
 | Regression | Full suite | Nothing previously working breaks | Before release |
 
 ### Framework Auto-Detection
@@ -251,7 +252,7 @@ The 4 primary criteria for the `software` domain profile. The evaluator MUST use
 | 0 | Crashes -- application does not start or crashes immediately |
 | 1 | Severely broken -- starts but most features throw errors |
 | 2 | Partial -- some features work, others are broken or incomplete |
-| 3 | Happy path works -- all sprint features function correctly in the normal flow |
+| 3 | Happy path works -- all sprint features function correctly in the normal flow, input validation on user-facing endpoints |
 | 4 | Error handling -- validation on all inputs, meaningful error messages, graceful failure on edge cases |
 | 5 | Production-ready -- rate limiting, retry logic, graceful degradation, circuit breakers where appropriate |
 
@@ -273,7 +274,7 @@ The 4 primary criteria for the `software` domain profile. The evaluator MUST use
 | 0 | Won't compile -- syntax errors, missing dependencies, broken imports |
 | 1 | Compiles with warnings -- builds but has significant structural issues |
 | 2 | Poor structure -- no types or loose types, no clear file organization, code duplication |
-| 3 | Strict types + organized -- TypeScript strict mode (or equivalent), logical file/folder structure, no lint errors |
+| 3 | Strict types + organized -- TypeScript strict mode (or equivalent), logical file/folder structure, no lint errors, no hardcoded secrets, parameterized queries |
 | 4 | Clean separation -- reusable utilities, proper error handling, clear module boundaries, single responsibility |
 | 5 | Well-documented + testable -- JSDoc/docstrings, dependency injection, testable architecture, follows project conventions |
 
@@ -290,6 +291,8 @@ Pre-built checklists for 4 common feature types. The generator includes the rele
 - [ ] Database records persist after API calls (verified with a follow-up GET)
 - [ ] Error responses include structured error messages (not stack traces)
 - [ ] TypeScript types (or language-equivalent types) match API response shapes
+- [ ] Authentication required on non-public endpoints
+- [ ] Input validated server-side (not just client-side)
 
 ### For UI Features
 
@@ -306,6 +309,7 @@ Pre-built checklists for 4 common feature types. The generator includes the rele
 - [ ] CRUD operations work through the API or application layer
 - [ ] Relationships resolve correctly (foreign keys, joins, includes, population)
 - [ ] Data persists across server restart (not in-memory only)
+- [ ] Parameterized queries only (no raw SQL string interpolation)
 
 ### For Infrastructure Features
 
@@ -313,3 +317,12 @@ Pre-built checklists for 4 common feature types. The generator includes the rele
 - [ ] Environment variables are loaded correctly (no undefined references)
 - [ ] External dependencies are connectable (database, cache, message queue)
 - [ ] Health endpoint responds with 200 at `/health` or `/api/health`
+
+### Security Anti-Patterns
+
+These trigger automatic score penalties when detected by the evaluator:
+
+| Anti-Pattern | Criterion Affected | Penalty |
+|-------------|-------------------|---------|
+| **Hardcoded Secrets** -- API keys, passwords, or tokens in source code | code_quality | Drop to max 1 |
+| **Missing Input Validation** -- user-facing endpoints accept unvalidated input | functionality | Drop to max 2 |

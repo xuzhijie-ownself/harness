@@ -41,6 +41,21 @@ The Domain Profile section in spec.md should declare: primary profile name, the 
 - definition of done
 - execution strategy
 - domain profile (primary profile name + criteria; optionally secondary profile)
+- security context
+
+## Security Context
+
+Every spec.md must include a Security Context section. Infer values from the project goal or ask the user if unclear. Use `none` for projects with no security concerns.
+
+```markdown
+## Security Context
+- data_sensitivity: none | internal | confidential | regulated
+- external_exposure: none | internal | public
+- auth_model: none | single_user | multi_user | multi_tenant
+- compliance: none | <comma-separated list, e.g. GDPR, HIPAA, PCI-DSS, SOC2>
+```
+
+This flows forward to all downstream phases. Domain skills read it to calibrate security requirements, threat modeling depth, and security testing scope.
 
 ## Required Output
 

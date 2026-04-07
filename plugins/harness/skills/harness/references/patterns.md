@@ -653,6 +653,20 @@ Add this section to spec.md after the Overview or Execution Strategy:
 
 Note: criteria names in NN-proposal.md and NN-eval.md/json come from the domain profile declared here. If no profile is specified, default to `software`.
 
+### Security Context section in `spec.md`
+
+Add this section to spec.md alongside the Domain Profile:
+
+```md
+## Security Context
+- data_sensitivity: none
+- external_exposure: none
+- auth_model: none
+- compliance: none
+```
+
+Values: `data_sensitivity` (none/internal/confidential/regulated), `external_exposure` (none/internal/public), `auth_model` (none/single_user/multi_user/multi_tenant), `compliance` (none or comma-separated list). Downstream phases read this to calibrate security depth.
+
 ## Quantified Rubric
 
 Use a `0-5` scale for each primary criterion.

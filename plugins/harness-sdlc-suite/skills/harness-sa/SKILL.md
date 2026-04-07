@@ -174,7 +174,7 @@ The 4 primary criteria for the `solution_architecture` domain profile. The evalu
 | 0 | Absent — no technical design decisions documented |
 | 1 | Severely incomplete — technology choices listed but no rationale, no edge cases considered |
 | 2 | Below acceptable — some design decisions documented but major gaps (e.g., no error handling strategy, no scalability consideration) |
-| 3 | Acceptable — key design decisions documented with rationale, error handling and scalability addressed at high level |
+| 3 | Acceptable — key design decisions documented with rationale, error handling and scalability addressed at high level, authentication and authorization approach documented |
 | 4 | Strong — comprehensive design with edge cases addressed, capacity estimates provided, failure modes analyzed, technology choices justified with trade-offs |
 | 5 | Excellent — production-grade design depth with quantified capacity models, detailed failure mode analysis, performance budgets, security threat model, and proven pattern references |
 
@@ -197,7 +197,7 @@ The 4 primary criteria for the `solution_architecture` domain profile. The evalu
 | 1 | Severely incomplete — design is theoretically possible but no implementation path, missing critical details |
 | 2 | Below acceptable — design is buildable but significant unknowns, no resource estimate, no phasing plan |
 | 3 | Acceptable — design is buildable with identified technology, risks documented, implementation phases suggested |
-| 4 | Strong — detailed implementation plan with technology validated, team skill gaps identified, phased delivery roadmap, risk mitigations in place |
+| 4 | Strong — detailed implementation plan with technology validated, team skill gaps identified, phased delivery roadmap, risk mitigations in place, threat model completed for external-facing components |
 | 5 | Excellent — design validated through proof of concept, team has demonstrated capability, dependencies secured, deployment strategy proven |
 
 ---
@@ -244,6 +244,7 @@ Pre-built checklists for 5 SA phases. The generator includes the relevant checkl
 - [ ] Scalability strategy documented (horizontal/vertical, auto-scaling triggers)
 - [ ] Availability target and redundancy design specified
 - [ ] Security architecture documented (authentication, authorization, encryption, network segmentation)
+- [ ] STRIDE threat model completed for each trust boundary crossing (required if spec.md external_exposure != none)
 - [ ] Disaster recovery and business continuity strategy outlined
 
 ---
@@ -393,6 +394,7 @@ The evaluator should flag these common SA anti-patterns when grading:
 | **Missing Failure Modes** | Happy path designed but no error handling, retry, or degradation strategy | technical_depth: -1 | Require failure mode analysis |
 | **API Inconsistency** | Different naming conventions, error formats, or auth patterns across APIs | integration_clarity: -1 | Flag as integration risk |
 | **Data Ownership Vacuum** | Data entities with no clear owning service or shared mutable state | design_coherence: -1 | Require explicit data ownership |
+| **Auth as Afterthought** | No authentication or authorization in initial design for user-facing system | technical_depth: -2 | Drop technical_depth to max 2 |
 
 ---
 

@@ -55,14 +55,14 @@ Delivered Product
 
 ## Phase Routing
 
-| Project Type | Phases | Example |
-|-------------|--------|---------|
-| Quick prototype | 1 -> 6 | "Build me a CLI tool" |
-| Internal tool | 1 -> 2 -> 4 -> 6 | "Automate our docket submissions" |
-| Enterprise system | 1 -> 2 -> 3 -> 4 -> 6 -> 8 | "Modernize our claims platform" |
-| Architecture only | 1 -> 2 -> 3 | "Design our target-state EA" |
+| Project Type | Phases | Security Level | Example |
+|-------------|--------|----------------|---------|
+| Quick prototype | 1 -> 6 | Baseline — spec.md security context + sdlc checklists | "Build me a CLI tool" |
+| Internal tool | 1 -> 2 -> 4 -> 6 | Standard — + BA security requirements + SA threat model | "Automate our docket submissions" |
+| Enterprise system | 1 -> 2 -> 3 -> 4 -> 6 -> 8 | Full — + EA security architecture + ops security posture | "Modernize our claims platform" |
+| Architecture only | 1 -> 2 -> 3 | Design — requirements + architecture security | "Design our target-state EA" |
 
-Each phase is a separate harness run (`/start` -> `/run` -> `/release`). Each run's output becomes the next run's input context.
+Each phase is a separate harness run (`/start` -> `/run` -> `/release`). Each run's output becomes the next run's input context. Every project type gets at least baseline security from Phase 1 (spec.md security context) + Phase 6 (sdlc checklists and anti-patterns). More phases = more security depth.
 
 ## Domain Skills
 
@@ -90,16 +90,16 @@ When a project spans multiple delivery phases, each phase must produce defined o
 
 ### Required Outputs per Phase
 
-| Phase | Owning Skill | Required Output Artifacts | Format |
-|-------|-------------|--------------------------|--------|
-| 1. Discovery & Intake | harness core (planner) | `features.json`, `spec.md`, `state.json` | JSON + Markdown in `.harness/` |
-| 2. Business Analysis | harness-ba | BRD, use case catalog, requirements traceability matrix | Markdown deliverables + updated `features.json` |
-| 3. Enterprise Architecture | harness-ea | Capability map, target-state architecture, ADRs | Markdown deliverables + updated `features.json` |
-| 4. Solution Architecture | harness-sa | HLD, API specs, data model, C4 diagrams | Markdown deliverables + updated `features.json` |
-| 5. Project Planning | harness core (coordinator) | Decomposition, sprint plan, `state.json` with round targets | JSON + Markdown in `.harness/` |
-| 6. Software Development | harness-sdlc | Working code, tests, build artifacts | Code + `.harness/sprints/` artifacts |
-| 7. Testing & QA | harness-sdlc (evaluator) | Evaluation reports, test results, `NN-eval.json` | JSON + Markdown in `.harness/sprints/` |
-| 8. Deployment & Handover | harness-ops | Deployment configs, runbooks, release artifacts | IaC configs + Markdown + `release.json` |
+| Phase | Owning Skill | Required Output Artifacts | Security Output | Format |
+|-------|-------------|--------------------------|-----------------|--------|
+| 1. Discovery & Intake | harness core (planner) | `features.json`, `spec.md`, `state.json` | Security Context in spec.md | JSON + Markdown in `.harness/` |
+| 2. Business Analysis | harness-ba | BRD, use case catalog, requirements traceability matrix | Security/privacy requirements in BRD | Markdown deliverables + updated `features.json` |
+| 3. Enterprise Architecture | harness-ea | Capability map, target-state architecture, ADRs | Security zoning, trust boundaries | Markdown deliverables + updated `features.json` |
+| 4. Solution Architecture | harness-sa | HLD, API specs, data model, C4 diagrams | STRIDE threat model for external components | Markdown deliverables + updated `features.json` |
+| 5. Project Planning | harness core (coordinator) | Sprint plan, `state.json` with round targets | Security work in sprint backlog | JSON + Markdown in `.harness/` |
+| 6. Software Development | harness-sdlc | Working code, tests, build artifacts | Secure code per sdlc checklists | Code + `.harness/sprints/` artifacts |
+| 7. Testing & QA | harness-sdlc (evaluator) | Evaluation reports, test results, `NN-eval.json` | Security test results (SAST, dep audit) | JSON + Markdown in `.harness/sprints/` |
+| 8. Deployment & Handover | harness-ops | Deployment configs, runbooks, release artifacts | Security posture verified | IaC configs + Markdown + `release.json` |
 
 ### Phase Dependencies
 
@@ -135,6 +135,8 @@ When a downstream phase discovers that an upstream phase's outputs are insuffici
 2. **Logging**: The coordinator adds a blocker entry to `progress.md` referencing the upstream phase and the specific missing artifact or content.
 3. **Re-entry**: The upstream phase is re-entered with a targeted sprint that addresses only the identified gap. The coordinator creates a new round scoped to the upstream phase's domain skill.
 4. **Resumption**: Once the upstream gap is resolved and passes evaluation, the downstream phase resumes from where it was blocked.
+
+Security gaps are a valid escalation trigger. Examples: SA finds no security requirements from BA → BA re-enters to capture them. Dev finds no auth pattern from SA → SA re-enters to design auth.
 
 ## Criteria Key Mapping
 
