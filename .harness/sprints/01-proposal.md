@@ -2,59 +2,81 @@
 
 ## Metadata
 - Role: generator
-- Agent: generator-1
-- Inputs: .harness/spec.md, .harness/features.json, harness-sales/SKILL.md, harness-tm/SKILL.md, harness-se/SKILL.md
+- Agent: coordinator-as-generator
+- Inputs: .harness/spec.md, .harness/features.json, prior evaluation artifacts
 - Status: in_review
 
 ## Target feature IDs
-- F-050
-- F-051
-- F-052
+- F-057
+- F-058
+- F-060
 
 ## Grouping waiver
-Three independent file audits using the same 6-section checklist. No cross-dependencies. Grouping avoids 2 unnecessary round-trips while keeping scope reviewable (3 files, same audit pattern). This follows the sprint plan defined in spec.md.
+F-057 and F-058 are tightly coupled: F-058 (slim postmortem command) requires F-057 (audit.md) to exist as its replacement target. F-060 (register sales suite) is independent but grouped per the spec execution strategy to minimize round count for markdown-only changes. All three features are non-overlapping file changes with zero conflict risk.
 
 ## Goal
-Audit harness-sales/SKILL.md, harness-tm/SKILL.md, and harness-se/SKILL.md against the 6-section checklist. Fix any structural gaps found. Ensure all 3 files meet the quality standard for downstream evaluation use.
+Create the audit reference skill, slim the postmortem command to a thin wrapper pointing at it, and register the sales suite across all three runtimes (Claude Code, Codex, Copilot).
 
 ## Deliverables
-For each of the 3 SKILL.md files:
-- Verified 6-section structure
-- Fixed contract check templates to include check IDs with criterion prefix patterns
-- Added dedicated Security Considerations subsection if missing
-- Ensured all criteria anchors are concrete and domain-specific
 
-## Findings from pre-audit
+### F-057: Create references/audit.md
+- New file: `plugins/harness/skills/harness/references/audit.md`
+- 6 sections following domain skill pattern:
+  1. Audit Methodology (process, artifact, drift, full audit types)
+  2. Audit Approach (integrity-first, compliance-first, trend-first)
+  3. Verification Strategy (grep checks, artifact counts, score trends)
+  4. Deliverable Verification (what makes a good postmortem report)
+  5. Evaluation Criteria (process_compliance, artifact_completeness, drift_detection, recommendation_quality -- each with 0-5 anchors)
+  6. Audit Checklists + Anti-Patterns (canonical integrity grep, anti-pattern catalog)
 
-### Gap 1: Missing Check IDs in Contract Check Templates (all 3 files)
-The spec requires "at least 4 contract checks (one per criterion) with check IDs matching the criterion prefix pattern." Currently, all 3 files use plain bullet checklists grouped by deliverable type, but they lack structured check IDs (e.g., QD-01 for qualification_depth, PC-01 for pipeline_coverage). Fix: Add a "Standard Contract Checks" subsection to Section 6 with criterion-mapped check IDs.
+### F-058: Slim postmortem.md
+- Modified file: `plugins/harness/commands/postmortem.md`
+- Target: under 60 lines
+- Keep: YAML frontmatter, preconditions, postmortem-data subcommand call
+- Remove: manual data gathering path, full grep checklist, detailed template body
+- Add: pointer to references/audit.md
+- Modified file: `.github/copilot-instructions.md` -- add audit.md reference
 
-### Gap 2: Security Guidance Not a Distinct Section (all 3 files)
-The spec requires "domain-specific security considerations covering data sensitivity, access control, and confidentiality." Currently, security items are embedded within individual checklists but there is no consolidated Security Considerations subsection. Fix: Add a "Security Considerations" subsection to Section 6 after Anti-Patterns with domain-specific guidance.
-
-### No other gaps found
-- Methodology tables: 5+ methodologies per file (checklist requires 3+). Pass.
-- Criteria anchors: All 4 criteria have 0-5 with concrete, domain-specific descriptions. Pass.
-- Verification methods: Domain-specific with what-to-check and how. Pass.
-- Anti-patterns: 6-8 per file with detection signals and penalties. Pass.
+### F-060: Register sales suite across runtimes
+- Modified file: `.claude-plugin/marketplace.json` -- add 3rd plugin entry for harness-sales-suite
+- Modified file: `.codex-plugin/plugin.json` -- add sales suite skills path
+- Modified file: `.github/copilot-instructions.md` -- add Sales Suite section with all 5 skill paths
 
 ## Verification
-- After fixing, re-read each file and verify all 6 sections present
-- Verify check IDs follow criterion prefix pattern
-- Verify Security Considerations subsection is domain-specific (not generic boilerplate)
-- Verify no existing content was accidentally removed
+
+### F-057 checks
+- File exists at expected path
+- Has exactly 6 sections with correct headings
+- Section 5 has 4 criteria with score 0-5 anchor tables
+- Section 6 has the integrity grep pattern from current postmortem.md line 131
+- File is self-contained (no external dependencies to understand it)
+
+### F-058 checks
+- `wc -l` on postmortem.md reports under 60 lines
+- File still has YAML frontmatter with name/description/allowed_tools
+- File contains "postmortem-data" subcommand reference
+- File contains "references/audit.md" pointer
+- File does NOT contain the grep checklist pattern
+- copilot-instructions.md includes audit.md path
+
+### F-060 checks
+- marketplace.json has 3 entries in plugins array
+- codex plugin.json skills array has 3 entries including sales suite path
+- copilot-instructions.md has Sales Suite section with all 5 domain skill paths
 
 ## Acceptance criteria
-- Product depth: All 6 sections present and complete in each file; audit methodology applied consistently
-- Functionality: Check IDs resolve to the correct criteria; security guidance covers the domain's specific concerns
-- Visual design: Consistent structure across all 3 files; tables properly formatted
-- Code quality: No broken markdown; no orphaned references; no duplicate content
+- Product depth: audit.md has comparable depth to existing domain skills (6 sections, tables, concrete examples)
+- Functionality: all three features work -- files exist, references resolve, registrations complete
+- Visual design: consistent markdown formatting matching existing reference files
+- Code quality: no stale references introduced, clean JSON syntax, under-60-line target met
 
 ## Contract checks
-- `PD-01`: (required) Each SKILL.md has all 6 sections with no placeholders or TBDs
-- `FN-01`: (required) Contract check templates include at least 4 criterion-mapped check IDs per file
-- `VD-01`: (required) Section structure is consistent across all 3 files
-- `CQ-01`: (required) No broken markdown formatting, orphaned cross-references, or duplicate sections
+- `PD-01` (required): audit.md has 6 sections with tables in each
+- `FN-01` (required): postmortem.md under 60 lines and references audit.md
+- `FN-02` (required): marketplace.json, codex plugin.json, copilot-instructions.md all updated for sales suite
+- `VD-01` (required): markdown formatting consistent with existing references/patterns.md
+- `CQ-01` (required): no broken JSON, no stale references, grep checklist moved cleanly
 
 ## Risks
-- Minimal: these are markdown file edits with well-defined structural requirements. Risk of over-editing existing content that is already good. Mitigation: only add missing sections, do not rewrite existing content.
+- The integrity grep pattern in postmortem.md may have been updated since spec was written -- need to capture the current version
+- copilot-instructions.md edits for F-058 and F-060 overlap (same file) -- merge carefully

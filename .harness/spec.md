@@ -3,142 +3,123 @@
 ## Metadata
 - Role: planner
 - Agent: planner-1
-- Inputs: user prompt (sales suite quality audit), harness-sales-suite plugin.json, harness-sales-suite/SKILL.md (index), harness-sales/SKILL.md (structure check), features.json (prior cycle F-045..F-049 complete)
+- Inputs: user prompt (audit reference skill + release), postmortem.md command, references/ directory, SKILL.md (core), features.json (prior cycle F-050..F-056 complete), release.json (v2.2.9)
 - Status: accepted
 
 ## Overview
 
-Quality audit and remediation of the harness-sales-suite plugin (v2.2.9). The prior build cycle produced all 6 SKILL.md files (1 index + 5 domain skills) but the process was broken -- 55% of sprint artifacts were missing, meaning the domain skills were never properly evaluated against their own criteria anchors. Five harness core fixes (F-045 through F-049) have since landed: hard gate on artifact validation, auto-complete state, handoff cleanup, mode mismatch warning, and sprint grouping respect. This cycle re-runs the sales suite through a proper quality gate with those fixes active.
+Extract the postmortem/audit logic from its current home as a Claude Code-only command (`plugins/harness/commands/postmortem.md`) into a core reference skill (`plugins/harness/skills/harness/references/audit.md`) that follows the domain skill section pattern. The command becomes a thin wrapper that points to the reference skill. This makes audit procedures available to all three runtimes (Claude Code, Codex, Copilot) and to any agent role, not just the slash command path.
 
-The work is audit-first: read each domain skill, verify structural completeness against a 6-section checklist, verify criteria anchor quality, verify methodology tables, verify anti-patterns and security guidance, then fix any gaps found. The final sprint runs a Codex adversarial review on the entire suite and remediates blocking/high findings.
+The audit reference skill covers process auditing, artifact auditing, and drift detection for harness runs. It is scoped to the harness's own process -- it is not a domain skill for external projects. The integrity grep checklist currently embedded in `CLAUDE.md` and duplicated in `postmortem.md` moves into `audit.md` as the single canonical source.
+
+The release bundles three prior feature groups into v2.3.0: core fixes (F-045 through F-049), sales suite (F-050 through F-056), and this audit skill work (F-057 through F-058).
 
 ## Design direction
 
-Not applicable -- these are domain skill markdown files, not user-facing UI. Quality direction: each SKILL.md should be a self-contained reference that a harness evaluator can use without reading the index skill. Sections should be consistent across all 5 domain skills in structure and depth.
+Not applicable -- these are framework reference files, not user-facing UI. Quality direction: `audit.md` should be a self-contained reference that any harness agent can read without needing the postmortem command. It follows the 6-section pattern established by the sales suite domain skills, adapted for process auditing instead of domain execution.
 
 ## Shipped scope
 
-- **F-050**: Audit and fix harness-sales/SKILL.md -- verify 6 core sections (methodology table, criteria anchors 1-5 for all 4 criteria, verification methods, contract check templates, anti-patterns, security guidance), fix any gaps
-- **F-051**: Audit and fix harness-tm/SKILL.md -- same 6-section checklist applied to tender management
-- **F-052**: Audit and fix harness-se/SKILL.md -- same 6-section checklist applied to sales engineering
-- **F-053**: Audit and fix harness-sen/SKILL.md -- same 6-section checklist applied to sales enablement
-- **F-054**: Audit and fix harness-so/SKILL.md -- same 6-section checklist applied to sales operations
-- **F-055**: Integration audit -- index skill routing table matches all 5 domain skills, criteria key mapping is consistent between index and each domain skill, verification methods in index match domain skill detail, no orphaned or missing cross-references
-- **F-056**: Codex adversarial review on the entire harness-sales-suite directory -- run review, triage findings into BLOCKING/HIGH/LOW, fix all BLOCKING and HIGH findings
+- **F-057**: Create `plugins/harness/skills/harness/references/audit.md` -- harness process audit reference skill with 6 sections: audit methodology, audit approach, verification strategy, deliverable verification, evaluation criteria (4 criteria with 0-5 anchors), and audit checklists (including the canonical integrity grep checklist)
+- **F-058**: Slim `plugins/harness/commands/postmortem.md` to a thin wrapper -- remove duplicated data-gathering instructions and template body, replace with a pointer to `references/audit.md` for procedures, keep command frontmatter for slash command support
+- **F-059**: Release v2.3.0 -- bundle core fixes (F-045..F-049), sales suite (F-050..F-056), audit skill (F-057..F-058), bump minor version, update CHANGELOG.md and release.json
 
 ## User stories
 
-- As a harness evaluator, I want each sales domain skill to have complete criteria anchors (scores 1-5 for all 4 criteria) so that I can score sprint deliverables without guessing what each score level means.
-- As a harness operator, I want consistent section structure across all 5 domain skills so that switching between profiles does not require learning a new layout.
-- As a harness operator, I want anti-patterns documented in each domain skill so that generators avoid common mistakes without trial and error.
-- As a harness operator, I want the index skill routing table to be provably consistent with the domain skills it references so that profile switching does not break.
-- As a harness operator, I want the suite to survive adversarial review so that downstream users can trust the quality of the domain guidance.
+- As a harness operator on Codex or Copilot, I want audit procedures available as a reference skill so that I can run a postmortem without needing Claude Code slash commands.
+- As a harness evaluator, I want a single canonical source for the integrity grep checklist so that stale reference detection is consistent across all audit paths.
+- As a harness operator, I want the postmortem command to be a thin wrapper so that audit logic is maintained in one place, not duplicated between the command and inline instructions.
+- As a harness consumer, I want v2.3.0 released with the sales suite and audit skill bundled so that I can install a coherent feature set.
 
 ## Execution strategy
 - Variant: Variant A
 - Mode: continuous
-- Expected sprint count: 3
-- Default target ordering: F-050, F-051, F-052, F-053, F-054, F-055, F-056
-- Multi-feature sprint policy: Features are grouped into sprints as defined below. Grouping waiver rationale is provided per sprint. The generator must still include a grouping waiver in each proposal.
-- Simplification policy: If a domain skill audit reveals no gaps, the feature still passes -- the audit itself (with documented evidence of completeness) is the deliverable. Do not invent gaps to fill.
+- Expected sprint count: 2
+- Default target ordering: F-057, F-058, F-059
+- Multi-feature sprint policy: Sprint 1 groups F-057 and F-058 because F-058 is a direct consequence of F-057 (the command slimming requires the reference skill to exist). Grouping waiver required in the proposal.
+- Simplification policy: If the postmortem command is already thin enough after F-058, do not pad it with extra content. The goal is reduction, not rewriting.
 - Methodology: agile
 
 ### Sprint plan
 
-**Sprint 1: Core domain skill audits (F-050, F-051, F-052)**
-- F-050: Audit harness-sales/SKILL.md against 6-section checklist, fix gaps
-- F-051: Audit harness-tm/SKILL.md against 6-section checklist, fix gaps
-- F-052: Audit harness-se/SKILL.md against 6-section checklist, fix gaps
-- Rationale: Three independent file audits using the same checklist. No cross-dependencies. Grouping avoids 2 unnecessary round-trips while keeping scope reviewable (3 files, same audit pattern).
+**Sprint 1: Audit skill + command slim (F-057, F-058)**
+- F-057: Create `references/audit.md` with 6 sections following the domain skill pattern
+- F-058: Slim `postmortem.md` to thin wrapper pointing to `audit.md`
+- Rationale: F-058 depends on F-057 existing. Both are markdown-only changes in the same plugin. Grouping avoids an unnecessary round-trip for a file that can only be slimmed after its replacement exists.
 
-**Sprint 2: Remaining skills + integration (F-053, F-054, F-055)**
-- F-053: Audit harness-sen/SKILL.md against 6-section checklist, fix gaps
-- F-054: Audit harness-so/SKILL.md against 6-section checklist, fix gaps
-- F-055: Integration audit -- cross-reference consistency between index skill and all 5 domain skills
-- Rationale: F-053 and F-054 follow the same audit pattern as Sprint 1. F-055 depends on all 5 domain skills being audited first (F-050..F-054). Grouping F-055 here avoids an extra sprint while ensuring all domain skills are finalized before the integration check runs.
+**Sprint 2: Release v2.3.0 (F-059)**
+- F-059: Version bump, CHANGELOG.md, release.json, plugin.json manifests, README sync
+- Rationale: Release must run after all content features are finalized and passing. Single feature sprint -- release touches cross-cutting files and follows the releaser role protocol.
 
-**Sprint 3: Adversarial review (F-056)**
-- F-056: Codex adversarial review on entire suite, fix BLOCKING/HIGH findings
-- Rationale: Must run after all domain skills and integration are finalized. Single feature sprint -- adversarial review touches the full suite and cannot be parallelized with content changes.
+### 6-Section Structure for audit.md
 
-### 6-Section Audit Checklist (used by F-050 through F-054)
+The reference skill adapts the domain skill section pattern for harness process auditing:
 
-Each domain SKILL.md must contain:
+1. **Section 1 -- Audit Methodology**: Three audit types (process audit, artifact audit, drift audit) with when-to-use guidance and what each type examines. Analogous to the methodology table in domain skills.
+2. **Section 2 -- Audit Approach**: Three approach strategies (integrity-first, compliance-first, trend-first) that determine the order and depth of audit steps. Analogous to the development methodology in domain skills.
+3. **Section 3 -- Verification Strategy**: What constitutes "testing" for an audit -- grep checks for stale references, artifact counts against expected counts, score trend analysis for drift detection, feature pass-rate calculations. Analogous to the testing strategy in domain skills.
+4. **Section 4 -- Deliverable Verification**: What makes a good postmortem report -- required sections, minimum evidence depth per section, table completeness enforcement. Analogous to the build/runtime verification in domain skills.
+5. **Section 5 -- Evaluation Criteria**: Four criteria with 0-5 anchors: `process_compliance` (was the harness process followed?), `artifact_completeness` (are all required artifacts present and well-formed?), `drift_detection` (do score trends and failure patterns reveal drift?), `recommendation_quality` (are recommendations actionable and evidence-based?). Analogous to the primary criteria in domain skills.
+6. **Section 6 -- Audit Checklists**: Pre-built checklist for post-run audit (the review checklist from patterns.md, expanded), anti-patterns (missing artifacts, unset status, stale handoff, score inflation), and the canonical integrity grep checklist (moved from CLAUDE.md/postmortem.md). Analogous to the anti-patterns section in domain skills.
 
-1. **Methodology table**: At least 3 methodologies with columns for when-to-use and harness mapping. Methodologies must be domain-appropriate (not generic).
-2. **Criteria anchors**: All 4 domain criteria must have explicit score anchors for levels 1 through 5. Each anchor must be concrete and domain-specific (not "good" / "very good" / "excellent"). Anchors must reference artifact types from the domain profile.
-3. **Verification methods**: Domain-specific verification procedures that map to the contract check template. Must specify what to check and how (not just "review the document").
-4. **Contract check templates**: At least 4 contract checks (one per criterion) with check IDs matching the criterion prefix pattern. Each check must specify required/advisory and verification method.
-5. **Anti-patterns**: At least 5 domain-specific anti-patterns with detection guidance and remediation. Must reference real failure modes, not generic warnings.
-6. **Security guidance**: Domain-specific security considerations covering data sensitivity, access control, and confidentiality relevant to the domain's artifact types. Must not be generic boilerplate.
+### Thin Wrapper Pattern for postmortem.md
+
+After F-058, the command file should contain:
+- YAML frontmatter (name, description, allowed_tools) -- unchanged
+- Preconditions section -- unchanged (still needs to verify state.json and features.json exist)
+- Data Gathering section -- reduced to just the `postmortem-data` subcommand invocation
+- A pointer: "Read `references/audit.md` for audit methodology, evaluation criteria, checklists, and report structure"
+- Output section -- reduced to just the file path and summary line
+- Remove: the full grep checklist (moves to audit.md Section 6), the detailed template body (moves to audit.md Section 4), the manual data gathering path (redundant with the subcommand)
 
 ## High-level technical design
 
-### Files under audit
+### Files changed
 
 | Feature | File | Action |
 |---------|------|--------|
-| F-050 | `plugins/harness-sales-suite/skills/harness-sales/SKILL.md` | Audit + fix |
-| F-051 | `plugins/harness-sales-suite/skills/harness-tm/SKILL.md` | Audit + fix |
-| F-052 | `plugins/harness-sales-suite/skills/harness-se/SKILL.md` | Audit + fix |
-| F-053 | `plugins/harness-sales-suite/skills/harness-sen/SKILL.md` | Audit + fix |
-| F-054 | `plugins/harness-sales-suite/skills/harness-so/SKILL.md` | Audit + fix |
-| F-055 | `plugins/harness-sales-suite/skills/harness-sales-suite/SKILL.md` + all 5 above | Cross-reference audit + fix |
-| F-056 | `plugins/harness-sales-suite/` (entire directory) | Adversarial review + fix |
+| F-057 | `plugins/harness/skills/harness/references/audit.md` | Create (new file) |
+| F-058 | `plugins/harness/commands/postmortem.md` | Slim down (remove ~80 lines, add reference pointer) |
+| F-059 | `release.json` | Add v2.3.0 entry, bump current_version |
+| F-059 | `CHANGELOG.md` | Add v2.3.0 section |
+| F-059 | `plugins/harness/plugin.json` | Version bump to 2.3.0 |
+| F-059 | `plugins/harness-sales-suite/plugin.json` | Version bump to 2.3.0 |
+| F-059 | `plugins/harness-sdlc-suite/plugin.json` | Version bump to 2.3.0 |
+| F-059 | `README.md` | Sync version references, add audit skill to feature list |
 
-### Audit approach
+### Cross-reference cleanup
 
-For each domain skill (F-050 through F-054):
-1. Read the full SKILL.md
-2. Check each of the 6 sections against the checklist
-3. Document findings as present/missing/incomplete for each section
-4. Fix any gaps in-place -- add missing sections, expand incomplete anchors, fill missing anti-patterns
-5. Re-verify the file after fixes
-
-For integration (F-055):
-1. Extract criteria keys from each domain skill
-2. Compare against index skill criteria key mapping table
-3. Extract verification methods from each domain skill
-4. Compare against index skill verification methods table
-5. Verify routing table paths resolve to actual files
-6. Fix any inconsistencies in the index skill or domain skills as needed
-
-For adversarial review (F-056):
-1. Run Codex review on the entire plugins/harness-sales-suite directory
-2. Triage findings: BLOCKING (factual errors, missing required content, broken references), HIGH (inconsistencies, weak anchors, generic content), LOW (style, formatting, minor wording)
-3. Fix all BLOCKING and HIGH findings
-4. Document LOW findings as non-blocking issues in evaluation
+When creating audit.md, verify:
+- The grep pattern in Section 6 matches the current pattern in `postmortem.md` (line 131)
+- The review checklist in Section 6 is a superset of the one in `patterns.md` (lines 680-690)
+- After F-058, `postmortem.md` contains zero duplicated logic from `audit.md`
 
 ## Non-goals
 
-- Adding new domain profiles or new domain skills
-- Changing the harness core (coordinator, evaluator, generator roles)
-- Modifying plugin.json structure or plugin metadata
-- Adding automated tests for SKILL.md content
-- Changing the sales pipeline phases or deal type routing in the index skill
-- Rewriting domain skills from scratch -- this is an audit and fix cycle, not a rebuild
+- Changing the harness-companion.mjs `postmortem-data` subcommand (it stays as-is)
+- Adding new evaluation criteria to the core harness (audit criteria are reference-only, not wired into state.json)
+- Making audit.md a full domain skill with its own plugin entry (it is a reference, not a routable skill)
+- Modifying the sales suite or SDLC suite content
+- Backporting audit.md patterns to existing domain skills
+- Changing the evaluator, generator, or coordinator role files
 
 ## Domain Profile
 - Primary: software
 - Secondary: (none)
 - Criteria: product_depth, functionality, visual_design, code_quality
-- Artifact types: Markdown domain skill files, plugin configuration
-- Stakeholder lens: Harness operators, harness evaluators, domain skill consumers
+- Artifact types: Markdown reference files, command files, release artifacts
+- Stakeholder lens: Harness operators, plugin consumers, framework maintainers
 
 ## Security Context
-- data_sensitivity: confidential
+- data_sensitivity: none
 - external_exposure: none
 - auth_model: none
 - compliance: none
 
 ## Definition of done
 
-All 7 features pass evaluation:
+All 3 features pass evaluation:
 
-1. **F-050**: harness-sales/SKILL.md passes all 6 checklist sections -- methodology table with 3+ sales methodologies, criteria anchors 1-5 for all 4 sales criteria, verification methods, contract check templates, 5+ anti-patterns, security guidance
-2. **F-051**: harness-tm/SKILL.md passes all 6 checklist sections with tender-management-specific content
-3. **F-052**: harness-se/SKILL.md passes all 6 checklist sections with sales-engineering-specific content
-4. **F-053**: harness-sen/SKILL.md passes all 6 checklist sections with sales-enablement-specific content
-5. **F-054**: harness-so/SKILL.md passes all 6 checklist sections with sales-operations-specific content
-6. **F-055**: Index skill routing table, criteria key mapping, and verification methods are provably consistent with all 5 domain skills -- zero orphaned references, zero mismatches
-7. **F-056**: Codex adversarial review completed, all BLOCKING and HIGH findings fixed, LOW findings documented
+1. **F-057**: `audit.md` exists at `plugins/harness/skills/harness/references/audit.md` with all 6 sections populated. Section 5 has 4 criteria with concrete 0-5 anchors. Section 6 has the canonical integrity grep checklist. The file is self-contained (readable without postmortem.md).
+2. **F-058**: `postmortem.md` is a thin wrapper under 60 lines. It references `audit.md` for procedures. It retains YAML frontmatter and preconditions. The grep checklist and detailed template body are gone from this file (they live in audit.md).
+3. **F-059**: `release.json` shows `current_version: "2.3.0"`. CHANGELOG.md has a v2.3.0 section listing F-045 through F-058. All plugin.json files show version 2.3.0. README.md version references are current.

@@ -1,7 +1,7 @@
 {
   "name": "harness",
   "version": "2.2.9",
-  "description": "Multi-agent sprint orchestration harness with two-plugin architecture: domain-blind core and pluggable domain skill suites.",
+  "description": "Multi-agent sprint orchestration harness with three-plugin architecture: domain-blind core, SDLC domain skill suite, and sales domain skill suite.",
   "author": {
     "name": "xuzhijie-ownself",
     "email": "kidtsui@outlook.com",
@@ -21,12 +21,13 @@
   ],
   "skills": [
     "./plugins/harness/skills/",
-    "./plugins/harness-sdlc-suite/skills/"
+    "./plugins/harness-sdlc-suite/skills/",
+    "./plugins/harness-sales-suite/skills/"
   ],
   "interface": {
     "displayName": "Harness",
     "shortDescription": "Multi-agent sprint orchestration harness",
-    "longDescription": "Runs an Anthropic-style application harness with 6 agents: initializer, planner, generator, evaluator, coordinator, and releaser. Domain-blind core with pluggable domain skill suites. Includes the SDLC suite for software, architecture, business analysis, solution architecture, and ops profiles.",
+    "longDescription": "Runs an Anthropic-style application harness with 6 agents: initializer, planner, generator, evaluator, coordinator, and releaser. Domain-blind core with pluggable domain skill suites. Includes the SDLC suite for software delivery and the Sales suite for revenue execution.",
     "developerName": "xuzhijie-ownself",
     "category": "Productivity",
     "capabilities": [

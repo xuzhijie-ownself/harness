@@ -68,6 +68,36 @@
         "ops"
       ],
       "strict": false
+    },
+    {
+      "name": "harness-sales-suite",
+      "source": "./plugins/harness-sales-suite",
+      "description": "Sales domain skill suite for the harness framework. Provides 5 domain skills (Sales, Sales Engineering, Tender Management, Sales Enablement, Sales Operations) and an index skill for profile routing.",
+      "version": "2.2.9",
+      "author": {
+        "name": "xuzhijie-ownself",
+        "email": "kidtsui@outlook.com"
+      },
+      "homepage": "https://github.com/xuzhijie-ownself/harness",
+      "repository": "https://github.com/xuzhijie-ownself/harness",
+      "license": "MIT",
+      "keywords": [
+        "harness",
+        "sales",
+        "revenue-execution",
+        "domain-skills"
+      ],
+      "category": "workflow",
+      "tags": [
+        "harness",
+        "sales",
+        "domain-skills",
+        "tender-management",
+        "sales-engineering",
+        "sales-enablement",
+        "sales-operations"
+      ],
+      "strict": false
     }
   ]
 }
