@@ -45,6 +45,19 @@ These principles govern ALL changes to the harness. Apply them without being ask
 
 8. **One release per cycle**: Version bumps happen at `/harness:release`, not between sprints. Prefer patch over minor.
 
+## Runtime Capabilities
+
+Not all runtimes support every harness feature. Use this table to understand what works where.
+
+| Capability | Claude Code | Codex CLI | Copilot CLI |
+|------------|-------------|-----------|-------------|
+| Slash commands | Yes | No | No |
+| Agent spawning | Yes | No | No |
+| Hooks (git/pre-post commit) | Yes | No | No |
+| Skills / plugin reading | Yes | Yes | Partial -- reads `.github/copilot-instructions.md` for context, no native skill loading |
+| Script execution | Yes | Yes | Yes -- via bash tool |
+| Interactive review (user-in-the-loop) | Yes | Partial -- no mid-session user prompts, review happens pre-session | Partial -- conversational but no structured contract review loop |
+
 ## Sprint Artifact Naming Convention
 
 ```

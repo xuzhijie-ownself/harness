@@ -17,6 +17,7 @@ The core harness can be used **standalone** with a `custom` profile -- no domain
 **References:**
 - https://www.anthropic.com/engineering/harness-design-long-running-apps
 - https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
+- https://www.anthropic.com/research/long-running-Claude
 
 ---
 
