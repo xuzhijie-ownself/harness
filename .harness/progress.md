@@ -29,4 +29,4 @@ rounds_since_reset: 2 / 3
 - All required features pass. Run `/harness:release` when ready to cut a version.
 
 ## Last commit
-- 2026-04-08T05:35:43.722Z
+- 2026-04-08T05:39:29.527Z
