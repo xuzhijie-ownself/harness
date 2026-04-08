@@ -1,17 +1,20 @@
 {
   "mode": "continuous",
-  "status": "complete",
+  "status": "active",
   "variant": "variant-a-sprinted",
-  "current_round": 2,
-  "last_completed_round": 2,
-  "active_feature_ids": [],
+  "current_round": 1,
+  "last_completed_round": 0,
+  "active_feature_ids": [
+    "F-061",
+    "F-063"
+  ],
   "expected_sprint_count": 2,
   "current_failure_streak": 0,
-  "last_feature_pass_delta": 1,
-  "stop_reason": "All required features pass.",
+  "last_feature_pass_delta": 0,
+  "stop_reason": "",
   "context_reset_threshold": 3,
-  "rounds_since_reset": 2,
-  "current_sprint_phase": "idle",
+  "rounds_since_reset": 1,
+  "current_sprint_phase": "implementation",
   "domain_profile": "software",
   "secondary_profile": "",
   "methodology": "agile",
@@ -21,42 +24,21 @@
       {
         "round": 1,
         "started_at": "2026-04-07T00:00:00Z",
-        "completed_at": "2026-04-08T02:48:22.799Z",
-        "feature_id": "F-057+F-058+F-060",
-        "outcome": "pass",
+        "completed_at": "",
+        "feature_id": "F-061+F-063",
+        "outcome": "",
         "phases": {
           "contract": {
-            "started_at": "2026-04-08T02:48:22.799Z",
-            "completed_at": "2026-04-08T02:48:22.799Z"
+            "started_at": "",
+            "completed_at": ""
           },
           "implementation": {
-            "started_at": "2026-04-08T02:48:22.799Z",
-            "completed_at": "2026-04-08T02:48:22.799Z"
+            "started_at": "",
+            "completed_at": ""
           },
           "evaluation": {
-            "started_at": "2026-04-08T02:48:22.799Z",
-            "completed_at": "2026-04-08T02:48:22.799Z"
-          }
-        }
-      },
-      {
-        "round": 2,
-        "started_at": "2026-04-08T02:49:00.000Z",
-        "completed_at": "2026-04-08T02:56:32.535Z",
-        "feature_id": "F-059",
-        "outcome": "pass",
-        "phases": {
-          "contract": {
-            "started_at": "2026-04-08T02:56:32.535Z",
-            "completed_at": "2026-04-08T02:56:32.535Z"
-          },
-          "implementation": {
-            "started_at": "2026-04-08T02:56:32.535Z",
-            "completed_at": "2026-04-08T02:56:32.535Z"
-          },
-          "evaluation": {
-            "started_at": "2026-04-08T02:56:32.535Z",
-            "completed_at": "2026-04-08T02:56:32.535Z"
+            "started_at": "",
+            "completed_at": ""
           }
         }
       }

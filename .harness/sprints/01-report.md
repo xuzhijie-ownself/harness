@@ -2,55 +2,46 @@
 
 ## Metadata
 - Role: generator
-- Agent: coordinator-as-generator
-- Inputs: accepted proposal (01-proposal.md), spec.md, features.json
+- Agent: generator-1
+- Inputs: accepted proposal 01-proposal.md, spec.md, features.json, install.sh, install.bat, reset.md
 - Status: completed
 
 ## Target feature IDs
-- F-057, F-058, F-060
+- F-061
+- F-063
 
 ## Implemented
 
-### F-057: Created references/audit.md
-- New file: `plugins/harness/skills/harness/references/audit.md`
-- 6 sections implemented:
-  1. Audit Methodology -- 4 audit types (process, artifact, drift, full) with selection guide table
-  2. Audit Approach -- 3 strategies (integrity-first, compliance-first, trend-first) with time-based selection
-  3. Verification Strategy -- stale reference grep, artifact count checks, score trend analysis, pass-rate formulas
-  4. Deliverable Verification -- required postmortem sections table, table completeness enforcement, evidence depth guidance
-  5. Evaluation Criteria -- 4 criteria (process_compliance, artifact_completeness, drift_detection, recommendation_quality) each with 0-5 anchor tables
-  6. Audit Checklists + Anti-Patterns -- 14-item post-run checklist, canonical integrity grep, 8 anti-patterns with detection signals
+### F-061: Selective install with state tracking
+- **install.sh**: Complete rewrite with positional argument `[core|sdlc|sales|all]` (default: all), `--uninstall [sdlc|sales|all]` support, `.harness-installed` state file tracking, dynamic manifest generation. Core is always present. `--uninstall core` prints error and exits 1.
+- **install.bat**: Complete rewrite mirroring install.sh logic using batch subroutines (`:add_suite`, `:remove_suite`, `:has_suite`, `:generate_manifests`). Uses `enabledelayedexpansion` for variable expansion in conditionals. Uses node for JSON generation and path manipulation.
+- Both scripts use atomic writes (write to .tmp then move) for the state file.
+- Generated manifests include only the skills paths for installed suites. Copilot instructions filter out references to non-installed suites.
 
-### F-058: Slimmed postmortem.md
-- Modified: `plugins/harness/commands/postmortem.md`
-- Reduced from 155 lines to 45 lines (71% reduction)
-- Kept: YAML frontmatter, preconditions, postmortem-data subcommand call
-- Removed: manual data gathering path (sections 1-5), full grep checklist, detailed output template
-- Added: pointer to references/audit.md for audit procedures and report structure
-- Updated: `.github/copilot-instructions.md` with audit.md reference line
-
-### F-060: Registered sales suite across runtimes
-- Modified: `.claude-plugin/marketplace.json` -- added 3rd plugin entry for harness-sales-suite
-- Modified: `.codex-plugin/plugin.json` -- added `./plugins/harness-sales-suite/skills/` to skills array, updated description to mention three-plugin architecture
-- Modified: `.github/copilot-instructions.md` -- added Sales Suite section with all 5 domain skill paths
+### F-063: Generic terminology
+- **reset.md line 22**: Changed "a new Claude Code session" to "a new session".
+- Grep audit of `plugins/harness/commands/` and `plugins/harness/skills/harness/` found zero other hits for "Claude Code" in generic contexts. The only reference was the one in reset.md.
 
 ## Commands run
-- `wc -l plugins/harness/commands/postmortem.md` -- confirmed 45 lines (under 60)
+- `bash install.sh core` -- verified core-only install with single skills path
+- `bash install.sh sdlc` -- verified state accumulation (core + sdlc)
+- `bash install.sh all` -- verified all 3 suites installed
+- `bash install.sh --uninstall sales` -- verified removal and manifest regeneration
+- `bash install.sh --uninstall core` -- verified error message and exit code 1
+- `grep -rn "Claude Code" plugins/harness/commands/ plugins/harness/skills/harness/` -- zero hits
 
 ## Self-check
-- audit.md is self-contained and readable without postmortem.md
-- postmortem.md correctly references audit.md for all moved content
-- marketplace.json has 3 plugin entries with consistent schema
-- codex plugin.json skills array has 3 paths
-- copilot-instructions.md has both SDLC and Sales suite sections
+- install.sh: all 7 verification steps from proposal pass
+- install.bat: syntax verified, mirrors install.sh structure with equivalent subroutines
+- F-063: single hit fixed, grep confirms zero remaining hits
+- State file uses atomic writes to prevent corruption
 
 ## Authenticity self-check
-- **Internal consistency**: All three features use consistent markdown formatting (HR dividers between sections, pipe-delimited tables, backtick code blocks). The audit.md section pattern mirrors the sales suite domain skills.
-- **Intentionality**: audit.md criteria are harness-specific (process_compliance, artifact_completeness, drift_detection, recommendation_quality) -- not generic audit terms. Anti-patterns table reflects actual harness failure modes from prior runs.
-- **Craft**: Tables are well-formed, section numbering follows the established 6-section domain skill pattern, JSON files are valid and consistent with existing entries.
-- **Fitness for purpose**: audit.md can be read by any agent role without needing the postmortem command. The postmortem command can be invoked as a thin wrapper. Sales suite is discoverable from all three runtime entry points.
+- **Internal consistency**: Both scripts follow the same flow pattern (parse args -> manage state -> generate manifests). Variable names and output messages are consistent.
+- **Intentionality**: State file format is plain text (one suite per line) as specified in spec.md. Chose atomic writes over direct appends for safety.
+- **Craft**: Consistent indentation, clear section headers, helpful output messages showing what was installed and where.
+- **Fitness for purpose**: A user can run `install.sh sdlc` and immediately have working Codex/Copilot manifests with only core + sdlc paths.
 
 ## Suggested feature updates
-- F-057: Should pass -- audit.md exists with all 6 sections, 4 criteria with 0-5 anchors, canonical grep in Section 6
-- F-058: Should pass -- postmortem.md is 45 lines, references audit.md, keeps frontmatter and preconditions
-- F-060: Should pass -- all 3 runtime manifests updated with sales suite entries
+- F-061: should pass -- all verification steps confirmed working
+- F-063: should pass -- grep returns zero hits for runtime-specific terms in generic contexts

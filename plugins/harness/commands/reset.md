@@ -19,7 +19,7 @@ Run the **Command Pre-Flight Validation** from SKILL.md before proceeding.
 
 - Context is ~75% full
 - The model is prematurely wrapping up features (context anxiety)
-- Work needs to pause and resume in a new Claude Code session
+- Work needs to pause and resume in a new session
 
 Context resets with a structured handoff are more reliable than compaction for
 long sessions. Models exhibit "context anxiety" -- premature closure as context fills.

@@ -3,74 +3,86 @@
 ## Metadata
 - Role: planner
 - Agent: planner-1
-- Inputs: user prompt (audit reference skill + release), postmortem.md command, references/ directory, SKILL.md (core), features.json (prior cycle F-050..F-056 complete), release.json (v2.2.9)
+- Inputs: user prompt, features.json, install.sh, install.bat, reset.md, session.md, CLAUDE.md
 - Status: accepted
 
 ## Overview
 
-Extract the postmortem/audit logic from its current home as a Claude Code-only command (`plugins/harness/commands/postmortem.md`) into a core reference skill (`plugins/harness/skills/harness/references/audit.md`) that follows the domain skill section pattern. The command becomes a thin wrapper that points to the reference skill. This makes audit procedures available to all three runtimes (Claude Code, Codex, Copilot) and to any agent role, not just the slash command path.
+Tri-runtime refactoring for the harness project (v2.3.0). The harness supports three runtimes -- Claude Code, Codex CLI, and Copilot CLI -- but the install scripts are monolithic (always install everything), command files contain runtime-specific language, and procedural logic is duplicated across session.md and reset.md instead of centralized in a reference file. This spec delivers four features across two sprints: make install selective with state tracking, neutralize runtime-specific terminology, extract shared procedures into a single orchestration reference, and document runtime capabilities in a table.
 
-The audit reference skill covers process auditing, artifact auditing, and drift detection for harness runs. It is scoped to the harness's own process -- it is not a domain skill for external projects. The integrity grep checklist currently embedded in `CLAUDE.md` and duplicated in `postmortem.md` moves into `audit.md` as the single canonical source.
-
-The release bundles three prior feature groups into v2.3.0: core fixes (F-045 through F-049), sales suite (F-050 through F-056), and this audit skill work (F-057 through F-058).
-
-## Design direction
-
-Not applicable -- these are framework reference files, not user-facing UI. Quality direction: `audit.md` should be a self-contained reference that any harness agent can read without needing the postmortem command. It follows the 6-section pattern established by the sales suite domain skills, adapted for process auditing instead of domain execution.
+## Domain Profile
+- Primary: software
+- Secondary: (none)
+- Criteria: product_depth, functionality, visual_design, code_quality
+- Artifact types: Shell scripts, batch scripts, Markdown command files, Markdown reference files
+- Stakeholder lens: Harness maintainers, plugin users across all three runtimes
 
 ## Shipped scope
 
-- **F-057**: Create `plugins/harness/skills/harness/references/audit.md` -- harness process audit reference skill with 6 sections: audit methodology, audit approach, verification strategy, deliverable verification, evaluation criteria (4 criteria with 0-5 anchors), and audit checklists (including the canonical integrity grep checklist)
-- **F-058**: Slim `plugins/harness/commands/postmortem.md` to a thin wrapper -- remove duplicated data-gathering instructions and template body, replace with a pointer to `references/audit.md` for procedures, keep command frontmatter for slash command support
-- **F-059**: Release v2.3.0 -- bundle core fixes (F-045..F-049), sales suite (F-050..F-056), audit skill (F-057..F-058), bump minor version, update CHANGELOG.md and release.json
+### F-061: Selective install with state tracking
+
+Redesign install.sh and install.bat to support suite-level granularity.
+
+- Positional argument: `install.sh [core|sdlc|sales|all]` (default: `all`). Same pattern for install.bat.
+- State file: `.harness-installed` in the target project root. Plain text, one line per installed suite name (`core`, `sdlc`, `sales`). Created on first install, updated on subsequent installs.
+- Install flow: read `.harness-installed` if it exists, add the requested suite(s), write the updated state, then regenerate `.codex-plugin/plugin.json` and `.github/copilot-instructions.md` from the combined installed-suite state. Only include skills paths for installed suites in the generated manifests.
+- Uninstall flow: `install.sh --uninstall [sdlc|sales|all]`. Remove the named suite from `.harness-installed`, regenerate manifests. `core` cannot be uninstalled separately -- attempting `--uninstall core` prints an error and exits non-zero.
+- All three path prefixes rewritten correctly in generated manifests: `plugins/harness/`, `plugins/harness-sdlc-suite/`, `plugins/harness-sales-suite/`.
+- `all` installs core + sdlc + sales. `core` installs only the core harness.
+
+### F-063: Generic terminology
+
+- reset.md line 22: change "Claude Code session" to "session".
+- Audit all files under `plugins/harness/commands/` and `plugins/harness/skills/harness/` for references to a specific runtime where the context is generic. Replace with runtime-neutral phrasing (e.g., "a new Claude Code session" becomes "a new session"). Do NOT change text that is genuinely runtime-specific (e.g., marketplace install instructions in install.sh, the CLAUDE.md file itself, or instructions that only apply to one runtime).
+
+### F-064: Extract reset and session procedures to references/orchestration.md
+
+- Create `plugins/harness/skills/harness/references/orchestration.md` with two sections: `## Session Procedure` and `## Reset Procedure`.
+- Move the procedural steps from session.md into `## Session Procedure`: Session Startup, Contract Phase (including interactive review loop), Implementation Phase, Evaluation Phase, Post-flight, Auto-Commit, Artifact Validation, Session End, Handoff Cleanup, Sprint Resume table.
+- Move the procedural steps from reset.md into `## Reset Procedure`: Steps 1-8, Phase Resume explanation, Post-flight.
+- session.md becomes a thin wrapper (~10-15 lines of content after frontmatter): frontmatter + brief description + "Read `plugins/harness/skills/harness/references/orchestration.md` section 'Session Procedure' and follow it."
+- reset.md becomes a thin wrapper (~10-15 lines of content after frontmatter): frontmatter + brief description + preconditions + "Read `plugins/harness/skills/harness/references/orchestration.md` section 'Reset Procedure' and follow it."
+- All script calls, interactive review loops, phase resume tables, and handoff cleanup logic move intact. No behavioral change.
+
+### F-066: Runtime capabilities table
+
+- Add a `## Runtime Capabilities` section to CLAUDE.md with a Markdown table.
+- Rows: Claude Code, Codex CLI, Copilot CLI.
+- Columns: slash commands, agent spawning, hooks (git hooks / pre-post commit), skills/plugin reading, script execution, interactive review (user-in-the-loop during contract phase).
+- Use Yes / No / Partial with brief inline notes where a capability is partial or conditional.
+- Place the section after the existing "Design Principles" section.
 
 ## User stories
 
-- As a harness operator on Codex or Copilot, I want audit procedures available as a reference skill so that I can run a postmortem without needing Claude Code slash commands.
-- As a harness evaluator, I want a single canonical source for the integrity grep checklist so that stale reference detection is consistent across all audit paths.
-- As a harness operator, I want the postmortem command to be a thin wrapper so that audit logic is maintained in one place, not duplicated between the command and inline instructions.
-- As a harness consumer, I want v2.3.0 released with the sales suite and audit skill bundled so that I can install a coherent feature set.
+- As a user installing the harness into a project that only needs SDLC workflows, I want to run `install.sh sdlc` and get only core + sdlc skills registered, so my Codex/Copilot manifests stay clean.
+- As a user removing the sales suite, I want to run `install.sh --uninstall sales` and have manifests regenerated without sales paths, without losing my sdlc install.
+- As a harness maintainer, I want command files to use runtime-neutral language so the same instructions read correctly regardless of which runtime executes them.
+- As a harness maintainer, I want session.md and reset.md to be thin wrappers pointing to a single orchestration reference, so procedural updates happen in one place.
+- As a new user evaluating runtimes, I want a capabilities table in CLAUDE.md so I can quickly see which features are available in each environment.
 
 ## Execution strategy
-- Variant: Variant A
-- Mode: continuous
+
+- Variant: Variant A (sprinted)
+- Mode: supervised
 - Expected sprint count: 2
-- Default target ordering: F-057, F-058, F-059
-- Multi-feature sprint policy: Sprint 1 groups F-057 and F-058 because F-058 is a direct consequence of F-057 (the command slimming requires the reference skill to exist). Grouping waiver required in the proposal.
-- Simplification policy: If the postmortem command is already thin enough after F-058, do not pad it with extra content. The goal is reduction, not rewriting.
 - Methodology: agile
 
 ### Sprint plan
 
-**Sprint 1: Audit skill + command slim (F-057, F-058)**
-- F-057: Create `references/audit.md` with 6 sections following the domain skill pattern
-- F-058: Slim `postmortem.md` to thin wrapper pointing to `audit.md`
-- Rationale: F-058 depends on F-057 existing. Both are markdown-only changes in the same plugin. Grouping avoids an unnecessary round-trip for a file that can only be slimmed after its replacement exists.
+**Sprint 1: F-061 + F-063**
+- F-061: Selective install with state tracking (install.sh, install.bat, .harness-installed).
+- F-063: Generic terminology audit and fixes across commands/ and skills/.
+- Grouping rationale: F-063 touches files that F-061 also modifies (both install scripts reference "Claude Code" in comments and output). Doing them together avoids merge conflicts on the same lines. Both are refactoring tasks with clear verification.
 
-**Sprint 2: Release v2.3.0 (F-059)**
-- F-059: Version bump, CHANGELOG.md, release.json, plugin.json manifests, README sync
-- Rationale: Release must run after all content features are finalized and passing. Single feature sprint -- release touches cross-cutting files and follows the releaser role protocol.
+**Sprint 2: F-064 + F-066**
+- F-064: Extract orchestration procedures from session.md and reset.md into references/orchestration.md.
+- F-066: Runtime capabilities table in CLAUDE.md.
+- Grouping rationale: Both are documentation restructuring with zero file overlap. F-064 touches session.md, reset.md, and a new orchestration.md. F-066 touches only CLAUDE.md. Independent changes reduce risk.
 
-### 6-Section Structure for audit.md
-
-The reference skill adapts the domain skill section pattern for harness process auditing:
-
-1. **Section 1 -- Audit Methodology**: Three audit types (process audit, artifact audit, drift audit) with when-to-use guidance and what each type examines. Analogous to the methodology table in domain skills.
-2. **Section 2 -- Audit Approach**: Three approach strategies (integrity-first, compliance-first, trend-first) that determine the order and depth of audit steps. Analogous to the development methodology in domain skills.
-3. **Section 3 -- Verification Strategy**: What constitutes "testing" for an audit -- grep checks for stale references, artifact counts against expected counts, score trend analysis for drift detection, feature pass-rate calculations. Analogous to the testing strategy in domain skills.
-4. **Section 4 -- Deliverable Verification**: What makes a good postmortem report -- required sections, minimum evidence depth per section, table completeness enforcement. Analogous to the build/runtime verification in domain skills.
-5. **Section 5 -- Evaluation Criteria**: Four criteria with 0-5 anchors: `process_compliance` (was the harness process followed?), `artifact_completeness` (are all required artifacts present and well-formed?), `drift_detection` (do score trends and failure patterns reveal drift?), `recommendation_quality` (are recommendations actionable and evidence-based?). Analogous to the primary criteria in domain skills.
-6. **Section 6 -- Audit Checklists**: Pre-built checklist for post-run audit (the review checklist from patterns.md, expanded), anti-patterns (missing artifacts, unset status, stale handoff, score inflation), and the canonical integrity grep checklist (moved from CLAUDE.md/postmortem.md). Analogous to the anti-patterns section in domain skills.
-
-### Thin Wrapper Pattern for postmortem.md
-
-After F-058, the command file should contain:
-- YAML frontmatter (name, description, allowed_tools) -- unchanged
-- Preconditions section -- unchanged (still needs to verify state.json and features.json exist)
-- Data Gathering section -- reduced to just the `postmortem-data` subcommand invocation
-- A pointer: "Read `references/audit.md` for audit methodology, evaluation criteria, checklists, and report structure"
-- Output section -- reduced to just the file path and summary line
-- Remove: the full grep checklist (moves to audit.md Section 6), the detailed template body (moves to audit.md Section 4), the manual data gathering path (redundant with the subcommand)
+### Policies
+- Default target ordering: F-061 -> F-063 -> F-064 -> F-066.
+- Multi-feature sprint policy: grouping allowed when features share modified files or are both low-risk documentation changes. Grouping waiver required in each sprint proposal.
+- Simplification policy: if a feature fails twice, the coordinator may descope optional sub-items (e.g., reduce capabilities table columns) but must not drop a required feature without user approval.
 
 ## High-level technical design
 
@@ -78,48 +90,46 @@ After F-058, the command file should contain:
 
 | Feature | File | Action |
 |---------|------|--------|
-| F-057 | `plugins/harness/skills/harness/references/audit.md` | Create (new file) |
-| F-058 | `plugins/harness/commands/postmortem.md` | Slim down (remove ~80 lines, add reference pointer) |
-| F-059 | `release.json` | Add v2.3.0 entry, bump current_version |
-| F-059 | `CHANGELOG.md` | Add v2.3.0 section |
-| F-059 | `plugins/harness/plugin.json` | Version bump to 2.3.0 |
-| F-059 | `plugins/harness-sales-suite/plugin.json` | Version bump to 2.3.0 |
-| F-059 | `plugins/harness-sdlc-suite/plugin.json` | Version bump to 2.3.0 |
-| F-059 | `README.md` | Sync version references, add audit skill to feature list |
+| F-061 | `install.sh` | Rewrite with argument parsing, state file, dynamic manifest generation |
+| F-061 | `install.bat` | Rewrite with argument parsing, state file, dynamic manifest generation |
+| F-063 | `plugins/harness/commands/reset.md` | Terminology fix (line 22 + any others found) |
+| F-063 | `plugins/harness/commands/*.md` | Audit and fix runtime-specific terms |
+| F-063 | `plugins/harness/skills/harness/**/*.md` | Audit and fix runtime-specific terms |
+| F-064 | `plugins/harness/skills/harness/references/orchestration.md` | Create (new file) |
+| F-064 | `plugins/harness/commands/session.md` | Slim to thin wrapper |
+| F-064 | `plugins/harness/commands/reset.md` | Slim to thin wrapper |
+| F-066 | `CLAUDE.md` | Add Runtime Capabilities table section |
 
-### Cross-reference cleanup
+### State file format (.harness-installed)
 
-When creating audit.md, verify:
-- The grep pattern in Section 6 matches the current pattern in `postmortem.md` (line 131)
-- The review checklist in Section 6 is a superset of the one in `patterns.md` (lines 680-690)
-- After F-058, `postmortem.md` contains zero duplicated logic from `audit.md`
+```
+core
+sdlc
+sales
+```
+
+Plain text, one suite per line, no comments, no blank lines. Scripts read with `cat`, filter with `grep`, append with `echo >> `.
 
 ## Non-goals
 
-- Changing the harness-companion.mjs `postmortem-data` subcommand (it stays as-is)
-- Adding new evaluation criteria to the core harness (audit criteria are reference-only, not wired into state.json)
-- Making audit.md a full domain skill with its own plugin entry (it is a reference, not a routable skill)
-- Modifying the sales suite or SDLC suite content
-- Backporting audit.md patterns to existing domain skills
-- Changing the evaluator, generator, or coordinator role files
+- Changing the Claude Code marketplace install flow.
+- Adding new runtimes beyond the existing three.
+- Modifying harness-companion.mjs or any script logic.
+- Changing features.json schema, state.json schema, or patterns.md templates.
+- Version bump or release -- version stays at 2.3.0.
+- Modifying domain skill suites (harness-sdlc-suite, harness-sales-suite) content.
 
-## Domain Profile
-- Primary: software
-- Secondary: (none)
-- Criteria: product_depth, functionality, visual_design, code_quality
-- Artifact types: Markdown reference files, command files, release artifacts
-- Stakeholder lens: Harness operators, plugin consumers, framework maintainers
+## Definition of done
+
+All 4 features pass evaluation with scores of 3+ on all criteria:
+
+1. **F-061**: `install.sh core` installs only core skills path in plugin.json. `install.sh sdlc` installs core + sdlc. `install.sh all` installs all three. `.harness-installed` tracks state correctly across multiple invocations. `--uninstall sales` removes sales and regenerates. `--uninstall core` errors. install.bat mirrors all behavior.
+2. **F-063**: reset.md line 22 no longer says "Claude Code session". Grep across `plugins/harness/commands/` and `plugins/harness/skills/harness/` for unnecessary runtime-specific terms returns zero hits (excluding genuinely runtime-specific contexts).
+3. **F-064**: `orchestration.md` exists with two H2 sections containing all procedural content. session.md is under 20 lines of content. reset.md is under 20 lines of content. Both point to orchestration.md. No behavioral change -- all script calls and review loops preserved in orchestration.md.
+4. **F-066**: CLAUDE.md contains a Runtime Capabilities table with 3 rows and 6+ capability columns. Values are accurate per current runtime behavior.
 
 ## Security Context
 - data_sensitivity: none
 - external_exposure: none
 - auth_model: none
 - compliance: none
-
-## Definition of done
-
-All 3 features pass evaluation:
-
-1. **F-057**: `audit.md` exists at `plugins/harness/skills/harness/references/audit.md` with all 6 sections populated. Section 5 has 4 criteria with concrete 0-5 anchors. Section 6 has the canonical integrity grep checklist. The file is self-contained (readable without postmortem.md).
-2. **F-058**: `postmortem.md` is a thin wrapper under 60 lines. It references `audit.md` for procedures. It retains YAML frontmatter and preconditions. The grep checklist and detailed template body are gone from this file (they live in audit.md).
-3. **F-059**: `release.json` shows `current_version: "2.3.0"`. CHANGELOG.md has a v2.3.0 section listing F-045 through F-058. All plugin.json files show version 2.3.0. README.md version references are current.

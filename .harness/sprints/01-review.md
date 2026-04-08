@@ -2,28 +2,37 @@
 
 ## Metadata
 - Role: evaluator
-- Agent: coordinator-as-evaluator
-- Inputs: 01-proposal.md, spec.md, features.json
+- Agent: evaluator-1
+- Inputs: .harness/sprints/01-proposal.md, .harness/spec.md, .harness/features.json
 - Status: accepted
-- Reviewed by: coordinator-as-evaluator
+- Reviewed by: evaluator-1
 - Decision: accept
 
 ## Target feature IDs
-- F-057, F-058, F-060
+- F-061
+- F-063
 
-## Review
+## Grouping waiver assessment
+Grouping is justified. F-063 touches reset.md line 22 which F-061 also indirectly relates to via install scripts containing "Claude Code" references. Both are bounded refactoring tasks. Grouping reduces merge conflict risk.
 
-### Scope
-The proposal correctly groups F-057 + F-058 + F-060 per the spec execution strategy. The grouping waiver is justified: F-058 depends on F-057, and F-060 is independent with no file overlap risk.
+## Contract check review
 
-### Deliverables
-All deliverables are concrete and verifiable. File paths are specified. The 6-section structure for audit.md matches the domain skill pattern from the sales suite.
+| Check | Assessment |
+|-------|-----------|
+| PD-01 (required) | Well-defined: install.sh accepts 4 argument variants with correct manifest generation |
+| FN-01 (required) | Clear: .harness-installed state file creation and update verified across invocations |
+| FN-02 (required) | Clear: --uninstall removes suite, --uninstall core errors |
+| FN-03 (required) | Clear: install.bat mirrors install.sh behavior |
+| VD-01 (advisory) | Reasonable: output message clarity |
+| CQ-01 (required) | Clear: grep verification for runtime-specific terminology |
 
-### Contract checks
-Five checks defined covering all three features. All marked required. Check IDs use standard prefixes (PD, FN, VD, CQ).
+## Verification completeness
+- F-061 verification steps cover all argument variants, state accumulation, and manifest correctness
+- F-063 verification via grep is sufficient for the scope
 
-### Risks
-Two risks identified (grep pattern currency, copilot-instructions.md merge). Both are manageable.
+## Risks acknowledged
+- install.bat testing limitation on macOS is acceptable -- syntax verification is sufficient for this scope
+- python3 fallback is a known pattern already in the existing install.sh
 
-### Verdict
-ACCEPT. The proposal is well-scoped, concrete, and testable. Proceed to implementation.
+## Decision
+**ACCEPT** -- The proposal is well-scoped with clear deliverables and verification steps. Proceed to implementation.
