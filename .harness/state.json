@@ -1,9 +1,9 @@
 {
   "mode": "continuous",
-  "status": "active",
+  "status": "complete",
   "variant": "variant-a-sprinted",
   "current_round": 2,
-  "last_completed_round": 1,
+  "last_completed_round": 2,
   "active_feature_ids": [
     "F-064",
     "F-066"
@@ -11,10 +11,10 @@
   "expected_sprint_count": 2,
   "current_failure_streak": 0,
   "last_feature_pass_delta": 2,
-  "stop_reason": "",
+  "stop_reason": "All required features pass.",
   "context_reset_threshold": 3,
   "rounds_since_reset": 2,
-  "current_sprint_phase": "evaluation",
+  "current_sprint_phase": "idle",
   "domain_profile": "software",
   "secondary_profile": "",
   "methodology": "agile",
