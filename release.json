@@ -1,6 +1,15 @@
 {
-  "current_version": "2.2.9",
+  "current_version": "2.3.0",
   "releases": [
+    {
+      "version": "2.3.0",
+      "date": "2026-04-07",
+      "features_shipped": ["F-045", "F-046", "F-047", "F-048", "F-049", "F-050", "F-051", "F-052", "F-053", "F-054", "F-055", "F-056", "F-057", "F-058", "F-059", "F-060"],
+      "features_deferred": [],
+      "changelog": "Sales domain skill suite (5 profiles: sales, sales engineering, tender management, sales enablement, sales operations), quality audit with contract checks and security considerations, audit reference skill (references/audit.md), postmortem command slimmed to thin wrapper, sales suite registered across all three runtimes (Claude Code, Codex, Copilot). Core fixes from F-045 through F-049 bundled.",
+      "sprint_count": 2,
+      "previous_version": "2.2.9"
+    },
     {
       "version": "2.2.9",
       "date": "2026-04-07",
@@ -164,5 +173,5 @@
       "previous_version": "0.6.0"
     }
   ],
-  "next_version": "2.2.10"
+  "next_version": "2.3.1"
 }

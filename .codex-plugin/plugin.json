@@ -1,6 +1,6 @@
 {
   "name": "harness",
-  "version": "2.2.9",
+  "version": "2.3.0",
   "description": "Multi-agent sprint orchestration harness with three-plugin architecture: domain-blind core, SDLC domain skill suite, and sales domain skill suite.",
   "author": {
     "name": "xuzhijie-ownself",

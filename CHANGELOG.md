@@ -1,10 +1,38 @@
 # Changelog
 
+## [2.3.0] - 2026-04-07
+
+### Sales Domain Skill Suite (F-050..F-056)
+- **F-050..F-052**: Built 5 domain skills (sales, sales engineering, tender management, sales enablement, sales operations) following 6-section pattern with methodology selection, verification strategy, evaluation criteria (4 per profile with 0-5 anchors), and sprint contract checklists
+- **F-053..F-055**: Quality audit -- added Standard Contract Checks (8 criterion-mapped check IDs per skill, 40 total globally unique) and Security Considerations (data sensitivity, access control, confidentiality) to all 5 domain skills
+- **F-056**: Codex adversarial review of entire sales suite -- fixed check ID prefix collisions in harness-sen (CC->CT) and harness-so (DC->DT, SD->SL)
+
+### Audit Reference Skill (F-057, F-058)
+- **F-057**: Created `plugins/harness/skills/harness/references/audit.md` -- 6-section process audit reference with methodology, approach selection, verification strategy, deliverable verification, evaluation criteria (process_compliance, artifact_completeness, drift_detection, recommendation_quality with 0-5 anchors), and audit checklists including canonical integrity grep
+- **F-058**: Slimmed `plugins/harness/commands/postmortem.md` from 155 to 45 lines -- thin wrapper pointing to `references/audit.md` for audit procedures
+
+### Runtime Registration (F-060)
+- **F-060**: Registered sales suite across all three runtimes:
+  - `.claude-plugin/marketplace.json`: 3rd plugin entry for harness-sales-suite
+  - `.codex-plugin/plugin.json`: sales suite skills path added
+  - `.github/copilot-instructions.md`: Sales Suite section with all 5 domain skill paths
+
+### Core Fixes (F-045..F-049)
+- Bundled from prior cycles -- see commit history for individual fixes
+
+### Release (F-059)
+- Version bump to 2.3.0 across all manifests
+- Three-plugin architecture: core + SDLC suite + sales suite
+
+### Stats
+- Sprint count: 2 (this cycle) + 3 (sales suite build) + 3 (quality audit)
+- Required features: 16 shipped (F-045 through F-060)
+
 ## [2.2.9] - 2026-04-07
 
 ### Codex Adversarial Review Fixes (F-042)
-- Fixed stale SDLC skill path in evaluator.md (`plugins/harness/skills/harness-sdlc/` → `plugins/harness-sdlc-suite/skills/harness-sdlc/`)
-- Scoped auto-commit to harness-owned paths only (`git add -A` → explicit path list) — prevents staging unrelated user files
+- Fixed stale SDLC skill path in evaluator.md (`plugins/harness/skills/harness-sdlc/` -> `plugins/harness-sdlc-suite/skills/harness-sdlc/`)
+- Scoped auto-commit to harness-owned paths only (`git add -A` -> explicit path list) -- prevents staging unrelated user files
 - Corrected README update flow: user must cd back to project root before running install.sh
 - Quoted all YAML frontmatter descriptions across core SKILL.md + 6 SDLC suite skills
 
@@ -31,14 +59,14 @@
 ## [2.2.7] - 2026-04-07
 
 ### Fixes
-- install.bat: escaped `(may contain other hooks)` parentheses in uninstall echo — unescaped `)` caused batch parser to prematurely close the `if` block, producing "`. was unexpected at this time.`" on every Windows run
+- install.bat: escaped `(may contain other hooks)` parentheses in uninstall echo -- unescaped `)` caused batch parser to prematurely close the `if` block, producing "`. was unexpected at this time.`" on every Windows run
 - install.bat: removed unused `setlocal enabledelayedexpansion` (latent bug for `!` in node one-liner)
-- install.bat: added subdirectory copying for domain skills (roles/, references/) — parity with install.sh
+- install.bat: added subdirectory copying for domain skills (roles/, references/) -- parity with install.sh
 
 ## [2.2.6] - 2026-04-07
 
 ### Fixes
-- install.sh/bat: renamed `init` → `start` command in uninstall list
+- install.sh/bat: renamed `init` -> `start` command in uninstall list
 - install.sh/bat: added `postmortem` to command list
 - install.sh/bat: added scripts directory copy (harness-companion.mjs + lib/)
 - install.bat: added copilot-instructions.md copy (was missing, install.sh already had it)
@@ -47,15 +75,15 @@
 
 ### Fixes
 - Fixed harness-sdlc-suite plugin.json version stuck at 2.0.0 (was never bumped by releaser)
-- Releaser manifest sync now uses glob discovery (`find plugins/ -name "plugin.json" -path "*/.claude-plugin/*"`) instead of hardcoded paths — domain-blind, auto-discovers any installed plugin suite
+- Releaser manifest sync now uses glob discovery (`find plugins/ -name "plugin.json" -path "*/.claude-plugin/*"`) instead of hardcoded paths -- domain-blind, auto-discovers any installed plugin suite
 
 ## [2.2.4] - 2026-04-07
 
 ### Refactoring (Codex-Reviewed)
-- Condensed coordinator.md: Script Calls → compact table, Calibration/Retro → SKILL.md references
+- Condensed coordinator.md: Script Calls -> compact table, Calibration/Retro -> SKILL.md references
 - Removed dead cost-log.md template from patterns.md
 - Fixed Security Context missing inline in spec.md template (Codex finding)
-- Fixed checkStop() hardcoded maxRetry=3 → reads config.json max_retry_on_failure (Codex finding)
+- Fixed checkStop() hardcoded maxRetry=3 -> reads config.json max_retry_on_failure (Codex finding)
 
 ### Security by Design
 - Embedded security in criteria anchors, checklists, anti-patterns across harness-sdlc, harness-ea, harness-ba, harness-sa
@@ -78,7 +106,7 @@
 - **F-027**: Remove unused subcommands (feature-update, verify-round-numbering, metrics-summary)
 
 ### Standardization
-- **F-028**: Sprint artifact naming — contract→proposal, contract-review→review, builder-report→report, evaluation→eval
+- **F-028**: Sprint artifact naming -- contract->proposal, contract-review->review, builder-report->report, evaluation->eval
 - **F-029**: Root artifact consolidation (removed init.md, summary.md, decomposition.md), simplified enums (status: pending/done, maturity: draft/reviewed/accepted)
 
 ### Enhancements
@@ -95,19 +123,19 @@
 ### Stats
 - Sprint count: 3
 - Required features: 7/7 passing (F-032 optional, skipped)
-- Subcommands: 15 → 9
-- Lib modules: 8 → 6
-- Hooks: 3 → 1
-- SKILL.md: 646 → ~200 lines
+- Subcommands: 15 -> 9
+- Lib modules: 8 -> 6
+- Hooks: 3 -> 1
+- SKILL.md: 646 -> ~200 lines
 
 ## [2.2.2] - 2026-04-06
 
 ### Features Shipped
-- **F-015**: Script hardening — JSDoc annotations, runtime validation, circular dep detection, error standardization, git escaping fix
-- **F-016**: Feature-update subcommand — CLI mutation of feature.passes/status/maturity
-- **F-017**: Per-step metrics — lib/metrics.mjs, metrics-summary subcommand, file_changes + evaluation_scores in cost_tracking
-- **F-018**: Structured event logging — lib/events.mjs, log-event/read-events subcommands, append-only events.jsonl
-- **F-019**: Postmortem command — `/harness:postmortem` with Timeline, Score Trends, Failure Analysis, Process Compliance, Recommendations
+- **F-015**: Script hardening -- JSDoc annotations, runtime validation, circular dep detection, error standardization, git escaping fix
+- **F-016**: Feature-update subcommand -- CLI mutation of feature.passes/status/maturity
+- **F-017**: Per-step metrics -- lib/metrics.mjs, metrics-summary subcommand, file_changes + evaluation_scores in cost_tracking
+- **F-018**: Structured event logging -- lib/events.mjs, log-event/read-events subcommands, append-only events.jsonl
+- **F-019**: Postmortem command -- `/harness:postmortem` with Timeline, Score Trends, Failure Analysis, Process Compliance, Recommendations
 
 ### Fixes
 - Round numbering offset: initializer now documents `current_round: 0` so first increment lands on 1
@@ -132,7 +160,7 @@
 - Required features: 4/4 passing
 
 ### Summary
-Script automation for harness mechanical operations. ~60% of the harness workflow (state updates, feature selection, auto-commit, artifact validation, progress tracking) is now handled by `harness-companion.mjs` — a zero-dependency Node.js ES module with atomic JSON writes and structured stdout. Reduces LLM token burn on deterministic tasks. Also fixed the evaluator's implicit documentation-only exemption for codex review.
+Script automation for harness mechanical operations. ~60% of the harness workflow (state updates, feature selection, auto-commit, artifact validation, progress tracking) is now handled by `harness-companion.mjs` -- a zero-dependency Node.js ES module with atomic JSON writes and structured stdout. Reduces LLM token burn on deterministic tasks. Also fixed the evaluator's implicit documentation-only exemption for codex review.
 
 ## [2.2.0] - 2026-04-04
 
@@ -141,7 +169,7 @@ Script automation for harness mechanical operations. ~60% of the harness workflo
 
 ### Core Fixes
 - **F-001**: Complete `architecture` to `enterprise_architecture` domain profile rename
-- **F-002**: Remove domain-specific leaks from core — generic evaluation schema, runtime verification, cross-domain composability
+- **F-002**: Remove domain-specific leaks from core -- generic evaluation schema, runtime verification, cross-domain composability
 - **F-003**: Rename `/init` command to `/start`
 
 ### Suite Index Additions
@@ -150,10 +178,10 @@ Script automation for harness mechanical operations. ~60% of the harness workflo
 - **F-006**: Domain verification methods table (what "runtime verification" means per profile)
 
 ### Domain Skill Depth
-- **F-007**: EA — Zachman framework, FEAF phases, ADR template, ArchiMate tool guidance, workshop template
-- **F-008**: BA — Elicitation interview template, MoSCoW/Kano/weighted prioritization, sign-off workflow, traceability matrix
-- **F-009**: SA — DDD strategic+tactical design, OpenAPI/AsyncAPI templates, STRIDE threat modeling, capacity modeling
-- **F-010**: Ops — GitOps reconciliation, SRE SLO/SLI/error budgets, runbook template, P0-P4 incident response, DORA metrics
+- **F-007**: EA -- Zachman framework, FEAF phases, ADR template, ArchiMate tool guidance, workshop template
+- **F-008**: BA -- Elicitation interview template, MoSCoW/Kano/weighted prioritization, sign-off workflow, traceability matrix
+- **F-009**: SA -- DDD strategic+tactical design, OpenAPI/AsyncAPI templates, STRIDE threat modeling, capacity modeling
+- **F-010**: Ops -- GitOps reconciliation, SRE SLO/SLI/error budgets, runbook template, P0-P4 incident response, DORA metrics
 
 ### Stats
 - Sprint count: 6
